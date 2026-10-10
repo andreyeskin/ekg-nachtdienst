@@ -82,50 +82,78 @@ befundet, hält nicht durch.
 
 ## 4. Deckung: was die Daten hergeben
 
-Geprüft gegen `data/ekg_daten.json` (41 Aufnahmen LUDB, mit Wellen-Annotation)
-und `data/ptbxl_auswahl.json` (458 Aufnahmen PTB-XL, mit Diagnosen).
+Gezählt am 10.10.2026 aus den Dateien selbst, nicht geschätzt. Drei Quellen:
 
-| Lektion | Thema | Daten vorhanden | Messbar? |
+| Quelle | Aufnahmen | Lizenz | Besonderheit |
 |---|---|---|---|
-| 1–7 | Grundlagen | Normalbefunde: 40 SR + 89 NORM | ja (LUDB) |
-| 8 | Sinusrhythmus und Varianten | SBRAD 30, STACH 30, SARRH 29 | ja |
-| 9 | SA-Block, Sick Sinus | **fehlt** | — |
-| 10 | AV-Block I–III | 1AVB 30, **2AVB 14, 3AVB 16** | teils |
-| 11 | AV-junktionaler Rhythmus | in 3AVB enthalten | teils |
-| 12 | Vorhofleitungsstörungen | RAO/RAE 15, LAO/LAE 14 | ja (LUDB-P-Dauer) |
-| 13 | Schenkelblöcke | CRBBB 19, CLBBB 15, IRBBB 33, IVCD 23 | ja (QRS-Breite) |
-| 14 | Hemiblöcke | LAFB 13; **LPFB fehlt** | ja (Achse) |
-| 15 | R-Progression, S-Persistenz | in Infarkt- und Hypertrophiefällen | ja |
-| 16 | ST/T | NST_ 42, STD_ 35, NDT 31, ISC_ 46 | ja |
-| 17 | QT, langes QT | QT messbar (LUDB); **pathologisch fehlt** | ja/— |
-| 18 | Hypertrophie | LVH 50, RVH 23 | ja (Sokolow) |
-| 19–20 | Infarkt, Lokalisation | ASMI 49, IMI 35 u. a. | ja |
-| 21 | Lungenembolie | **fehlt** | — |
-| 22 | Peri-/Myokarditis | **fehlt** | — |
-| 23 | Elektrolyte | **fehlt** | — |
-| 24 | SVES, SVT, WPW | PAC 32, SVTAC 27, PSVT 24, WPW 20 | ja |
-| 25 | Vorhofflimmern, -flattern | AFIB 40, AFLT 27 | ja |
-| 26 | Ventrikuläre Störungen | PVC 53; **VT/Kammerflimmern fehlt** | teils |
-| 27 | Brugada | **fehlt** | — |
-| 28 | ARVD/C | **fehlt** | — |
-| 29 | Schrittmacher | PACE 15 | ja |
-| 30 | Monitor-EKG | jede Aufnahme im Monitormodus | ja |
-| 31 | Situs inversus | **im Auszug nicht; in der Volldatenbank suchen** | — |
-| 32 | Systematische Befundung | alle | ja |
+| **LUDB** | 199 | ODC-By | **Wellen-Annotation durch Kardiologen** — die einzige Quelle, an der gemessen werden darf |
+| **PTB-XL** (Auswahl) | 458 | CC BY 4.0 | SCP-Codes, Befundtext, Alter, Achse |
+| **Chapman-Shaoxing / Ningbo** | 1359 | CC BY 4.0 | 86 verschiedene Diagnosen, SNOMED-codiert |
+| **gesamt** | **2016** | | |
 
-**Sieben Lücken.** So wird damit umgegangen, in dieser Reihenfolge:
+| Lektion | Thema | LUDB | PTB-XL | Chapman | gesamt | Stand |
+|---|---|---:|---:|---:|---:|---|
+| 1–7 | Grundlagen, Normalbefund | 142 | 286 | 121 | 549 | ok |
+| 8 | Sinus und Varianten | 39 | 116 | 672 | 827 | ok |
+| 9 | SA-Block, Sick Sinus | 0 | 0 | 42 | 42 | ok |
+| 10 | AV-Block I–III | 0 | 73 | 180 | 253 | ok |
+| 11 | AV-junktional, Ersatzrhythmen | 0 | 0 | 200 | 200 | ok |
+| 12 | Vorhofleitung | 0 | 49 | 118 | 167 | ok |
+| 13 | Schenkelblöcke | 0 | 121 | 252 | 373 | ok |
+| 14 | Hemiblöcke | 0 | 57 | 41 | 98 | ok |
+| 15 | R-Progression, Rotation | 0 | 0 | 108 | 108 | ok |
+| 16 | ST und T | 0 | 154 | 985 | 1139 | ok |
+| 17 | QT-Zeit, langes QT | an jeder LUDB-Aufnahme messbar | 0 | 65 | 65 | ok |
+| 18 | Hypertrophie | 0 | 73 | 225 | 298 | ok |
+| 19–20 | Infarkt und Lokalisation | 0 | 101 | 67 | 168 | ok |
+| 21 | **Lungenembolie** | 0 | 0 | 0 | **0** | **Lücke** |
+| 22 | **Peri-/Myokarditis** | 0 | 0 | 0 | **0** | **Lücke** |
+| 23 | **Elektrolytstörungen** | 0 | 0 | 0 | **0** | **Lücke** |
+| 24 | SVES, SVT, WPW | 0 | 103 | 413 | 516 | ok |
+| 25 | Vorhofflimmern und -flattern | 18 | 67 | 300 | 385 | ok |
+| 26 | Ventrikuläre Störungen | 0 | 53 | 224 | 277 | ok |
+| 27 | Brugada | 0 | 0 | 5 | 5 | dünn |
+| 28 | **ARVD/C** | 0 | 0 | 0 | **0** | **Lücke** |
+| 29 | Schrittmacher | 0 | 15 | 67 | 82 | ok |
+| 30 | Monitor-EKG | alle | | | alle | ok |
+| 31 | **Situs inversus / Dextrokardie** | 0 | 0 | 0 | **0** | **Lücke** |
+| 32 | Systematische Befundung | alle | | | alle | ok |
 
-1. **In der Volldatenbank suchen.** Die ausgewählten 458 sind ein Auszug; PTB-XL
-   hat 21 799 Aufnahmen und 71 Diagnose-Codes. Für Situs inversus, VT und
-   seltenere Muster lohnt die Suche in `ptbxl_database.csv`.
-2. **Andere offene Quellen prüfen.** Es gibt weitere frei lizenzierte
-   EKG-Sammlungen; jede Aufnahme, die ins Spiel soll, muss eine Lizenz haben,
-   die Weitergabe und Verkauf erlaubt.
+### Was daraus folgt
+
+**26 von 32 Lektionen sind mit echten Aufnahmen gedeckt.** Fünf Lücken bleiben,
+eine Lektion ist dünn.
+
+**Die wichtigste Zahl steht nicht in der Spalte „gesamt", sondern in der Spalte
+„LUDB": 199.** Nur diese Aufnahmen tragen eine Wellen-Annotation von
+Kardiologen, und nur an ihnen darf der Zirkel prüfen, ob *richtig* gemessen
+wurde — also ob der Spieler wirklich den P-Beginn erwischt hat und nicht
+zufällig eine gleich lange Strecke daneben. Alle übrigen 1817 Aufnahmen sind
+zum **Ansehen, Vergleichen und Befunden** da, nicht zum Messen. Darum stehen
+sie im Export auf `messbar: false`.
+
+Das ist kein Mangel, sondern die ehrliche Grenze offener Daten: Wer messen
+lehren will, braucht jemanden, der vorher von Hand markiert hat, wo die Welle
+anfängt. Das haben 199 Aufnahmen.
+
+### Die fünf Lücken
+
+Lungenembolie, Peri-/Myokarditis, Elektrolytstörungen, ARVD/C und Dextrokardie
+fehlen in allen drei Datenbanken — sie kommen in der SNOMED-Codeliste der
+Challenge 2021 überhaupt nicht vor. Vorgehen, in dieser Reihenfolge:
+
+1. **PTB Diagnostic Database** (ODC-By, 549 Aufnahmen) prüfen: sie führt
+   Myokarditis als Diagnose auf Patientenebene. Damit wäre Lektion 22 gedeckt.
+2. **Volle PTB-XL** (21 799 Aufnahmen statt der 458 der Auswahl) nach
+   Dextrokardie durchsuchen; der Befundtext ist frei durchsuchbar.
 3. **Als Schema zeigen, nicht als Aufnahme.** Wo keine echte Kurve zu bekommen
-   ist (Brugada, ARVD, Elektrolytstörungen), wird ein **gerechnetes Schema**
-   gezeigt und ausdrücklich so beschriftet: „Schema, keine Aufnahme." Gemessen
-   wird daran nie. Eine gezeichnete Kurve, die sich als Aufnahme ausgibt, kommt
-   nicht ins Spiel — das ist dieselbe Regel wie in der Art Bible.
+   ist, wird ein gerechnetes Schema gezeigt und ausdrücklich so beschriftet:
+   „Schema, keine Aufnahme." Gemessen wird daran nie. Eine gezeichnete Kurve,
+   die sich als Aufnahme ausgibt, kommt nicht ins Spiel — dieselbe Regel wie in
+   der Art Bible.
+
+Für Lungenembolie, ARVD/C und Elektrolyte ist Weg 3 der wahrscheinliche: Diese
+Muster sind in offenen Sammlungen kaum sauber annotiert zu bekommen.
 
 ---
 

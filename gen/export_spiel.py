@@ -76,7 +76,7 @@ def eine(nr):
             rhythmus = k.split(":", 1)[-1].strip()
         elif k and ":" not in k:
             diagnose.append(k)
-    return {"id": nr, "rhythmus": rhythmus, "diagnose": diagnose, "mess": m,
+    return {"id": nr, "rhythmus": rhythmus, "diagnose": diagnose, "messbar": True, "mess": m,
             "p_mv": E.p_amplitude(d, LEAD), "sig": werte(d), "schlaege": sl}
 
 
@@ -91,7 +91,13 @@ if __name__ == "__main__":
         if not r:
             continue
         gruppe = r["rhythmus"] or "ohne Angabe"
-        if gesehen.get(gruppe, 0) >= 8:            # je Rhythmusgruppe höchstens acht
+        # Früher: höchstens acht je Rhythmusgruppe. Das war richtig, solange nur
+        # Kapitel 1 gebaut wurde — für den ganzen Kurs verschenkt es 159 von 200
+        # Aufnahmen, und zwar ausgerechnet die knappste Ware: LUDB ist die einzige
+        # Quelle mit Wellen-Annotation, also die einzige, an der gemessen werden
+        # darf. Das Spiel bündelt ohnehin nur, was es braucht (tools/baue.py).
+        obergrenze = int(os.environ.get("JE_GRUPPE", "0")) or 10**6
+        if gesehen.get(gruppe, 0) >= obergrenze:
             continue
         gesehen[gruppe] = gesehen.get(gruppe, 0) + 1
         aus.append(r)
