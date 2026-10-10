@@ -7,8 +7,8 @@
   general  — fal-ai/flux-general: генерация с ControlNet (глубина/контуры из нашего рендера)
              и опциональными LoRA-стилями (≈ $0.075/мегапиксель).
 
-Ключ берётся из переменной окружения FAL_KEY (секрет облачного окружения, не из чата).
-Без ключа скрипт работает как --dry-run: печатает, что отправил бы.
+Ключ берётся из переменной окружения FAL_KEY, либо его подставляет прокси облачного окружения
+(«Netzwerk-Secret»: заголовок Authorization: Key … для *.fal.run). С --dry-run ничего не отправляется.
 
 Примеры:
   python3 malen.py kontext --image render.png --style stil_riso.txt --seed 7 --out out.png
@@ -50,6 +50,10 @@ def main():
     a = ap.parse_args()
 
     key = os.environ.get("FAL_KEY")
+    if not key and os.environ.get("FAL_PROXY_AUTH", "1") == "1" and not a.dry_run:
+        # Ключ может подставлять прокси облачного окружения («Netzwerk-Secret»): клиенту нужен
+        # хоть какой-то заголовок, прокси заменит его настоящим для разрешённых хостов.
+        os.environ["FAL_KEY"] = "proxy-injected"; key = "proxy"
     dry = a.dry_run or not key
     style = load_style(a.style)
     full_prompt = (a.prompt + ". " if a.prompt else "") + style
@@ -94,6 +98,8 @@ def main():
     t = time.time()
     result = fal_client.subscribe(endpoint, arguments=payload, with_logs=False)
     imgs = result.get("images") or []
+    if isinstance(result, dict) and result.get("detail") and not imgs:
+        print("fal.ai ответил ошибкой:", result.get("detail")); sys.exit(1)
     if not imgs: print("Нет изображений в ответе:", json.dumps(result)[:500]); sys.exit(1)
     urllib.request.urlretrieve(imgs[0]["url"], a.out)
     print(f"saved {a.out} ({imgs[0].get('width')}x{imgs[0].get('height')}) seed={result.get('seed', a.seed)} {time.time()-t:.0f}s")
