@@ -63,6 +63,59 @@ Sie starten aus der Situation heraus, nicht aus einem Menü. Jedes dauert ein bi
 - **Wiederspielwert**: Die Engine zieht die Streifen jedes Mal aus einem anderen echten Datensatz
   derselben Diagnosegruppe. Der Fall bleibt, die Kurven sind neu.
 
+## 5a. Räume, die nichts beibringen
+
+Ein Haus, in dem jeder Raum eine Aufgabe hat, ist kein Haus, sondern ein
+Fragebogen mit Tapete. Deshalb gibt es **warme Räume**: Orte, an denen man
+nichts lernt, nichts sammelt und nichts freischaltet.
+
+- **Teeküche.** Der Automat macht nur noch halbe Tassen, seit jemand im Februar
+  etwas hineingeschüttet hat. Im Kühlschrank steht eine Dose mit einem Zettel
+  drauf. An der Tür hängt eine Dankeskarte von Angehörigen, ohne Namen.
+- **Hinterausgang.** Dr. Falks nie angezündete Zigarette. Kalte Luft. Er sagt
+  genau einen Satz, der nichts mit Herzen zu tun hat.
+- **Lager.** Ein EKG-Gerät aus den Achtzigern, in dem noch Papier steckt. Ein
+  Rollstuhl mit einem Aufkleber, den ein Kind daraufgeklebt hat.
+- **Treppenhaus.** Die Abkürzung, die alle nehmen. Ein Fenster, an dem man
+  sieht, wie die Tageszeit weitergeht.
+- **Stilles Zimmer.** Nichts passiert. Genau darum geht es.
+
+**Regeln, damit sie warm bleiben:**
+
+1. **Nie Pflicht.** Kein Fortschritt hängt daran, kein Befund liegt dort.
+2. **Nie in der Liste.** Der „Stand der Schicht" erwähnt sie nicht. Wer sie
+   findet, findet sie.
+3. **Nie belohnt.** Keine Punkte, keine Abzeichen. Die Szene ist die Belohnung.
+4. **Sie kosten Zeit** — und das ist richtig so. Wer sich fünf Minuten hinsetzt,
+   hat fünf Minuten weniger. Niemand bestraft einen dafür.
+5. **Sie verändern sich mit der Schicht.** Morgens riecht die Teeküche nach
+   Kaffee, nachts steht die Kanne kalt da. Die Tassen auf Marlenes Tisch werden
+   mehr. Falks Zigarette wandert zwischen Ohr und Hand.
+6. **Wer zweimal kommt, bekommt mehr.** Figuren erzählen beim zweiten Mal etwas,
+   das sie beim ersten Mal nicht erzählt haben — nichts Dramatisches, eher
+   warum jemand immer dieselbe Tasse nimmt.
+
+## 5b. Anspielungen — auf uns selbst, nicht auf andere
+
+Kleine Wiedererkennungen machen eine Welt lebendig. Sie kommen aber **aus
+unserer eigenen Welt**, nicht aus fremden Filmen, Serien oder Spielen: deren
+Namen und Figuren sind geschützt, und ein geborgter Witz altert schlecht.
+
+Was funktioniert:
+- **Dinge kehren wieder.** Der verblasste Katzensticker auf Marlenes
+  Namensschild. Das rote Fadenbändchen der Enkelin, das später in einem ganz
+  anderen Kapitel auf einer Kinderzeichnung auftaucht.
+- **Figuren erinnern sich.** Wer Herrn Baum nach dem Foto gefragt hat, wird beim
+  nächsten Treffen gefragt, ob er noch weiß, wie das Mädchen heißt.
+- **Das Haus altert.** Der schiefe Bilderrahmen im Flur hängt im letzten Kapitel
+  immer noch schief.
+- **Ein Insiderwitz pro Abteilung**, aus dem Fach selbst: die Kaffeekasse, die
+  jemand mit einem EKG-Lineal bewacht; der Spruch über Ableitung aVR, den jede
+  Station anders erzählt.
+
+Was nicht: Zitate aus Serien, Namen aus anderen Spielen, nachgebaute Figuren,
+Markennamen auf Geräten.
+
 ## 6. Technische Grundsätze
 
 - Eine Webseite, später PWA. Kein Spiel-Framework: SVG und Canvas reichen und bleiben leicht.
