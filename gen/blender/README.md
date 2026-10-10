@@ -17,11 +17,17 @@ Einzelne Durchgänge: `python3 gen/blender/ebenen.py aufnahme lines` usw. (Liste
   `OHNE_LINIE`, `OHNE_SCHATTIERUNG`, `SONNE_AUS`, `sonne_stellen()` (Schnittstelle in `werkzeug.py`).
   Jedes Objekt trägt eine Ebene (hinten/mitte) und optional eine Klickzone.
 * `werkzeug.py` — Materialien, Grundkörper, `raum_huelle()` (Raum als ein Netz: saubere Linien an allen
-  Raumfugen), `loch()`, `platzhalter()` (unsichtbare Fläche nur für eine Klickzone, z. B. Platz einer Figur).
+  Raumfugen), `loch()`, `platzhalter()` (unsichtbare Fläche nur für eine Klickzone, z. B. Platz einer Figur),
+  `platte()` (eine Fläche ohne Dicke: eine Kontur statt zweier Striche), die gemeinsamen Bausteine
+  `fenster()` (Blendrahmen in der Laibung, Pfosten/Kämpfer, Flügelrahmen, Griff, Fensterbank), `jalousie()`
+  (Kasten, Lamellen einzeln mit Kontur, Leiterbänder, Unterschiene, Schnur) und `himmel_baender()` (flacher
+  Himmel aus Farbbändern), sowie `schirmflaeche()` (Bildschirmfläche, die das Spiel mit einer Kurve belegt).
 * `ebenen.py` — Render-Durchgänge für jeden Raum:
   `flat` (Lokalfarbe, Stufen nach Flächenrichtung), `lines` (Freestyle, doppelt aufgelöst), `linesmid`
   (nur Mittelgrund), `mask`, `sun` (nur Sonne), `ao` (Umgebungsverdeckung), `kontakt` (Schatten von oben
-  unter Möbeln), jeweils `*bg` ohne Mittelgrund. Schreibt `art/szenen/<raum>/hitboxes.json`.
+  unter Möbeln), jeweils `*bg` ohne Mittelgrund. Schreibt `art/szenen/<raum>/hitboxes.json` und
+  `schirme.json` (vier Bildecken je Schirmfläche, Ebene). `BLENDER_THREADS=2` begrenzt die Kerne, wenn
+  nebenher anderes rendert.
 * `komposit.py` — Farbe × Kontaktschatten × Sonne × Linie; Ebenen mit Alpha für die Parallaxe.
   Je Raum einstellbar (`EINSTELLUNG`): Lichtfarbe, Weichheit, AO-Schwelle, Kontaktschatten an/aus.
 * `malen.py` — optionaler Feinschliff über fal.ai (Flux Kontext), Schlüssel aus `FAL_KEY`.
@@ -42,6 +48,12 @@ python3 gen/blender/ebenen_figuren.py portraits
 
 Die Uhrzeiger setzt `gen/kunst.py` aus der Klickzone `uhr` als SVG über das Hintergrundbild (gleiche Ebene
 wie das Zifferblatt, sonst wandern sie in der Parallaxe); das Spiel dreht sie nach der Spielzeit.
+`kunst.py` bettet `hitboxes.json` (→ `kunst.szenen.<raum>.zonen`, daraus baut `spiel.js` die Klickfelder) und
+`schirme.json` (→ `.schirme`, Leinwände mit laufenden Kurven in der Ebene des Schirms) mit ein — Zahlen werden
+nirgends abgeschrieben.
+
+Draußen vor den Fenstern (Himmel, Nachbarflügel, Bäume) liegt niedrig genug, dass es nie im Weg der Sonne steht:
+`ebenen_figuren.py raum` lässt alle Raumobjekte die Sonne der Figuren abschatten, unabhängig von `SONNE_AUS`.
 
 Regeln, die aus Fehlern stammen:
 * Raum nicht aus sich durchdringenden Kisten bauen — die Fugen bekommen sonst keine oder flackernde Linien.

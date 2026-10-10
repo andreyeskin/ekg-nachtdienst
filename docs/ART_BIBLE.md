@@ -41,15 +41,35 @@ Bildschirm-Inhalt, nie als Raum.
 | Rost | `#B5552D` | **genau ein Objekt pro Bild** — das, was die Geschichte weitertreibt |
 | Morgenlicht | `#F8E7BF` | Fenster, Sonnenstreifen; je Tageszeit abgewandelt |
 | Phosphor | `#39E58C` | ausschließlich Bildschirme und Monitorkurven |
+| Linoleum | `#C9BDA2` warm · `#B6BFB6` kühl | Böden: eine Stufe dunkler als die Wand, erdet den Raum (§3.1) |
+| Mint hell | `#D6E4DD` | Wände des kühlen Raums (Monitorzimmer) — Mint als Fläche, nicht als Sockel |
+| Glas | `#1E2A30` | Geräteschirme (EKG-Wagen, Bettmonitore): Tinte als Fläche, die Kurve kommt aus dem Code |
 
 Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
 in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
+
+### Je Raum eine eigene Hauptkombination (10.10.2026)
+Alle Räume teilen Sand/Papier/Mint/Petrol/Tinte/Holz, aber jeder Raum hat eine eigene Verteilung,
+sonst sind sie nicht zu unterscheiden:
+
+| Raum | Wand | Sockel | Boden | Möbel | Rost (das eine Objekt) |
+|---|---|---|---|---|---|
+| Aufnahme (06:40, warm) | Sand | Mint | Linoleum warm | Holz-Tresen, Petrol-Polster der Bank, Geräte Tinte | Betablocker-Schachtel in Herrn Baums Tüte |
+| Monitorzimmer (09:15, kühl) | Mint hell | Sand | Linoleum kühl | Papier-Tischplatte auf Petrol-Blöcken, Holz-Aktenschrank | Dr. Falks Zirkel |
+
+Werkstoff-Logik: Holz für Arbeitsplatten, Tresen, Zargen, Armlehnen; Petrol für Polster und lackierte
+Gehäuse; Tinte für Gestelle, Griffe und dunkles Glas; Papier für Ablagen, Rahmen, Zettel. Himmel draußen
+als flache Bänder aus Morgenlicht-Abwandlungen (Aufnahme: `#F8E7BF` → `#F6DCA4` → `#F3CD8C`, Sonne `#FFF6DC`;
+Monitorzimmer: `#DCE9EA` / `#E6EFEE`), Silhouetten draußen in Petrol und Papier.
 
 ### Regeln, die aus der Recherche kommen
 1. Der Streifen ist das einzige hochfrequente Element am Bildschirm. Raster, Korn, Dithering
    berühren ihn nie.
 2. Der Streifen ist heller als die Welt: eigenes Papier `#FFF8F4` mit Schatten, nie Sand.
 3. Hinweise auf dem Streifen sind statische Farbflächen unter der Kurve. Nichts blinkt.
+   Geräteschirme im Raum (EKG-Wagen, Bettmonitore) zeigen laufende Kurven aus `data/`, gezeichnet vom
+   Code auf eine Leinwand in der Ebene des Schirms (`art/szenen/<raum>/schirme.json` → `spiel.js`);
+   im Render bleibt die Schirmfläche eine ruhige Glasfläche. Ableitung und Frequenz setzt der Code.
 4. Jede Requisite besteht den Test „Würde ein Kardiologe sie zur Entscheidung brauchen?" —
    sonst bleibt sie klein, still oder weg.
 5. Figuren tragen Emotion im Gesicht; Körperdetail und Realismus zählen wenig.

@@ -25,10 +25,10 @@ TINTE = hexc("#1E2A30"); SCHATTEN = hexc("#2C5560")
 # und/oder aus dem Durchgang „kontakt" (Licht von oben, geometrische Formen unter Möbeln)
 STANDARD = dict(licht="#FFF6DC", anteil=0.32, schwelle=0.35, weich=0.7, ao=0.62, kontakt=False)
 EINSTELLUNG = {
-    "aufnahme": dict(STANDARD, ao=0.0, kontakt=True),                                       # 06:40, warm, hart; Schatten von oben statt AO-Flecken
+    "aufnahme": dict(licht="#FFF0C6", anteil=0.5, schwelle=0.35, weich=0.5, ao=0.0, kontakt=True),   # 06:40, warm, hart; Schatten von oben statt AO-Flecken
     # 09:15, kühl, weicher. AO bleibt aus: der helle, offene Raum erreicht nirgends tiefe Verdeckung
     # (Minimum ~0,6), die Schwelle schnitt nur Flecken an Wandecken aus — dafür Schatten von oben.
-    "monitor": dict(licht="#FBFDF8", anteil=0.40, schwelle=0.30, weich=1.2, ao=0.0, kontakt=True),
+    "monitor": dict(licht="#FBFDF8", anteil=0.42, schwelle=0.30, weich=1.2, ao=0.0, kontakt=True),
 }
 
 

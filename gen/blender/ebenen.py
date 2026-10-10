@@ -265,9 +265,34 @@ def klickzonen():
     with open(ZIEL + "hitboxes.json", "w", encoding="utf-8") as f:
         json.dump(zonen, f, indent=1)
     print("KLICKZONEN", json.dumps(zonen), flush=True)
+    schirme()
+
+
+def schirme():
+    """Bildschirmflächen (werkzeug.schirmflaeche): die vier Ecken der Vorderseite in Bühnenpixeln, im
+    Uhrzeigersinn ab oben links, dazu das umschließende Rechteck und die Ebene — art/szenen/<raum>/schirme.json.
+    Das Spiel legt dort seine Leinwand mit der laufenden Kurve hin (docs/ART_BIBLE.md §6: nie gemalt)."""
+    aus = {}
+    for name, (objname, ebene) in wz.SCHIRME.items():
+        o = bpy.data.objects[objname]
+        ecken = [Vector(v) for v in o.bound_box]; ymin = min(v.y for v in ecken)
+        vorn = [o.matrix_world @ v for v in ecken if abs(v.y - ymin) < 1e-6]
+        pts = [(p.x * B, (1 - p.y) * H) for p in (world_to_camera_view(sc, kamera, v) for v in vorn)]
+        mx, my = sum(p[0] for p in pts) / 4, sum(p[1] for p in pts) / 4
+        pts.sort(key=lambda p: math.atan2(p[1] - my, p[0] - mx))          # im Uhrzeigersinn (y nach unten)
+        start = min(range(4), key=lambda i: pts[i][0] + pts[i][1])        # oben links zuerst
+        pts = pts[start:] + pts[:start]
+        xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+        aus[name] = {"ebene": ebene, "ecken": [[round(x, 1), round(y, 1)] for x, y in pts],
+                     "kasten": [round(min(xs), 1), round(min(ys), 1), round(max(xs), 1), round(max(ys), 1)]}
+    with open(ZIEL + "schirme.json", "w", encoding="utf-8") as f:
+        json.dump(aus, f, indent=1)
+    if aus: print("SCHIRME", json.dumps(aus), flush=True)
 
 
 sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'
+if os.environ.get("BLENDER_THREADS"):     # z. B. BLENDER_THREADS=2, wenn nebenher anderes rendert
+    sc.render.threads_mode = 'FIXED'; sc.render.threads = max(1, int(os.environ["BLENDER_THREADS"]))
 sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = B, H, 100
 sc.render.image_settings.file_format = 'PNG'; sc.render.image_settings.color_mode = 'RGB'
 sc.view_settings.view_transform = 'Standard'; sc.view_settings.look = 'None'
