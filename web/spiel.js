@@ -202,10 +202,21 @@
         ]
       },
       vorwarnung: {
-        text: "Das ist das Einzige, was mich an der Sache stört. Wem schwarz vor Augen wird, wer schwitzt und sich "
-            + "noch hinsetzen kann — der kippt anders um. Hier zieht jemand den Stecker und steckt ihn wieder rein. "
-            + "Das kommt selten aus dem Kopf. Das kommt meistens von unten.",
-        antworten: [{ text: "Vom Herzen.", zu: "auftrag" }, { text: "Zurück.", zu: "start" }]
+        text: "Das ist das Einzige, was mich an der Sache stört. Wem erst schwarz vor Augen wird, wer schwitzt und "
+            + "sich noch hinsetzen kann — das ist der gewöhnliche Weg, und der spricht für eine Kreislaufsache. "
+            + "Hier fehlt genau das. Es steht in jeder Liste der Warnzeichen. Ein Beweis ist es nicht, aber es "
+            + "heißt: nicht nach Hause schicken, bevor man nachgesehen hat.",
+        antworten: [
+          { text: "Also nachsehen.", zu: "auftrag" },
+          { text: "Beweist das etwas?", zu: "beweis" },
+          { text: "Zurück.", zu: "start" }
+        ]
+      },
+      beweis: {
+        text: "Nichts beweist es. Beweisen würde: ein Puls dauerhaft unter vierzig, eine Pause über drei Sekunden "
+            + "im Wachen, oder ein Block, bei dem Schläge ausfallen. Das steht alles noch nicht auf dem Papier. "
+            + "Deswegen schreibst du jetzt eines.",
+        antworten: [{ text: "Verstanden.", zu: "auftrag" }]
       },
       verletzt: {
         text: "Eine Schramme am Ellbogen, sonst nichts. Er sagt, er hat sich am Regal festgehalten. Beim zweiten Mal "
@@ -310,10 +321,12 @@
         ]
       },
       gut: {
-        text: "Gut. Zwei Zahlen, kein Roman. — Also: Der Knoten ist langsam und die Überleitung ist lang. "
-            + "Beides zusammen heißt noch nicht, dass er deswegen umfällt. Es heißt: Die Leitung ist angeschlagen. "
-            + "Eine angeschlagene Leitung fällt nicht gleichmäßig aus, sie fällt plötzlich aus. "
-            + "Deshalb hängt er jetzt am Monitor und nicht zu Hause am Wasserkocher.",
+        text: "Gut. Zwei Zahlen, kein Roman. — Also: Der Knoten ist langsam, die Überleitung ist lang, und er "
+            + "nimmt etwas, das beides macht. Das erklärt die Zahlen. Es erklärt nicht, warum er umfällt. "
+            + "Was es sagt, ist: Die Leitung ist angeschlagen. Und eine angeschlagene Leitung fällt nicht "
+            + "gleichmäßig aus, sie fällt plötzlich aus. Beweisen würde das erst eine Pause oder ein Block, "
+            + "bei dem Schläge ausfallen — und den sieht man nur, wenn jemand hinschaut, wenn es passiert. "
+            + "Deshalb hängt er am Monitor und sitzt nicht zu Hause am Wasserkocher.",
         weiter: "ende"
       },
       halb: {
@@ -437,15 +450,18 @@
         { text: "Ramipril — der Blutdrucksenker.", warum: "ACE-Hemmer senken den Druck, bremsen aber weder Sinusknoten noch AV-Knoten." },
         {
           text: "Bisoprolol — der Betablocker.", richtig: true,
-          warum: "Betablocker bremsen den Sinusknoten und verlangsamen die AV-Überleitung. Teil der Erklärung — "
-               + "aber nur ein Teil: Ein Betablocker macht langsam, nicht bewusstlos."
+          warum: "Betablocker bremsen den Sinusknoten und verlangsamen die AV-Überleitung. Das zählt doppelt: "
+               + "Eine langsame Frequenz gilt nur dann als verdächtig, wenn kein bremsendes Medikament im Spiel "
+               + "ist — und hier ist eins im Spiel. Erklärt aber immer noch nicht die Bewusstlosigkeit: "
+               + "Ein Betablocker macht langsam, nicht ohnmächtig."
         }
       ],
       fertig: function () {
         befund({
           id: "b-medis", titel: "Medikamente", zeit: zeitText(),
           text: "Bisoprolol 5 mg, Ramipril 5 mg, ASS 100 mg. Der Betablocker bremst Sinusknoten und AV-Knoten — "
-              + "er erklärt die langsame Frequenz mit, aber keine Bewusstlosigkeit ohne Vorwarnung.",
+              + "er erklärt die langsame Frequenz mit, aber keine Bewusstlosigkeit ohne Vorwarnung. "
+              + "Eine Bradykardie unter bremsender Medikation ist erwartbar, nicht verdächtig.",
           symbol: tablettenBild()
         });
         zeitVor(4);

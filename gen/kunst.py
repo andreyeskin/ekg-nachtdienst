@@ -306,6 +306,40 @@ def infusionsstaender(x, bodeny):
 
 
 # ============================================================ Figuren
+
+def mit_rand(pfad_d, op, licht=(-5, -4), randfarbe=BERNSTEIN, randop=0.8, extra=""):
+    """Eine Masse mit Lichtkante: dieselbe Form zuerst in Licht, zur Lampe hin
+    versetzt, dann die Tinte darüber. Übrig bleibt ein Saum auf der Lichtseite —
+    der Unterschied zwischen einer Silhouette und einem Körper."""
+    dx, dy = licht
+    return (f'<path d="{pfad_d}" fill="{randfarbe}" fill-opacity="{randop:.2f}" '
+            f'transform="translate({F(dx)},{F(dy)})"{extra}/>'
+            f'<path d="{pfad_d}" {tinte(op)}{extra}/>')
+
+
+def falte(x0, y0, x1, y1, bauch, op=0.42, breite=2.6):
+    """Stofffalte: eine kurze, leicht gebogene Linie, heller als die Tinte."""
+    mx, my = (x0 + x1) / 2 + bauch, (y0 + y1) / 2
+    return (f'<path d="M{F(x0)},{F(y0)} Q{F(mx)},{F(my)} {F(x1)},{F(y1)}" fill="none" '
+            f'stroke="{PAPIER}" stroke-opacity="{op:.2f}" stroke-width="{F(breite)}" stroke-linecap="round"/>')
+
+
+def hand(x, y, r, richtung=1, op=0.9):
+    """Eine Hand, keine Kugel: Handrücken plus angedeutete Finger."""
+    d = (f'M{F(x)},{F(y - r)} '
+         f'C{F(x + r * 1.15 * richtung)},{F(y - r * 0.9)} {F(x + r * 1.3 * richtung)},{F(y + r * 0.5)} '
+         f'{F(x + r * 0.7 * richtung)},{F(y + r)} '
+         f'C{F(x + r * 0.2 * richtung)},{F(y + r * 1.25)} {F(x - r * 0.5 * richtung)},{F(y + r * 0.8)} '
+         f'{F(x - r * 0.55 * richtung)},{F(y)} Z')
+    s = [f'<path d="{d}" {tinte(op)}/>']
+    for i in range(3):
+        fy = y - r * 0.35 + i * r * 0.5
+        s.append(f'<path d="M{F(x + r * 0.25 * richtung)},{F(fy)} L{F(x + r * 0.95 * richtung)},{F(fy + r * 0.12)}" '
+                 f'fill="none" stroke="{PAPIER}" stroke-opacity="0.22" stroke-width="{F(r * 0.14)}" '
+                 f'stroke-linecap="round"/>')
+    return "".join(s)
+
+
 def thermoskanne(x, fussy, hoehe=64, magenta=True):
     """Verbeulte Thermoskanne. Steht auf dem Tresen oder wird gehalten."""
     f_ = MAGENTA if magenta else TINTE
@@ -331,13 +365,17 @@ def marlene(x, bodeny, hoehe=330, akzent_magenta=False, kanne=True):
     e = hoehe / 330.0                      # Maßstab
     kx, ky = x, bodeny - hoehe             # Kopfmitte oben
     s = []
-    # Rumpf: breite, weiche Trapezform
-    s.append(f'<path d="M{F(x - 86 * e)},{F(bodeny)} '
+    # Rumpf: breite, weiche Trapezform, mit Lichtkante von der Lampe rechts
+    rumpf = (f'M{F(x - 86 * e)},{F(bodeny)} '
              f'C{F(x - 92 * e)},{F(ky + 150 * e)} {F(x - 70 * e)},{F(ky + 96 * e)} {F(x - 44 * e)},{F(ky + 84 * e)} '
              f'L{F(x + 44 * e)},{F(ky + 84 * e)} '
-             f'C{F(x + 72 * e)},{F(ky + 96 * e)} {F(x + 94 * e)},{F(ky + 150 * e)} {F(x + 88 * e)},{F(bodeny)} Z" '
-             f'{tinte(0.80)}/>')
+             f'C{F(x + 72 * e)},{F(ky + 96 * e)} {F(x + 94 * e)},{F(ky + 150 * e)} {F(x + 88 * e)},{F(bodeny)} Z')
+    s.append(mit_rand(rumpf, 0.80, licht=(6 * e, -3 * e), randop=0.7))
     s.append(rasterflaeche([(x - 86 * e, bodeny), (x - 30 * e, ky + 120 * e), (x - 6 * e, bodeny)], 0.3))
+    # Falten im Kasack: Schulter zur Hüfte, Bauch, Ärmelansatz
+    s.append(falte(x - 48 * e, ky + 104 * e, x - 30 * e, ky + 196 * e, -7 * e, 0.22, 3 * e))
+    s.append(falte(x + 36 * e, ky + 102 * e, x + 52 * e, ky + 184 * e, 6 * e, 0.3, 3 * e))
+    s.append(falte(x - 14 * e, ky + 150 * e, x + 20 * e, ky + 162 * e, 0, 0.16, 3 * e))
     # Ärmel hochgekrempelt: hellerer Ring am Oberarm
     s.append(f'<path d="M{F(x - 84 * e)},{F(ky + 150 * e)} q{F(16 * e)},{F(10 * e)} {F(34 * e)},{F(4 * e)}" '
              f'{strich(0.5, 5 * e)}/>')
@@ -349,11 +387,20 @@ def marlene(x, bodeny, hoehe=330, akzent_magenta=False, kanne=True):
         s.append(thermoskanne(x - 62 * e, ky + 248 * e, 62 * e, akzent_magenta))
     # Arm rechts: auf dem Tresen abgestützt
     s.append(f'<path d="M{F(x + 66 * e)},{F(ky + 126 * e)} C{F(x + 104 * e)},{F(ky + 160 * e)} '
-             f'{F(x + 118 * e)},{F(ky + 196 * e)} {F(x + 124 * e)},{F(ky + 224 * e)}" '
+             f'{F(x + 116 * e)},{F(ky + 192 * e)} {F(x + 120 * e)},{F(ky + 214 * e)}" '
              f'fill="none" stroke="{TINTE}" stroke-opacity="0.84" stroke-width="{F(24 * e)}" stroke-linecap="round"/>')
+    s.append(f'<path d="M{F(x + 76 * e)},{F(ky + 138 * e)} C{F(x + 106 * e)},{F(ky + 168 * e)} '
+             f'{F(x + 114 * e)},{F(ky + 192 * e)} {F(x + 117 * e)},{F(ky + 208 * e)}" fill="none" '
+             f'stroke="{BERNSTEIN}" stroke-opacity="0.5" stroke-width="{F(4 * e)}" stroke-linecap="round"/>')
+    s.append(hand(x + 122 * e, ky + 226 * e, 13 * e, 1, 0.9))
     # Hals und Kopf
     s.append(rechteck(x - 13 * e, ky + 66 * e, 26 * e, 26 * e, 0.8))
-    s.append(f'<ellipse cx="{F(kx)}" cy="{F(ky + 48 * e)}" rx="{F(33 * e)}" ry="{F(36 * e)}" {tinte(0.86)}/>')
+    kopf = (f'M{F(kx - 33 * e)},{F(ky + 46 * e)} '
+            f'C{F(kx - 33 * e)},{F(ky + 16 * e)} {F(kx - 18 * e)},{F(ky + 10 * e)} {F(kx)},{F(ky + 11 * e)} '
+            f'C{F(kx + 20 * e)},{F(ky + 12 * e)} {F(kx + 33 * e)},{F(ky + 22 * e)} {F(kx + 32 * e)},{F(ky + 50 * e)} '
+            f'C{F(kx + 31 * e)},{F(ky + 72 * e)} {F(kx + 18 * e)},{F(ky + 84 * e)} {F(kx + 1 * e)},{F(ky + 84 * e)} '
+            f'C{F(kx - 20 * e)},{F(ky + 84 * e)} {F(kx - 33 * e)},{F(ky + 70 * e)} {F(kx - 33 * e)},{F(ky + 46 * e)} Z')
+    s.append(mit_rand(kopf, 0.86, licht=(5 * e, -3 * e), randop=0.72))
     # Dutt, schief, mit Lesebrille darin
     s.append(f'<ellipse cx="{F(kx - 26 * e)}" cy="{F(ky + 6 * e)}" rx="{F(26 * e)}" ry="{F(22 * e)}" '
              f'{tinte(0.92)} transform="rotate(-18 {F(kx - 26 * e)} {F(ky + 6 * e)})"/>')
@@ -400,11 +447,13 @@ def herr_k(x, bodeny, hoehe=300, tuete_magenta=True, tuete=True):
         s.append(f'<path d="M{F(fx * 1.0 if False else fx)},{F(bodeny - 6)} h{F(34 * e)} '
                  f'q{F(8 * e)},{F(10 * e)} {F(-6 * e)},{F(12 * e)} h{F(-30 * e)} z" {tinte(0.92)}/>')
     # Rumpf: gebeugter Bogen, breiter Rücken
-    s.append(f'<path d="M{F(x - 34 * e)},{F(ky + 196 * e)} '
-             f'C{F(x - 52 * e)},{F(ky + 120 * e)} {F(x - 44 * e)},{F(ky + 70 * e)} {F(x - 10 * e)},{F(ky + 56 * e)} '
-             f'L{F(x + 34 * e)},{F(ky + 60 * e)} '
-             f'C{F(x + 62 * e)},{F(ky + 86 * e)} {F(x + 70 * e)},{F(ky + 150 * e)} {F(x + 72 * e)},{F(ky + 198 * e)} Z" '
-             f'{tinte(0.82)}/>')
+    ruecken = (f'M{F(x - 34 * e)},{F(ky + 196 * e)} '
+               f'C{F(x - 52 * e)},{F(ky + 120 * e)} {F(x - 44 * e)},{F(ky + 70 * e)} {F(x - 10 * e)},{F(ky + 56 * e)} '
+               f'L{F(x + 34 * e)},{F(ky + 60 * e)} '
+               f'C{F(x + 62 * e)},{F(ky + 86 * e)} {F(x + 70 * e)},{F(ky + 150 * e)} {F(x + 72 * e)},{F(ky + 198 * e)} Z')
+    s.append(mit_rand(ruecken, 0.82, licht=(7 * e, -4 * e), randop=0.85))
+    s.append(falte(x + 10 * e, ky + 90 * e, x + 34 * e, ky + 160 * e, 7 * e, 0.22, 3 * e))
+    s.append(falte(x - 20 * e, ky + 104 * e, x - 10 * e, ky + 180 * e, -6 * e, 0.14, 3 * e))
     # Strickjacke unterm Patientenhemd: Kante
     s.append(f'<path d="M{F(x - 6 * e)},{F(ky + 66 * e)} C{F(x + 2 * e)},{F(ky + 130 * e)} '
              f'{F(x + 6 * e)},{F(ky + 170 * e)} {F(x + 10 * e)},{F(ky + 196 * e)}" {strich(0.55, 4 * e)}/>')
@@ -415,14 +464,20 @@ def herr_k(x, bodeny, hoehe=300, tuete_magenta=True, tuete=True):
              f'{F(x + 74 * e)},{F(ky + 170 * e)} {F(x + 52 * e)},{F(ky + 190 * e)}" '
              f'fill="none" stroke="{TINTE}" stroke-opacity="0.86" stroke-width="{F(24 * e)}" stroke-linecap="round"/>')
     s.append(f'<path d="M{F(x - 16 * e)},{F(ky + 80 * e)} C{F(x - 30 * e)},{F(ky + 130 * e)} '
-             f'{F(x - 10 * e)},{F(ky + 168 * e)} {F(x + 14 * e)},{F(ky + 184 * e)}" '
+             f'{F(x - 10 * e)},{F(ky + 164 * e)} {F(x + 10 * e)},{F(ky + 178 * e)}" '
              f'fill="none" stroke="{TINTE}" stroke-opacity="0.86" stroke-width="{F(22 * e)}" stroke-linecap="round"/>')
+    s.append(hand(x + 18 * e, ky + 188 * e, 12 * e, 1, 0.9))
+    s.append(hand(x + 52 * e, ky + 190 * e, 12 * e, 1, 0.9))
     # Rotes Fadenarmband der Enkelin (Bernstein-Rot, kein Magenta)
     s.append(f'<path d="M{F(x + 44 * e)},{F(ky + 176 * e)} q{F(9 * e)},{F(6 * e)} {F(17 * e)},{F(1 * e)}" '
              f'fill="none" stroke="{BERNSTEIN}" stroke-opacity="0.95" stroke-width="{F(4.5 * e)}" stroke-linecap="round"/>')
     # Kopf, nach vorn gesenkt
-    s.append(f'<ellipse cx="{F(x + 12 * e)}" cy="{F(ky + 30 * e)}" rx="{F(34 * e)}" ry="{F(36 * e)}" '
-             f'{tinte(0.86)} transform="rotate(10 {F(x + 12 * e)} {F(ky + 30 * e)})"/>')
+    s.append(mit_rand(
+        f'M{F(x - 22 * e)},{F(ky + 28 * e)} C{F(x - 22 * e)},{F(ky + 2 * e)} {F(x + 2 * e)},{F(ky - 6 * e)} '
+        f'{F(x + 20 * e)},{F(ky - 2 * e)} C{F(x + 40 * e)},{F(ky + 3 * e)} {F(x + 47 * e)},{F(ky + 24 * e)} '
+        f'{F(x + 44 * e)},{F(ky + 44 * e)} C{F(x + 41 * e)},{F(ky + 62 * e)} {F(x + 22 * e)},{F(ky + 68 * e)} '
+        f'{F(x + 4 * e)},{F(ky + 64 * e)} C{F(x - 14 * e)},{F(ky + 60 * e)} {F(x - 22 * e)},{F(ky + 46 * e)} '
+        f'{F(x - 22 * e)},{F(ky + 28 * e)} Z', 0.86, licht=(6 * e, -3 * e), randop=0.8))
     # Schiebermütze
     s.append(f'<path d="M{F(x - 22 * e)},{F(ky + 18 * e)} C{F(x - 26 * e)},{F(ky - 14 * e)} '
              f'{F(x + 34 * e)},{F(ky - 20 * e)} {F(x + 46 * e)},{F(ky + 10 * e)} '
@@ -483,11 +538,15 @@ def falk(x, bodeny, hoehe=360, blick=-1):
         s.append(f'<path d="M{F(fx)},{F(bodeny - 8 * e)} h{F(34 * e)} q{F(7 * e)},{F(8 * e)} '
                  f'{F(-7 * e)},{F(9 * e)} h{F(-27 * e)} z" {tinte(0.93)}/>')
     # Kittel: Dreieck, unten breit, mit scharfem Saum
-    s.append(f'<path d="M{F(x - 4 * e)},{F(ky + 52 * e)} '
-             f'C{F(x - 34 * e)},{F(ky + 70 * e)} {F(x - 46 * e)},{F(ky + 150 * e)} {F(x - 54 * e)},{F(ky + 266 * e)} '
-             f'L{F(x + 52 * e)},{F(ky + 266 * e)} '
-             f'C{F(x + 46 * e)},{F(ky + 148 * e)} {F(x + 34 * e)},{F(ky + 70 * e)} {F(x + 8 * e)},{F(ky + 52 * e)} Z" '
-             f'{tinte(0.30)}/>')
+    kittel = (f'M{F(x - 4 * e)},{F(ky + 52 * e)} '
+              f'C{F(x - 34 * e)},{F(ky + 70 * e)} {F(x - 46 * e)},{F(ky + 150 * e)} {F(x - 54 * e)},{F(ky + 266 * e)} '
+              f'L{F(x + 52 * e)},{F(ky + 266 * e)} '
+              f'C{F(x + 46 * e)},{F(ky + 148 * e)} {F(x + 34 * e)},{F(ky + 70 * e)} {F(x + 8 * e)},{F(ky + 52 * e)} Z')
+    s.append(f'<path d="{kittel}" fill="{PHOSPHOR}" fill-opacity="0.22" '
+             f'transform="translate({F(-6 * e)},{F(-3 * e)})"/>')
+    s.append(f'<path d="{kittel}" {tinte(0.30)}/>')
+    s.append(falte(x - 26 * e, ky + 96 * e, x - 38 * e, ky + 236 * e, -8 * e, 0.3, 3 * e))
+    s.append(falte(x + 22 * e, ky + 100 * e, x + 34 * e, ky + 240 * e, 8 * e, 0.26, 3 * e))
     s.append(rasterflaeche([(x - 54 * e, ky + 266 * e), (x - 44 * e, ky + 140 * e),
                             (x - 10 * e, ky + 160 * e), (x - 12 * e, ky + 266 * e)], 0.22, fein=True))
     s.append(f'<path d="M{F(x - 4 * e)},{F(ky + 52 * e)} '

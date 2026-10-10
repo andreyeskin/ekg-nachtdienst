@@ -77,7 +77,13 @@ ok("Porträt im Dialog", (await seite.locator(".dialog-bild svg").count()) === 1
 await schuss("marlene");
 ok("Frage nach dem Fall", await antworte("Was ist passiert"));
 ok("Nachfrage ohne Vorwarnung", await antworte("Ohne Vorwarnung"));
-await antworte("Vom Herzen");
+ok("Nachfrage nach dem Beweiswert", await antworte("Beweist das etwas"));
+await seite.locator(".dialog-text").click();   // Schreibmaschine überspringen
+await warte(200);
+const streng = (await seite.locator(".dialog-text").textContent()) || "";
+ok("Antwort nennt die harten Kriterien, nicht nur ein Gefühl",
+   /unter vierzig/.test(streng) && /drei Sekunden/.test(streng), streng.slice(0, 80));
+await antworte("Verstanden");
 await dialogDurch();
 ok("Auftrag gesetzt", await seite.evaluate(() => window.Spiel.hat("auftrag_ekg")));
 
