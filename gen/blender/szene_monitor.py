@@ -10,7 +10,8 @@ import math
 import bpy
 from mathutils import Vector
 
-from werkzeug import kiste, kugel, leeren, loch, markiere, material, platzhalter, raum_huelle, zylinder
+from werkzeug import (fenster, himmel_baender, jalousie, kiste, kugel, leeren, loch, markiere, material, platzhalter,
+                      raum_huelle, schirmflaeche, zylinder)
 
 leeren()
 sc = bpy.context.scene
@@ -22,24 +23,30 @@ M = {n: material(n, c, r) for n, c, r in (
     ("petrol", (0.22, 0.24, 0.25), 0.55), ("dunkel", (0.07, 0.08, 0.09), 0.5), ("metall", (0.45, 0.47, 0.48), 0.4),
     ("rahmen", (0.85, 0.82, 0.76), 0.6), ("flur", (0.8, 0.8, 0.8), 0.9), ("nachbarbau", (0.5, 0.55, 0.5), 0.9),
     ("rost", (0.5, 0.2, 0.1), 0.5), ("tasse", (0.22, 0.24, 0.25), 0.5), ("gehaeuse", (0.22, 0.24, 0.25), 0.5),
-    ("schirm_gross", (0.02, 0.05, 0.04), 0.3), ("schirm_a", (0.6, 0.7, 0.6), 0.3),
-    ("schirm_b", (0.6, 0.7, 0.6), 0.3), ("schirm_c", (0.6, 0.7, 0.6), 0.3),
+    ("schirm_gross", (0.02, 0.05, 0.04), 0.3), ("schirm_klein", (0.08, 0.1, 0.11), 0.3), ("schirm_aus", (0.08, 0.1, 0.11), 0.3),
+    ("lamelle", (0.55, 0.68, 0.62), 0.6), ("band", (0.85, 0.82, 0.76), 0.7), ("polster", (0.22, 0.24, 0.25), 0.7),
+    ("himmel_oben", (0.8, 0.85, 0.9), 0.9), ("himmel_unten", (0.85, 0.9, 0.92), 0.9), ("rasen", (0.5, 0.6, 0.45), 0.9),
+    ("hecke", (0.45, 0.6, 0.52), 0.9), ("nachbar_fenster", (0.08, 0.1, 0.11), 0.3),
 )}
-M["himmel"] = material("himmel", (0.8, 0.85, 0.9), leuchten=(0.85, 0.9, 1.0), staerke=3.0)
 
-# Lokalfarben (docs/ART_BIBLE.md): Sand, Papier, Mint, Petrol, Holz; Rost genau einmal (Falks Zirkel).
-# Schirme wie EKG-Millimeterpapier: helle Fläche #FFF8F4, Gehäuse Petrol — die Kurve zeichnet das Spiel
+# Lokalfarben (docs/ART_BIBLE.md §2): das Monitorzimmer ist der kühle Raum — Mint hell an den Wänden, Sand als
+# Sockel (Umkehrung der Aufnahme), kühles Linoleum, Petrol für Geräte, Holz nur am Schrank und an der Zarge;
+# Rost genau einmal (Falks Zirkel). Schirme: der große wie EKG-Papier (#FFF8F4, die Kurve zeichnet das Spiel),
+# die Bettmonitore dunkles Glas (#1E2A30), ihre Kurven kommen ebenfalls aus dem Code (schirme.json).
 PALETTE = {
-    "wand": "#EFE6D3", "boden": "#D9D4C4", "decke": "#E3DCCB", "paneel": "#BFD9CF", "holz": "#C99A5B",
+    "wand": "#D6E4DD", "boden": "#B6BFB6", "decke": "#E3E6DD", "paneel": "#EFE6D3", "holz": "#C99A5B",
     "papier": "#F7F1E4", "petrol": "#2C5560", "dunkel": "#2C3E46", "metall": "#8A9598", "rahmen": "#F7F1E4",
-    "flur": "#D6DED7", "nachbarbau": "#BFD9CF", "himmel": "#E6EFEE", "rost": "#B5552D", "tasse": "#2C5560",
-    "gehaeuse": "#2C5560",
-    "schirm_gross": "#FFF8F4", "schirm_a": "#FFF8F4", "schirm_b": "#FFF8F4", "schirm_c": "#FFF8F4",
+    "flur": "#D6DED7", "nachbarbau": "#BFD9CF", "rost": "#B5552D", "tasse": "#2C5560",
+    "gehaeuse": "#2C3E46", "schirm_gross": "#FFF8F4", "schirm_klein": "#1E2A30", "schirm_aus": "#2C3E46",
+    "lamelle": "#BFD9CF", "band": "#F7F1E4", "polster": "#2C5560",
+    "himmel_oben": "#DCE9EA", "himmel_unten": "#E6EFEE", "rasen": "#CFD9C2", "hecke": "#9FC2B3",
+    "nachbar_fenster": "#1E2A30",
 }
 HIMMEL = "#E6EFEE"
-OHNE_LINIE = set()
-OHNE_SCHATTIERUNG = {"himmel", "schirm_gross", "schirm_a", "schirm_b", "schirm_c"}   # Himmel und Schirme bleiben flach
-SONNE_AUS = {"himmel_aussen", "nachbarbau"}
+OHNE_LINIE = {"himmel_oben", "himmel_unten"}
+OHNE_SCHATTIERUNG = {"himmel_oben", "himmel_unten", "schirm_gross", "schirm_klein", "schirm_aus", "hecke", "rasen",
+                     "nachbarbau", "nachbar_fenster"}   # Himmel, Draußen und Schirme bleiben flach
+SONNE_AUS = set()
 
 # ---------------- Raum ----------------
 X0, X1, HOEHE = -5.6, 4.1, 3.2
@@ -50,7 +57,7 @@ FX0, FX1, FZ0, FZ1 = -3.7, -2.45, 1.25, 2.50   # Sturz knapp über Augenhöhe: L
 loch(raum, (TX1 - TX0, 0.8, THOEHE), ((TX0 + TX1) / 2, 0.15, THOEHE / 2))
 loch(raum, (FX1 - FX0, 0.8, FZ1 - FZ0), ((FX0 + FX1) / 2, 0.15, (FZ0 + FZ1) / 2))
 
-# Wandpaneel (Mint) unten an Rück- und rechter Wand, Holzleiste darüber — wie in der Aufnahme
+# Sockel (Sand) unten an Rück- und rechter Wand, Holzleiste darüber — wie in der Aufnahme, Farben vertauscht
 PZ = 0.95
 kiste((TX0 - 0.1 - X0, 0.03, PZ), ((X0 + TX0 - 0.1) / 2, -0.015, PZ / 2), M["paneel"], "hinten", fase=0, name="paneel_links")
 kiste((TX0 - 0.1 - X0, 0.05, 0.05), ((X0 + TX0 - 0.1) / 2, -0.025, PZ + 0.025), M["holz"], "hinten", fase=0.005, name="leiste_links")
@@ -70,38 +77,41 @@ kiste((5.95, 3.2, 0.05), (-7.025, 1.9, 2.725), M["flur"], "hinten", fase=0, name
 kiste((5.3, 0.06, 0.05), (-7.35, 1.57, 0.9), M["holz"], "hinten", fase=0.008, name="handlauf")
 kiste((5.95, 1.5, 0.05), (-7.025, 0.95, -0.025), M["boden"], "hinten", fase=0, name="flur_boden")
 
-# Fenster: Papierrahmen, ein Kreuz, draußen Himmel und das Nachbarhaus (Mint)
-FM = (FX0 + FX1) / 2
-for x in (FX0 - 0.04, FX1 + 0.04):
-    kiste((0.08, 0.08, FZ1 - FZ0 + 0.08), (x, -0.04, (FZ0 + FZ1) / 2), M["rahmen"], "hinten", fase=0.01, name="fensterrahmen")
-kiste((FX1 - FX0 + 0.16, 0.08, 0.08), (FM, -0.04, FZ1 + 0.04), M["rahmen"], "hinten", fase=0.01, name="fensterrahmen")
-kiste((FX1 - FX0 + 0.22, 0.16, 0.06), (FM, -0.07, FZ0 - 0.03), M["rahmen"], "hinten", fase=0.01, name="fensterbank")
-kiste((0.05, 0.05, FZ1 - FZ0), (FM, 0.12, (FZ0 + FZ1) / 2), M["rahmen"], "hinten", fase=0, name="fensterkreuz")
-kiste((FX1 - FX0, 0.05, 0.05), (FM, 0.12, FZ0 + (FZ1 - FZ0) * 0.62), M["rahmen"], "hinten", fase=0, name="fensterkreuz")
-kiste((30, 0.1, 30), (0, 9.0, 5.0), M["himmel"], "hinten", fase=0, name="himmel_aussen")
-kiste((8.0, 2.0, 4.6), (-3.2, 7.0, -0.7), M["nachbarbau"], "hinten", fase=0, name="nachbarbau")
+# Fenster: dasselbe Bauteil wie in der Aufnahme (Blendrahmen in der Laibung, zwei Flügel, Griff, Fensterbank),
+# die Jalousie am Vormittag ganz hochgezogen (Kasten mit gestapelten Lamellen). Draußen: Rasen, der Nachbarflügel
+# der Klinik (Mint, mit Fensterreihe) und Bäume unter einem kühlen Himmel in zwei Bändern.
+fenster(FX0, FX1, FZ0, FZ1, M["rahmen"], M["dunkel"], griff_z=1.75)
+jalousie(FX0 + 0.03, FX1 - 0.03, FZ1 - 0.01, FZ1 - 0.01 - 0.08 - 0.11, M["lamelle"], M["band"], M["rahmen"], y=0.0, pitch=0.032, breite=0.075, neigung=0, schnur=0.6)
+AUSSEN = himmel_baender(40.0, [(-20.0, 9.0, M["himmel_unten"]), (9.0, 30.0, M["himmel_oben"])])
+# Kamera 0,8/-7,4/2,45 blickt leicht nach unten: durchs Fenster sieht man den Hof — Rasen, eine Hecke, dahinter
+# die Fassade des Nachbarflügels (Mint) mit dunkler Fensterreihe; Bäume wären hier nur abgeschnittene Kronen.
+# Nichts davon steht im Weg der Sonne.
+AUSSEN.append(kiste((60, 40, 0.1), (0, 20.5, -0.05), M["rasen"], "hinten", fase=0, name="rasen"))
+AUSSEN.append(kiste((30, 0.6, 1.0), (-8.0, 14.0, 0.5), M["hecke"], "hinten", fase=0.08, name="hecke"))
+AUSSEN.append(kiste((16.0, 3.0, 3.0), (-11.0, 21.5, 1.5), M["nachbarbau"], "hinten", fase=0, name="nachbarbau"))
+AUSSEN.append(kiste((16.3, 3.3, 0.16), (-11.0, 21.5, 3.08), M["dunkel"], "hinten", fase=0, name="nachbar_dach"))
+for i in range(10):
+    AUSSEN.append(kiste((0.9, 0.05, 1.0), (-18.0 + i * 1.6, 19.97, 1.7), M["nachbar_fenster"], "hinten", fase=0, name=f"nachbar_fenster_{i}"))
+SONNE_AUS = {o.name for o in AUSSEN}
 
-# ---------------- Bildschirmwand: sechs Schirme, gewachsen statt gerastert ----------------
-SCHIRME = [  # Mitte x, Mitte z, Bildbreite, Bildhöhe, Drehung um z (Grad), Bildfarbe
-    (0.0, 1.50, 1.70, 0.96, 0, "schirm_gross"),
-    (-1.62, 2.14, 0.92, 0.54, 7, "schirm_a"),
-    (-1.48, 1.24, 0.70, 0.42, 5, "schirm_b"),
-    (0.28, 2.47, 0.78, 0.44, 0, "schirm_c"),
-    (1.48, 2.08, 0.80, 0.48, -6, "schirm_a"),
-    (2.95, 2.36, 0.60, 0.36, -8, "schirm_b"),
-]
+# ---------------- Bildschirmwand: der große Schirm (Papierstreifen der Engine) und drei gleiche Bettmonitore
+# in einer Reihe darüber (Bett 1–3, Kurven aus dem Code), rechts ein vierter Monitor ohne Bett: aus ----------------
 RAND = 0.07
-for i, (sx, sz, sb, sh, dreh, farbe) in enumerate(SCHIRME):
-    gross = i == 0
-    zone = "schirm" if gross else "schirme_klein"
-    d = (0, 0, math.radians(dreh))
-    tief = 0.07 if gross else 0.06
-    abstand = 0.10 if gross else 0.16                      # Wandabstand: kleine Schirme an Schwenkarmen
+
+
+def monitor(sx, sz, sb, sh, farbe, zone, name, abstand=0.14, tief=0.06):
+    d = (0, 0, 0)   # flach an der Wand: so bleibt die Bildfläche im Bild ein exaktes Rechteck
     kiste((0.12, abstand, 0.12), (sx, -abstand / 2, sz), M["dunkel"], "hinten", fase=0, name="halter")
     kiste((sb + 2 * RAND, tief, sh + 2 * RAND), (sx, -abstand - tief / 2, sz), M["gehaeuse"], "hinten", zone, fase=0.012, dreh=d, name="gehaeuse")
-    bild = kiste((sb, 0.006, sh), (sx, -abstand - tief - 0.003, sz), M[farbe], "hinten", zone, fase=0, dreh=d,
-                 name="schirm_bild" if gross else "schirm")
-    if gross: markiere(bild, None, "schirm_bild")   # Bildfläche: dort liegt im Spiel die laufende Kurve
+    return kiste((sb, 0.006, sh), (sx, -abstand - tief - 0.003, sz), M[farbe], "hinten", zone, fase=0, dreh=d, name=name)
+
+
+gross = monitor(0.0, 1.50, 1.70, 0.96, "schirm_gross", "schirm", "schirm_bild", abstand=0.10, tief=0.07)
+markiere(gross, None, "schirm_bild")   # Bildfläche: dort liegt im Spiel die laufende Kurve (Papierstil)
+schirmflaeche("gross", gross, "hintergrund")
+for i, sx in enumerate((-1.05, 0.0, 1.05)):
+    schirmflaeche(f"bett_{i + 1}", monitor(sx, 2.36, 0.82, 0.5, "schirm_klein", "schirme_klein", f"schirm_bett_{i + 1}"), "hintergrund")
+monitor(2.45, 2.2, 0.62, 0.38, "schirm_aus", None, "schirm_aus")
 
 # ---------------- Mittelgrund: Arbeitsplatz ----------------
 TI0, TI1, TT, TH = -2.75, 1.75, 0.85, 0.75     # Tisch von x..x, Tiefe, Höhe
@@ -127,7 +137,7 @@ for w in (GW, -GW):
 zylinder(0.02, 0.016, (GX, GY, GZ), M["rost"], "mitte", "tisch", dreh=(math.radians(90), 0, 0), name="zirkel_gelenk")
 zylinder(0.007, 0.035, (GX, GY, GZ + 0.03), M["rost"], "mitte", "tisch", v=12, name="zirkel_griff")
 
-# Drehstuhl vor dem Tisch, Lehne zur Kamera
+# Drehstuhl vor dem Tisch, Lehne zur Kamera (Polster Petrol, Gestell dunkel)
 SX, SY, SD = -0.62, -1.45, math.radians(12)
 for k in range(5):
     a = SD + k * 2 * math.pi / 5
@@ -135,19 +145,21 @@ for k in range(5):
           dreh=(0, 0, a), name="stuhlfuss")
     kugel(0.03, (SX + 0.29 * math.cos(a), SY + 0.29 * math.sin(a), 0.03), M["dunkel"], "mitte", name="rolle")
 zylinder(0.03, 0.36, (SX, SY, 0.27), M["metall"], "mitte", name="stuhlsaeule", v=16)
-kiste((0.50, 0.48, 0.08), (SX, SY, 0.49), M["petrol"], "mitte", fase=0.03, dreh=(0, 0, SD), name="sitz")
+kiste((0.50, 0.48, 0.08), (SX, SY, 0.49), M["polster"], "mitte", fase=0.03, dreh=(0, 0, SD), name="sitz")
 def hinter_sitz(abstand):   # Punkt hinter der Sitzmitte (zur Kamera hin), mit dem Stuhl gedreht
     return SX + abstand * math.sin(SD), SY - abstand * math.cos(SD)
 
 
 # Stütze und Lehne stehen hinter der Sitzkante (0,24 m) — ragen sie darüber, werfen sie Schatten auf den Sitz
 kiste((0.04, 0.04, 0.30), (*hinter_sitz(0.26), 0.62), M["dunkel"], "mitte", fase=0.008, dreh=(0, 0, SD), name="lehnenstuetze")
-kiste((0.46, 0.07, 0.46), (*hinter_sitz(0.32), 0.92), M["petrol"], "mitte", fase=0.03, dreh=(math.radians(6), 0, SD), name="lehne")   # leicht nach hinten geneigt
+kiste((0.46, 0.07, 0.46), (*hinter_sitz(0.32), 0.92), M["polster"], "mitte", fase=0.03, dreh=(math.radians(6), 0, SD), name="lehne")   # leicht nach hinten geneigt
 
-# Aktenschrank an der rechten Wand (kein Ding ohne Grund: Ordner der Monitorbefunde)
-kiste((0.45, 0.9, 1.95), (X1 - 0.24, -1.15, 0.975), M["petrol"], "mitte", fase=0.01, name="schrank")
+# Aktenschrank (Holz, Ordner der Monitorbefunde) an der rechten Wand: vier Schubladen mit Griffmulden
+kiste((0.45, 0.9, 1.95), (X1 - 0.24, -1.15, 0.975), M["holz"], "mitte", fase=0.01, name="schrank")
+kiste((0.46, 0.9, 0.03), (X1 - 0.24, -1.15, 1.965), M["dunkel"], "mitte", fase=0.004, name="schrank_deckel")
 for k in range(4):
     kiste((0.01, 0.8, 0.005), (X1 - 0.47, -1.15, 0.45 + k * 0.45), M["dunkel"], "mitte", fase=0, name="schrankfuge")
+    kiste((0.012, 0.16, 0.025), (X1 - 0.47, -1.15, 0.62 + k * 0.45), M["dunkel"], "mitte", fase=0.003, name="schrankgriff")
 
 # Wanduhr über dem Aktenschrank, neben dem rechten kleinen Schirm — Zifferblatt und Stift ohne Zeiger:
 # die Zeiger setzt das Spiel als Overlay aus der Klickzone "uhr" (docs/ART_BIBLE.md §7.3)
