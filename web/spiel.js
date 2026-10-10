@@ -348,6 +348,41 @@
     }
   };
 
+  /* --- Reizleitung: Einstieg --- */
+  /* Marlene zeigt ihr Schema, sobald das EKG geschrieben ist. Alles, was Kapitel 1
+     dafür braucht, steht in diesem Block; das Rätsel liegt in web/raetsel_reizleitung.js. */
+  DIALOGE.marlene.start.antworten.splice(DIALOGE.marlene.start.antworten.length - 1, 0, {
+    text: "Wie kommt der Takt eigentlich von oben nach unten?",
+    wenn: function () { return hat("ekg_geschrieben") && !!global.Reizleitung; },
+    zu: "reizleitung"
+  });
+  DIALOGE.marlene.reizleitung = {
+    text: "Bevor du misst, solltest du wissen, was du da misst. Hier, mein altes Schema: ein Herz ohne Leitung. "
+        + "Bau sie ein. Sitzt ein Teil falsch, sagt es dir der Streifen — echte Streifen, von echten Patienten.",
+    antworten: [
+      {
+        text: "Zeig her.", zu: null,
+        tu: function () {
+          /* Erst schließt der Dialog und gibt die Bühne frei, dann öffnet das Rätsel. */
+          global.setTimeout(function () {
+            global.Reizleitung.starte({
+              satz: satz,
+              anmerkungen: {
+                39: "Den kennst du: Das ist der Streifen von Herrn Baum. Sein AV-Knoten sitzt am richtigen Platz — er leitet nur langsamer."
+              },
+              fertig: function () {
+                setze("reizleitung_gebaut");
+                melde("Reizleitung gebaut: richtige Anatomie, normales EKG.");
+              }
+            });
+          }, 60);
+        }
+      },
+      { text: "Später.", zu: "start" }
+    ]
+  };
+  /* --- Ende Reizleitung --- */
+
   /* ------------------------------------------------------------ Handlungen */
   function ekgSchreiben() {
     if (!hat("ekg_geschrieben")) {

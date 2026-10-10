@@ -90,6 +90,8 @@ await warte(300);
 await feld("marlene").click();
 await warte(450);
 ok("Marlene spricht", await seite.locator(".dialog.an").isVisible());
+await seite.locator(".dialog-text").click();   // Schreibmaschine überspringen, sonst liest die Prüfung den halben Satz
+await warte(150);
 ok("Erstbegrüßung, nicht die Wiederholung",
    ((await seite.locator(".dialog-text").textContent()) || "").includes("Famulantin"),
    ((await seite.locator(".dialog-text").textContent()) || "").slice(0, 60));
@@ -220,6 +222,107 @@ ok("Stand weist auf das Monitorzimmer hin",
 await schuss("stand_mitte");
 await seite.locator("#stand-hof .zu").click();
 await warte(300);
+
+/* -------------------------------------------- 7c Rätsel „Reizleitung bauen" */
+await feld("marlene").click();
+await warte(450);
+ok("Marlene bietet ihr Schema an", await antworte("Wie kommt der Takt"));
+ok("Schema öffnet sich", await antworte("Zeig her"));
+await warte(500);
+const rl = (sel) => seite.locator("#reizleitung-hof " + sel);
+ok("Reizleitung offen", await seite.locator("#reizleitung-hof.an").isVisible());
+ok("Herzschema aus kunst.json", (await rl(".rl-herz svg.schema-herz").count()) === 1);
+ok("Kein Text im Herzbild", (await rl("svg.schema-herz text").count()) === 0);
+ok("Fünf Bauteile, sieben Plätze",
+   (await rl(".rl-teil").count()) === 5 && (await rl(".rl-platz").count()) === 7);
+const kleinste = await seite.evaluate(() => {
+  const hof = document.getElementById("reizleitung-hof");
+  const masse = [...hof.querySelectorAll("button:not([hidden]), .rl-platz .rl-treffer")].map((e) => {
+    const r = e.getBoundingClientRect(); return Math.min(r.width, r.height);
+  });
+  return Math.round(Math.min(...masse));
+});
+ok("Alles Antippbare mindestens 44 px", kleinste >= 44, kleinste + " px");
+const tabelle = await seite.evaluate(() => window.Reizleitung.__pruefeTabelle());
+ok("Fall-Tabelle passt zu den Daten (Rhythmus, PQ, QRS je Aufnahme)",
+   tabelle.length >= 5 && tabelle.every((z) => z.da && z.passt),
+   tabelle.map((z) => z.fall + ":" + z.aufnahme + (z.passt ? "" : "!")).join(" "));
+await schuss("reizleitung_leer");
+
+/* Setzt ein Bauteil (Ziffer oder Antippen) und wartet, bis Welle und Streifen durch sind. */
+async function setzeTeil(teil, platz, mitTaste) {
+  if (mitTaste) await seite.keyboard.press(String(["sinus", "av", "his", "schenkel", "purkinje"].indexOf(teil) + 1));
+  else await rl(`.rl-teil[data-teil="${teil}"]`).click();
+  await rl(`.rl-platz[data-platz="${platz}"]`).click();
+  await seite.waitForSelector('#reizleitung-hof .rl-herz[data-bereit="ja"]', { timeout: 15000 });
+  await warte(200);
+  return seite.evaluate(() => {
+    const hof = document.getElementById("reizleitung-hof"), z = window.Reizleitung.zustand();
+    const sp = hof.__streifen && hof.__streifen.stand.zirkel;
+    return { fall: z.fall, aufnahme: z.aufnahme,
+             ms: sp ? Math.round((sp.ende - sp.start) * 1000) : null,
+             unter: hof.querySelector(".rl-unterschrift").textContent,
+             rueck: hof.querySelector(".rl-rueck").textContent,
+             streifen: !hof.querySelector(".rl-streifen").classList.contains("ohne") };
+  });
+}
+
+/* Richtiger Aufbau, Schritt für Schritt — jeder Zwischenstand hat seine eigene echte Kurve. */
+let st = await setzeTeil("sinus", "sinus", true);
+ok("Nur Sinusknoten: kompletter Block, Schrittmacher-Aufnahme 74",
+   st.fall === "block" && st.aufnahme === 74 && /AV-Block III/.test(st.rueck), st.fall + "/" + st.aufnahme);
+st = await setzeTeil("av", "av", true);
+ok("Ohne His-Bündel weiterhin Block", st.fall === "block" && st.aufnahme === 74, st.fall + "/" + st.aufnahme);
+st = await setzeTeil("his", "his");
+ok("Ohne Schenkel: breiter QRS, Aufnahme 24 (Linksschenkelblock)",
+   st.fall === "schenkel" && st.aufnahme === 24 && st.ms > 120 && /Linksschenkelblock/.test(st.unter),
+   st.fall + "/" + st.aufnahme + "/" + st.ms + " ms");
+await schuss("reizleitung_ohne_schenkel");
+st = await setzeTeil("schenkel", "schenkel");
+ok("Ohne Purkinje: nächstliegende Aufnahme 59, ehrlich benannt",
+   st.fall === "purkinje" && st.aufnahme === 59 && /Am nächsten kommt/.test(st.rueck), st.fall + "/" + st.aufnahme);
+st = await setzeTeil("purkinje", "purkinje");
+ok("Vollständig und richtig: Sinusrhythmus, Aufnahme 119",
+   st.fall === "richtig" && st.aufnahme === 119 && /LUDB Nr\. 119/.test(st.unter) && /Sinusrhythmus/.test(st.unter),
+   st.unter.slice(0, 90));
+ok("Markierte PQ-Zeit im Normbereich", st.ms >= 120 && st.ms <= 200, st.ms + " ms");
+ok("Lernziel im Text: richtige Anatomie, normales EKG", /Richtige Anatomie, normales EKG/.test(st.rueck));
+ok("Abschluss-Knopf erscheint", await rl(".rl-fertig").isVisible());
+await schuss("reizleitung_richtig");
+
+/* Fehlaufbau 1: AV-Knoten in den linken Vorhof — PQ über 200 ms (Herrn Baums Streifen). */
+st = await setzeTeil("av", "linker_vorhof");
+ok("AV-Knoten falsch: PQ > 200 ms, Aufnahme 39",
+   st.fall === "av_umweg" && st.aufnahme === 39 && st.ms > 200 && /PQ über 200 ms/.test(st.rueck),
+   st.fall + "/" + st.aufnahme + "/" + st.ms + " ms");
+ok("Rückmeldung sagt, warum (und was im echten Herzen passiert)",
+   /Umweg/.test(st.rueck) && /AV-Block I\. Grades/.test(st.rueck) && /Herrn Baum/.test(st.rueck));
+await schuss("reizleitung_av_falsch");
+await setzeTeil("av", "av");
+
+/* Fehlaufbau 2: Sinusknoten heraus — keine P-Welle, nächstliegend Vorhofflimmern. */
+await rl('.rl-teil[data-teil="sinus"]').click();
+await rl(".rl-raus").click();
+await seite.waitForSelector('#reizleitung-hof .rl-herz[data-bereit="ja"]', { timeout: 15000 });
+st = await seite.evaluate(() => ({ ...window.Reizleitung.zustand(),
+  rueck: document.querySelector("#reizleitung-hof .rl-rueck").textContent,
+  unter: document.querySelector("#reizleitung-hof .rl-unterschrift").textContent }));
+ok("Ohne Sinusknoten: keine P-Welle, Aufnahme 96 (Vorhofflimmern)",
+   st.fall === "ohne_sinus" && st.aufnahme === 96 && /Vorhofflimmern/.test(st.unter) && /keine P-Welle/.test(st.rueck),
+   st.fall + "/" + st.aufnahme);
+await schuss("reizleitung_ohne_sinus");
+await setzeTeil("sinus", "sinus");
+
+/* Fehlaufbau 3: Schenkel auf den Klappenring — breiter QRS. */
+st = await setzeTeil("schenkel", "klappenring");
+ok("Schenkel falsch: QRS > 120 ms, Aufnahme 24", st.fall === "schenkel" && st.aufnahme === 24 && st.ms > 120,
+   st.fall + "/" + st.aufnahme + "/" + st.ms + " ms");
+
+await seite.keyboard.press("Escape");
+await warte(300);
+ok("Escape schließt das Rätsel", (await seite.locator("#reizleitung-hof.an").count()) === 0);
+ok("Bühne danach wieder bedienbar",
+   await seite.evaluate(() => !document.getElementById("buehne").classList.contains("stumm")));
 
 /* ---------------------------------------------------------- 8 Raumwechsel */
 const ausgang = seite.locator("#buehne .felder polygon.ausgang").first();
