@@ -801,6 +801,178 @@ def monitor_vordergrund():
     return ebene("".join(s), versatz=(-2.4, 1.6), klasse="e-vordergrund")
 
 
+# ============================================================ Schema · Herz (Reizleitung)
+# Ligne claire (docs/ART_BIBLE.md, Stand 10.10.2026): flache Lokalfarben, eine
+# gleichmäßig dünne Tuschelinie, keine Schraffur, kein Verlauf, kein Text.
+# Das Schema ist ein Lehrbild, kein Raum: Muskel, Höhlen, Gefäße, Klappenebene.
+# Die Reizleitung selbst zeichnet das Rätsel (web/raetsel_reizleitung.js) —
+# hier stehen nur ihre Wege und die Plätze, damit Bild und Spiel aus derselben
+# Geometrie kommen.
+LIGNE_CLAIRE = {
+    "sand": "#EFE6D3", "papier": "#F7F1E4", "mint": "#BFD9CF", "petrol": "#2C5560",
+    "tinte": "#1E2A30", "holz": "#C99A5B", "rost": "#B5552D",
+}
+HERZ_B, HERZ_H = 640, 600
+HERZ_LINIE = 2.0                       # eine Linie, überall gleich
+
+
+def _glatt(punkte, zu=True):
+    """Catmull-Rom durch die Punkte, als kubische Bézier-Kurve — gerechnet, nicht gezogen."""
+    n = len(punkte)
+    if n < 3:
+        return "M" + " L".join(f"{F(x)},{F(y)}" for x, y in punkte)
+
+    def p(i):
+        return punkte[i % n] if zu else punkte[max(0, min(n - 1, i))]
+
+    d = [f"M{F(punkte[0][0])},{F(punkte[0][1])}"]
+    for i in range(n if zu else n - 1):
+        p0, p1, p2, p3 = p(i - 1), p(i), p(i + 1), p(i + 2)
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        d.append(f"C{F(c1[0])},{F(c1[1])} {F(c2[0])},{F(c2[1])} {F(p2[0])},{F(p2[1])}")
+    if zu:
+        d.append("Z")
+    return " ".join(d)
+
+
+def _rund(punkte, r=40):
+    """Geschlossenes Vieleck mit abgerundeten Ecken (je Ecke eine quadratische Kurve,
+    höchstens bis zur halben Kantenlänge) — glatt, ohne Überschwingen."""
+    n = len(punkte)
+    d = []
+    for i in range(n):
+        a, b, e = punkte[i - 1], punkte[i], punkte[(i + 1) % n]
+        l1, l2 = math.dist(a, b), math.dist(b, e)
+        k1, k2 = min(r, l1 / 2) / (l1 or 1), min(r, l2 / 2) / (l2 or 1)
+        p1 = (b[0] + (a[0] - b[0]) * k1, b[1] + (a[1] - b[1]) * k1)
+        p2 = (b[0] + (e[0] - b[0]) * k2, b[1] + (e[1] - b[1]) * k2)
+        d.append(("M" if i == 0 else "L") + f"{F(p1[0])},{F(p1[1])} Q{F(b[0])},{F(b[1])} {F(p2[0])},{F(p2[1])}")
+    return " ".join(d) + " Z"
+
+
+def _versetzt(kette, mitte, abstand):
+    """Punkte einer Höhlenwand um `abstand` nach außen (weg von der Höhlenmitte) — dort,
+    unter der Innenschicht, liegt das Purkinje-Netz."""
+    aus = []
+    for x, y in kette:
+        dx, dy = x - mitte[0], y - mitte[1]
+        lang = math.hypot(dx, dy) or 1.0
+        aus.append((x + dx / lang * abstand, y + dy / lang * abstand))
+    return aus
+
+
+def herz_schema():
+    """Schematisches Herz von vorn: Vorhöfe, Kammern, Scheidewände, Klappenebene.
+
+    Rückgabe: (svg, geo). `geo` enthält die Plätze für die fünf Bauteile, zwei
+    Fehlplätze, die Bahnen der Reizleitung und die Flächen für die Erregung —
+    alles in den Koordinaten der viewBox."""
+    c = LIGNE_CLAIRE
+    linie = (f'stroke="{c["tinte"]}" stroke-width="{HERZ_LINIE}" '
+             'stroke-linejoin="round" stroke-linecap="round"')
+
+    # Außenkontur des Herzmuskels, im Uhrzeigersinn ab der Mündung der oberen Hohlvene
+    umriss_p = [(150, 118), (116, 146), (100, 196), (104, 240), (114, 278), (118, 326), (134, 392),
+                (172, 456), (234, 512), (304, 556), (372, 578), (422, 566), (472, 524), (516, 454),
+                (546, 372), (556, 306), (552, 276), (552, 232), (540, 184), (512, 146), (466, 124),
+                (410, 120), (360, 128), (316, 118), (268, 108), (222, 110)]
+    umriss = _glatt(umriss_p)
+
+    # Höhlen (Blut): rechter/linker Vorhof, rechte/linke Kammer
+    ra = [(160, 140), (132, 170), (124, 214), (132, 250), (156, 260), (232, 262), (284, 258),
+          (296, 222), (290, 176), (268, 146), (220, 134)]
+    la = [(334, 150), (328, 200), (334, 250), (356, 260), (518, 260), (532, 226), (522, 182),
+          (494, 154), (446, 140), (386, 140)]
+    rv = [(136, 298), (296, 298), (306, 346), (318, 404), (334, 464), (348, 510),
+          (318, 516), (268, 494), (210, 452), (154, 398), (132, 344)]
+    lv = [(346, 298), (526, 298), (526, 342), (514, 400), (490, 456), (452, 500),
+          (406, 528), (378, 526), (366, 468), (356, 402), (348, 346)]
+
+    band_y0, band_y1 = 266, 290       # Klappenebene: Bindegewebe, leitet nicht
+
+    # Gefäße (liegen hinter dem Muskel)
+    hohlvene = "M168,128 L164,12 L226,12 L222,128 Z"
+    aorta = ("M332,132 C330,96 334,62 350,44 C372,20 430,14 470,30 C496,40 506,62 504,92 "
+             "L462,96 C462,76 454,64 438,60 C412,54 392,62 384,82 C378,98 380,116 382,132 Z")
+    lungenvenen = [
+        "M536,170 C560,164 590,162 626,166 L626,196 C594,192 566,194 544,202 Z",
+        "M548,222 C572,220 600,222 626,226 L626,254 C600,250 574,250 552,254 Z",
+    ]
+
+    # Segelklappen: zwei Segel je Seite, vom Klappenring in die Kammer
+    segel = [[(170, band_y1), (188, band_y1), (184, 330)], [(246, band_y1), (264, band_y1), (252, 326)],
+             [(400, band_y1), (418, band_y1), (412, 334)], [(474, band_y1), (492, band_y1), (480, 328)]]
+
+    s = [f'<svg viewBox="0 0 {HERZ_B} {HERZ_H}" xmlns="http://www.w3.org/2000/svg" '
+         'class="schema-herz" preserveAspectRatio="xMidYMid meet">',
+         f'<defs><clipPath id="herz-umriss-clip"><path d="{umriss}"/></clipPath></defs>']
+    s.append(f'<path d="{hohlvene}" fill="{c["sand"]}" {linie}/>')
+    s.append(f'<path d="{aorta}" fill="{c["sand"]}" {linie}/>')
+    for d in lungenvenen:
+        s.append(f'<path d="{d}" fill="{c["sand"]}" {linie}/>')
+    s.append(f'<path d="{umriss}" fill="{c["mint"]}"/>')
+    for hoehle in (ra, la, rv, lv):
+        s.append(f'<path d="{_rund(hoehle)}" fill="{c["sand"]}" {linie}/>')
+    s.append(f'<g clip-path="url(#herz-umriss-clip)">'
+             f'<rect x="0" y="{band_y0}" width="{HERZ_B}" height="{band_y1 - band_y0}" fill="{c["petrol"]}"/>'
+             f'<line x1="0" y1="{band_y0}" x2="{HERZ_B}" y2="{band_y0}" {linie}/>'
+             f'<line x1="0" y1="{band_y1}" x2="{HERZ_B}" y2="{band_y1}" {linie}/></g>')
+    for sg in segel:
+        s.append(f'<polygon points="{pts(sg)}" fill="{c["papier"]}" {linie}/>')
+    s.append(f'<path d="{umriss}" fill="none" {linie}/>')
+    s.append('</svg>')
+
+    # ---- Plätze: fünf richtige, zwei falsche. Die Etage entscheidet, was ein falscher Platz bedeutet.
+    plaetze = {
+        "sinus":    {"x": 178, "y": 132, "etage": "vorhof"},   # rechter Vorhof, Mündung der oberen Hohlvene
+        "av":       {"x": 300, "y": 238, "etage": "vorhof"},   # unten in der Vorhofscheidewand
+        "his":      {"x": 322, "y": 306, "etage": "grenze"},   # durch die Klappenebene, Septumoberkante
+        "schenkel": {"x": 336, "y": 412, "etage": "kammer"},   # Kammerscheidewand
+        "purkinje": {"x": 376, "y": 540, "etage": "kammer"},   # Herzspitze, unter der Innenschicht
+        "linker_vorhof": {"x": 468, "y": 176, "etage": "vorhof"},
+        "klappenring":   {"x": 470, "y": 278, "etage": "grenze"},
+    }
+
+    # ---- Bahnen der Reizleitung: so liegen die Bauteile, wenn sie richtig sitzen
+    his = "M304,248 C312,264 318,284 322,318"
+    schenkel = ["M322,318 C322,360 326,414 340,498",          # rechter Schenkel, rechts am Septum
+                "M324,318 C338,352 350,414 368,496"]          # linker Schenkel, links am Septum
+    mitte_rv, mitte_lv = (238, 400), (436, 404)
+    netz_r = _versetzt([(318, 514), (268, 492), (210, 450), (154, 396)], mitte_rv, 10)
+    netz_l = _versetzt([(380, 524), (406, 526), (452, 500), (490, 456), (514, 400)], mitte_lv, 11)
+    purkinje = [_glatt([(340, 498)] + netz_r, zu=False), _glatt([(368, 496)] + netz_l, zu=False)]
+    aeste = []
+    for kette, mitte in ((netz_r, mitte_rv), (netz_l, mitte_lv)):      # kurze Äste in die Wand
+        for x, y in kette[1:]:
+            dx, dy = x - mitte[0], y - mitte[1]
+            lang = math.hypot(dx, dy) or 1.0
+            aeste.append(f"M{F(x)},{F(y)} L{F(x + dx / lang * 13)},{F(y + dy / lang * 13)}")
+
+    geo = {
+        "viewBox": f"0 0 {HERZ_B} {HERZ_H}",
+        "plaetze": plaetze,
+        "teile": {
+            "sinus": {"ellipse": [178, 132, 15, 9, -32]},
+            "av": {"ellipse": [302, 242, 13, 8, 58]},
+            "his": {"bahnen": [his]},
+            "schenkel": {"bahnen": schenkel},
+            "purkinje": {"bahnen": purkinje + aeste, "fein": True},
+        },
+        "punkte": {"sinus": [178, 132], "av": [302, 242], "his_anfang": [304, 248],
+                   "his_ende": [322, 318], "sperre": [314, 278]},
+        "wege": {
+            "vorhof_av": "M178,132 C214,164 268,190 302,242",      # Vorhofmuskel bis zum AV-Knoten
+            "vorhof_links": "M178,132 C262,106 430,110 514,222",   # über das Dach in den linken Vorhof
+            "vorhof_unten": "M178,132 C150,180 150,230 196,258",   # an der Seitenwand hinunter
+            "purkinje": purkinje,                                  # Hauptstränge ohne Äste
+        },
+        "flaechen": {"umriss": umriss, "band": [band_y0, band_y1]},
+        "farben": c,
+    }
+    return "".join(s), geo
+
+
 # ============================================================ Ausgabe
 SZENEN = {
     "aufnahme": {
@@ -903,6 +1075,8 @@ if __name__ == "__main__":
     ziel = os.path.join(os.path.dirname(hier), "bau")
     os.makedirs(ziel, exist_ok=True)
     daten = baue()
+    herz, herz_geo = herz_schema()                 # Lehrbild fürs Rätsel „Reizleitung bauen“
+    daten["schemata"] = {"herz": herz, "herz_geo": herz_geo}
     with open(os.path.join(ziel, "kunst.json"), "w", encoding="utf-8") as f:
         json.dump(daten, f, ensure_ascii=False)
     groesse = sum(len(v) for s in daten["szenen"].values() for v in s.values())

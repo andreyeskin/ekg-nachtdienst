@@ -218,6 +218,76 @@ body {
 .rueck.fast { border-left-color: var(--bernstein); }
 .rueck.fast strong { color: var(--bernstein); }
 
+/* ------------------------------------------- Rätsel „Reizleitung bauen"
+   Herz in ligne claire (gen/kunst.py), Bauteile in Holz, die Erregung in Rost.
+   Jede Schaltfläche mindestens 44 × 44 px (docs/LEHRPLAN.md, Abschnitt 5). */
+#reizleitung-hof .knopf { min-height: 44px; min-width: 44px; }
+.rl-werkbank {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px; align-items: start;
+}
+.rl-herz {
+  position: relative; width: 100%; max-width: 420px; aspect-ratio: 640 / 600; margin: 0 auto;
+  background: #F7F1E4; border: 2px solid var(--tinte);
+}
+.rl-herz > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.rl-auflage { pointer-events: none; }
+.rl-platz { pointer-events: all; cursor: pointer; outline: none; }
+.rl-treffer { fill: transparent; }
+.rl-ring {
+  fill: transparent; stroke: #1E2A30; stroke-width: 1.6; stroke-dasharray: 5 5;
+  stroke-opacity: .55; transition: fill .14s, stroke-opacity .14s;
+}
+.rl-herz.bereit .rl-ring { stroke-opacity: 1; stroke-width: 2.2; }
+.rl-platz:hover .rl-ring { fill: rgba(44, 85, 96, .18); stroke-opacity: 1; }
+.rl-platz:focus-visible .rl-ring { stroke: var(--magenta); stroke-opacity: 1; stroke-width: 3; }
+.rl-flaeche { fill: #B5552D; opacity: 0; }
+.rl-knoten { fill: #C99A5B; stroke: #1E2A30; stroke-width: 2; }
+.rl-strang-rand { fill: none; stroke: #1E2A30; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+.rl-strang { fill: none; stroke: #C99A5B; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.rl-strang-rand.fein { stroke-width: 6; }
+.rl-strang.fein { stroke-width: 2; }
+.rl-marke { fill: #C99A5B; stroke: #1E2A30; stroke-width: 2; }
+.rl-marke-nr { font: 700 17px var(--mono); fill: #1E2A30; }
+.rl-teil-bild.gewaehlt .rl-knoten, .rl-teil-bild.gewaehlt .rl-marke,
+.rl-teil-bild.gewaehlt .rl-strang-rand { stroke: var(--magenta); }
+.rl-w-bahn { fill: none; stroke: #B5552D; stroke-width: 5; stroke-linecap: round; }
+.rl-w-zelle { fill: #B5552D; }
+.rl-w-ring { fill: none; stroke: #B5552D; stroke-width: 3; }
+.rl-w-sperre { stroke: #B5552D; stroke-width: 8; stroke-linecap: round; }
+.rl-kasten { display: flex; flex-direction: column; gap: 7px; }
+.knopf.rl-teil {
+  display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 7px 12px;
+  text-align: left; font: 500 16px var(--text); letter-spacing: 0; text-transform: none;
+}
+.rl-teil .nr {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #C99A5B; border: 2px solid #1E2A30; color: #1E2A30; font: 700 14px var(--mono);
+}
+.rl-teil .wo { margin-left: auto; font: 600 11px var(--mono); letter-spacing: .05em; opacity: .7; }
+.knopf.rl-teil.gewaehlt, .knopf.rl-teil.gewaehlt:hover { background: #2C5560; border-color: #2C5560; color: #F7F1E4; }
+.knopf.rl-teil.gesetzt:not(.gewaehlt) { background: rgba(201, 154, 91, .16); }
+.rl-aktionen { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.rl-status { margin: 10px 0 0; font-size: 15px; min-height: 1.5em; }
+.rl-rueck { max-width: 78em; font-size: 16px; }
+.rl-rueck span { display: block; margin-top: 7px; }
+.rl-rueck .rl-wo { padding-left: 10px; border-left: 3px solid var(--magenta); }
+.rl-rueck .rl-grund { font-size: 15px; opacity: .85; }
+.rl-streifen { margin-top: 16px; }
+.rl-unterschrift { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-bottom: 6px; font: 600 13px/1.5 var(--mono); }
+.rl-unterschrift .rl-quelle { background: var(--tinte); color: var(--papier); padding: 1px 6px; }
+.rl-streifen canvas { width: 100%; height: 170px; display: block; }
+.rl-streifen.ohne .raetsel-papier { display: none; }
+.rl-hinweis { margin: 0; font-size: 15px; }
+.rl-hinweis:empty { display: none; }
+.rl-streifen.ohne .rl-hinweis {
+  padding: 18px 14px; border: 2px dashed rgba(16, 33, 43, .45); background: rgba(255, 248, 244, .6);
+}
+/* Unter 900 px untereinander: Das Herz behält seine volle Breite, die Plätze bleiben fingergroß. */
+@media (max-width: 900px) { .rl-werkbank { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .rl-streifen canvas { height: 150px; } }
+
 /* ------------------------------------------------------------ Befundmappe */
 .mappe {
   position: fixed; inset: 0; display: none; z-index: 45;
