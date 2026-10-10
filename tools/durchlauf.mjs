@@ -121,8 +121,8 @@ ok("Nachfrage nach dem Beweiswert", await antworte("Beweist das etwas"));
 await seite.locator(".dialog-text").click();   // Schreibmaschine überspringen
 await warte(200);
 const streng = (await seite.locator(".dialog-text").textContent()) || "";
-ok("Antwort nennt die harten Kriterien, nicht nur ein Gefühl",
-   /unter vierzig/.test(streng) && /drei Sekunden/.test(streng), streng.slice(0, 80));
+ok("Antwort nennt die harten Kriterien, nicht nur ein Gefühl (Puls unter 40, Pause über 3 s, plötzlicher Ausfall)",
+   /unter vierzig/.test(streng) && /drei Sekunden/.test(streng) && /plötzlich/.test(streng), streng.slice(0, 80));
 await antworte("Verstanden");
 await dialogDurch();
 ok("Auftrag gesetzt", await seite.evaluate(() => window.Spiel.hat("auftrag_ekg")));
@@ -177,6 +177,10 @@ await schuss("zirkel_rr_richtig");
 await seite.locator("#zirkel-hof .uebernehmen").click();
 await warte(400);
 ok("Befund Frequenz in der Mappe", await seite.evaluate(() => window.Mappe.hat("b-frequenz")));
+/* Lehrbuch Lektion 8: Norm 50–100/min, Sinusbradykardie erst unter 50 — nirgends mehr „unter 60“. */
+const karteHf = await seite.evaluate(() => window.Spiel.zustand.befunde.filter((b) => b.id === "b-frequenz")[0].text);
+ok("Frequenz-Karte: Norm 50–100, Grenze der Sinusbradykardie bei 50",
+   /50–100/.test(karteHf) && /unter 50/.test(karteHf) && !/60–100|unter 60/.test(karteHf), karteHf.slice(-90));
 
 /* ---------------------------------------------------------- 5 Zirkel: PQ, erst falsch */
 await wagen.click(); await warte(400);
@@ -265,6 +269,11 @@ const tabelle = await seite.evaluate(() => window.Reizleitung.__pruefeTabelle())
 ok("Fall-Tabelle passt zu den Daten (Rhythmus, PQ, QRS je Aufnahme)",
    tabelle.length >= 5 && tabelle.every((z) => z.da && z.passt),
    tabelle.map((z) => z.fall + ":" + z.aufnahme + (z.passt ? "" : "!")).join(" "));
+ok("Jede Zeile der Fall-Tabelle nennt ihre Lehrbuchlektion (im Code, nicht im Spieltext)",
+   await seite.evaluate(() => Object.keys(window.Reizleitung.FAELLE).every((k) => typeof window.Reizleitung.FAELLE[k].lektion === "string")));
+/* Lehrbuch Lektion 1 und 14: der linke Schenkel teilt sich in zwei Faszikel — rechts, Stamm, hinten, vorn. */
+const bahnen = await seite.evaluate(() => window.KUNST.schemata.herz_geo.teile.schenkel.bahnen.length);
+ok("Herzschema: linker Schenkel in zwei Faszikel geteilt (vier Schenkelbahnen)", bahnen === 4, String(bahnen));
 await schuss("reizleitung_leer");
 
 /* Setzt ein Bauteil (Ziffer oder Antippen) und wartet, bis Welle und Streifen durch sind. */
@@ -289,12 +298,17 @@ async function setzeTeil(teil, platz, mitTaste) {
 let st = await setzeTeil("sinus", "sinus", true);
 ok("Nur Sinusknoten: kompletter Block, Schrittmacher-Aufnahme 74",
    st.fall === "block" && st.aufnahme === 74 && /AV-Block III/.test(st.rueck), st.fall + "/" + st.aufnahme);
+ok("Block: Ersatzfrequenzen nach Lage des Blocks (40–60 schmal, 30–40 breit) und Schrittmacher benannt",
+   /40–60/.test(st.rueck) && /30–40/.test(st.rueck) && /Schrittmacher/.test(st.rueck) && /schenkelblockartig/.test(st.rueck));
 st = await setzeTeil("av", "av", true);
 ok("Ohne His-Bündel weiterhin Block", st.fall === "block" && st.aufnahme === 74, st.fall + "/" + st.aufnahme);
 st = await setzeTeil("his", "his");
 ok("Ohne Schenkel: breiter QRS, Aufnahme 24 (Linksschenkelblock)",
-   st.fall === "schenkel" && st.aufnahme === 24 && st.ms > 120 && /Linksschenkelblock/.test(st.unter),
+   st.fall === "schenkel" && st.aufnahme === 24 && st.ms >= 120 && /Linksschenkelblock/.test(st.unter),
    st.fall + "/" + st.aufnahme + "/" + st.ms + " ms");
+/* Die Datenbank nennt Nr. 24 „Sinusbradykardie“ (51/min); das Spiel ordnet das Etikett an seiner Grenze (50) ein. */
+ok("Datenbank-Etikett „Sinusbradykardie“ bei 51/min wird eingeordnet, nicht übernommen",
+   /Sinusbradykardie/.test(st.unter) && /unter 50/.test(st.rueck) && /nicht zum Modell/.test(st.rueck), st.rueck.slice(-140));
 await schuss("reizleitung_ohne_schenkel");
 st = await setzeTeil("schenkel", "schenkel");
 ok("Ohne Purkinje: nächstliegende Aufnahme 59, ehrlich benannt",
@@ -305,6 +319,9 @@ ok("Vollständig und richtig: Sinusrhythmus, Aufnahme 119",
    st.unter.slice(0, 90));
 ok("Markierte PQ-Zeit im Normbereich", st.ms >= 120 && st.ms <= 200, st.ms + " ms");
 ok("Lernziel im Text: richtige Anatomie, normales EKG", /Richtige Anatomie, normales EKG/.test(st.rueck));
+ok("Kein Lehrbuchverweis im Spieltext (Lektionsnummern bleiben in Code und docs)", !/Lektion/.test(st.rueck), st.rueck.slice(0, 80));
+ok("Alle vier Schenkelbahnen gezeichnet (rechts, Stamm, zwei Faszikel)",
+   (await rl('.rl-teil-bild[data-teil="schenkel"] path.rl-strang').count()) === 4);
 ok("Abschluss-Knopf erscheint", await rl(".rl-fertig").isVisible());
 await schuss("reizleitung_richtig");
 
@@ -465,6 +482,9 @@ await feld("wand").click();
 await warte(700);
 ok("A: Zentrale öffnet sich", await seite.locator("#schirme-hof.an").isVisible());
 ok("A: drei Schirme mit Kurve", (await seite.locator("#schirme-hof .schirm canvas").count()) === 3);
+const auftragZentrale = (await seite.locator("#schirme-hof .raetsel-auftrag").textContent()) || "";
+ok("A: Kästchengröße mit Papiervorschub genannt (5 mm bei 25 mm/s = 200 ms)",
+   /5 mm/.test(auftragZentrale) && /25 mm\/s/.test(auftragZentrale) && /200 ms/.test(auftragZentrale), auftragZentrale.slice(-60));
 const bilder = await seite.evaluate(() => Array.from(document.querySelectorAll("#schirme-hof .schirm canvas"))
   .map((c) => c.getContext("2d").getImageData(0, 0, c.width, c.height).data.some((v, i) => i % 4 === 1 && v > 200)));
 ok("A: auf jedem Schirm leuchtet eine Kurve", bilder.length === 3 && bilder.every(Boolean), JSON.stringify(bilder));
@@ -595,6 +615,13 @@ await schuss("k2_rueckschau");
 await seite.keyboard.press("Escape");
 await warte(300);
 ok("A: Escape schließt die Rückschau", (await seite.locator("#schirme-hof.an").count()) === 0);
+/* Der große Monitor nach dem Fund: 53/min ist nach Lektion 8 Sinusrhythmus am unteren Rand, keine Bradykardie. */
+await feld("schirm").click();
+await warte(300);
+const meldungSchirm = (await seite.locator(".meldung").last().textContent()) || "";
+ok("A: großer Monitor nennt Sinusrhythmus, langsam — nicht „Sinusbradykardie“ bei " + MESS.baum.frequenz + "/min",
+   /Sinusrhythmus/.test(meldungSchirm) && !/Sinusbradykardie/.test(meldungSchirm) &&
+   meldungSchirm.includes(MESS.baum.frequenz + "/min"), meldungSchirm.slice(0, 90));
 
 /* ------------------------------------------------------------ Weg B */
 await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), vorZentrale);

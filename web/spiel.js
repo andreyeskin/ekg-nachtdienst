@@ -225,7 +225,7 @@
       },
       beweis: {
         text: "Nichts beweist es. Beweisen würde: ein Puls dauerhaft unter vierzig, eine Pause über drei Sekunden "
-            + "im Wachen, oder ein Block, bei dem Schläge ausfallen. Das steht alles noch nicht auf dem Papier. "
+            + "im Wachen, oder ein Block, bei dem plötzlich Schläge ausfallen. Das steht alles noch nicht auf dem Papier. "
             + "Deswegen schreibst du jetzt eines.",
         antworten: [{ text: "Verstanden.", zu: "auftrag" }]
       },
@@ -338,7 +338,7 @@
             + "nimmt etwas, das beides macht. Das erklärt die Zahlen. Es erklärt nicht, warum er umfällt. "
             + "Was es sagt, ist: Die Leitung ist angeschlagen. Und eine angeschlagene Leitung fällt nicht "
             + "gleichmäßig aus, sie fällt plötzlich aus. Beweisen würde das erst eine Pause oder ein Block, "
-            + "bei dem Schläge ausfallen — und den sieht man nur, wenn jemand hinschaut, wenn es passiert. "
+            + "bei dem plötzlich Schläge ausfallen — und den sieht man nur, wenn jemand hinschaut, wenn es passiert. "
             + "Deshalb hängt er am Monitor und sitzt nicht zu Hause am Wasserkocher.",
         weiter: "ende"
       },
@@ -507,7 +507,7 @@
         },
         {
           text: "Kammertachykardie — breite Komplexe, schnell.",
-          warum: "Die Komplexe sind schmal (Norm 60–100 ms, Lektion 4) und die Frequenz ist niedrig. Das Gegenteil davon."
+          warum: "Die Komplexe sind schmal (Norm 60–100 ms) und die Frequenz ist niedrig. Das Gegenteil davon."
         }
       ],
       fertig: function () {
@@ -535,14 +535,14 @@
       titel: "Wie langsam ist langsam?",
       auftrag: "Miss einen RR-Abstand. Aus ihm kommt die Frequenz: 60 000 geteilt durch den RR-Abstand in Millisekunden.",
       deutung: function (ms) {
-        return T("60 000 : {ms} = {hf} pro Minute. ", { ms: ms, hf: Math.round(60000 / ms) }) + frequenzSatz(Math.round(60000 / ms));
+        return T("60 000 : {ms} = {hf} pro Minute.", { ms: ms, hf: Math.round(60000 / ms) }) + " " + frequenzSatz(Math.round(60000 / ms));
       },
       fertig: function (erg) {
         var hf = Math.round(60000 / erg.wahrheit);
         Z.werte.hf = hf; Z.werte.rr = erg.wahrheit;
         befund({
           id: "b-frequenz", titel: T("Frequenz: {hf}/min", { hf: hf }), zeit: zeitText(),
-          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute. ", { rr: erg.wahrheit, hf: hf }) + frequenzSatz(hf),
+          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute.", { rr: erg.wahrheit, hf: hf }) + " " + frequenzSatz(hf),
           ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.9, dauer: 6 }
         });
         zeitVor(6);
@@ -586,7 +586,7 @@
       text: "Drei Schachteln und ein Foto. Bisoprolol 5 mg · Ramipril 5 mg · ASS 100 mg. "
           + "Welche davon geht dich beim langsamen Puls etwas an?",
       antworten: [
-        { text: "ASS 100 — der Blutverdünner.", warum: "ASS beeinflusst die Gerinnung, nicht die Frequenz." },
+        { text: "ASS 100 — der Blutverdünner.", warum: "ASS hemmt die Blutplättchen, nicht die Frequenz." },
         { text: "Ramipril — der Blutdrucksenker.", warum: "ACE-Hemmer senken den Druck, bremsen aber weder Sinusknoten noch AV-Knoten." },
         {
           text: "Bisoprolol — der Betablocker.", richtig: true,
@@ -669,7 +669,7 @@
     var unter = {};
     unter[AUFNAHME_EKG] = T("Herr Baum. Sinusrhythmus, {hf}/min, langsam. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger "
                           + "als ein großes Kästchen: AV-Block I. Grades.", { hf: mB.frequenz, pq: mB.pq });
-    unter[SCHIRM_FLIMMERN_EKG] = T("Keine P-Wellen, die RR-Abstände springen, etwa {hf}/min: Vorhofflimmern.",
+    unter[SCHIRM_FLIMMERN_EKG] = T("Keine P-Wellen, die RR-Abstände springen, im Mittel etwa {hf}/min: Vorhofflimmern.",
                                    { hf: mF.frequenz });
     unter[SCHIRM_SCHNELL_EKG] = T("Sinusrhythmus, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — im Rahmen.",
                                   { hf: mS.frequenz, pq: mS.pq });
@@ -699,7 +699,7 @@
 
     global.Schirme.starte({
       titel: "Zentrale · drei Betten",
-      text: "Drei Schirme, drei Patienten, die Namen ausgeblendet. Ein großes Kästchen sind 200 ms.",
+      text: "Drei Schirme, drei Patienten, die Namen ausgeblendet. Ein großes Kästchen (5 mm) sind bei 25 mm/s 200 ms.",
       schirme: schirme,
       schritte: [
         {
@@ -813,7 +813,7 @@
   function grosserMonitor() {
     if (hat("k2_klingel") && !hat("k2_fertig")) { ampelAusloesen(); return; }
     if (hat("k2_bett")) {
-      melde(T("Bett {n} · Herr Baum. Sinusbradykardie, {hf}/min, vor jedem QRS eine P-Welle.",
+      melde(T("Bett {n} · Herr Baum. Sinusrhythmus, {hf}/min, langsam, vor jedem QRS eine P-Welle.",
               { n: bettVon(AUFNAHME_EKG), hf: satz(AUFNAHME_EKG).mess.frequenz }));
       return;
     }

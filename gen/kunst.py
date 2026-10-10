@@ -936,11 +936,19 @@ def herz_schema():
 
     # ---- Bahnen der Reizleitung: so liegen die Bauteile, wenn sie richtig sitzen
     his = "M304,248 C312,264 318,284 322,318"
-    schenkel = ["M322,318 C322,360 326,414 340,498",          # rechter Schenkel, rechts am Septum
-                "M324,318 C338,352 350,414 368,496"]          # linker Schenkel, links am Septum
+    # Der linke Schenkel teilt sich in zwei Faszikel (Lehrbuch Lektion 1 und 14): ein hinteres Bündel die
+    # Scheidewand hinunter zur Spitze, ein vorderes Bündel zur vorderen Seitenwand. Die ersten drei Bahnen
+    # liegen im Septum; die vierte quert als Lehrbild die Kammer und endet oben am Purkinje-Netz der linken Wand.
     mitte_rv, mitte_lv = (238, 400), (436, 404)
     netz_r = _versetzt([(318, 514), (268, 492), (210, 450), (154, 396)], mitte_rv, 10)
     netz_l = _versetzt([(380, 524), (406, 526), (452, 500), (490, 456), (514, 400)], mitte_lv, 11)
+    teilung = (344, 386)                                   # Aufzweigung des linken Schenkels
+    netz_l_oben = netz_l[-1]
+    schenkel_septum = ["M322,318 C322,360 326,414 340,498",          # rechter Schenkel, rechts am Septum
+                       f"M324,318 C334,348 340,372 {F(teilung[0])},{F(teilung[1])}",   # linker Schenkel: Stamm
+                       f"M{F(teilung[0])},{F(teilung[1])} C350,428 358,464 368,496"]   # linksposteriorer Faszikel
+    schenkel = schenkel_septum + [
+        f"M{F(teilung[0])},{F(teilung[1])} C396,388 462,386 {F(netz_l_oben[0])},{F(netz_l_oben[1])}"]  # linksanteriorer Faszikel
     purkinje = [_glatt([(340, 498)] + netz_r, zu=False), _glatt([(368, 496)] + netz_l, zu=False)]
     aeste = []
     for kette, mitte in ((netz_r, mitte_rv), (netz_l, mitte_lv)):      # kurze Äste in die Wand
@@ -966,6 +974,7 @@ def herz_schema():
             "vorhof_links": "M178,132 C262,106 430,110 514,222",   # über das Dach in den linken Vorhof
             "vorhof_unten": "M178,132 C150,180 150,230 196,258",   # an der Seitenwand hinunter
             "purkinje": purkinje,                                  # Hauptstränge ohne Äste
+            "schenkel_septum": schenkel_septum,                    # ohne den vorderen Faszikel: Weg der Erregung ohne Schenkel
         },
         "flaechen": {"umriss": umriss, "band": [band_y0, band_y1]},
         "farben": c,

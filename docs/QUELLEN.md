@@ -58,10 +58,10 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 |---|---|---|
 | Die Aufnahme zeigt Sinusrhythmus | LUDB-Datensatz 39, Kommentarfeld „Sinus bradycardia" + eigene Prüfung: vor jedem QRS eine annotierte P-Welle | |
 | Frequenz 53/min (RR ≈ 1130 ms) | LUDB 39, Median der RR-Abstände aus den QRS-Marken | Die im Spiel angezeigte Zahl wird aus dem **vom Spieler gemessenen** Schlag gerechnet, nicht fest eingetragen |
-| Bradykardie = unter 60/min | allgemeiner Standard, ESC-Synkope-2018 nennt 40–50/min als „mild inappropriate sinus bradycardia" | |
-| PQ-Zeit normal 120–200 ms | Chou; Schwelle 200 ms auch in ESC-Pacing-2021 | Untergrenze 120 ms noch am Original zu prüfen |
+| Norm der Sinusfrequenz 50–100/min; Sinusbradykardie = unter 50/min; 53/min heißt im Spiel „Sinusrhythmus, langsam" | Lehrbuch Lektion 8 als Prüfmaßstab (§7); ESC-Synkope-2018 nennt als Warnzeichen erst dauerhaft < 40/min und als „mild inappropriate sinus bradycardia" 40–50/min | Viele offene Quellen setzen die Grenze bei 60/min, und LUDB etikettiert Nr. 39 (53/min) als „Sinus bradycardia". Das Spiel folgt dem Lehrbuch und sagt das Etikett dazu, wo es neben einer Kurve steht. Früher stand hier „Bradykardie = unter 60/min" — das widersprach §7 und ist gestrichen |
+| PQ-Zeit normal 120–200 ms | Chou; Schwelle 200 ms auch in ESC-Pacing-2021; beide Grenzen gegen Lehrbuch Lektion 3 geprüft | Für die Veröffentlichung bleibt Chou am Original zu prüfen (§5) |
 | PQ über 200 ms = AV-Block I. Grades | ESC-Pacing-2021; Definition: jede P-Welle wird übergeleitet, aber verzögert | |
-| LUDB 39 hat PQ 214–258 ms (Median 228) | eigene Messung aus den Annotationen, Schlag für Schlag | Die Streuung ist echt: der P-Beginn ist die am schwersten zu setzende Marke |
+| LUDB 39 hat PQ 214–258 ms (Median 228) | eigene Messung aus den Annotationen, Schlag für Schlag | Die Streuung ist echt: der P-Beginn ist die am schwersten zu setzende Marke. Die LUDB-Befundliste für Nr. 39 nennt **keinen** AV-Block I° (nur linksatriale und linksventrikuläre Hypertrophie); die Einstufung im Spiel folgt allein der Regel PQ > 200 ms, gerechnet aus den annotierten P- und QRS-Anfängen. Die P-Welle ist mit 137 ms (Median) verbreitert; dasselbe gilt für Nr. 23 (PQ 210 ms, Rätsel Reizleitung) |
 | QRS schmal (82–92 ms) | LUDB 39, Annotation | spricht gegen eine Blockierung unterhalb des AV-Knotens |
 | Synkope ohne Vorwarnung ist ein Warnzeichen | ESC-Synkope-2018, Tabelle 7: „Syncope without prodrome" unter den Hochrisikomerkmalen; Abschnitt 4.1.1: ein typisches, langsam einsetzendes Prodrom (Blässe, Schwitzen, Übelkeit) spricht **für** eine Reflexsynkope | **Vorsicht:** Die Leitlinie sagt *nicht*, dass fehlendes Prodrom kardiale Synkope beweist. Sie sagt: es macht die harmlose Erklärung unwahrscheinlicher und zählt als Risikomerkmal. Der Dialog im Spiel ist entsprechend formuliert |
 | AV-Block I. Grades mit deutlich verlängerter PQ-Zeit passt zu arrhythmischer Synkope | ESC-Synkope-2018, Tabelle 5 (Merkmale, die eine Diagnose *nahelegen*, nicht beweisen) | Deshalb sagt Dr. Falk ausdrücklich, dass das noch nicht die Ursache ist |
@@ -86,7 +86,8 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 
 ## 5. Offen
 
-- Untergrenze der PQ-Norm (120 ms) am Primärtext belegen.
+- Untergrenze der PQ-Norm (120 ms): gegen das Lehrbuch geprüft (Lektion 3); für die
+  Veröffentlichung noch an einer offenen Quelle (Chou, AHA-Empfehlungen) belegen.
 - Für Kapitel 2 und folgende: Aufnahmen mit AV-Block II°/III° **mit**
   Wellen-Annotation finden. PTB-XL hat die Diagnosen, aber keine Marken; LUDB
   hat die Marken, aber keine höhergradigen Blöcke. Solange diese Lücke besteht,
@@ -105,21 +106,33 @@ sie in die Belegtabelle ein — in derselben Sitzung, nicht später.
 
 ---
 
-## 6. Abgleich mit dem Lehrbuch und ergänzende offene Quellen (10.10.2026)
+## 7. Abgleich mit dem Lehrbuch und ergänzende offene Quellen (10.10.2026, zweiter Durchgang)
 
 Das Lehrbuch (EKG-Kurs, Thieme 2024, 38 Lektionen) ist der **Prüfmaßstab**: Jede fachliche
 Aussage im Spiel wird gegen die passende Lektion gelesen (Ergebnis in `FACHREGELN.md`, in eigenen
-Worten, ohne Zitate). Es bleibt keine zitierte Quelle des Produkts; wo eine Aussage belegt werden
-muss, steht hier eine offene Quelle.
+Worten, ohne Zitate). Es bleibt keine zitierte Quelle des Produkts, und Lektionsnummern stehen
+nicht in Texten, die der Spieler sieht; wo eine Aussage belegt werden muss, steht hier eine
+offene Quelle.
 
 | Kürzel | Quelle | wofür | Lizenz / Hinweis |
 |---|---|---|---|
-| **OpenStax-A&P-19.2** | OpenStax, *Anatomy and Physiology 2e*, 19.2 „Cardiac Muscle and Electrical Activity". https://openstax.org/books/anatomy-and-physiology-2e/pages/19-2-cardiac-muscle-and-electrical-activity | Lage von Sinusknoten, AV-Knoten, His-Bündel, Schenkeln (linker Schenkel mit zwei Faszikeln), Purkinje-Fasern; Ersatzfrequenzen (AV-Knoten 40–60/min, His-Bündel 30–40/min, tiefer langsamer); AV-Verzögerung ca. 100 ms | CC BY-NC-SA 4.0 — nur als Faktenquelle, kein Text übernommen |
-| **Lehrbuch L8** | EKG-Kurs, Lektion 8 | Frequenzgrenzen: Norm 50–100/min, Sinusbradykardie < 50/min | Entscheidung: Das Spiel folgt dem Lehrbuch. Viele andere Quellen setzen 60/min; die Datenbank LUDB etikettiert Aufnahme 39 (53/min) als „Sinus bradycardia". Das Spiel nennt deshalb 53/min „Sinusrhythmus, langsam" und die Grenze 50. |
-| **Lehrbuch L3/L10** | Lektionen 3 und 10 | PQ 120–200 ms; AV-Block I° > 200 ms, Verzögerung im AV-Knoten; AV-Block III° mit Ersatzzentren 40–60 bzw. 30–40/min | im Spiel so umgesetzt |
+| **OpenStax-A&P-19.2** | OpenStax, *Anatomy and Physiology 2e*, 19.2 „Cardiac Muscle and Electrical Activity". https://openstax.org/books/anatomy-and-physiology-2e/pages/19-2-cardiac-muscle-and-electrical-activity | Lage von Sinusknoten, AV-Knoten, His-Bündel, Schenkeln (linker Schenkel mit zwei Faszikeln), Purkinje-Fasern; Ersatzfrequenzen (AV-Knoten 40–60/min, His-Bündel 30–40/min, tiefer langsamer); AV-Verzögerung ca. 100 ms | CC BY-NC-SA 4.0 — nur als Faktenquelle, kein Text übernommen. Das Spiel nennt Ersatzfrequenzen nur nach Lage des Blocks, wie das Lehrbuch (Lektion 10) |
+| **Lehrbuch L1/L14** | Lektionen 1 und 14 | linker Schenkel teilt sich in zwei Faszikel | Herzschema im Rätsel „Reizleitung" zeigt Stamm und zwei Faszikel (umgesetzt) |
+| **Lehrbuch L2/L36** | Lektionen 2 und 36 | 50 mm/s in Deutschland üblich, 25 mm/s angloamerikanisch; 1 mm = 20 ms bei 50 mm/s; Eichung 10 mm = 1 mV; Leitungszeiten in II messen | Zirkel-Kopfzeile nennt Geschwindigkeit, Eichung, Ableitung; Zentrale nennt „5 mm bei 25 mm/s = 200 ms" |
+| **Lehrbuch L7** | Lektion 7 | Frequenz aus Kästchen (300 bzw. 150 geteilt durch 10-mm-Quadrate); bei Flimmern mittlere Frequenz | Spiel rechnet 60 000 : RR; Flimmer-Schirm sagt „im Mittel etwa" |
+| **Lehrbuch L8** | EKG-Kurs, Lektion 8 | Frequenzgrenzen: Norm 50–100/min, Sinusbradykardie < 50/min | Entscheidung: Das Spiel folgt dem Lehrbuch. Viele andere Quellen setzen 60/min; die Datenbank LUDB etikettiert Aufnahme 39 (53/min) als „Sinus bradycardia". Das Spiel nennt deshalb 53/min „Sinusrhythmus, langsam" und die Grenze 50 — auch am großen Monitor (korrigiert) |
+| **Lehrbuch L3/L10** | Lektionen 3 und 10 | PQ 120–200 ms; AV-Block I° > 200 ms, Verzögerung im AV-Knoten; AV-Block III° mit Ersatzzentrum am Übergang (40–60/min, schmal) oder in der Kammer (30–40/min, breit); Mobitz II blockiert plötzlich | im Spiel so umgesetzt; „ein Block, bei dem plötzlich Schläge ausfallen" |
 | **Lehrbuch L11** | Lektion 11 | AV-junktionaler Ersatzrhythmus bei Ausfall des Sinusimpulses | Rätsel „Reizleitung": Fall „ohne Sinusknoten" zeigt keinen Vorhofflimmer-Streifen mehr |
-| **Lehrbuch L13** | Lektion 13 | kompletter Schenkelblock QRS ≥ 120 ms | im Rätsel so benannt |
-| **Lehrbuch L30** | Lektion 30 | Schrittmacher-EKG | Aufnahme 74 (AV-Block III° mit Kammerschrittmacher) wird als solche benannt |
+| **Lehrbuch L13** | Lektion 13 | kompletter Schenkelblock QRS ≥ 120 ms; Myokardschädigung plump, nicht M-förmig | im Rätsel so benannt (Nr. 24 bzw. Nr. 59) |
+| **Lehrbuch L25** | Lektion 25 | Vorhofflimmern: keine P, absolute Arrhythmie, Frequenz als Mittel | Schirm „Vorhofflimmern" (Nr. 96) |
+| **Lehrbuch L30** | Lektion 30 | Schrittmacher-EKG: Spike, schenkelblockartig breiter QRS | Aufnahme 74 (AV-Block III° mit Kammerschrittmacher) wird als solche benannt |
+| **Lehrbuch L31** | Lektion 31 | Monitor-EKG: Rhythmus und Frequenz, keine Feinanalyse | Schirme zeigen Ableitung II echter Aufnahmen als Standbild; Zahlen als Median benannt |
+| **Lehrbuch L35/L38** | Lektionen 35 und 38 | Bradykardie < 50; Sinusbradykardie unter Betablocker und bei Sportlern; PQ von P-Anfang bis Q-Anfang | stützt Dr. Falks und Marlenes Sätze; Zirkel-Regeln |
+
+**Datenbank-Etiketten, die vom Lehrbuch abweichen** (dokumentiert, nicht korrigiert): „Sinus
+bradycardia" bei 50–59/min (Nr. 39, 24, 59, 134); „Sinus tachycardia" bei Nr. 114 (Median
+91/min); kein „I degree AV block" bei Nr. 39 (PQ 228) und Nr. 23 (PQ 210), dafür bei Nr. 61 (PQ
+189). Das Spiel zeigt die Etiketten als Datenbankbefund und ordnet sie nach Lehrbuch ein.
 
 **Noch zu belegen (offen):** Therapie-Entscheidungen am Monitor (Beobachten · Arzt rufen · Pacer)
 stehen nicht im EKG-Kurs. Das Spiel behauptet dazu keine Kriterien mehr; falls später doch,
