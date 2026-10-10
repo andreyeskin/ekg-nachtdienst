@@ -94,7 +94,9 @@ def set_lines():
     for m in bpy.data.materials:
         if not m.use_nodes: continue
         em = [n for n in m.node_tree.nodes if n.type == 'EMISSION']
-        if em: em[-1].inputs["Color"].default_value = (1, 1, 1, 1)
+        if em:
+            for l in list(em[-1].inputs["Color"].links): m.node_tree.links.remove(l)   # kein Flächen-Shading im Linienpass
+            em[-1].inputs["Color"].default_value = (1, 1, 1, 1)
     sc.world.node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
     sc.render.use_freestyle = True; sc.render.line_thickness_mode = 'ABSOLUTE'
     vl = sc.view_layers[0]; vl.use_freestyle = True
@@ -153,7 +155,9 @@ elif MODE == "mask":
     for m in bpy.data.materials:
         if not m.use_nodes: continue
         em = [n for n in m.node_tree.nodes if n.type == 'EMISSION']
-        if em: em[-1].inputs["Color"].default_value = (0, 0, 0, 1)
+        if em:
+            for l in list(em[-1].inputs["Color"].links): m.node_tree.links.remove(l)
+            em[-1].inputs["Color"].default_value = (0, 0, 0, 1)
     sc.world.node_tree.nodes["Background"].inputs[0].default_value = (0, 0, 0, 1)
     white = bpy.data.materials.new("w"); white.use_nodes = True
     wn = white.node_tree; e = wn.nodes.new("ShaderNodeEmission"); e.inputs["Color"].default_value = (1, 1, 1, 1)
