@@ -40,7 +40,27 @@ def set_flat():
         if out is None: continue
         col = PAL.get(m.name)
         em = nt.nodes.new("ShaderNodeEmission"); em.inputs["Strength"].default_value = 1.0
-        em.inputs["Color"].default_value = (*srgb_to_lin(hexc(col)), 1) if col else (0.5, 0.5, 0.5, 1)
+        base = (*srgb_to_lin(hexc(col)), 1) if col else (0.5, 0.5, 0.5, 1)
+        if m.name in ("dawn", "corridor", "screen", "glass"):
+            em.inputs["Color"].default_value = base
+        else:
+            # Volumen ohne Linie: Faktor nach Flächenrichtung, in Stufen (ligne claire: flach, nicht weich)
+            geo = nt.nodes.new("ShaderNodeNewGeometry")
+            sep = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(geo.outputs["Normal"], sep.inputs["Vector"])
+            # oben (+Z) hell, vorn (-Y) neutral, Seiten (±X) dunkler, unten dunkel
+            absx = nt.nodes.new("ShaderNodeMath"); absx.operation = 'ABSOLUTE'; nt.links.new(sep.outputs["X"], absx.inputs[0])
+            fz = nt.nodes.new("ShaderNodeMath"); fz.operation = 'MULTIPLY'; fz.inputs[1].default_value = 0.10; nt.links.new(sep.outputs["Z"], fz.inputs[0])
+            fx = nt.nodes.new("ShaderNodeMath"); fx.operation = 'MULTIPLY'; fx.inputs[1].default_value = -0.14; nt.links.new(absx.outputs[0], fx.inputs[0])
+            fsum = nt.nodes.new("ShaderNodeMath"); fsum.operation = 'ADD'; nt.links.new(fz.outputs[0], fsum.inputs[0]); nt.links.new(fx.outputs[0], fsum.inputs[1])
+            fac = nt.nodes.new("ShaderNodeMath"); fac.operation = 'ADD'; fac.inputs[1].default_value = 1.0; nt.links.new(fsum.outputs[0], fac.inputs[0])
+            # auf Stufen runden (0.04), damit keine Verläufe entstehen
+            snap = nt.nodes.new("ShaderNodeMath"); snap.operation = 'SNAP'; snap.inputs[1].default_value = 0.04; nt.links.new(fac.outputs[0], snap.inputs[0])
+            mix = nt.nodes.new("ShaderNodeMix"); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'; mix.inputs["Factor"].default_value = 1.0
+            mix.inputs[6].default_value = base
+            comb = nt.nodes.new("ShaderNodeCombineColor")
+            for i in range(3): nt.links.new(snap.outputs[0], comb.inputs[i])
+            nt.links.new(comb.outputs["Color"], mix.inputs[7])
+            nt.links.new(mix.outputs[2], em.inputs["Color"])
         for l in list(out.inputs["Surface"].links): nt.links.remove(l)
         nt.links.new(em.outputs["Emission"], out.inputs["Surface"])
     for o in bpy.data.objects:
@@ -114,6 +134,20 @@ elif MODE == "flatbg":
     set_flat(); hide_layer(("mid", "fg")); render(OUT + "pass_flat_bg.png", 4, False)
 elif MODE == "linesbg":
     set_lines(); hide_layer(("mid", "fg")); render(OUT + "pass_lines_bg.png", 4, False)
+elif MODE in ("ao", "aobg"):
+    # Kontaktschatten: Ambient Occlusion als Emission, später hart geschnitten
+    set_flat()
+    if MODE.endswith("bg"): hide_layer(("mid", "fg"))
+    for m in bpy.data.materials:
+        if not m.use_nodes: continue
+        nt = m.node_tree; out = nt.nodes.get("Material Output")
+        if out is None: continue
+        ao = nt.nodes.new("ShaderNodeAmbientOcclusion"); ao.samples = 8; ao.inputs["Distance"].default_value = 0.7
+        em = nt.nodes.new("ShaderNodeEmission"); nt.links.new(ao.outputs["AO"], em.inputs["Color"])
+        for l in list(out.inputs["Surface"].links): nt.links.remove(l)
+        nt.links.new(em.outputs["Emission"], out.inputs["Surface"])
+    sc.world.node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
+    render(OUT + f"pass_{MODE}.png", 24, True)
 elif MODE == "mask":
     set_flat()
     for m in bpy.data.materials:

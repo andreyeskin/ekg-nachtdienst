@@ -13,7 +13,7 @@ def load(n):
     return np.asarray(Image.open(D + n).convert("RGB")).astype(np.float32) / 255
 
 def luma(a): return 0.2126 * a[..., 0] + 0.7152 * a[..., 1] + 0.0722 * a[..., 2]
-def compose(flat_n, amb_n, sun_n, lines_n, out_n, mask_n=None, shadow_t=0.0, sun_t=0.35):
+def compose(flat_n, amb_n, sun_n, lines_n, out_n, mask_n=None, shadow_t=0.0, sun_t=0.35, ao_n=None, ao_t=0.62):
     flat, amb, sun, lines = load(flat_n), load(amb_n), load(sun_n), load(lines_n)
     h, w = flat.shape[:2]
     if amb is None: amb = np.ones_like(flat)   # без рассеянного прохода: тени нет
@@ -25,6 +25,12 @@ def compose(flat_n, amb_n, sun_n, lines_n, out_n, mask_n=None, shadow_t=0.0, sun
     ls = np.asarray(Image.fromarray((ls * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
     # тень относительно локальной освещённости: только там, где заметно темнее окружения (под мебелью, углы)
     shadow = (la < shadow_t).astype(np.float32)[..., None]   # только по-настоящему тёмное: под мебелью, в проёме
+    # Kontaktschatten aus dem AO-Pass: eine flache Schattenstufe unter Möbeln und in Ecken
+    ao = load(ao_n) if ao_n else None
+    if ao is not None:
+        lao = luma(ao)
+        lao = np.asarray(Image.fromarray((lao * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(9)).filter(ImageFilter.GaussianBlur(1.0))).astype(np.float32) / 255
+        shadow = np.maximum(shadow, (lao < ao_t).astype(np.float32)[..., None])
     light = (ls > sun_t).astype(np.float32)[..., None]
     # мягкие края уровней (1 px), чтобы не было лесенки
     def soft(m): return np.asarray(Image.fromarray((m[..., 0] * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.7))).astype(np.float32)[..., None] / 255
@@ -45,7 +51,7 @@ def compose(flat_n, amb_n, sun_n, lines_n, out_n, mask_n=None, shadow_t=0.0, sun
         a = np.asarray(img); a = a.copy(); a[..., 3] = m; img = Image.fromarray(a)
     img.save(ZIEL + out_n); print("saved", ZIEL + out_n)
 
-compose("pass_flat.png", "pass_amb.png", "pass_sun.png", "pass_lines.png", "vorschau.png")
+compose("pass_flat.png", "pass_amb.png", "pass_sun.png", "pass_lines.png", "vorschau.png", ao_n="pass_ao.png")
 if "--layers" in sys.argv:
-    compose("pass_flat_bg.png", "pass_ambbg.png", "pass_sunbg.png", "pass_lines_bg.png", "hintergrund.png")
-    compose("pass_flat.png", "pass_amb.png", "pass_sun.png", "pass_lines.png", "mittelgrund.png", mask_n="mask_mid.png")
+    compose("pass_flat_bg.png", "pass_ambbg.png", "pass_sunbg.png", "pass_lines_bg.png", "hintergrund.png", ao_n="pass_aobg.png")
+    compose("pass_flat.png", "pass_amb.png", "pass_sun.png", "pass_lines.png", "mittelgrund.png", mask_n="mask_mid.png", ao_n="pass_ao.png")
