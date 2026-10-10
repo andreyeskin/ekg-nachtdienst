@@ -8,9 +8,12 @@
 
   var FARBE = {
     papier: "#FFF8F4", fein: "#F0C2B0", grob: "#DB8A6E",
-    kurve: "#17181A", kurveMonitor: "#17181A", papierMonitor: "#FFF8F4",   /* Monitor sieht aus wie Papier (Entscheidung 10.10.2026) */
+    kurve: "#17181A", kurveMonitor: "#17181A", papierMonitor: "#FFF8F4",   /* der große Schirm sieht aus wie Papier (Entscheidung 10.10.2026) */
     zirkel: "#C2185B", loesung: "#0E7C6B"
   };
+  /* Geräteschirme im Raum (EKG-Wagen, Bettmonitore): dunkles Glas in Tinte, Phosphor-Kurve, Raster kaum sichtbar
+     (docs/ART_BIBLE.md §2: Phosphor nur auf Bildschirmen). Gewählt mit opt.stil = "phosphor". */
+  var PHOSPHOR = { papier: "#1E2A30", fein: "#24323A", grob: "#2C4048", kurve: "#39E58C" };
   var VORLAUF_MM = 12;                      /* Platz für die Eichzacke */
 
   function Streifen(leinwand, opt) {
@@ -23,6 +26,8 @@
       mmProMv: opt.mmProMv || 10,
       pxProMm: opt.pxProMm || 0,            /* 0 = aus dem Fenster rechnen */
       monitor: !!opt.monitor,
+      stil: opt.stil === "phosphor" ? PHOSPHOR : null,   /* null: Papier-Farben */
+      anzeige: opt.anzeige || null,                        /* {links, rechts}: kurze Texte oben, vom Code gesetzt */
       kalibrierung: opt.kalibrierung !== false,
       raster: opt.raster !== false,
       von: opt.von || 0,                    /* Fensteranfang in Sekunden */
@@ -54,23 +59,43 @@
 
     function vorlaufPx(mm) { return (S.kalibrierung ? VORLAUF_MM : 2) * mm; }
 
+    function farbe(rolle) {
+      if (S.stil) return S.stil[rolle] || FARBE[rolle];
+      if (rolle === "papier") return S.monitor ? FARBE.papierMonitor : FARBE.papier;
+      if (rolle === "kurve") return S.monitor ? FARBE.kurveMonitor : FARBE.kurve;
+      return FARBE[rolle];
+    }
+
     function raster(b, h, mm) {
-      ctx.fillStyle = S.monitor ? FARBE.papierMonitor : FARBE.papier;
+      ctx.fillStyle = farbe("papier");
       ctx.fillRect(0, 0, b, h);
       if (!S.raster) return;
       var i, n;
       var spalten = Math.ceil(b / mm), zeilen = Math.ceil(h / mm);
       if (spalten > 4000 || zeilen > 4000) return;          /* Schutz gegen Unsinn */
+      var nurGrob = S.stil && mm < 3;                         /* kleine Geräteschirme: nur das grobe Raster */
       for (i = 0; i <= spalten; i++) {
-        ctx.strokeStyle = (i % 5 === 0) ? FARBE.grob : FARBE.fein;
+        if (nurGrob && i % 5) continue;
+        ctx.strokeStyle = (i % 5 === 0) ? farbe("grob") : farbe("fein");
         ctx.lineWidth = (i % 5 === 0) ? 1 : 0.5;
         ctx.beginPath(); ctx.moveTo(i * mm + .5, 0); ctx.lineTo(i * mm + .5, h); ctx.stroke();
       }
       for (i = 0; i <= zeilen; i++) {
-        ctx.strokeStyle = (i % 5 === 0) ? FARBE.grob : FARBE.fein;
+        if (nurGrob && i % 5) continue;
+        ctx.strokeStyle = (i % 5 === 0) ? farbe("grob") : farbe("fein");
         ctx.lineWidth = (i % 5 === 0) ? 1 : 0.5;
         ctx.beginPath(); ctx.moveTo(0, i * mm + .5); ctx.lineTo(b, i * mm + .5); ctx.stroke();
       }
+    }
+
+    /* Kurze Anzeige oben links/rechts (Ableitung, Frequenz aus den Daten) — Text setzt immer der Code */
+    function anzeige(b, h) {
+      if (!S.anzeige) return;
+      var px = Math.max(8, Math.round(h * 0.2));
+      ctx.fillStyle = farbe("kurve"); ctx.textBaseline = "top";
+      ctx.font = "600 " + px + "px ui-monospace, Menlo, monospace";
+      if (S.anzeige.links) { ctx.textAlign = "left"; ctx.fillText(S.anzeige.links, px * 0.5, px * 0.35); }
+      if (S.anzeige.rechts) { ctx.textAlign = "right"; ctx.fillText(S.anzeige.rechts, b - px * 0.5, px * 0.35); }
     }
 
     var letzteMm = 4, letzteB = 600;
@@ -97,7 +122,7 @@
       var i0 = Math.max(0, Math.round(S.von * S.fs));
       var dauer = S.dauer || (b - vl) / (S.mmProS * mm);
       var i1 = Math.min(S.werte.length, i0 + Math.ceil(dauer * S.fs) + 2);
-      ctx.strokeStyle = S.monitor ? FARBE.kurveMonitor : FARBE.kurve;
+      ctx.strokeStyle = farbe("kurve");
       ctx.lineWidth = Math.max(1.1, (S.monitor ? 0.42 : 0.3) * mm);
       ctx.lineJoin = "round"; ctx.lineCap = "round";
       ctx.beginPath();
@@ -108,6 +133,7 @@
       }
       ctx.stroke();
       ctx.shadowBlur = 0;
+      anzeige(b, h);
 
       if (S.marken) {
         S.marken.forEach(function (m) {

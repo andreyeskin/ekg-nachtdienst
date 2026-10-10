@@ -885,33 +885,44 @@
   }
 
   /* ------------------------------------------------------------ Räume */
+  /* Klickfelder kommen aus den Klickzonen der gerenderten Szene (art/szenen/<raum>/hitboxes.json, über
+     gen/kunst.py in kunst.szenen.<raum>.zonen) — so stimmen Bild und Feld nach jedem Render überein.
+     Die Zahlen hier sind nur der Rückfall, falls eine Zone fehlt. */
+  var KUNST = null;
+  function zone(raum, id, rueckfall) {
+    var z = KUNST && KUNST.szenen[raum] && KUNST.szenen[raum].zonen && KUNST.szenen[raum].zonen[id];
+    if (!z) z = rueckfall;
+    return [[z[0], z[1]], [z[2], z[1]], [z[2], z[3]], [z[0], z[3]]];
+  }
+
   function baueRaeume(kunst) {
+    KUNST = kunst;
     global.Szene.registriere("aufnahme", {
       titel: "Aufnahme", ebenen: kunst.szenen.aufnahme, ersatzfarbe: "#2A3A42",
       beiBetreten: function () {
-        Z.raum = "aufnahme"; stoppeMonitor(); kopfAuffrischen(); uhrStellen(); sichere();
+        Z.raum = "aufnahme"; starteSchirme("aufnahme"); kopfAuffrischen(); uhrStellen(); sichere();
       },
       felder: [
         {
           id: "marlene", name: "Schwester Marlene",
-          punkte: [[16, 365], [548, 365], [548, 707], [16, 707]],
+          punkte: zone("aufnahme", "marlene", [16, 365, 548, 707]),
           bei: function () { global.Dialog.starte("marlene", "start"); }
         },
         {
           id: "herrk", name: "Herr Baum",
-          punkte: [[1279, 399], [1424, 399], [1424, 737], [1279, 737]],
+          punkte: zone("aufnahme", "herrk", [1279, 399, 1424, 737]),
           bei: function () { global.Dialog.starte("herr_k", "start"); }
         },
         {
           id: "tuete", name: "Plastiktüte",
-          punkte: [[1241, 628], [1307, 628], [1307, 728], [1241, 728]],
+          punkte: zone("aufnahme", "tuete", [1241, 628, 1307, 728]),
           sichtbar: function () { return hat("darf_tuete"); },
           erledigt: function () { return global.Mappe.hat("b-medis"); },
           bei: tueteAnsehen
         },
         {
           id: "wagen", name: "EKG-Wagen",
-          punkte: [[822, 422], [960, 422], [960, 738], [822, 738]],
+          punkte: zone("aufnahme", "wagen", [822, 422, 960, 738]),
           erledigt: function () { return global.Mappe.hat("b-rhythmus"); },
           bei: function () {
             if (!hat("auftrag_ekg")) {
@@ -924,14 +935,14 @@
         },
         {
           id: "uhr", name: "Wanduhr",
-          punkte: [[1332, 167], [1466, 167], [1466, 295], [1332, 295]],
+          punkte: zone("aufnahme", "uhr", [1332, 167, 1466, 295]),
           bei: function () {
             melde(T("{zeit} · Schichtbeginn war 06:30.", { zeit: zeitText() }));
           }
         },
         {
           id: "pinnwand", name: "Pinnwand",
-          punkte: [[284, 197], [486, 197], [486, 358], [284, 358]],
+          punkte: zone("aufnahme", "pinnwand", [284, 197, 486, 358]),
           bei: function () {
             melde("Dienstplan, ein Zettel über die Kaffeekasse, ein Kinderbild ohne Namen.");
           }
@@ -940,7 +951,7 @@
       ausgaenge: [
         {
           name: "Flur zum Monitorzimmer", nach: "monitor",
-          punkte: [[1533, 228], [1600, 228], [1600, 701], [1533, 701]],
+          punkte: zone("aufnahme", "ausgang", [1533, 228, 1600, 701]),
           wenn: function () { return anzahlKernbefunde() >= 2; },
           gesperrt: function () {
             melde("Noch nicht. Mit leerer Mappe meldet dich Marlene nirgends an.", "warnung");
@@ -955,7 +966,7 @@
         Z.raum = "monitor"; Z.kapitel = 2;
         if (!hat("ankunft_monitor")) { Z.zeit = Math.max(Z.zeit, 9 * 60 + 15); setze("ankunft_monitor"); }
         kopfAuffrischen(); uhrStellen(); sichere();
-        starteMonitor();
+        starteSchirme("monitor");
         global.setTimeout(function () {
           if (global.Szene.aktueller() !== "monitor") return;
           if (!hat("falk_gesprochen")) {
@@ -970,28 +981,28 @@
         /* --- Kapitel 2: neue Felder --- */
         {
           id: "wand", name: "Monitorwand · drei Betten",
-          punkte: [[500, 112], [1384, 104], [1384, 340], [500, 352]],
+          punkte: zone("monitor", "schirme_klein", [500, 104, 1384, 352]),
           erledigt: function () { return hat("k2_bett"); },
           bei: function () { monitorwand(); }
         },
         /* --- Ende Kapitel 2: neue Felder --- */
         {
           id: "schirm", name: "Großer Monitor",
-          punkte: [[638, 308], [955, 308], [955, 498], [638, 498]],
+          punkte: zone("monitor", "schirm", [638, 308, 955, 498]),
           bei: function () {
             grosserMonitor();
           }
         },
         {
           id: "falk", name: "Dr. Falk",
-          punkte: [[1159, 341], [1299, 341], [1299, 717], [1159, 717]],
+          punkte: zone("monitor", "falk", [1159, 341, 1299, 717]),
           bei: function () { global.Dialog.starte("falk", "start"); }
         }
       ],
       ausgaenge: [
         {
           name: "Zurück in die Aufnahme", nach: "aufnahme",
-          punkte: [[0, 286], [132, 286], [132, 656], [0, 656]]
+          punkte: zone("monitor", "ausgang", [0, 286, 132, 656])
         }
       ]
     });
@@ -1036,29 +1047,58 @@
     global.Szene.sperre(true);
   }
 
-  /* Monitor: die Kurve läuft wirklich, aus derselben Aufnahme. */
-  var monitorStreifen = null;
-  function stoppeMonitor() {
-    if (monitorStreifen) { monitorStreifen.stoppeLauf(); monitorStreifen = null; }
-    var alt = document.getElementById("monitor-lauf");
-    if (alt && alt.parentNode) alt.parentNode.removeChild(alt);
+  /* Bildschirme im Raum: jede Fläche aus art/szenen/<raum>/schirme.json (kunst.szenen.<raum>.schirme) bekommt
+     eine Leinwand in ihrer eigenen Ebene (sie wandert mit der Parallaxe mit), darauf läuft eine echte Aufnahme
+     aus data/ — nie ins Bild gemalt (ART_BIBLE §6). Nur der aktuelle Raum läuft; beim Wechsel wird gestoppt.
+       wagen_schirm  EKG-Wagen der Aufnahme: Herrn Baums Ableitung II, Frequenz aus den Daten
+       gross         großer Schirm der Zentrale: wie Papier (Entscheidung 10.10.2026), Herr Baum
+       bett_1..3     Bettmonitore: dieselben drei Aufnahmen wie im Rätsel „Drei Schirme“, in Bettenfolge
+     Marlenes Verwaltungs-PC hat keine Fläche: er zeigt kein EKG. */
+  var schirmLauf = [];
+  function stoppeSchirme() {
+    schirmLauf.forEach(function (s) { s.streifen.stoppeLauf(); if (s.el.parentNode) s.el.parentNode.removeChild(s.el); });
+    schirmLauf = [];
   }
-  function starteMonitor() {
-    stoppeMonitor();
+  function schirmAufnahme(name) {
+    if (name === "wagen_schirm" || name === "gross") return satz(AUFNAHME_EKG);
+    var m = /^bett_(\d)$/.exec(name);
+    if (m) { var b = betten()[+m[1] - 1]; return b ? b.satz : null; }
+    return null;
+  }
+  function starteSchirme(raum) {
+    stoppeSchirme();
+    var liste = KUNST && KUNST.szenen[raum] && KUNST.szenen[raum].schirme;
+    if (!liste) return;
     var buehne = document.getElementById("buehne");
-    var d = document.createElement("div");
-    d.id = "monitor-lauf"; d.className = "monitor-lauf";
-    d.innerHTML = '<canvas height="150"></canvas>';
-    buehne.appendChild(d);
-    var s = satz(AUFNAHME_EKG);
-    monitorStreifen = global.EKG.Streifen(d.querySelector("canvas"), {
-      werte: s.sig.werte, fs: s.sig.fs, mmProS: 25, dauer: 5.2,
-      monitor: true, kalibrierung: false
+    Object.keys(liste).forEach(function (name) {
+      var f = liste[name], s = schirmAufnahme(name);
+      if (!s) return;
+      var ebene = buehne.querySelector(".ebene-" + (f.ebene || "hintergrund"));
+      if (!ebene) return;
+      var k = f.kasten, b = k[2] - k[0], h = k[3] - k[1];
+      var d = document.createElement("div");
+      d.className = "schirm-lauf"; d.setAttribute("data-schirm", name); d.setAttribute("data-satz", String(s.id));
+      d.style.left = (k[0] / 16).toFixed(3) + "%"; d.style.top = (k[1] / 9).toFixed(3) + "%";
+      d.style.width = (b / 16).toFixed(3) + "%"; d.style.height = (h / 9).toFixed(3) + "%";
+      if (f.ecken && f.ecken.length === 4) {         /* schräge Fläche: Leinwand auf die vier Ecken beschneiden */
+        d.style.clipPath = "polygon(" + f.ecken.map(function (e) {
+          return ((e[0] - k[0]) / b * 100).toFixed(2) + "% " + ((e[1] - k[1]) / h * 100).toFixed(2) + "%";
+        }).join(", ") + ")";
+      }
+      d.innerHTML = "<canvas></canvas>";
+      ebene.appendChild(d);
+      var gross = name === "gross";
+      var streifen = global.EKG.Streifen(d.querySelector("canvas"), {
+        werte: s.sig.werte, fs: s.sig.fs, mmProS: 25, dauer: gross ? 5.2 : 4.0,
+        monitor: true, kalibrierung: false, stil: gross ? null : "phosphor",
+        anzeige: gross ? null : { links: (s.sig.lead || "II").toUpperCase(), rechts: String(s.mess.frequenz) }
+      });
+      schirmLauf.push({ name: name, el: d, streifen: streifen, satz: s.id });
+      global.requestAnimationFrame(function () { streifen.zeichne(); streifen.starteLauf(1); });
     });
-    global.requestAnimationFrame(function () {
-      monitorStreifen.zeichne();
-      monitorStreifen.starteLauf(1);
-    });
+  }
+  function schirmeStand() {
+    return schirmLauf.map(function (s) { return { name: s.name, satz: s.satz, laeuft: s.streifen.laeuftGerade() }; });
   }
 
   /* ------------------------------------------------------------ Start */
@@ -1109,7 +1149,7 @@
     zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn,
     __dialoge: DIALOGE, __ekgSchreiben: ekgSchreiben, __messePq: messePq, __messeFrequenz: messeFrequenz,
     __tuete: tueteAnsehen,
-    __betten: betten, __zentrale: zentrale, __ampel: ampelAusloesen,
+    __betten: betten, __zentrale: zentrale, __ampel: ampelAusloesen, __schirme: schirmeStand,
     KAPITEL2_EKG: { baum: AUFNAHME_EKG, flimmern: SCHIRM_FLIMMERN_EKG, schnell: SCHIRM_SCHNELL_EKG }
   };
 })(window);

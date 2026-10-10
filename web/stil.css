@@ -111,16 +111,11 @@ body {
 }
 .feldname.an { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Bildfläche des großen Schirms: hitboxes.json "schirm_bild" (650,321–943,487 von 1600×900) im Rahmen der
-   Ebenen (Bühne + 32 px × 18 px, Versatz −16/−9 px): Anteil der Bühne plus Anteil des Überstands —
-   exakt bei jeder Bühnengröße. left = 650/1600·(B+32) − 16, top = 321/900·(H+18) − 9 usw. */
-.monitor-lauf {
-  position: absolute;
-  left: calc(40.625% - 3px); top: calc(35.667% - 2.58px);
-  width: calc(18.3125% + 5.86px); height: calc(18.444% + 3.32px);
-  pointer-events: none; overflow: hidden;
-}
-.monitor-lauf canvas { width: 100%; height: 100%; display: block; }
+/* Bildschirmflächen (art/szenen/<raum>/schirme.json): spiel.js setzt je Fläche eine Leinwand in die Ebene des
+   Schirms, Lage und Größe in Prozent der Ebene — die Ebene ist genau 16:9 wie das 1600×900-Bild, also deckungs-
+   gleich; schräge Flächen werden per clip-path auf ihre vier Ecken beschnitten. */
+.schirm-lauf { position: absolute; pointer-events: none; overflow: hidden; }
+.schirm-lauf canvas { width: 100%; height: 100%; display: block; }
 
 @keyframes atem { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
 .atmet { animation: atem 4.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center bottom; }

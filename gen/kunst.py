@@ -1066,6 +1066,13 @@ def baue():
                 aus["szenen"][name][ebene] = png_ebene(pfad, uhr_teile(ordner) if ebene == "hintergrund" else "")
             else:
                 aus["szenen"][name][ebene] = ""
+        # Klickzonen (hitboxes.json) und Bildschirmflächen (schirme.json) wandern mit ins Spiel: spiel.js baut
+        # daraus Klickfelder und legt auf die Schirme seine Leinwände mit laufenden Kurven — nichts doppelt gepflegt
+        for datei, feld in (("hitboxes.json", "zonen"), ("schirme.json", "schirme")):
+            pfad = os.path.join(ordner, datei)
+            if os.path.exists(pfad):
+                with open(pfad, encoding="utf-8") as f:
+                    aus["szenen"][name][feld] = json.load(f)
     for wer in ("marlene", "herr_k", "falk"):
         pfad = os.path.join(os.path.dirname(hier), "art", "portraits", wer + ".png")
         aus["portraits"][wer] = png_portrait(pfad) if os.path.exists(pfad) else portrait(wer)

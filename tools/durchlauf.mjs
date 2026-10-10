@@ -66,6 +66,14 @@ for (const n of ["hintergrund", "mittelgrund", "figuren"])
 ok("Uhrzeiger in der Hintergrund-Ebene", (await seite.locator("#buehne .ebene-hintergrund svg #uhr-std").count()) === 1);
 ok("Hotspots vorhanden", (await seite.locator(".feld").count()) >= 6);
 ok("Auftakt-Dialog erscheint", await seite.locator(".dialog.an").isVisible());
+/* Bildschirme: auf dem EKG-Wagen läuft Herrn Baums Aufnahme aus data/ (Leinwand in der Mittelgrund-Ebene),
+   Marlenes Verwaltungs-PC zeigt keine Kurve — in der Aufnahme gibt es genau diese eine Leinwand. */
+const schirme1 = await seite.evaluate(() => window.Spiel.__schirme());
+ok("EKG-Wagen: laufende Kurve aus data/", schirme1.length === 1 && schirme1[0].name === "wagen_schirm" &&
+   schirme1[0].satz === 39 && schirme1[0].laeuft, JSON.stringify(schirme1));
+ok("EKG-Wagen: Leinwand in der Mittelgrund-Ebene",
+   (await seite.locator("#buehne .ebene-mittelgrund .schirm-lauf[data-schirm=wagen_schirm] canvas").count()) === 1);
+ok("Marlenes PC zeigt kein EKG", (await seite.locator("#buehne .schirm-lauf").count()) === 1);
 await schuss("auftakt");
 
 async function dialogDurch(maxKlicks = 14) {
@@ -347,7 +355,15 @@ const ausgang = seite.locator("#buehne .felder polygon.ausgang").first();
 await ausgang.click();
 await warte(1100);
 ok("Im Monitorzimmer", await seite.evaluate(() => window.Szene.aktueller() === "monitor"));
-ok("Monitorkurve läuft", (await seite.locator("#monitor-lauf canvas").count()) === 1);
+ok("Monitorkurve läuft (großer Schirm, Papier)", (await seite.locator("#buehne .ebene-hintergrund .schirm-lauf[data-schirm=gross] canvas").count()) === 1);
+/* Bettmonitore: drei Leinwände, je eine der drei Aufnahmen der Zentrale, in Bettenfolge, alle laufend */
+const schirme2 = await seite.evaluate(() => window.Spiel.__schirme());
+const bettenJetzt = await seite.evaluate(() => window.Spiel.__betten().map((b) => b.id));
+const kleine = schirme2.filter((s) => /^bett_\d$/.test(s.name)).sort((a, b) => a.name < b.name ? -1 : 1);
+ok("Bettmonitore: drei laufende Kurven in Bettenfolge",
+   kleine.length === 3 && kleine.every((s, i) => s.laeuft && s.satz === bettenJetzt[i]) &&
+   new Set(kleine.map((s) => s.satz)).size === 3, JSON.stringify(kleine) + " Betten " + bettenJetzt.join(","));
+ok("Keine Leinwand der Aufnahme mehr aktiv", schirme2.every((s) => s.name !== "wagen_schirm"));
 await warte(1600);
 ok("Dr. Falk spricht an", await seite.locator(".dialog.an").isVisible());
 await schuss("monitorzimmer");
