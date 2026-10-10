@@ -1,0 +1,12 @@
+{
+  "name": "nachtdienst",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lernspiel zum EKG auf echten Aufnahmen",
+  "type": "module",
+  "scripts": {
+    "bauen": "python3 tools/baue.py",
+    "pruefen": "python3 tools/baue.py && node tools/durchlauf.mjs"
+  },
+  "devDependencies": { "playwright-core": "^1.47.0" }
+}
