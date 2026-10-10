@@ -319,3 +319,56 @@ body {
   .dialog-text { font-size: 17px; }
   .dialog { padding: 10px; }
 }
+
+/* ------------------------------------------- Kapitel 2: Zentrale und Ampel */
+/* LEHRPLAN 5, Regel 5: jede Schaltfläche in diesen Fenstern mindestens 44 × 44 px. */
+#schirme-hof .knopf, #ampel-hof .knopf { min-height: 44px; min-width: 44px; }
+#schirme-hof .knopf.wahl.richtig:disabled, #schirme-hof .knopf.wahl.falsch:disabled { opacity: 1; }
+.knopf.wahl .nr, .ampel-knopf .nr {
+  display: inline-block; width: 1.7em; font: 700 12px var(--mono); color: var(--magenta);
+}
+
+.schirm-liste { display: flex; flex-direction: column; gap: 10px; margin: 0 0 14px; }
+.schirm { margin: 0; background: #07130F; border: 3px solid var(--tinte); }
+.schirm.hervor { border-color: var(--phosphor); box-shadow: 0 0 0 3px rgba(47, 158, 107, .35); }
+.schirm-kopf {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  padding: 5px 10px; background: var(--tinte); color: var(--papier);
+}
+.schirm-name { font: 700 14px var(--mono); letter-spacing: .08em; color: #39E58C; }
+.schirm-info { margin-left: auto; font: 600 11px var(--mono); letter-spacing: .05em; opacity: .8; }
+.schirm canvas { width: 100%; height: 116px; display: block; }
+.schirm-unter {
+  margin: 0; padding: 8px 10px; font-size: 16px; line-height: 1.5;
+  background: var(--papier-hell); color: var(--tinte); border-top: 2px solid var(--tinte);
+}
+.schirme-frage { font: 700 17px var(--anzeige); margin: 4px 0 10px; }
+.schirme-frage:empty, .schirme.rueckschau .raetsel-knoepfe, .schirme.rueckschau .rueck { display: none; }
+
+.ampel-lage { font-size: 17px; line-height: 1.6; margin: 0 0 12px; }
+.ampel-schirm canvas { height: 130px; }
+.ampel-hinweis { font-size: 16px; margin: 12px 0 0; }
+.ampel-frage { font: 700 18px var(--anzeige); margin: 12px 0 8px; }
+.ampel-zeit { height: 14px; border: 2px solid var(--tinte); background: var(--papier); }
+.ampel-balken { height: 100%; width: 100%; background: var(--bernstein); }
+.ampel-sek { font: 700 15px var(--mono); margin: 6px 0 10px; }
+.ampel-wahl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.knopf.ampel-knopf {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  min-height: 92px; padding: 11px 14px; text-align: left; white-space: normal;
+  border-left-width: 12px; text-transform: none; letter-spacing: 0;
+}
+.ampel-knopf.gruen { border-left-color: var(--phosphor); }
+.ampel-knopf.gelb { border-left-color: var(--bernstein); }
+.ampel-knopf.rot { border-left-color: var(--magenta); }
+.ampel-kopf { display: flex; align-items: baseline; }
+.ampel-farbe { font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+.ampel-was { font: 700 17px var(--anzeige); }
+.ampel-wie { font: 400 15px/1.4 var(--text); }
+.knopf.ampel-knopf:hover { background: rgba(199, 127, 24, .22); color: var(--tinte); }
+.knopf.ampel-knopf.gewaehlt, .knopf.ampel-knopf.gewaehlt:disabled { background: var(--tinte); color: var(--papier); opacity: 1; }
+.knopf.ampel-knopf.gewaehlt .nr { color: var(--papier); }
+@media (max-width: 760px) {
+  .ampel-wahl { grid-template-columns: 1fr; }
+  .knopf.ampel-knopf { min-height: 64px; }
+}

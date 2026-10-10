@@ -1,11 +1,16 @@
-/* Durchlauf durch Kapitel 1 in echtem Chromium.
+/* Durchlauf durch Kapitel 1 und 2 in echtem Chromium.
    jsdom reicht hier nicht: Canvas, Zeigerereignisse, Layout und Animation
-   sind genau das, was schiefgeht.                                            */
+   sind genau das, was schiefgeht.
+
+   Aufruf: node tools/durchlauf.mjs [spiel.html] [bilderordner]
+   Ohne Angaben: bau/nachtdienst.html und bau/durchlauf/ in diesem Repository. */
 import { starteBrowser } from "./browser.mjs";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
-const DATEI = process.argv[2] || "/home/claude/spiel/bau/nachtdienst.html";
-const BILDER = process.argv[3] || "/home/claude/spiel/bau/durchlauf";
+const BAU = fileURLToPath(new URL("../bau/", import.meta.url));
+const DATEI = process.argv[2] || BAU + "nachtdienst.html";
+const BILDER = process.argv[3] || BAU + "durchlauf";
 fs.mkdirSync(BILDER, { recursive: true });
 
 const fehler = [], warnungen = [];
@@ -29,6 +34,19 @@ await seite.addInitScript(() => {
 });
 seite.on("console", (m) => { if (m.type() === "error") fehler.push("Konsole: " + m.text().slice(0, 160)); });
 seite.on("pageerror", (e) => fehler.push("Seitenfehler: " + String(e).slice(0, 200)));
+
+/* Bricht ein Schritt ab (Zeitüberschreitung o. ä.), trotzdem alles Bisherige
+   ausgeben und ein Bild vom Zustand machen — sonst sieht man nur den Stapel. */
+let abgebrochen = false;
+function abbruch(e) {
+  if (abgebrochen) return;
+  abgebrochen = true;
+  console.log(schritte.join("\n"));
+  console.log("\nABBRUCH: " + String((e && e.message) || e).split("\n")[0]);
+  seite.screenshot({ path: `${BILDER}/abbruch.png` }).catch(() => {}).finally(() => process.exit(1));
+}
+process.on("uncaughtException", abbruch);
+process.on("unhandledRejection", abbruch);
 
 async function schuss(name) {
   n++;
@@ -90,9 +108,8 @@ await warte(300);
 await feld("marlene").click();
 await warte(450);
 ok("Marlene spricht", await seite.locator(".dialog.an").isVisible());
-ok("Erstbegrüßung, nicht die Wiederholung",
-   ((await seite.locator(".dialog-text").textContent()) || "").includes("Famulantin"),
-   ((await seite.locator(".dialog-text").textContent()) || "").slice(0, 60));
+const gruss = await dialogLesen();                     /* erst fertig tippen lassen, dann lesen */
+ok("Erstbegrüßung, nicht die Wiederholung", gruss.includes("Famulantin"), gruss.slice(0, 60));
 ok("Porträt im Dialog", (await seite.locator(".dialog-bild svg").count()) === 1);
 await schuss("marlene");
 ok("Frage nach dem Fall", await antworte("Was ist passiert"));
@@ -251,6 +268,320 @@ await warte(300);
 ok("Hotspot-Hilfe schaltet sich ein", await seite.evaluate(
   () => document.querySelector(".felder").classList.contains("zeigen")));
 await schuss("hotspots_gezeigt");
+
+/* ================================================== Kapitel 2: Monitorzimmer
+   Vier Wege durch dasselbe Kapitel, alle bis zum offenen Ende:
+     A  Tastatur · erst zwei falsche Betten · Begründung PQ · Ampel: Arzt rufen
+     B  großer Monitor · Begründung Frequenz · Ampel weggeklickt, über Dr. Falk
+        wieder geholt · Zeit läuft ab
+     C  Neubetreten nach dem Fund · Ampel: Pacer
+     D  Neubetreten · Ampel weggeklickt, über den großen Monitor · Beobachten   */
+await warte(2600);                                         /* Hotspot-Hilfe aus */
+
+async function dialogLesen() {
+  if (!(await seite.locator(".dialog-antworten.an").count())) {   /* tippt noch */
+    await seite.locator(".dialog-text").click();
+    await warte(120);
+  }
+  return (await seite.locator(".dialog-text").textContent()) || "";
+}
+/* Klickt einen Dialog bis zum Ende durch und sammelt Texte und Knöpfe. */
+async function dialogDurchLesen(max = 16) {
+  const texte = [];
+  for (let i = 0; i < max; i++) {
+    if (!(await seite.locator(".dialog.an").count())) break;
+    texte.push(await dialogLesen());
+    const w = seite.locator(".dialog-antwort.weiter");
+    if (await w.count()) {
+      texte.push("[" + ((await w.first().textContent()) || "").trim() + "]");
+      await w.first().click(); await warte(300); continue;
+    }
+    const a = seite.locator(".dialog-antwort");
+    if ((await a.count()) === 1) {
+      texte.push("[" + ((await a.first().textContent()) || "").trim() + "]");
+      await a.first().click(); await warte(300); continue;
+    }
+    break;
+  }
+  return texte.join(" | ");
+}
+const zustand = () => seite.evaluate(() => JSON.parse(JSON.stringify(window.Spiel.zustand)));
+const K2 = await seite.evaluate(() => window.Spiel.KAPITEL2_EKG);
+const MESS = await seite.evaluate((k) => ({
+  baum: window.Spiel.satz(k.baum).mess, flimmern: window.Spiel.satz(k.flimmern).mess,
+  schnell: window.Spiel.satz(k.schnell).mess
+}), K2);
+/* Wo liegt welches Bett? Die Folge wird je Schicht gemischt. */
+async function bettIndex() {
+  await seite.evaluate(() => { window.Spiel.__betten(); });
+  const b = (await zustand()).werte.betten;
+  return { baum: b.indexOf(K2.baum), flimmern: b.indexOf(K2.flimmern), schnell: b.indexOf(K2.schnell) };
+}
+/* Alle sichtbaren Knöpfe eines Fensters mindestens 44 × 44 px? */
+async function fingergross(wurzel) {
+  return seite.evaluate((sel) => {
+    const zuKlein = [];
+    document.querySelectorAll(sel + " button").forEach((b) => {
+      const r = b.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return;              /* versteckt */
+      if (r.width < 44 || r.height < 44) zuKlein.push((b.textContent || "").trim().slice(0, 24) + " " +
+                                                       Math.round(r.width) + "×" + Math.round(r.height));
+    });
+    return zuKlein;
+  }, wurzel);
+}
+/* Nichts blinkt: keine CSS-Animation in den neuen Fenstern. */
+async function ohneBlinken(wurzel) {
+  return seite.evaluate((sel) => {
+    const an = [];
+    document.querySelectorAll(sel + ", " + sel + " *").forEach((el) => {
+      const n = getComputedStyle(el).animationName;
+      if (n && n !== "none") an.push(el.className + ":" + n);
+    });
+    return an;
+  }, wurzel);
+}
+const rueckText = async (sel) => ((await seite.locator(sel + " .rueck").textContent()) || "").trim();
+
+ok("K2: Falk hat den Auftrag gegeben", await seite.evaluate(() => window.Spiel.hat("k2_auftrag")));
+ok("K2: Neues Feld an der Monitorwand", (await feld("wand").count()) === 1);
+await seite.locator("#kopf-stand").click();
+await warte(400);
+const offenK2 = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
+ok("K2: Stand nennt den Auftrag", /drei Schirme/.test(offenK2), offenK2.slice(0, 140));
+ok("K2: Stand verrät weder Bett noch Merkmal",
+   !/Bett \d|Vorhofflimmern|PQ \d|\b228\b/.test(offenK2), offenK2.slice(0, 140));
+ok("K2: Kapitel 2 im Stand", /Kapitel 2/.test((await seite.locator("#stand-hof .stand-zeile").textContent()) || ""));
+await seite.locator("#stand-hof .zu").click();
+await warte(300);
+const vorZentrale = await seite.evaluate(() => window.localStorage.getItem("nachtdienst-1"));
+
+/* ------------------------------------------------------------ Weg A */
+await feld("wand").click();
+await warte(700);
+ok("A: Zentrale öffnet sich", await seite.locator("#schirme-hof.an").isVisible());
+ok("A: drei Schirme mit Kurve", (await seite.locator("#schirme-hof .schirm canvas").count()) === 3);
+const bilder = await seite.evaluate(() => Array.from(document.querySelectorAll("#schirme-hof .schirm canvas"))
+  .map((c) => c.getContext("2d").getImageData(0, 0, c.width, c.height).data.some((v, i) => i % 4 === 1 && v > 200)));
+ok("A: auf jedem Schirm leuchtet eine Kurve", bilder.length === 3 && bilder.every(Boolean), JSON.stringify(bilder));
+ok("A: „Zurück“ oben rechts", await seite.evaluate(() => {
+  const k = document.querySelector("#schirme-hof .raetsel-kopf"), z = k.querySelector(".zu");
+  return z.textContent.trim() === "Zurück" && k.getBoundingClientRect().right - z.getBoundingClientRect().right < 40;
+}));
+let zuKlein = await fingergross("#schirme-hof");
+ok("A: Knöpfe der Zentrale fingergroß", !zuKlein.length, zuKlein.join(", "));
+let blinkt = await ohneBlinken("#schirme-hof");
+ok("A: nichts blinkt in der Zentrale", !blinkt.length, blinkt.join(", "));
+await schuss("k2_zentrale");
+
+let idx = await bettIndex();
+await seite.keyboard.press(String(idx.flimmern + 1));         /* Ziffer wählt */
+await warte(250);
+let r = await rueckText("#schirme-hof");
+ok("A: falsches Bett (Flimmern) per Ziffer, mit Begründung",
+   (await seite.locator("#schirme-hof .rueck.fast").count()) === 1 && /P-Welle/.test(r) && /Vorhofflimmern/.test(r),
+   r.slice(0, 120));
+await seite.locator("#schirme-hof .frage-wahl .knopf").nth(idx.schnell).click();
+await warte(250);
+r = await rueckText("#schirme-hof");
+ok("A: falsches Bett (schnell) nennt Zahlen aus den Daten",
+   r.includes(String(MESS.schnell.frequenz)) && r.includes(String(MESS.schnell.pq)), r.slice(0, 160));
+await schuss("k2_zentrale_falsch");
+await seite.keyboard.press(String(idx.baum + 1));
+await warte(250);
+ok("A: richtiges Bett erkannt", (await seite.locator("#schirme-hof .rueck.gut").count()) === 1);
+await seite.keyboard.press("Enter");                         /* Enter führt weiter */
+await warte(300);
+ok("A: Begründungsfrage nennt das Bett",
+   ((await seite.locator("#schirme-hof .schirme-frage").textContent()) || "").includes("Bett " + (idx.baum + 1)));
+ok("A: sein Schirm ist hervorgehoben",
+   (await seite.locator(`#schirme-hof .schirm.hervor[data-i="${idx.baum}"]`).count()) === 1);
+await seite.keyboard.press("1");                             /* P-Wellen: reicht allein nicht */
+await warte(250);
+r = await rueckText("#schirme-hof");
+ok("A: „P vor jedem QRS“ allein reicht nicht — mit Grund",
+   (await seite.locator("#schirme-hof .rueck.fast").count()) === 1 && /nicht von beiden/.test(r), r.slice(0, 140));
+await seite.keyboard.press("3");                             /* PQ */
+await warte(250);
+r = await rueckText("#schirme-hof");
+ok("A: Begründung PQ angenommen, Zahlen aus den Daten",
+   (await seite.locator("#schirme-hof .rueck.gut").count()) === 1 &&
+   r.includes(String(MESS.baum.pq)) && r.includes(String(MESS.schnell.pq)), r.slice(0, 160));
+await schuss("k2_zentrale_begruendet");
+await seite.locator("#schirme-hof .weiter").click();
+await warte(600);
+ok("A: Befund „Monitor“ in der Mappe", await seite.evaluate(() => window.Mappe.hat("b-monitor")));
+ok("A: Dr. Falk antwortet auf die PQ-Begründung", /PQ-Zeit/.test(await dialogLesen()));
+await schuss("k2_falk_pq");
+const textA1 = await dialogDurchLesen();
+ok("A: Falk übergibt das Bett", /Ab jetzt gehört er Ihnen/.test(textA1), textA1.slice(-120));
+await warte(2400);
+ok("A: Bett klingelt — Ampel öffnet sich", await seite.locator("#ampel-hof.an").isVisible());
+const lage = (await seite.locator("#ampel-hof .ampel-lage").textContent()) || "";
+ok("A: Lage nennt Frequenz aus den Daten", lage.includes(MESS.baum.frequenz + " pro Minute"), lage.slice(-60));
+ok("A: Lage behauptet keinen höhergradigen Block",
+   !/Block|Pause|fällt aus|Wenckebach|Mobitz/i.test(lage), lage.slice(0, 80));
+ok("A: Monitor läuft in der Ampel", (await seite.locator("#ampel-hof canvas").count()) === 1);
+ok("A: Zeit läuft erst nach „Los“", (await seite.locator("#ampel-hof .ampel-entscheidung").isHidden()));
+await schuss("k2_ampel_lage");
+await seite.keyboard.press("Enter");                         /* Los */
+await warte(250);
+const breite1 = await seite.evaluate(() => document.querySelector("#ampel-hof .ampel-balken").getBoundingClientRect().width);
+await warte(1200);
+const breite2 = await seite.evaluate(() => document.querySelector("#ampel-hof .ampel-balken").getBoundingClientRect().width);
+ok("A: Zeitbalken schrumpft sichtbar", breite2 < breite1 - 20, Math.round(breite1) + " → " + Math.round(breite2));
+ok("A: drei Handlungen", (await seite.locator("#ampel-hof .ampel-knopf").count()) === 3);
+zuKlein = await fingergross("#ampel-hof");
+ok("A: Ampel-Knöpfe fingergroß", !zuKlein.length, zuKlein.join(", "));
+blinkt = await ohneBlinken("#ampel-hof");
+ok("A: nichts blinkt in der Ampel", !blinkt.length, blinkt.join(", "));
+await schuss("k2_ampel_entscheidung");
+await seite.keyboard.press("2");                             /* Arzt rufen */
+await seite.locator(".dialog.an").waitFor({ timeout: 4000 });
+ok("A: Falk zur richtigen Wahl", /Gerufen, und bei ihm geblieben/.test(await dialogLesen()));
+await schuss("k2_ampel_falk");
+const textA2 = await dialogDurchLesen();
+ok("A: Schlussszene nennt die Frequenz aus den Daten",
+   textA2.includes("Sinus, " + MESS.baum.frequenz + " pro Minute"), textA2.slice(0, 120));
+ok("A: Kapitel endet offen", /Speicher/.test(textA2) && /Ende des spielbaren Teils/.test(textA2), textA2.slice(-140));
+let z = await zustand();
+ok("A: Ziel erreicht (Wahl: Arzt)", z.marken.k2_fertig && z.werte.ampel === "arzt", JSON.stringify(z.werte.ampel));
+ok("A: vier Befunde", z.befunde.length === 4, String(z.befunde.length));
+
+await seite.locator("#kopf-stand").click();
+await warte(400);
+const fussA = (await seite.locator("#stand-hof .stand-fuss").textContent()) || "";
+const hatA = (await seite.locator("#stand-hof .hat li").allTextContents()).join(" | ");
+ok("A: Stand sagt, dass hier das Gebaute endet", /Damit endet/.test(fussA), fussA.slice(0, 80));
+ok("A: Stand führt die Episode auf", /geklingelt/.test(hatA), hatA.slice(-100));
+await schuss("k2_stand_ende");
+await seite.locator("#stand-hof .zu").click();
+await warte(300);
+
+/* Vergleich der neuen Karte mit dem Aufnahme-EKG */
+await seite.locator("#kopf-mappe").click();
+await warte(600);
+const titel = await seite.locator(".mappe .karte h3").allTextContents();
+const iMon = titel.findIndex((t) => /^Monitor/.test(t)), iPq = titel.findIndex((t) => /^PQ-Zeit/.test(t));
+await seite.locator(".mappe .karte").nth(iMon).click();
+await seite.locator(".mappe .karte").nth(iPq).click();
+await seite.locator(".mappe .vergleich").click();
+await warte(700);
+const pqSpanne = await seite.evaluate((id) => {
+  const w = window.Spiel.satz(id).schlaege.filter((s) => s.p0 !== undefined).map((s) => Math.round((s.q0 - s.p0) * 1000));
+  return { min: Math.min(...w), max: Math.max(...w) };
+}, K2.baum);
+const vergleich = (await seite.locator(".mappe-vergleich .verg-frage").textContent()) || "";
+ok("A: Monitorkarte lässt sich mit dem Aufnahme-EKG vergleichen",
+   (await seite.locator(".mappe-vergleich.an canvas").count()) === 2 &&
+   vergleich.includes(pqSpanne.min + " und " + pqSpanne.max + " ms"), vergleich.slice(0, 160));
+await schuss("k2_vergleich");
+await seite.locator(".mappe .zu").click();
+await warte(300);
+
+await feld("falk").click();
+await warte(450);
+ok("A: Falk danach, ohne neue Begrüßung", /Speicher/.test(await dialogLesen()));
+await dialogDurchLesen();
+await feld("wand").click();
+await warte(600);
+ok("A: Monitorwand danach als Rückschau mit Befund je Schirm",
+   (await seite.locator("#schirme-hof.an.rueckschau .schirm-unter").count()) === 3);
+await schuss("k2_rueckschau");
+await seite.keyboard.press("Escape");
+await warte(300);
+ok("A: Escape schließt die Rückschau", (await seite.locator("#schirme-hof.an").count()) === 0);
+
+/* ------------------------------------------------------------ Weg B */
+await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), vorZentrale);
+await seite.reload();
+await warte(2000);
+ok("B: wieder vor der Zentrale", !(await zustand()).marken.k2_bett && (await seite.locator(".dialog.an").count()) === 0);
+await feld("schirm").click();                                /* der große Monitor führt auch hin */
+await warte(700);
+ok("B: großer Monitor öffnet die Zentrale", await seite.locator("#schirme-hof.an").isVisible());
+idx = await bettIndex();
+await seite.locator("#schirme-hof .frage-wahl .knopf").nth(idx.baum).click();
+await warte(250);
+await seite.locator("#schirme-hof .weiter").click();
+await warte(300);
+await seite.locator("#schirme-hof .frage-wahl .knopf", { hasText: "Frequenz" }).click();
+await warte(250);
+r = await rueckText("#schirme-hof");
+ok("B: Begründung Frequenz angenommen, Zahlen aus den Daten",
+   (await seite.locator("#schirme-hof .rueck.gut").count()) === 1 &&
+   r.includes(String(MESS.baum.frequenz)) && r.includes(String(MESS.schnell.frequenz)) &&
+   r.includes(String(MESS.flimmern.frequenz)), r.slice(0, 160));
+await seite.locator("#schirme-hof .weiter").click();
+await warte(600);
+ok("B: Falk antwortet auf die Frequenz-Begründung", /Die Frequenz/.test(await dialogLesen()));
+const nachFund = await seite.evaluate(() => window.localStorage.getItem("nachtdienst-1"));
+await dialogDurchLesen();
+await warte(2400);
+ok("B: Ampel öffnet sich", await seite.locator("#ampel-hof.an").isVisible());
+await seite.locator("#ampel-hof .zu").click();               /* weggeklickt: keine Sackgasse */
+await warte(400);
+ok("B: „Zurück“ schließt die Ampel", (await seite.locator("#ampel-hof.an").count()) === 0);
+await seite.locator("#kopf-stand").click();
+await warte(400);
+const offenB = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
+ok("B: Stand erinnert an die Klingel", /hat geklingelt/.test(offenB), offenB.slice(-90));
+await seite.locator("#stand-hof .zu").click();
+await warte(300);
+await feld("falk").click();
+await warte(450);
+ok("B: Falk schickt zum Bett", /klingelt/.test(await dialogLesen()));
+await seite.locator(".dialog-antwort", { hasText: "Ich geh" }).click();
+await warte(900);
+ok("B: Ampel über Dr. Falk wieder da", await seite.locator("#ampel-hof.an").isVisible());
+await seite.locator("#ampel-hof .ampel-los").click();
+await seite.locator("#ampel-hof .rueck.fast").waitFor({ timeout: 13000 });   /* niemand entscheidet */
+ok("B: Zeit abgelaufen, mit Satz statt Strafe",
+   /Zeit ist um/.test(await rueckText("#ampel-hof")), await rueckText("#ampel-hof"));
+await schuss("k2_ampel_zeit");
+await seite.locator(".dialog.an").waitFor({ timeout: 4000 });
+ok("B: Falk korrigiert trocken", /Zehn Sekunden/.test(await dialogLesen()));
+const textB = await dialogDurchLesen();
+z = await zustand();
+ok("B: Ziel erreicht (Zeit abgelaufen)", z.marken.k2_fertig && z.werte.ampel === "zeit" &&
+   /Ende des spielbaren Teils/.test(textB), z.werte.ampel);
+ok("B: Karte nennt die Frequenz als Merkmal",
+   /Erkannt an der Frequenz/.test(z.befunde.find((b) => b.id === "b-monitor").text));
+
+/* ------------------------------------------------------------ Weg C */
+await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachFund);
+await seite.reload();
+await warte(2600);
+ok("C: beim Betreten klingelt das Bett (wieder)", await seite.locator("#ampel-hof.an").isVisible());
+await seite.locator("#ampel-hof .ampel-los").click();
+await warte(300);
+await seite.locator("#ampel-hof .ampel-knopf", { hasText: "Pacer" }).click();
+await seite.locator(".dialog.an").waitFor({ timeout: 4000 });
+ok("C: Falk korrigiert den Pacer", /Gelb, nicht Rot/.test(await dialogLesen()));
+await schuss("k2_ampel_pacer");
+await dialogDurchLesen();
+z = await zustand();
+ok("C: Ziel erreicht (Pacer)", z.marken.k2_fertig && z.werte.ampel === "pacer", z.werte.ampel);
+
+/* ------------------------------------------------------------ Weg D */
+await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachFund);
+await seite.reload();
+await warte(2600);
+await seite.keyboard.press("Escape");                        /* Escape schließt auch die Ampel */
+await warte(300);
+ok("D: Escape schließt die Ampel", (await seite.locator("#ampel-hof.an").count()) === 0);
+await feld("schirm").click();
+await warte(500);
+ok("D: großer Monitor holt die Ampel zurück", await seite.locator("#ampel-hof.an").isVisible());
+await seite.keyboard.press(" ");                             /* Leertaste: Los */
+await warte(250);
+await seite.keyboard.press("1");                             /* Beobachten */
+await seite.locator(".dialog.an").waitFor({ timeout: 4000 });
+ok("D: Falk korrigiert das bloße Beobachten", /Gelb, nicht Grün/.test(await dialogLesen()));
+await dialogDurchLesen();
+z = await zustand();
+ok("D: Ziel erreicht (Beobachten)", z.marken.k2_fertig && z.werte.ampel === "beobachten", z.werte.ampel);
+ok("Kapitel 2: vier Wege, alle am offenen Ende", true);
 
 /* ------------------------------------------------- 9c Drei Sprachen */
 for (const [kurz, probe] of [["en", "Findings"], ["ru", "Папка находок"]]) {

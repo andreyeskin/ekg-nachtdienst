@@ -1,4 +1,4 @@
-/* „Nachtdienst" — Kapitel 1: Aufnahme, 06:40.
+/* „Nachtdienst" — Kapitel 1: Aufnahme, 06:40 · Kapitel 2: Monitorzimmer, 09:15.
    Fall: Herr Konrad Baum, 68, zwei Synkopen ohne Vorwarnung.
    Alle Kurven stammen aus echten Aufnahmen (LUDB), alle Zeiten aus deren
    Experten-Annotation. Erfunden sind nur die Menschen.                        */
@@ -7,6 +7,17 @@
 
   var SCHLUESSEL = "nachtdienst-1";
   var AUFNAHME_EKG = 39;          /* Sinusbradykardie, PQ 228 ms — AV-Block I° */
+  /* Kapitel 2: die beiden anderen Betten an der Monitorwand. Gewählt nach den
+     Feldern rhythmus und mess in data/ekg_daten.json. Von den drei Merkmalen,
+     an denen man Herrn Baum erkennen kann (P vor jedem QRS · Frequenz · PQ),
+     trennen ihn Frequenz und PQ von beiden — „P vor jedem QRS" nur von einem. */
+  var SCHIRM_FLIMMERN_EKG = 96;   /* "Atrial fibrillation.", mess.pq null: keine P-Welle, RR unregelmäßig,
+                                     QRS schmal, mess.frequenz 90. Aufnahme 110 wäre ohne Nebendiagnose,
+                                     hat aber einen großen aberranten Komplex im Fenster — verwirrt. */
+  var SCHIRM_SCHNELL_EKG = 114;   /* "Sinus tachycardia.", mess.frequenz 91, mess.pq 140: P vor jedem QRS wie
+                                     bei ihm, aber schneller und PQ normal. Im Text nur „Sinusrhythmus": Der
+                                     Median über den Streifen liegt unter 100/min, „Tachykardie" wäre schief. */
+  var KAP2_FENSTER = { von: 2.8, dauer: 6 };   /* auf allen drei Schirmen derselbe Ausschnitt */
   var SATZ = {};
 
   var Z = {
@@ -302,6 +313,7 @@
 
     falk: {
       start: {
+        umleiten: function () { return hat("k2_auftrag") ? "wieder" : null; },
         text: "Sie sind die Neue. Falk. — Bevor Sie etwas sagen: Ich will nicht hören, was Sie vermuten. "
             + "Ich will hören, was Sie gemessen haben.",
         antworten: [
@@ -341,8 +353,93 @@
         weiter: "ende"
       },
       ende: {
-        text: "So. Jetzt wird beobachtet. Und beobachten heißt: hinschauen, nicht abwarten. — "
-            + "Hier endet das, was bisher gebaut ist. Der Rest der Schicht kommt noch.",
+        text: "So. Jetzt wird beobachtet. Und beobachten heißt: hinschauen, nicht abwarten.",
+        weiter: "schirme"
+      },
+
+      /* ---------------------------------------------- Kapitel 2: Monitorzimmer */
+      schirme: {
+        text: "Da oben an der Wand hängen drei Betten. Eins davon ist Ihr Herr Baum. — Die Namen hab ich "
+            + "ausgeblendet. Namen lesen kann jeder. Sagen Sie mir, welches Bett er ist. Und woran Sie es sehen.",
+        tu: function () { setze("k2_auftrag"); global.Szene.aktualisiere(); },
+        endeText: "Ich schau nach."
+      },
+      wieder: {
+        text: function () {
+          if (hat("k2_fertig")) return T("Ich bin am Speicher. — Bleiben Sie bei ihm.");
+          if (hat("k2_klingel")) return T("Bett {n} klingelt. — Gehen Sie.", { n: bettVon(AUFNAHME_EKG) });
+          if (hat("k2_bett")) return T("Bett {n}. Er gehört jetzt Ihnen. — Ich bin hier.", { n: bettVon(AUFNAHME_EKG) });
+          return T("Und? Welches Bett?");
+        },
+        antworten: [
+          { text: "Woran soll ich ihn erkennen?", zu: "tipp", wenn: function () { return !hat("k2_bett"); } },
+          { text: "Ich schau noch.", zu: null, wenn: function () { return !hat("k2_bett"); } },
+          {
+            text: "Ich geh.", zu: null,
+            wenn: function () { return hat("k2_klingel") && !hat("k2_fertig"); },
+            tu: function () { global.setTimeout(ampelAusloesen, 300); }
+          }
+        ],
+        endeText: "Gut."
+      },
+      tipp: {
+        text: "An dem, was Sie heute früh gemessen haben. — Sonst an nichts.",
+        endeText: "Verstanden."
+      },
+      k2_pq: {
+        text: function () {
+          return T("Die PQ-Zeit. Gut. — Langsam sind viele. Eine Überleitung, die sich so viel Zeit lässt, hat an "
+                 + "dieser Wand nur er.")
+               + (global.Mappe.hat("b-pq")
+                  ? " " + T("Sie haben sie heute früh selbst gemessen. Darum sehen Sie sie jetzt.") : "");
+        },
+        weiter: "k2_wache"
+      },
+      k2_frequenz: {
+        text: "Die Frequenz. — Stimmt. Heute. An dieser Wand ist er der einzige Langsame. Morgen hängen hier "
+            + "vielleicht drei Langsame. Dann brauchen Sie die PQ-Zeit.",
+        weiter: "k2_wache"
+      },
+      k2_wache: {
+        text: function () {
+          return T("Bett {n}. Ab jetzt gehört er Ihnen. — Ich bin hier.", { n: bettVon(AUFNAHME_EKG) });
+        },
+        endeText: "Verstanden."
+      },
+
+      /* Nach der Ampel. Keine Strafe: Jede Wahl, auch keine, endet in derselben
+         Szene am Bett — nur der Weg dorthin ist ein anderer. */
+      ampel_arzt: {
+        text: "Gut. — Gerufen, und bei ihm geblieben. Beides. Er ist mit zwei Ohnmachten hier und wird blass. "
+            + "Das will ich wissen. Sofort, nicht nachher.",
+        weiter: "ampel_schluss"
+      },
+      ampel_beobachten: {
+        text: "Ich hab die Klingel gehört. — Hinschauen ist richtig. Allein reicht es nicht. Er ist mit zwei "
+            + "Ohnmachten hier und wird blass. Das sagen Sie mir. Sofort. Bleiben und rufen: Gelb, nicht Grün.",
+        weiter: "ampel_schluss"
+      },
+      ampel_pacer: {
+        text: "Ich hab die Klingel gehört. Langsam. — Er redet mit Ihnen. Seine Hände sind warm. Der Pacer ist "
+            + "für einen Kreislauf, der an der langsamen Frequenz scheitert. Seiner hält. Bleiben und mich rufen: "
+            + "Gelb, nicht Rot.",
+        weiter: "ampel_schluss"
+      },
+      ampel_zeit: {
+        text: "Ich hab die Klingel gehört. — Zehn Sekunden sind lang, wenn man nichts tut. Er ist blass, aber "
+            + "wach, und er redet. Bleiben und mich rufen: Gelb.",
+        weiter: "ampel_schluss"
+      },
+      ampel_schluss: {
+        text: function () {
+          return T("Sinus, {hf} pro Minute. Vor jedem QRS ein P. Die Überleitung lang, wie heute früh. — Das ist "
+                 + "jetzt. Was vorhin war, als ihm komisch wurde, zeigt der Speicher. Den schau ich mir an.",
+                   { hf: satz(AUFNAHME_EKG).mess.frequenz });
+        },
+        weiter: "ende2"
+      },
+      ende2: {
+        text: "Bleiben Sie bei ihm. — Hier endet, was bisher gebaut ist. Der Rest der Schicht kommt noch.",
         endeText: "Ende des spielbaren Teils"
       }
     }
@@ -482,6 +579,211 @@
       '<rect x="152" y="36" width="32" height="4" fill="#10212B" opacity=".45"/></svg>';
   }
 
+  /* ============================================================ Kapitel 2: Monitorzimmer, 09:15
+     Drei Schirme, drei echte Aufnahmen; welcher ist Herr Baum, und woran sieht
+     man es? Danach klingelt sein Bett: die Ampel. Zwei Begründungen tragen
+     (PQ-Zeit oder Frequenz), jede Ampel-Wahl führt weiter. Das Kapitel endet
+     offen — was der Speicher zeigt, ist noch nicht gebaut.                    */
+
+  /* Bettenfolge: einmal je Schicht gemischt und gespeichert, damit Herr Baum
+     nicht immer auf demselben Platz liegt. */
+  function betten() {
+    var ids = Z.werte.betten, alle = [AUFNAHME_EKG, SCHIRM_FLIMMERN_EKG, SCHIRM_SCHNELL_EKG];
+    var gueltig = ids && ids.length === alle.length &&
+                  alle.every(function (id) { return ids.indexOf(id) >= 0 && SATZ[id]; });
+    if (!gueltig) {
+      ids = alle.slice();
+      for (var i = ids.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1)), t = ids[i];
+        ids[i] = ids[j]; ids[j] = t;
+      }
+      Z.werte.betten = ids;
+      sichere();
+    }
+    return ids.map(function (id, i) { return { nr: i + 1, id: id, satz: satz(id) }; });
+  }
+  function bettVon(id) { return Math.max(0, betten().map(function (b) { return b.id; }).indexOf(id)) + 1; }
+
+  /* Kleinster und größter Wert einer Strecke über alle annotierten Schläge —
+     für ehrliche Vergleiche zwischen einem gemessenen Schlag und dem Median. */
+  function spanne(s, von, bis, folge) {
+    var sl = s.schlaege, w = [];
+    for (var i = 0; i < sl.length; i++) {
+      var a = sl[i][von], b = folge ? (sl[i + 1] && sl[i + 1][bis]) : sl[i][bis];
+      if (a !== undefined && b !== undefined) w.push(Math.round((b - a) * 1000));
+    }
+    return { min: Math.min.apply(null, w), max: Math.max.apply(null, w) };
+  }
+
+  function fensterOffen() {
+    return !!document.querySelector(".raetsel.an, .mappe.an");
+  }
+
+  function zentrale() {
+    if (!hat("k2_auftrag")) setze("k2_auftrag");
+    var B = betten();
+    var nB = bettVon(AUFNAHME_EKG), nF = bettVon(SCHIRM_FLIMMERN_EKG), nS = bettVon(SCHIRM_SCHNELL_EKG);
+    var mB = satz(AUFNAHME_EKG).mess, mF = satz(SCHIRM_FLIMMERN_EKG).mess, mS = satz(SCHIRM_SCHNELL_EKG).mess;
+
+    var unter = {};
+    unter[AUFNAHME_EKG] = T("Herr Baum. Sinusbradykardie, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger "
+                          + "als ein großes Kästchen: AV-Block I. Grades.", { hf: mB.frequenz, pq: mB.pq });
+    unter[SCHIRM_FLIMMERN_EKG] = T("Keine P-Wellen, die RR-Abstände springen, etwa {hf}/min: Vorhofflimmern.",
+                                   { hf: mF.frequenz });
+    unter[SCHIRM_SCHNELL_EKG] = T("Sinusrhythmus, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — im Rahmen.",
+                                  { hf: mS.frequenz, pq: mS.pq });
+    var schirme = B.map(function (b) {
+      return { name: T("Bett {n}", { n: b.nr }), satz: b.satz, von: KAP2_FENSTER.von, dauer: KAP2_FENSTER.dauer,
+               unter: hat("k2_bett") ? unter[b.id] : null };
+    });
+
+    if (hat("k2_bett")) {
+      global.Schirme.starte({
+        titel: "Zentrale · drei Betten",
+        text: "Zum Nachlesen: was auf jedem Schirm zu sehen ist.",
+        schirme: schirme, hervor: nB - 1
+      });
+      return;
+    }
+
+    var warumBett = {};
+    warumBett[AUFNAHME_EKG] = T("Bett {n} ist Herr Baum. Woran man das sieht, ist die nächste Frage.", { n: nB });
+    warumBett[SCHIRM_FLIMMERN_EKG] = T("Auf Bett {n} steht vor keinem QRS eine P-Welle, und die Abstände springen — "
+                                     + "Vorhofflimmern. Herr Baum hatte heute früh vor jedem QRS ein P, in gleichen "
+                                     + "Abständen.", { n: nF });
+    warumBett[SCHIRM_SCHNELL_EKG] = T("Auf Bett {n} steht vor jedem QRS eine P-Welle, wie bei ihm. Aber das Herz "
+                                    + "schlägt {hf} pro Minute, und die PQ-Zeit ist mit {pq} ms kürzer als ein großes "
+                                    + "Kästchen. Herr Baum ist langsamer, und seine Überleitung ist länger.",
+                                      { n: nS, hf: mS.frequenz, pq: mS.pq });
+
+    global.Schirme.starte({
+      titel: "Zentrale · drei Betten",
+      text: "Drei Schirme, drei Patienten, die Namen ausgeblendet. Ein großes Kästchen sind 200 ms.",
+      schirme: schirme,
+      schritte: [
+        {
+          frage: "Welches Bett ist Herr Baum?",
+          antworten: B.map(function (b) {
+            return { text: T("Bett {n}", { n: b.nr }), richtig: b.id === AUFNAHME_EKG, warum: warumBett[b.id] };
+          })
+        },
+        {
+          frage: T("Woran siehst du, dass Bett {n} Herr Baum ist?", { n: nB }),
+          hervor: nB - 1,
+          antworten: [
+            {
+              merkmal: "p", text: "An den P-Wellen: Vor jedem QRS steht eine.",
+              warum: T("Das stimmt für ihn und schließt Bett {f} aus, wo keine P-Welle zu finden ist. Aber Bett {s} "
+                     + "hat auch vor jedem QRS eine P-Welle. Allein trennt dieses Merkmal ihn nicht von beiden.",
+                       { f: nF, s: nS })
+            },
+            {
+              merkmal: "frequenz", richtig: true, text: "An der Frequenz: Er ist der Langsamste.",
+              warum: T("An dieser Wand ja: {hf} pro Minute gegen {hfs} auf Bett {s} und etwa {hff} auf Bett {f}. "
+                     + "Heute reicht das. Langsam sind aber viele — was nur zu ihm gehört, ist die lange PQ-Zeit.",
+                       { hf: mB.frequenz, hfs: mS.frequenz, hff: mF.frequenz, s: nS, f: nF })
+            },
+            {
+              merkmal: "pq", richtig: true, text: "An der PQ-Zeit: länger als ein großes Kästchen.",
+              warum: T("Nur auf Bett {n} braucht der Impuls vom Vorhof zur Kammer länger als 200 ms: {pq} ms, Median "
+                     + "aller Schläge. Bett {s} kommt mit {pqs} ms aus, Bett {f} hat gar keine P-Welle und damit keine "
+                     + "PQ-Zeit. Das ist das Merkmal, das nur er hat.",
+                       { n: nB, pq: mB.pq, s: nS, pqs: mS.pq, f: nF })
+            }
+          ]
+        }
+      ],
+      fertig: function (g) { bettGefunden(g[1].merkmal); }
+    });
+  }
+
+  function bettGefunden(merkmal) {
+    var s = satz(AUFNAHME_EKG), m = s.mess, n = bettVon(AUFNAHME_EKG);
+    var pq = spanne(s, "p0", "q0"), rr = spanne(s, "r", "r", true);
+    setze("k2_bett");
+    Z.werte.merkmal = merkmal;
+    zeitVor(7);
+    befund({
+      id: "b-monitor", titel: T("Monitor: Bett {n}", { n: n }), zeit: zeitText(),
+      text: T("Herr Baum am Monitor: Sinusbradykardie, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger als "
+            + "ein großes Kästchen. Monitorwerte sind der Median aller Schläge im Streifen.", { hf: m.frequenz, pq: m.pq })
+          + " " + (merkmal === "pq"
+                   ? T("Erkannt an der PQ-Zeit: Die hat an der Wand nur er.")
+                   : T("Erkannt an der Frequenz: heute der einzige Langsame an der Wand.")),
+      ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 3.0, dauer: 5 },
+      vergleich: {
+        "b-pq": T("Heute früh am Wagen, jetzt am Monitor: dieselbe lange Überleitung, und jede P-Welle kommt durch. "
+                + "Nicht schlechter, nicht besser. Dein Wert von heute früh stammt aus einem Schlag; über alle Schläge "
+                + "liegt die PQ-Zeit zwischen {min} und {max} ms. Das ist Messung, keine Veränderung.",
+                  { min: pq.min, max: pq.max }),
+        "b-frequenz": T("Dieselbe Frequenz wie am Morgen: langsam, aber gleichmäßig. Dein Wert kommt aus einem "
+                      + "RR-Abstand; im ganzen Streifen liegen die RR-Abstände zwischen {min} und {max} ms.",
+                        { min: rr.min, max: rr.max }),
+        "b-rhythmus": T("Morgens wie jetzt: vor jedem QRS eine P-Welle, gleiche Abstände. Der Sinusknoten gibt den "
+                      + "Takt."),
+        "b-medis": T("Der Betablocker kann beides mit erklären, was der Monitor zeigt: den langsamen Takt und die lange "
+                   + "Überleitung. Die Ohnmachten erklärt er allein nicht.")
+      }
+    });
+    global.Dialog.starte("falk", merkmal === "pq" ? "k2_pq" : "k2_frequenz", function () {
+      global.setTimeout(ampelAusloesen, 1800);
+    });
+  }
+
+  /* Die Ampel. Ausgelöst einmal nach dem Fund; wer „Zurück" tippt, findet sie
+     wieder am großen Monitor, an der Wand, bei Dr. Falk oder beim nächsten
+     Betreten des Raums. Keine Sackgasse. */
+  function ampelAusloesen() {
+    if (!hat("k2_bett") || hat("k2_fertig")) return;
+    if (!hat("k2_klingel")) { setze("k2_klingel"); zeitVor(11); }
+    if (global.Szene.aktueller() !== "monitor" || global.Dialog.laeuft() || fensterOffen()) return;
+    var s = satz(AUFNAHME_EKG), n = bettVon(AUFNAHME_EKG);
+    global.Ampel.starte({
+      titel: T("Bett {n} klingelt", { n: n }),
+      lage: T("Ein paar Minuten später klingelt Bett {n}. Du bist als Erste bei ihm. Herr Baum sitzt auf der "
+            + "Bettkante, er wollte aufstehen. Er ist blass. „Mir war gerade ganz komisch. Jetzt geht's schon wieder. "
+            + "Entschuldigung.“ Er ist wach, antwortet in ganzen Sätzen, seine Hände sind warm. Der Monitor über dem "
+            + "Bett zählt {hf} pro Minute.", { n: n, hf: s.mess.frequenz }),
+      frage: "Was tust du?",
+      ekg: { satz: s, name: T("Bett {n} · Herr Baum", { n: n }), von: KAP2_FENSTER.von, dauer: 5 },
+      sekunden: 10,
+      wahl: [
+        { id: "beobachten", farbe: "gruen", ampel: "Grün", text: "Beobachten",
+          wie: "Bei ihm bleiben, den Monitor im Blick." },
+        { id: "arzt", farbe: "gelb", ampel: "Gelb", text: "Arzt rufen",
+          wie: "Dr. Falk rufen." },
+        { id: "pacer", farbe: "rot", ampel: "Rot", text: "Pacer vorbereiten",
+          wie: "Elektroden für den externen Schrittmacher kleben." }
+      ],
+      danach: "Dr. Falk kommt.",
+      fertig: ampelSzene,
+      abbruch: function () { melde(T("Bett {n} klingelt noch.", { n: n }), "warnung"); }
+    });
+  }
+
+  function ampelSzene(id) {
+    var wahl = id || "zeit";
+    Z.werte.ampel = wahl;
+    setze("k2_fertig");
+    zeitVor(4);
+    global.Dialog.starte("falk", "ampel_" + wahl);
+  }
+
+  function grosserMonitor() {
+    if (hat("k2_klingel") && !hat("k2_fertig")) { ampelAusloesen(); return; }
+    if (hat("k2_bett")) {
+      melde(T("Bett {n} · Herr Baum. Sinusbradykardie, {hf}/min, vor jedem QRS eine P-Welle.",
+              { n: bettVon(AUFNAHME_EKG), hf: satz(AUFNAHME_EKG).mess.frequenz }));
+      return;
+    }
+    zentrale();
+  }
+
+  function monitorwand() {
+    if (hat("k2_klingel") && !hat("k2_fertig")) { ampelAusloesen(); return; }
+    zentrale();
+  }
+
   /* ------------------------------------------------------------ Stand der Schicht */
   function kapitelStand() {
     var hat = [], offen = [], M = global.Mappe;
@@ -514,8 +816,21 @@
       offen.push("Dr. Falk steht im Monitorzimmer und wartet auf Zahlen.");
     }
 
+    /* Kapitel 2 — nennt das Ziel, nie die Lösung: kein Bett, kein Merkmal, bevor
+       der Spieler es selbst gefunden hat. */
+    if (Z.marken.k2_fertig) {
+      hat.push(T("Bett {n} hat geklingelt: Herr Baum war blass. Dr. Falk sieht sich den Speicher an.",
+                 { n: bettVon(AUFNAHME_EKG) }));
+    }
+    if (Z.marken.falk_gesprochen && !Z.marken.k2_bett) {
+      offen.push("Dr. Falk will wissen, welcher der drei Schirme an der Wand Herrn Baum gehört — und woran du es siehst.");
+    }
+    if (Z.marken.k2_klingel && !Z.marken.k2_fertig) {
+      offen.push(T("Bett {n} hat geklingelt. Herr Baum wartet.", { n: bettVon(AUFNAHME_EKG) }));
+    }
+
     var fuss = "";
-    if (Z.marken.ankunft_monitor && Z.marken.falk_gesprochen) {
+    if (Z.marken.k2_fertig) {
       fuss = "Damit endet, was bisher gebaut ist. Der Rest der Schicht — Station, Intensiv, "
            + "Aufwachraum, Chefvisite — kommt noch.";
     } else if (!Z.befunde.length) {
@@ -601,18 +916,29 @@
         kopfAuffrischen(); sichere();
         starteMonitor();
         global.setTimeout(function () {
+          if (global.Szene.aktueller() !== "monitor") return;
           if (!hat("falk_gesprochen")) {
             setze("falk_gesprochen");
             global.Dialog.starte("falk", "start");
+          } else if (hat("k2_bett") && !hat("k2_fertig")) {
+            ampelAusloesen();                       /* Kapitel 2: Bett klingelt (wieder) */
           }
         }, 1400);
       },
       felder: [
+        /* --- Kapitel 2: neue Felder --- */
+        {
+          id: "wand", name: "Monitorwand · drei Betten",
+          punkte: [[500, 112], [1384, 104], [1384, 340], [500, 352]],
+          erledigt: function () { return hat("k2_bett"); },
+          bei: function () { monitorwand(); }
+        },
+        /* --- Ende Kapitel 2: neue Felder --- */
         {
           id: "schirm", name: "Großer Monitor",
           punkte: [[794, 372], [1116, 372], [1116, 604], [794, 604]],
           bei: function () {
-            melde("Sinusbradykardie, 53/min. Keine Pause in den letzten Minuten.");
+            grosserMonitor();
           }
         },
         {
@@ -741,6 +1067,8 @@
     start: start, melde: melde, neuZeichnen: neuZeichnen, sichere: sichere, zaehlerAuffrischen: kopfAuffrischen,
     zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn,
     __dialoge: DIALOGE, __ekgSchreiben: ekgSchreiben, __messePq: messePq, __messeFrequenz: messeFrequenz,
-    __tuete: tueteAnsehen
+    __tuete: tueteAnsehen,
+    __betten: betten, __zentrale: zentrale, __ampel: ampelAusloesen,
+    KAPITEL2_EKG: { baum: AUFNAHME_EKG, flimmern: SCHIRM_FLIMMERN_EKG, schnell: SCHIRM_SCHNELL_EKG }
   };
 })(window);
