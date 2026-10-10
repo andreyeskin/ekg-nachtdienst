@@ -21,7 +21,7 @@ def mat(name, color, rough=0.6, metallic=0.0, emission=None, strength=1.0):
 # светлоты заданы осознанно: стены светлые, мебель тёмная, чтобы силуэты читались после постеризации
 G = {
     "wall": mat("wall", (0.62, 0.60, 0.55), 0.85), "wall_low": mat("wall_low", (0.30, 0.36, 0.36), 0.8),
-    "ceiling": mat("ceiling", (0.25, 0.25, 0.24), 0.9), "floor": mat("floor", (0.50, 0.48, 0.44), 0.35),
+    "ceiling": mat("ceiling", (0.25, 0.25, 0.24), 0.9), "cornice": mat("cornice", (0.7, 0.68, 0.62), 0.8), "floor": mat("floor", (0.50, 0.48, 0.44), 0.35),
     "dark": mat("dark", (0.07, 0.08, 0.09), 0.5), "mid": mat("mid", (0.22, 0.24, 0.25), 0.55),
     "wood": mat("wood", (0.36, 0.26, 0.17), 0.5), "paper": mat("paper", (0.90, 0.86, 0.78), 0.8),
     "cork": mat("cork", (0.42, 0.30, 0.18), 0.9), "metal": mat("metal", (0.45, 0.47, 0.48), 0.35, 0.7),
@@ -81,6 +81,10 @@ bpy.data.objects.remove(_hole, do_unlink=True)
 box((40, 30, 0.1), (0, 16, -0.05), mat("ground", (0.35, 0.42, 0.3), 0.9), "bg", bevel=0, name="ground")
 box((W + 2, DEPTH + 2, 0.1), (0, -DEPTH / 2 + 0.5, -0.05), G["floor"], "bg", bevel=0, name="floor")
 box((W + 2, DEPTH + 2, 0.1), (0, -DEPTH / 2 + 0.5, H + 0.05), G["ceiling"], "bg", bevel=0, name="ceiling")
+# Deckenkante: schmale Leiste am Übergang Wand/Decke, damit die Tuschelinie den Stoß zeigt
+box((W, 0.06, 0.06), (0, -0.03, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_back")
+box((0.06, DEPTH + 2, 0.06), (-W / 2 + 0.03, -DEPTH / 2 + 0.5, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_left")
+box((0.06, DEPTH + 2, 0.06), (W / 2 - 0.03, -DEPTH / 2 + 0.5, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_right")
 box((0.3, DEPTH + 2, H), (-W / 2 - 0.15, -DEPTH / 2 + 0.5, H / 2), G["wall"], "bg", bevel=0, name="wall_left")
 box((0.3, DEPTH + 2, H), (W / 2 + 0.15, -DEPTH / 2 + 0.5, H / 2), G["wall"], "bg", bevel=0, name="wall_right")
 # нижняя тёмная панель стены (как в прототипе) и рейка

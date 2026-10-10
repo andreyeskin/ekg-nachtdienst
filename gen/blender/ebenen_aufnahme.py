@@ -14,7 +14,7 @@ sc = bpy.context.scene
 hexc = lambda s: tuple(int(s[i:i + 2], 16) / 255 for i in (1, 3, 5))
 # палитра ligne claire: приглушённая, светлая, один ржавый акцент
 PAL = {
-    "wall": "#EFE6D3", "wall_low": "#BFD9CF", "ceiling": "#EEE7DA", "floor": "#DCD3C0",
+    "wall": "#EFE6D3", "cornice": "#F7F1E4", "wall_low": "#BFD9CF", "ceiling": "#DDD6C4", "floor": "#DCD3C0",
     "wood": "#C99A5B", "paper": "#F7F1E4", "cork": "#B98B5A", "dark": "#2C3E46", "mid": "#2C5560",
     "metal": "#8A9598", "glass": "#EAF1F2", "slat": "#F4EBD8", "screen": "#CDEBDA", "lampshade": "#2C3E46",
     "accent": "#B5552D", "dawn": "#F8E7BF", "corridor": "#F3D9A8", "ground": "#CFD9C2",
