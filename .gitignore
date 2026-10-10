@@ -10,3 +10,6 @@ bau/
 bau/
 node_modules/
 .DS_Store
+
+# macOS
+.DS_Store
