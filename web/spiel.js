@@ -610,21 +610,21 @@
       felder: [
         {
           id: "schirm", name: "Großer Monitor",
-          punkte: [[794, 372], [1116, 372], [1116, 604], [794, 604]],
+          punkte: [[638, 308], [955, 308], [955, 498], [638, 498]],
           bei: function () {
             melde("Sinusbradykardie, 53/min. Keine Pause in den letzten Minuten.");
           }
         },
         {
           id: "falk", name: "Dr. Falk",
-          punkte: [[1178, 348], [1292, 348], [1300, 700], [1166, 700]],
+          punkte: [[1159, 350], [1299, 350], [1299, 703], [1159, 703]],
           bei: function () { global.Dialog.starte("falk", "start"); }
         }
       ],
       ausgaenge: [
         {
           name: "Zurück in die Aufnahme", nach: "aufnahme",
-          punkte: [[0, 300], [150, 300], [150, 880], [0, 880]]
+          punkte: [[0, 286], [132, 286], [132, 656], [0, 656]]
         }
       ]
     });

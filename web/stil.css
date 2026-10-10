@@ -108,8 +108,10 @@ body {
 }
 .feldname.an { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* Bildfläche des großen Schirms: hitboxes.json "schirm_bild" (650,321–943,487 von 1600x900), umgerechnet
+   auf die Bühne — die Ebenen ragen 16 px über jeden Rand und sind „slice" eingepasst (Bezug 1402 px breit). */
 .monitor-lauf {
-  position: absolute; left: 49.9%; top: 43.2%; width: 18.4%; height: 19.5%;
+  position: absolute; left: 40.30%; top: 35.10%; width: 18.98%; height: 19.13%;
   pointer-events: none; overflow: hidden;
 }
 .monitor-lauf canvas { width: 100%; height: 100%; display: block; }

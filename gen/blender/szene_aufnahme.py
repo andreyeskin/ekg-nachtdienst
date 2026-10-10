@@ -69,24 +69,21 @@ def sphere(r, loc, m, layer, hit=None, name="sph"):
 
 # ---------------- комната: задняя стена y=0, камера смотрит вдоль +y ----------------
 W, H, DEPTH = 10.0, 3.0, 9.0
-# задняя стена с проёмом под окно: один меш с отверстием (булево), чтобы Freestyle не рисовал швы
+# Raum als EIN Netz mit Fensterloch (werkzeug.raum_huelle): Wand/Decke, Wand/Wand, Wand/Boden sind echte Kanten.
+# Getrennte Kisten gaben dort keine Linie, eine flackernde (linke Wandoberkante genau in der Deckenfläche) oder
+# lose Striche (Kanten, die hinter die Kamera reichen) — die Streulinien oben links und über dem Fenster.
+from werkzeug import loch, raum_huelle
 _WX0, _WX1, _WZ0, _WZ1 = -1.25, 1.45, 1.35, 2.75
-_wall = box((W + 2, 0.3, H + 0.4), (0, 0.15, H / 2), G["wall"], "bg", bevel=0, name="wall_back")
-bpy.ops.mesh.primitive_cube_add(size=1, location=((_WX0 + _WX1) / 2, 0.15, (_WZ0 + _WZ1) / 2))
-_hole = bpy.context.object; _hole.scale = (_WX1 - _WX0, 0.6, _WZ1 - _WZ0); bpy.ops.object.transform_apply(scale=True)
-_md = _wall.modifiers.new("hole", 'BOOLEAN'); _md.operation = 'DIFFERENCE'; _md.object = _hole
-bpy.context.view_layer.objects.active = _wall; bpy.ops.object.modifier_apply(modifier="hole")
-bpy.data.objects.remove(_hole, do_unlink=True)
+_wall = _tag(loch(raum_huelle(-W / 2, W / 2, H, G["wall"], G["floor"], G["ceiling"], 7.0, name="room"),
+                  (_WX1 - _WX0, 0.8, _WZ1 - _WZ0), ((_WX0 + _WX1) / 2, 0.15, (_WZ0 + _WZ1) / 2)), "bg")
 # снаружи: земля и небо для рассеянного света (в прямом солнечном проходе не мешают)
 box((40, 30, 0.1), (0, 16, -0.05), mat("ground", (0.35, 0.42, 0.3), 0.9), "bg", bevel=0, name="ground")
-box((W + 2, DEPTH + 2, 0.1), (0, -DEPTH / 2 + 0.5, -0.05), G["floor"], "bg", bevel=0, name="floor")
-box((W + 2, DEPTH + 2, 0.1), (0, -DEPTH / 2 + 0.5, H + 0.05), G["ceiling"], "bg", bevel=0, name="ceiling")
 # Deckenkante: schmale Leiste am Übergang Wand/Decke, damit die Tuschelinie den Stoß zeigt
-box((W, 0.06, 0.06), (0, -0.03, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_back")
-box((0.06, DEPTH + 2, 0.06), (-W / 2 + 0.03, -DEPTH / 2 + 0.5, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_left")
-box((0.06, DEPTH + 2, 0.06), (W / 2 - 0.03, -DEPTH / 2 + 0.5, H - 0.03), G["cornice"], "bg", bevel=0, name="cornice_right")
-box((0.3, DEPTH + 2, H), (-W / 2 - 0.15, -DEPTH / 2 + 0.5, H / 2), G["wall"], "bg", bevel=0, name="wall_left")
-box((0.3, DEPTH + 2, H), (W / 2 + 0.15, -DEPTH / 2 + 0.5, H / 2), G["wall"], "bg", bevel=0, name="wall_right")
+# (2 mm unter der Decke und nur bis vor die Kamera, sonst flackert bzw. verrutscht ihre Oberkante)
+_CZ, _CT = H - 0.032, 7.0
+box((W, 0.06, 0.06), (0, -0.03, _CZ), G["cornice"], "bg", bevel=0, name="cornice_back")
+box((0.06, _CT, 0.06), (-W / 2 + 0.03, -_CT / 2, _CZ), G["cornice"], "bg", bevel=0, name="cornice_left")
+box((0.06, _CT, 0.06), (W / 2 - 0.03, -_CT / 2, _CZ), G["cornice"], "bg", bevel=0, name="cornice_right")
 # нижняя тёмная панель стены (как в прототипе) и рейка
 box((W, 0.03, 1.05), (0, -0.015, 0.525), G["wall_low"], "bg", bevel=0, name="wainscot")
 box((W, 0.05, 0.05), (0, -0.025, 1.075), G["wood"], "bg", bevel=0.005, name="wainscot_rail")
@@ -192,4 +189,26 @@ bg = sc.world.node_tree.nodes["Background"]; bg.inputs[0].default_value = (0.12,
 bpy.ops.object.camera_add(location=(0, -7.6, 1.25), rotation=(math.radians(90), 0, 0)); cam = bpy.context.object; sc.camera = cam
 cam.data.lens = 31; cam.data.sensor_width = 36; cam.data.shift_y = 0.0
 
-# (рендер-проходы задаёт ebenen_aufnahme.py)
+# ---------------- Einstellungen für ebenen.py (vorher in ebenen_aufnahme.py) ----------------
+# leichte Dreiviertelansicht von rechts: Tiefe, und trotzdem bleibt alles lesbar
+cam.location = (1.3, -7.5, 1.35); cam.data.lens = 30
+cam.rotation_euler = (Vector((-0.45, 0.0, 1.2)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
+# Tüte (Gegenstand der Geschichte) und Mappe auf dem Tresen: weißes Papier, Rost bleibt beim Becher
+bpy.data.objects["bag"].data.materials[0] = G["paper"]
+bpy.data.objects["folder"].data.materials[0] = G["paper"]
+PALETTE = {
+    "wall": "#EFE6D3", "cornice": "#F7F1E4", "wall_low": "#BFD9CF", "ceiling": "#DDD6C4", "floor": "#DCD3C0",
+    "wood": "#C99A5B", "paper": "#F7F1E4", "cork": "#B98B5A", "dark": "#2C3E46", "mid": "#2C5560",
+    "metal": "#8A9598", "glass": "#EAF1F2", "slat": "#F4EBD8", "screen": "#CDEBDA", "lampshade": "#2C3E46",
+    "accent": "#B5552D", "dawn": "#F8E7BF", "corridor": "#F3D9A8", "ground": "#CFD9C2",
+}
+HIMMEL = "#F8E7BF"
+OHNE_LINIE = {"slat"}                                        # Lamellen ohne Kontur: sonst Strichgewitter
+OHNE_SCHATTIERUNG = {"dawn", "corridor", "screen", "glass"}  # Lichtquellen bleiben flach
+SONNE_AUS = {"win_glow"}                                     # Leuchtfläche vor dem Fenster schirmt sonst ab
+
+
+def sonne_stellen(s):
+    """Sonnenaufgang: tief, von draußen durch die Jalousie zur Kamera hin."""
+    s.data.energy = 14.0; s.data.angle = math.radians(0.6)
+    s.rotation_euler = Vector((-0.30, -0.80, -0.52)).to_track_quat('-Z', 'Y').to_euler()
