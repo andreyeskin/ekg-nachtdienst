@@ -850,6 +850,34 @@ def overlay_ebene(ordner):
             'xmlns="http://www.w3.org/2000/svg">' + "".join(teile) + '</svg>')
 
 
+def _png64(pfad):
+    import base64
+    with open(pfad, "rb") as f:
+        return base64.b64encode(f.read()).decode("ascii")
+
+
+def png_figuren(ordner):
+    """Figurenebene aus einzelnen gerenderten Figuren (gen/blender/ebenen_figuren.py raum):
+    figuren.json nennt je Figur Datei, Bühnenposition und Atem-Klasse; jede Figur wird ein eigenes
+    <g id="fig-…" class="atmet">, damit die Engine sie einzeln atmen lassen kann."""
+    with open(os.path.join(ordner, "figuren.json"), encoding="utf-8") as f:
+        platz = json.load(f)
+    g = []
+    for name, p in platz.items():
+        g.append(f'<g id="fig-{name}" class="{p.get("klasse", "atmet")}"><image href="data:image/png;base64,'
+                 + _png64(os.path.join(ordner, p["datei"])) +
+                 f'" x="{p["x"]}" y="{p["y"]}" width="{p["breite"]}" height="{p["hoehe"]}"/></g>')
+    return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '
+            'xmlns="http://www.w3.org/2000/svg">' + "".join(g) + '</svg>')
+
+
+def png_portrait(pfad):
+    """Gerendertes Brustbild (400×440, Alpha) für den Dialog; das Papier dahinter kommt aus dem CSS."""
+    return ('<svg viewBox="0 0 400 440" preserveAspectRatio="xMidYMid slice" class="portrait" '
+            'xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,' + _png64(pfad) +
+            '" x="0" y="0" width="400" height="440"/></svg>')
+
+
 def baue():
     aus = {"szenen": {}, "portraits": {}}
     hier = os.path.dirname(os.path.abspath(__file__))
@@ -858,12 +886,15 @@ def baue():
         ordner = os.path.join(os.path.dirname(hier), "art", "szenen", name)
         for ebene in ("hintergrund", "mittelgrund", "figuren", "vordergrund"):
             pfad = os.path.join(ordner, ebene + ".png")
-            if os.path.exists(pfad):
+            if ebene == "figuren" and os.path.exists(os.path.join(ordner, "figuren", "figuren.json")):
+                aus["szenen"][name][ebene] = png_figuren(os.path.join(ordner, "figuren"))
+            elif os.path.exists(pfad):
                 aus["szenen"][name][ebene] = png_ebene(pfad)
             elif os.path.isdir(ordner) and ebene == "vordergrund":
                 aus["szenen"][name][ebene] = overlay_ebene(ordner)
     for wer in ("marlene", "herr_k", "falk"):
-        aus["portraits"][wer] = portrait(wer)
+        pfad = os.path.join(os.path.dirname(hier), "art", "portraits", wer + ".png")
+        aus["portraits"][wer] = png_portrait(pfad) if os.path.exists(pfad) else portrait(wer)
     return aus
 
 

@@ -543,7 +543,7 @@
         },
         {
           id: "herrk", name: "Herr Baum",
-          punkte: [[1279, 515], [1424, 515], [1424, 720], [1279, 720]],
+          punkte: [[1279, 399], [1424, 399], [1424, 737], [1279, 737]],
           bei: function () { global.Dialog.starte("herr_k", "start"); }
         },
         {

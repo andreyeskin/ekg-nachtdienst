@@ -133,7 +133,7 @@ LX, LY = -2.1, DY + 0.15
 cyl(0.1, 0.02, (LX, LY, 1.11), G["dark"], "mid", "marlene"); cyl(0.012, 0.45, (LX, LY, 1.33), G["dark"], "mid", "marlene", v=12)
 bpy.ops.mesh.primitive_cone_add(radius1=0.17, radius2=0.04, depth=0.17, location=(LX - 0.06, LY - 0.1, 1.5), rotation=(math.radians(28), 0, math.radians(30)))
 cone = bpy.context.object; cone.data.materials.append(G["lampshade"]); cone.visible_shadow = False; _tag(cone, "mid", "marlene")
-cyl(0.045, 0.1, (-3.5, DY - 0.15, 1.15), G["accent"], "mid", "marlene", name="mug")
+cyl(0.045, 0.1, (-3.5, DY - 0.15, 1.15), G["mid"], "mid", "marlene", name="mug")  # nur Marlenes Kanne ist Rost
 for k in range(3):
     box((0.3, 0.22, 0.015), (-2.9 + k * 0.02, DY + 0.1, 1.11 + k * 0.016), G["paper"], "mid", "marlene", bevel=0, rot=(0, 0, 0.1 * k - 0.1))
 box((0.26, 0.2, 0.02), (-3.9, DY + 0.05, 1.11), G["accent"], "mid", "marlene", bevel=0, name="folder")
