@@ -19,3 +19,6 @@ ISABEL/
 
 # Blender-Zwischenergebnisse
 bau/blender/
+
+# Arbeitskopien der Agenten
+.claude/worktrees/
