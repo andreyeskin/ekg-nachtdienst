@@ -480,6 +480,52 @@
       '<rect x="152" y="36" width="32" height="4" fill="#10212B" opacity=".45"/></svg>';
   }
 
+  /* ------------------------------------------------------------ Stand der Schicht */
+  function kapitelStand() {
+    var hat = [], offen = [], M = global.Mappe;
+    Z.befunde.forEach(function (b) { hat.push(b.titel + " <em>" + b.zeit + "</em>"); });
+    if (Z.marken.fall_gehoert) hat.push("Die Geschichte des Falls von Marlene");
+    if (Z.marken.k_anamnese) hat.push("Herrn Baums eigene Schilderung");
+
+    if (!Z.marken.fall_gehoert) offen.push("Marlene weiß, warum der Mann hier sitzt. Du noch nicht.");
+    if (!Z.marken.k_anamnese) offen.push("Mit Herrn Baum selbst hast du noch nicht gesprochen.");
+    if (!Z.marken.auftrag_ekg) offen.push("Es ist noch kein EKG geschrieben.");
+    else {
+      if (!M.hat("b-rhythmus")) offen.push("Der Rhythmus ist noch nicht bestimmt.");
+      if (!M.hat("b-frequenz")) offen.push("Die Frequenz ist noch nicht gemessen — RR-Abstand, Zirkel.");
+      if (!M.hat("b-pq")) offen.push("Die PQ-Zeit ist noch nicht gemessen.");
+    }
+    if (!M.hat("b-medis")) {
+      offen.push(Z.marken.darf_tuete
+        ? "In die Plastiktüte hast du noch nicht geschaut."
+        : "Was Herr Baum einnimmt, weißt du nicht. Frag ihn.");
+    }
+    if (anzahlKernbefunde() < 2) {
+      if (Z.marken.auftrag_ekg) {
+        offen.push("Zwei Befunde aus dem EKG brauchst du, bevor dich jemand weiterschickt. "
+                   + "Du hast " + anzahlKernbefunde() + ".");
+      }
+    } else if (!Z.marken.ankunft_monitor) {
+      offen.push("Der Flur rechts steht offen. Marlene meldet dich an.");
+    }
+    if (Z.marken.ankunft_monitor && !Z.marken.falk_gesprochen) {
+      offen.push("Dr. Falk steht im Monitorzimmer und wartet auf Zahlen.");
+    }
+
+    var fuss = "";
+    if (Z.marken.ankunft_monitor && Z.marken.falk_gesprochen) {
+      fuss = "Damit endet, was bisher gebaut ist. Der Rest der Schicht — Station, Intensiv, "
+           + "Aufwachraum, Chefvisite — kommt noch.";
+    } else if (!Z.befunde.length) {
+      fuss = "Alles, was du selbst misst, landet in der Befundmappe. Vermutungen nicht.";
+    }
+    return {
+      zeit: zeitText(), titel: Z.kapitel === 1 ? "Kapitel 1 · Aufnahme" : "Kapitel 2 · Monitorzimmer",
+      ort: (global.Szene.raum(global.Szene.aktueller()) || {}).titel || "",
+      hat: hat, offen: offen, fuss: fuss
+    };
+  }
+
   /* ------------------------------------------------------------ Räume */
   function baueRaeume(kunst) {
     global.Szene.registriere("aufnahme", {
@@ -651,6 +697,7 @@
     ekgDaten.forEach(function (r) { SATZ[r.id] = r; });
     global.Szene.start(document.getElementById("buehne"));
     global.Mappe.start(Z, satz);
+    global.Stand.start(Z, kapitelStand);
     global.Dialog.lade({
       baeume: DIALOGE, portraits: kunst.portraits,
       namen: { marlene: "Schwester Marlene", herr_k: "Herr Baum", falk: "Oberarzt Dr. Falk" }
@@ -658,11 +705,13 @@
     baueRaeume(kunst);
 
     document.getElementById("kopf-mappe").addEventListener("click", global.Mappe.oeffne);
+    document.getElementById("kopf-stand").addEventListener("click", global.Stand.oeffne);
     document.getElementById("kopf-zeigen").addEventListener("click", function () {
       global.Szene.zeigeFelder(2400);
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "h" && !global.Dialog.laeuft()) global.Szene.zeigeFelder(2400);
+      if (e.key === "s" && !global.Dialog.laeuft()) global.Stand.oeffne();
     });
     document.getElementById("kopf-neu").addEventListener("click", function () {
       if (global.confirm("Schicht von vorn beginnen? Die Befundmappe wird geleert.")) vonVorn();

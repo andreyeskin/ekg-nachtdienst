@@ -220,3 +220,21 @@ body {
 
 .fuss { max-width: 1600px; margin: 0 auto; padding: 0 16px 30px; font-size: 13px; opacity: .45; line-height: 1.6; }
 .fuss a { color: inherit; }
+
+/* ------------------------------------------------------------- Stand der Schicht */
+.stand-zeile { font-size: 15px; opacity: .8; margin-bottom: 4px; }
+.stand-uhr { font: 600 17px var(--mono); color: var(--bernstein); }
+.stand-kap { color: var(--papier); }
+.stand-ueber { font: 600 13px var(--anzeige); letter-spacing: .1em; text-transform: uppercase;
+  opacity: .55; margin: 20px 0 6px; }
+.stand-liste { list-style: none; margin: 0; padding: 0; }
+.stand-liste li { position: relative; padding: 7px 0 7px 24px; font-size: 15px; line-height: 1.5;
+  border-bottom: 1px solid rgba(244, 230, 210, .09); }
+.stand-liste li:last-child { border-bottom: 0; }
+.stand-liste li em { font-style: normal; font: 500 12px var(--mono); color: var(--bernstein); opacity: .8; }
+.stand-liste.hat li::before { content: "\2713"; position: absolute; left: 2px; color: var(--phosphor); }
+.stand-liste.offen li::before { content: "\2022"; position: absolute; left: 6px; color: var(--bernstein); }
+.stand-liste li.leer { opacity: .5; }
+.stand-liste li.leer::before { content: ""; }
+.stand-fuss { margin-top: 18px; font-size: 14px; line-height: 1.6; opacity: .65; }
+.stand-fuss:empty { display: none; }

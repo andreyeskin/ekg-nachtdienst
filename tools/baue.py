@@ -15,7 +15,7 @@ WEB = os.path.join(WURZEL, "web")
 BAU = os.path.join(WURZEL, "bau")
 DATEN = os.path.join(WURZEL, "data") if os.path.isdir(os.path.join(WURZEL, "data")) else BAU
 
-SKRIPTE = ["ekg.js", "szene.js", "dialog.js", "mappe.js", "raetsel_zirkel.js", "spiel.js"]
+SKRIPTE = ["ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js", "raetsel_zirkel.js", "spiel.js"]
 
 
 def lies(pfad):
@@ -23,7 +23,19 @@ def lies(pfad):
         return f.read()
 
 
+def kunst_aktuell():
+    """Bilder neu zeichnen, wenn der Zeichner jünger ist als sein Ergebnis."""
+    quelle = os.path.join(WURZEL, "gen", "kunst.py")
+    ziel = os.path.join(BAU, "kunst.json")
+    if os.path.exists(ziel) and os.path.getmtime(ziel) >= os.path.getmtime(quelle):
+        return
+    os.makedirs(BAU, exist_ok=True)
+    import subprocess
+    subprocess.run([sys.executable, quelle], check=True)
+
+
 def baue(ziel=None):
+    kunst_aktuell()
     html = lies(os.path.join(WEB, "index.html"))
     css = lies(os.path.join(WEB, "stil.css"))
     kunst = json.load(open(os.path.join(BAU, "kunst.json"), encoding="utf-8"))

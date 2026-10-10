@@ -66,6 +66,18 @@ async function antworte(teil) {
 }
 const feld = (id) => seite.locator(`.feld[data-feld="${id}"]`);
 
+/* -------------------------------------------- 1b Stand ganz am Anfang */
+await seite.locator("#kopf-stand").click();
+await warte(400);
+ok("Stand öffnet sich", await seite.locator("#stand-hof.an").isVisible());
+const offen0 = await seite.locator("#stand-hof .offen li").allTextContents();
+ok("Stand nennt am Anfang offene Punkte", offen0.length >= 3, offen0.length + " Punkte");
+ok("Stand verrät die Lösung nicht",
+   !offen0.join(" ").match(/228|Block|Bisoprolol|AV-/), offen0.join(" | ").slice(0, 120));
+await schuss("stand_anfang");
+await seite.locator("#stand-hof .zu").click();
+await warte(300);
+
 /* ---------------------------------------------------------- 2 Marlene */
 await feld("marlene").click();
 await warte(450);
@@ -188,6 +200,18 @@ await seite.locator(".dialog-antwort", { hasText: "PQ-Zeit gemessen" }).click();
 await warte(400);
 await dialogDurch();
 ok("Monitorzimmer freigegeben", await seite.evaluate(() => window.Spiel.hat("monitor_frei")));
+
+/* -------------------------------------------- 7b Stand mit drei Befunden */
+await seite.locator("#kopf-stand").click();
+await warte(400);
+const habe = await seite.locator("#stand-hof .hat li").allTextContents();
+ok("Stand zählt die Befunde auf", habe.length >= 3, habe.length + " Einträge");
+const offen1 = await seite.locator("#stand-hof .offen li").allTextContents();
+ok("Stand weist auf das Monitorzimmer hin",
+   /Flur|Monitorzimmer/.test(offen1.join(" ")), offen1.join(" | ").slice(0, 120));
+await schuss("stand_mitte");
+await seite.locator("#stand-hof .zu").click();
+await warte(300);
 
 /* ---------------------------------------------------------- 8 Raumwechsel */
 const ausgang = seite.locator("#buehne .felder polygon.ausgang").first();
