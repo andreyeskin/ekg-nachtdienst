@@ -14,11 +14,11 @@
     hof.className = "raetsel stand";
     hof.id = "stand-hof";
     hof.innerHTML =
-      '<div class="raetsel-innen schmal"><div class="raetsel-kopf"><h2>Stand der Schicht</h2>' +
-      '<button class="knopf zu" type="button">Zurück</button></div>' +
+      '<div class="raetsel-innen schmal"><div class="raetsel-kopf"><h2>' + T("Stand der Schicht") + '</h2>' +
+      '<button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
       '<div class="stand-zeile"></div>' +
-      '<h3 class="stand-ueber">Was du hast</h3><ul class="stand-liste hat"></ul>' +
-      '<h3 class="stand-ueber">Was offen ist</h3><ul class="stand-liste offen"></ul>' +
+      '<h3 class="stand-ueber">' + T("Was du hast") + '</h3><ul class="stand-liste hat"></ul>' +
+      '<h3 class="stand-ueber">' + T("Was offen ist") + '</h3><ul class="stand-liste offen"></ul>' +
       '<p class="stand-fuss"></p></div>';
     document.body.appendChild(hof);
     hof.querySelector(".zu").addEventListener("click", schliesse);
@@ -26,19 +26,19 @@
 
   function liste(el, eintraege, leerText) {
     el.innerHTML = eintraege.length
-      ? eintraege.map(function (t) { return "<li>" + t + "</li>"; }).join("")
-      : '<li class="leer">' + leerText + "</li>";
+      ? eintraege.map(function (t) { return "<li>" + T(t) + "</li>"; }).join("")
+      : '<li class="leer">' + T(leerText) + "</li>";
   }
 
   function oeffne() {
     if (!hof) bau();
     var k = kapitel();
     hof.querySelector(".stand-zeile").innerHTML =
-      '<span class="stand-uhr">' + k.zeit + "</span> · " + k.ort +
-      ' · <span class="stand-kap">' + k.titel + "</span>";
+      '<span class="stand-uhr">' + k.zeit + "</span> · " + T(k.ort) +
+      ' · <span class="stand-kap">' + T(k.titel) + "</span>";
     liste(hof.querySelector(".hat"), k.hat, "Noch nichts. Sieh dich um — oben „Was geht hier?" + "“ zeigt, was anklickbar ist.");
     liste(hof.querySelector(".offen"), k.offen, "Für dieses Kapitel nichts mehr.");
-    hof.querySelector(".stand-fuss").textContent = k.fuss || "";
+    hof.querySelector(".stand-fuss").textContent = T(k.fuss || "");
     hof.classList.add("an");
     if (global.Szene) global.Szene.sperre(true);
   }

@@ -10,11 +10,11 @@
     hof.className = "mappe";
     hof.innerHTML =
       '<div class="mappe-innen">' +
-      '  <div class="mappe-kopf"><h2>Befundmappe</h2>' +
-      '    <div class="mappe-hilfe">Zwei Karten antippen und vergleichen — so liest man EKG.</div>' +
-      '    <button class="knopf zu" type="button">Schließen</button></div>' +
+      '  <div class="mappe-kopf"><h2>' + T("Befundmappe") + '</h2>' +
+      '    <div class="mappe-hilfe">' + T("Zwei Karten antippen und vergleichen — so liest man EKG.") + '</div>' +
+      '    <button class="knopf zu" type="button">' + T("Schließen") + '</button></div>' +
       '  <div class="mappe-karten"></div>' +
-      '  <div class="mappe-fuss"><button class="knopf vergleich" type="button" disabled>Vergleichen</button></div>' +
+      '  <div class="mappe-fuss"><button class="knopf vergleich" type="button" disabled>' + T("Vergleichen") + '</button></div>' +
       '  <div class="mappe-vergleich"></div>' +
       '</div>';
     document.body.appendChild(hof);
@@ -25,15 +25,15 @@
   function karteHtml(k, i) {
     return '<article class="karte" data-i="' + i + '" tabindex="0">' +
       '<div class="karte-kopf"><span class="karte-zeit">' + (k.zeit || "") + '</span>' +
-      '<h3>' + k.titel + '</h3></div>' +
+      '<h3>' + T(k.titel) + '</h3></div>' +
       (k.ekg ? '<canvas class="karte-ekg" height="110"></canvas>' : '<div class="karte-symbol">' + (k.symbol || "") + '</div>') +
-      '<p>' + k.text + '</p></article>';
+      '<p>' + T(k.text) + '</p></article>';
   }
 
   function maleKarten() {
     var feld = hof.querySelector(".mappe-karten");
     if (!Z.befunde.length) {
-      feld.innerHTML = '<p class="leer">Noch nichts gesammelt. Sieh dich um, miss nach, frag jemanden.</p>';
+      feld.innerHTML = '<p class="leer">' + T("Noch nichts gesammelt. Sieh dich um, miss nach, frag jemanden.") + '</p>';
       return;
     }
     feld.innerHTML = Z.befunde.map(karteHtml).join("");
@@ -79,12 +79,12 @@
     var a = Z.befunde[gewaehlt[0]], b = Z.befunde[gewaehlt[1]];
     var feld = hof.querySelector(".mappe-vergleich");
     feld.innerHTML =
-      '<div class="verg-kopf"><h3>' + a.titel + '</h3><h3>' + b.titel + '</h3></div>' +
+      '<div class="verg-kopf"><h3>' + T(a.titel) + '</h3><h3>' + T(b.titel) + '</h3></div>' +
       '<div class="verg-paar">' +
-      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + a.text + '</p></div>' +
-      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + b.text + '</p></div>' +
+      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(a.text) + '</p></div>' +
+      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(b.text) + '</p></div>' +
       '</div>' +
-      '<p class="verg-frage">' + (frage(a, b) || "Was ist anders? Sieh zuerst auf den Rhythmus, dann auf die Zeiten.") + '</p>';
+      '<p class="verg-frage">' + T(frage(a, b) || "Was ist anders? Sieh zuerst auf den Rhythmus, dann auf die Zeiten.") + '</p>';
     var lw = feld.getElementsByTagName("canvas");
     [a, b].forEach(function (k, i) {
       if (k.ekg) maleEkg(lw[i], k.ekg);
@@ -118,7 +118,9 @@
   function fuegeHinzu(k) {
     if (hat(k.id)) return false;
     Z.befunde.push(k);
-    if (global.Spiel && global.Spiel.melde) global.Spiel.melde("Befund in der Mappe: " + k.titel);
+    if (global.Spiel && global.Spiel.melde) {
+      global.Spiel.melde(T("Befund in der Mappe: {was}", { was: T(k.titel) }));
+    }
     if (global.Spiel && global.Spiel.sichere) global.Spiel.sichere();
     if (global.Spiel && global.Spiel.zaehlerAuffrischen) global.Spiel.zaehlerAuffrischen();
     return true;

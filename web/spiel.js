@@ -49,11 +49,11 @@
     if (u) u.textContent = zeitText();
     var m = document.getElementById("kopf-mappe");
     if (m) {
-      m.textContent = "Befundmappe · " + Z.befunde.length;
+      m.textContent = T("Befundmappe") + " · " + Z.befunde.length;
       m.classList.toggle("voll", Z.befunde.length > 0);
     }
     var o = document.getElementById("kopf-ort");
-    if (o) o.textContent = (global.Szene.raum(global.Szene.aktueller()) || {}).titel || "";
+    if (o) o.textContent = T((global.Szene.raum(global.Szene.aktueller()) || {}).titel || "");
   }
 
   function uhrStellen() {
@@ -74,7 +74,7 @@
     }
     var d = document.createElement("div");
     d.className = "meldung" + (art ? " " + art : "");
-    d.textContent = text;
+    d.textContent = T(text);
     meldungen.appendChild(d);
     global.setTimeout(function () { d.classList.add("weg"); }, 3200);
     global.setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 3900);
@@ -87,7 +87,7 @@
       hof = document.createElement("div");
       hof.id = "frage-hof"; hof.className = "raetsel frage";
       hof.innerHTML = '<div class="raetsel-innen"><div class="raetsel-kopf"><h2></h2>' +
-        '<button class="knopf zu" type="button">Zurück</button></div>' +
+        '<button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
         '<p class="raetsel-auftrag"></p><div class="frage-bild"></div>' +
         '<div class="frage-wahl"></div><div class="rueck"></div></div>';
       document.body.appendChild(hof);
@@ -95,8 +95,8 @@
         hof.classList.remove("an"); global.Szene.sperre(false); global.Szene.aktualisiere();
       });
     }
-    hof.querySelector("h2").textContent = opt.titel;
-    hof.querySelector(".raetsel-auftrag").textContent = opt.text;
+    hof.querySelector("h2").textContent = T(opt.titel);
+    hof.querySelector(".raetsel-auftrag").textContent = T(opt.text);
     var bild = hof.querySelector(".frage-bild");
     bild.innerHTML = opt.ekg ? '<canvas height="172" style="width:100%"></canvas>' : "";
     var rueck = hof.querySelector(".rueck");
@@ -105,12 +105,12 @@
     wahl.innerHTML = "";
     opt.antworten.forEach(function (a, i) {
       var b = document.createElement("button");
-      b.className = "knopf wahl"; b.type = "button"; b.textContent = a.text;
+      b.className = "knopf wahl"; b.type = "button"; b.textContent = T(a.text);
       b.addEventListener("click", function () {
         Array.prototype.forEach.call(wahl.children, function (c) { c.disabled = true; });
         b.classList.add(a.richtig ? "richtig" : "falsch");
         rueck.className = "rueck " + (a.richtig ? "gut" : "fast");
-        rueck.innerHTML = "<strong>" + (a.richtig ? "Richtig." : "Nicht ganz.") + "</strong> " + a.warum;
+        rueck.innerHTML = "<strong>" + T(a.richtig ? "Richtig." : "Nicht ganz.") + "</strong> " + T(a.warum);
         if (a.richtig) {
           global.setTimeout(function () {
             hof.classList.remove("an"); global.Szene.sperre(false);
@@ -185,7 +185,7 @@
           { text: "Was soll ich tun?", zu: "auftrag" },
           { text: "Was hältst du davon?", zu: "meinung", wenn: function () { return hat("fall_gehoert"); } },
           {
-            text: function () { return "Ich hab die PQ-Zeit gemessen: " + Z.werte.pq + " ms."; },
+            text: function () { return T("Ich hab die PQ-Zeit gemessen: {pq} ms.", { pq: Z.werte.pq }); },
             zu: "pq", wenn: function () { return global.Mappe.hat("b-pq"); }
           },
           { text: "Später.", zu: null }
@@ -236,9 +236,9 @@
       },
       pq: {
         text: function () {
-          return "Über zweihundert. Dann leitet er über — aber er lässt sich Zeit dabei. Das allein lässt keinen "
-               + "umfallen. Aber eine Leitung, die heute " + Z.werte.pq + " Millisekunden braucht, kann morgen "
-               + "stehenbleiben. Und genau dafür gibt es den Monitor. Geh rüber, ich meld dich an.";
+          return T("Über zweihundert. Dann leitet er über — aber er lässt sich Zeit dabei. Das allein lässt keinen "
+                 + "umfallen. Aber eine Leitung, die heute {pq} Millisekunden braucht, kann morgen stehenbleiben. "
+                 + "Und genau dafür gibt es den Monitor. Geh rüber, ich meld dich an.", { pq: Z.werte.pq });
         },
         tu: function () { setze("monitor_frei"); global.Szene.aktualisiere(); },
         antworten: [{ text: "Danke, Marlene.", zu: null }]
@@ -307,13 +307,14 @@
         antworten: [
           {
             text: function () {
-              return "Sinusbradykardie, " + Z.werte.hf + " pro Minute, PQ " + Z.werte.pq + " Millisekunden.";
+              return T("Sinusbradykardie, {hf} pro Minute, PQ {pq} Millisekunden.",
+                       { hf: Z.werte.hf, pq: Z.werte.pq });
             },
             wenn: function () { return global.Mappe.hat("b-pq") && global.Mappe.hat("b-frequenz"); },
             zu: "gut"
           },
           {
-            text: function () { return "Der Puls ist langsam, etwa " + Z.werte.hf + " pro Minute."; },
+            text: function () { return T("Der Puls ist langsam, etwa {hf} pro Minute.", { hf: Z.werte.hf }); },
             wenn: function () { return global.Mappe.hat("b-frequenz"); },
             zu: "halb"
           },
@@ -352,7 +353,7 @@
     if (!hat("ekg_geschrieben")) {
       setze("ekg_geschrieben");
       zeitVor(8);
-      melde("EKG geschrieben · " + zeitText());
+      melde(T("EKG geschrieben · {zeit}", { zeit: zeitText() }));
     }
     var s = satz(AUFNAHME_EKG);
     frage({
@@ -394,15 +395,16 @@
       titel: "Wie langsam ist langsam?",
       auftrag: "Miss einen RR-Abstand. Aus ihm kommt die Frequenz: 60 000 geteilt durch den RR-Abstand in Millisekunden.",
       deutung: function (ms) {
-        return "60 000 : " + ms + " = " + Math.round(60000 / ms) + " pro Minute. Unter 60 — Bradykardie.";
+        return T("60 000 : {ms} = {hf} pro Minute. Unter 60 — Bradykardie.",
+                 { ms: ms, hf: Math.round(60000 / ms) });
       },
       fertig: function (erg) {
         var hf = Math.round(60000 / erg.wahrheit);
         Z.werte.hf = hf; Z.werte.rr = erg.wahrheit;
         befund({
-          id: "b-frequenz", titel: "Frequenz: " + hf + "/min", zeit: zeitText(),
-          text: "RR " + erg.wahrheit + " ms. 60 000 : " + erg.wahrheit + " = " + hf + " pro Minute. "
-              + "Norm 60–100, also Bradykardie.",
+          id: "b-frequenz", titel: T("Frequenz: {hf}/min", { hf: hf }), zeit: zeitText(),
+          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute. Norm 60–100, also Bradykardie.",
+                  { rr: erg.wahrheit, hf: hf }),
           ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.9, dauer: 6 }
         });
         zeitVor(6);
@@ -417,16 +419,16 @@
       auftrag: "Miss die PQ-Zeit. Bei 50 mm/s ist ein kleines Kästchen 20 Millisekunden breit.",
       deutung: function (ms) {
         return ms > 200
-          ? "Norm 120–200 ms. " + ms + " ms ist zu lang: AV-Block I. Grades."
-          : "Norm 120–200 ms — das liegt im Rahmen.";
+          ? T("Norm 120–200 ms. {ms} ms ist zu lang: AV-Block I. Grades.", { ms: ms })
+          : T("Norm 120–200 ms — das liegt im Rahmen.");
       },
       fertig: function (erg) {
         Z.werte.pq = erg.wahrheit;
         befund({
-          id: "b-pq", titel: "PQ-Zeit: " + erg.wahrheit + " ms", zeit: zeitText(),
-          text: "Norm 120–200 ms. " + erg.wahrheit + " ms — AV-Block I. Grades. Die Überleitung ist verzögert, "
-              + "aber jeder Vorhofimpuls kommt noch an. (Der P-Beginn liegt nie ganz scharf; von Schlag zu Schlag "
-              + "schwanken die Werte um einige Millisekunden. Im Zweifel mehrere Schläge messen.)",
+          id: "b-pq", titel: T("PQ-Zeit: {ms} ms", { ms: erg.wahrheit }), zeit: zeitText(),
+          text: T("Norm 120–200 ms. {ms} ms — AV-Block I. Grades. Die Überleitung ist verzögert, aber jeder "
+                + "Vorhofimpuls kommt noch an. (Der P-Beginn liegt nie ganz scharf; von Schlag zu Schlag schwanken "
+                + "die Werte um einige Millisekunden. Im Zweifel mehrere Schläge messen.)", { ms: erg.wahrheit }),
           ekg: { satz: AUFNAHME_EKG, mmProS: 50, von: 2.9, dauer: 2.4 },
           vergleich: {
             "b-frequenz": "Beides zusammen: Der Taktgeber ist langsam UND die Leitung dorthin ist lang. "
@@ -483,7 +485,7 @@
   /* ------------------------------------------------------------ Stand der Schicht */
   function kapitelStand() {
     var hat = [], offen = [], M = global.Mappe;
-    Z.befunde.forEach(function (b) { hat.push(b.titel + " <em>" + b.zeit + "</em>"); });
+    Z.befunde.forEach(function (b) { hat.push(T(b.titel) + " <em>" + b.zeit + "</em>"); });
     if (Z.marken.fall_gehoert) hat.push("Die Geschichte des Falls von Marlene");
     if (Z.marken.k_anamnese) hat.push("Herrn Baums eigene Schilderung");
 
@@ -502,8 +504,8 @@
     }
     if (anzahlKernbefunde() < 2) {
       if (Z.marken.auftrag_ekg) {
-        offen.push("Zwei Befunde aus dem EKG brauchst du, bevor dich jemand weiterschickt. "
-                   + "Du hast " + anzahlKernbefunde() + ".");
+        offen.push(T("Zwei Befunde aus dem EKG brauchst du, bevor dich jemand weiterschickt. Du hast {n}.",
+                     { n: anzahlKernbefunde() }));
       }
     } else if (!Z.marken.ankunft_monitor) {
       offen.push("Der Flur rechts steht offen. Marlene meldet dich an.");
@@ -568,7 +570,7 @@
           id: "uhr", name: "Wanduhr",
           punkte: [[1206, 106], [1332, 106], [1332, 232], [1206, 232]],
           bei: function () {
-            melde(zeitText() + " · Schichtbeginn war 06:30.");
+            melde(T("{zeit} · Schichtbeginn war 06:30.", { zeit: zeitText() }));
           }
         },
         {
@@ -645,21 +647,21 @@
       hof = document.createElement("div");
       hof.id = "wahl-hof"; hof.className = "raetsel wahl-hof";
       hof.innerHTML = '<div class="raetsel-innen schmal"><div class="raetsel-kopf"><h2></h2>' +
-        '<button class="knopf zu" type="button">Zurück</button></div>' +
+        '<button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
         '<p class="raetsel-auftrag"></p><div class="frage-wahl"></div></div>';
       document.body.appendChild(hof);
       hof.querySelector(".zu").addEventListener("click", function () {
         hof.classList.remove("an"); global.Szene.sperre(false); global.Szene.aktualisiere();
       });
     }
-    hof.querySelector("h2").textContent = opt.titel;
-    hof.querySelector(".raetsel-auftrag").textContent = opt.text;
+    hof.querySelector("h2").textContent = T(opt.titel);
+    hof.querySelector(".raetsel-auftrag").textContent = T(opt.text);
     var feld = hof.querySelector(".frage-wahl");
     feld.innerHTML = "";
     opt.wahl.forEach(function (w) {
       var b = document.createElement("button");
       b.type = "button"; b.className = "knopf wahl" + (w.fertig ? " erledigt" : "");
-      b.textContent = w.text + (w.fertig ? "  ✓" : "");
+      b.textContent = T(w.text) + (w.fertig ? "  ✓" : "");
       b.addEventListener("click", function () { hof.classList.remove("an"); w.tu(); });
       feld.appendChild(b);
     });
@@ -706,6 +708,7 @@
 
     document.getElementById("kopf-mappe").addEventListener("click", global.Mappe.oeffne);
     document.getElementById("kopf-stand").addEventListener("click", global.Stand.oeffne);
+    global.Sprache.waehler(document.getElementById("kopf-sprache"));
     document.getElementById("kopf-zeigen").addEventListener("click", function () {
       global.Szene.zeigeFelder(2400);
     });
@@ -714,7 +717,7 @@
       if (e.key === "s" && !global.Dialog.laeuft()) global.Stand.oeffne();
     });
     document.getElementById("kopf-neu").addEventListener("click", function () {
-      if (global.confirm("Schicht von vorn beginnen? Die Befundmappe wird geleert.")) vonVorn();
+      if (global.confirm(T("Schicht von vorn beginnen? Die Befundmappe wird geleert."))) vonVorn();
     });
 
     var fortsetzung = lade();
@@ -727,8 +730,15 @@
     }
   }
 
+  /* Sprachwechsel: der Zustand liegt im Speicher, also ist Neuladen der
+     sauberste Weg — alle Oberflächen werden neu und richtig aufgebaut. */
+  function neuZeichnen() {
+    sichere();
+    try { global.location.reload(); } catch (e) {}
+  }
+
   global.Spiel = {
-    start: start, melde: melde, sichere: sichere, zaehlerAuffrischen: kopfAuffrischen,
+    start: start, melde: melde, neuZeichnen: neuZeichnen, sichere: sichere, zaehlerAuffrischen: kopfAuffrischen,
     zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn,
     __dialoge: DIALOGE, __ekgSchreiben: ekgSchreiben, __messePq: messePq, __messeFrequenz: messeFrequenz,
     __tuete: tueteAnsehen

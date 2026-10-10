@@ -19,6 +19,14 @@ function ok(was, bedingung, zusatz = "") {
 
 const browser = await starteBrowser();
 const seite = await browser.newPage({ viewport: { width: 1340, height: 900 }, deviceScaleFactor: 1 });
+/* Der Durchlauf prüft die deutschen Sätze — Sprache vor dem Laden festlegen. */
+await seite.addInitScript(() => {
+  try {
+    if (!window.localStorage.getItem("nachtdienst-sprache")) {
+      window.localStorage.setItem("nachtdienst-sprache", "de");
+    }
+  } catch (e) {}
+});
 seite.on("console", (m) => { if (m.type() === "error") fehler.push("Konsole: " + m.text().slice(0, 160)); });
 seite.on("pageerror", (e) => fehler.push("Seitenfehler: " + String(e).slice(0, 200)));
 
@@ -243,6 +251,19 @@ await warte(300);
 ok("Hotspot-Hilfe schaltet sich ein", await seite.evaluate(
   () => document.querySelector(".felder").classList.contains("zeigen")));
 await schuss("hotspots_gezeigt");
+
+/* ------------------------------------------------- 9c Drei Sprachen */
+for (const [kurz, probe] of [["en", "Findings"], ["ru", "Папка находок"]]) {
+  await seite.evaluate((k) => { window.localStorage.setItem("nachtdienst-sprache", k); }, kurz);
+  await seite.reload();
+  await warte(900);
+  const kopf = (await seite.locator("#kopf-mappe").textContent()) || "";
+  ok("Sprache " + kurz + " schaltet um", kopf.includes(probe), kopf.trim());
+  await schuss("sprache_" + kurz);
+}
+await seite.evaluate(() => { window.localStorage.setItem("nachtdienst-sprache", "de"); });
+await seite.reload();
+await warte(900);
 
 /* ---------------------------------------------------------- 10 Zurück, Sperre */
 await seite.evaluate(() => { window.localStorage.clear(); });

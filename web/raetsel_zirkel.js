@@ -37,16 +37,16 @@
     hof.id = "zirkel-hof";
     hof.innerHTML =
       '<div class="raetsel-innen">' +
-      '  <div class="raetsel-kopf"><h2></h2><button class="knopf zu" type="button">Zurück</button></div>' +
+      '  <div class="raetsel-kopf"><h2></h2><button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
       '  <p class="raetsel-auftrag"></p>' +
       '  <div class="raetsel-papier"><canvas height="196"></canvas></div>' +
       '  <div class="raetsel-anzeige"><span class="wert">—</span><span class="einheit">ms</span>' +
       '    <span class="raetsel-tempo"></span></div>' +
       '  <div class="rueck"></div>' +
       '  <div class="raetsel-knoepfe">' +
-      '    <button class="knopf loesung" type="button">Lösung zeigen</button>' +
-      '    <button class="knopf nochmal" type="button">Nochmal</button>' +
-      '    <button class="knopf haupt uebernehmen" type="button" hidden>In die Mappe</button>' +
+      '    <button class="knopf loesung" type="button">' + T("Lösung zeigen") + '</button>' +
+      '    <button class="knopf nochmal" type="button">' + T("Nochmal") + '</button>' +
+      '    <button class="knopf haupt uebernehmen" type="button" hidden>' + T("In die Mappe") + '</button>' +
       '  </div>' +
       '</div>';
     document.body.appendChild(hof);
@@ -69,7 +69,7 @@
   function rueck(art, titel, text) {
     var r = hof.querySelector(".rueck");
     r.className = "rueck" + (art ? " " + art : "");
-    r.innerHTML = titel ? "<strong>" + titel + "</strong>" + (text ? " " + text : "") : "";
+    r.innerHTML = titel ? "<strong>" + T(titel) + "</strong>" + (text ? " " + T(text) : "") : "";
   }
 
   /* Welcher Schlag war gemeint? Der, dessen Anfangsmarke dem Messanfang am nächsten liegt. */
@@ -104,15 +104,16 @@
 
     if (Math.abs(dStart) > 170 || Math.abs(dEnde) > 170) {
       rueck("fast", "Das war eine andere Strecke.",
-            "Gemessen werden soll: " + a.anfang + " → " + a.ende + ". " + a.wie +
-            " Tipp: „Lösung zeigen" + "“ blendet die richtige Strecke ein.");
+            T("Gemessen werden soll: {von} → {bis}.", { von: T(a.anfang), bis: T(a.ende) }) +
+            " " + T(a.wie) + " " + T("Tipp: „Lösung zeigen“ blendet die richtige Strecke ein."));
       return;
     }
     if (Math.abs(ab) <= S.toleranz) {
       letzte = { ok: true, gemessen: ms, wahrheit: wahr, abweichung: ab, versuche: versuche, schlag: t.i };
-      rueck("gut", a.name + " = " + wahr + " ms.",
-            (Math.abs(ab) <= 4 ? "Auf die Millisekunde." : "Deine Messung: " + ms + " ms, " +
-             (ab > 0 ? "+" : "") + ab + " ms daneben — innerhalb der Toleranz.") +
+      rueck("gut", T("{was} = {ms} ms.", { was: T(a.name), ms: wahr }),
+            (Math.abs(ab) <= 4 ? T("Auf die Millisekunde.")
+                               : T("Deine Messung: {ms} ms, {ab} ms daneben — innerhalb der Toleranz.",
+                                   { ms: ms, ab: (ab > 0 ? "+" : "") + ab })) +
             " " + (S.deutung ? S.deutung(wahr) : ""));
       streifen.setze({ loesung: { start: t.a, ende: t.b } });
       hof.querySelector(".uebernehmen").hidden = false;
@@ -120,15 +121,17 @@
     }
     var hinweis;
     if (Math.abs(dStart) > Math.abs(dEnde)) {
-      hinweis = "Dein Anfang liegt " + Math.abs(Math.round(dStart)) + " ms " +
-                (dStart > 0 ? "zu spät" : "zu früh") + ". Der " + a.anfang + " ist gemeint.";
+      hinweis = T("Dein Anfang liegt {ms} ms {richtung}. Gemeint ist: {stelle}.",
+                  { ms: Math.abs(Math.round(dStart)),
+                    richtung: dStart > 0 ? T("zu spät") : T("zu früh"), stelle: T(a.anfang) });
     } else {
-      hinweis = "Dein Ende liegt " + Math.abs(Math.round(dEnde)) + " ms " +
-                (dEnde > 0 ? "zu spät" : "zu früh") + ". Das " + a.ende + " ist gemeint.";
+      hinweis = T("Dein Ende liegt {ms} ms {richtung}. Gemeint ist: {stelle}.",
+                  { ms: Math.abs(Math.round(dEnde)),
+                    richtung: dEnde > 0 ? T("zu spät") : T("zu früh"), stelle: T(a.ende) });
     }
     letzte = { ok: false, gemessen: ms, wahrheit: wahr, abweichung: ab, versuche: versuche };
-    rueck("fast", ms + " ms — noch nicht.", hinweis +
-          " (Toleranz ±" + S.toleranz + " ms.)");
+    rueck("fast", T("{ms} ms — noch nicht.", { ms: ms }),
+          hinweis + " " + T("(Toleranz ±{t} ms.)", { t: S.toleranz }));
   }
 
   function zeigeLoesung() {
@@ -139,8 +142,8 @@
       if (s1 < S.von || s2 > S.von + S.dauer) continue;
       streifen.setze({ loesung: { start: s1, ende: s2 },
                        marken: [{ s: s1 }, { s: s2 }] });
-      rueck("", a.name + ": " + Math.round((s2 - s1) * 1000) + " ms.",
-            a.wie + " Jetzt selbst nachmessen — „Nochmal" + "“.");
+      rueck("", T("{was}: {ms} ms.", { was: T(a.name), ms: Math.round((s2 - s1) * 1000) }),
+            T(a.wie) + " " + T("Jetzt selbst nachmessen — „Nochmal“."));
       return;
     }
   }
@@ -154,11 +157,12 @@
     S.dauer = S.dauer || (S.was === "rr" ? 6 : 3);
     versuche = 0; letzte = null;
     var a = AUFGABEN[S.was];
-    hof.querySelector("h2").textContent = S.titel || ("Messen: " + a.name);
+    hof.querySelector("h2").textContent = T(S.titel) || T("Messen: {was}", { was: T(a.name) });
     hof.querySelector(".raetsel-auftrag").innerHTML =
-      (S.auftrag || ("Miss die " + a.name + ".")) + " <em>" + a.wie + "</em>";
+      (S.auftrag ? T(S.auftrag) : T("Miss die {was}.", { was: T(a.name) })) + " <em>" + T(a.wie) + "</em>";
     hof.querySelector(".raetsel-tempo").textContent =
-      S.mmProS + " mm/s · 10 mm/mV · Ableitung " + (S.satz.sig.lead || "II").toUpperCase();
+      T("{v} mm/s · 10 mm/mV · Ableitung {lead}",
+        { v: S.mmProS, lead: (S.satz.sig.lead || "II").toUpperCase() });
     hof.querySelector(".wert").textContent = "—";
     hof.querySelector(".uebernehmen").hidden = true;
     rueck("", "Zieh mit Finger, Pencil oder Maus über den Streifen.", "");

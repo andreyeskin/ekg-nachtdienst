@@ -70,11 +70,11 @@
     aktiv = { baum: baum, id: id, weiterKnopf: null, abbrechbar: !!k.abbrechbar };
     /* Erst den Text bilden, dann die Wirkung auslösen — sonst beschreibt der
        Knoten einen Zustand, den er selbst gerade erst hergestellt hat. */
-    var inhalt = typeof k.text === "function" ? k.text() : k.text;
+    var inhalt = typeof k.text === "function" ? k.text() : T(k.text);
     if (k.tu) k.tu();
     var wer = k.wer || baum;
     feldPortrait.innerHTML = portraits[wer] || "";
-    feldName.textContent = namen[wer] || "";
+    feldName.textContent = T(namen[wer] || "");
     hof.classList.add("an");
     hof.classList.toggle("ohne-bild", !portraits[wer]);
     tippe(inhalt);
@@ -86,7 +86,7 @@
         var b = document.createElement("button");
         b.className = "dialog-antwort";
         b.innerHTML = '<span class="nr">' + (i + 1) + '</span>' +
-                      (typeof a.text === "function" ? a.text() : a.text);
+                      (typeof a.text === "function" ? a.text() : T(a.text));
         b.addEventListener("click", function (ev) {
           ev.stopPropagation();
           if (tippt) { fertigTippen(); return; }
@@ -99,14 +99,14 @@
       aktiv.weiterKnopf = { baum: k.weiterBaum || baum, id: k.weiter };
       var w = document.createElement("button");
       w.className = "dialog-antwort weiter";
-      w.textContent = "Weiter";
+      w.textContent = T("Weiter");
       w.addEventListener("click", function (ev) { ev.stopPropagation(); weiter(); });
       feldAntw.appendChild(w);
     } else {
       aktiv.weiterKnopf = { ende: true };
       var s = document.createElement("button");
       s.className = "dialog-antwort weiter";
-      s.textContent = k.endeText || "Danke.";
+      s.textContent = T(k.endeText || "Danke.");
       s.addEventListener("click", function (ev) { ev.stopPropagation(); weiter(); });
       feldAntw.appendChild(s);
     }

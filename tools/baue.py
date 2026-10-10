@@ -15,7 +15,8 @@ WEB = os.path.join(WURZEL, "web")
 BAU = os.path.join(WURZEL, "bau")
 DATEN = os.path.join(WURZEL, "data") if os.path.isdir(os.path.join(WURZEL, "data")) else BAU
 
-SKRIPTE = ["ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js", "raetsel_zirkel.js", "spiel.js"]
+SKRIPTE = ["sprache.js", "ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js",
+           "raetsel_zirkel.js", "spiel.js"]
 
 
 def lies(pfad):
@@ -54,7 +55,17 @@ def baue(ziel=None):
             auswahl.append(r)
             gesehen.add(r["rhythmus"])
 
+    woerter = {}
+    textordner = os.path.join(WURZEL, "text")
+    if os.path.isdir(textordner):
+        for sprache in ("en", "ru"):
+            pfad = os.path.join(textordner, sprache + ".json")
+            if os.path.exists(pfad):
+                tisch = json.load(open(pfad, encoding="utf-8"))
+                woerter[sprache] = {k: v for k, v in tisch.items() if v}
+
     daten = ("window.KUNST=" + json.dumps(kunst, ensure_ascii=False, separators=(",", ":")) + ";\n"
+             "window.WOERTER=" + json.dumps(woerter, ensure_ascii=False, separators=(",", ":")) + ";\n"
              "window.EKG_DATEN=" + json.dumps(auswahl, ensure_ascii=False, separators=(",", ":")) + ";")
 
     html = html.replace('<link rel="stylesheet" href="stil.css">',

@@ -12,10 +12,11 @@
   <span class="ort" id="kopf-ort"></span>
   <span class="luecke"></span>
   <span class="uhr" id="kopf-zeit">06:40</span>
-  <button class="knopf" id="kopf-stand" type="button" title="Was hast du, was ist offen">Stand</button>
-  <button class="knopf" id="kopf-zeigen" type="button" title="Zeigt, was anklickbar ist">Was geht hier?</button>
+  <span id="kopf-sprache"></span>
+  <button class="knopf" id="kopf-stand" type="button" data-t title="Was hast du, was ist offen">Stand</button>
+  <button class="knopf" id="kopf-zeigen" type="button" data-t title="Zeigt, was anklickbar ist">Was geht hier?</button>
   <button class="knopf" id="kopf-mappe" type="button">Befundmappe · 0</button>
-  <button class="knopf" id="kopf-neu" type="button">Neu</button>
+  <button class="knopf" id="kopf-neu" type="button" data-t>Neu</button>
 </header>
 
 <main class="rahmen">
@@ -23,12 +24,13 @@
 </main>
 
 <p class="fuss">
-  Lernspiel zum EKG. Alle Kurven stammen aus echten Aufnahmen der
-  Lobachevsky University Electrocardiography Database (LUDB, ODC-By 1.0);
-  alle geprüften Zeiten aus deren Experten-Annotation. Kein Medizinprodukt.
+  <span data-t>Lernspiel zum EKG. Alle Kurven stammen aus echten Aufnahmen offener Datenbanken;
+  alle geprüften Zeiten aus deren Experten-Annotation. Kein Medizinprodukt.</span>
+  <span class="quellen">LUDB (ODC-By 1.0) · PTB-XL (CC BY 4.0) · Chapman-Shaoxing/Ningbo (CC BY 4.0)</span>
 </p>
 
 <script src="daten.js"></script>
+<script src="sprache.js"></script>
 <script src="ekg.js"></script>
 <script src="szene.js"></script>
 <script src="dialog.js"></script>
@@ -38,6 +40,7 @@
 <script src="spiel.js"></script>
 <script>
   window.addEventListener("DOMContentLoaded", function () {
+    window.Sprache.starte(window.WOERTER || {});
     window.Spiel.start(window.KUNST, window.EKG_DATEN);
   });
 </script>
