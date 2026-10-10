@@ -543,12 +543,12 @@
         },
         {
           id: "herrk", name: "Herr Baum",
-          punkte: [[1365, 516], [1521, 516], [1521, 724], [1365, 724]],
+          punkte: [[1279, 515], [1424, 515], [1424, 720], [1279, 720]],
           bei: function () { global.Dialog.starte("herr_k", "start"); }
         },
         {
           id: "tuete", name: "Plastiktüte",
-          punkte: [[1333, 631], [1404, 631], [1404, 733], [1333, 733]],
+          punkte: [[1241, 628], [1307, 628], [1307, 728], [1241, 728]],
           sichtbar: function () { return hat("darf_tuete"); },
           erledigt: function () { return global.Mappe.hat("b-medis"); },
           bei: tueteAnsehen

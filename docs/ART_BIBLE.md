@@ -122,3 +122,20 @@ Kittel, Bleistift hinterm Ohr, das EKG-Lineal aus dem Kurs in der Tasche.
 - Frontalansicht ohne jede Tiefe (leichte Dreiviertelansicht oder ein Vordergrund-Element genügt).
 - Mehr als ein Magenta-Objekt.
 - Requisiten ohne Grund im Bild („sieht medizinisch aus") — jedes Ding gehört jemandem.
+
+## 7. Logikprüfung — vor jedem Einchecken einer Szene
+
+Ein Raum muss als Ort funktionieren, nicht nur als Bild. Durchgehen, bevor Ebenen ins Spiel kommen:
+
+1. **Wege frei.** Jede Tür, jeder Durchgang und jeder Ausgang-Hotspot hat freien Boden davor.
+   Kein Stuhl vor der Tür, kein Wagen im Gang.
+2. **Dinge stehen, wo sie gebraucht werden.** EKG-Wagen am Patienten, Monitor dort, wo man ihn
+   vom Platz aus sieht, Lampe über dem Arbeitsplatz. Jedes Ding gehört jemandem.
+3. **Die Uhr geht richtig.** Zeiger werden nie ins Bild gerendert; sie sind ein SVG-Overlay
+   (`#uhr-std`, `#uhr-min`, aus `hitboxes.json` → `gen/kunst.py`) und folgen der Spielzeit.
+   Das Licht im Raum passt zur Uhrzeit des Kapitels (Tabelle in Abschnitt 4).
+4. **Maßstab stimmt.** Stuhl ≈ 0,5 m, Tresen ≈ 1,05 m hoch, Tür ≈ 2,1 m; Figuren stehen auf dem
+   Boden, Füße auf der Bodenlinie, nicht davor schwebend.
+5. **Es bewegt sich etwas.** Figuren atmen (`class="atmet"` auf ihrem Element), Parallaxe
+   läuft, Bildschirme zeigen die laufende Kurve. Eine Szene ohne jede Bewegung ist nicht fertig.
+6. **Hotspots sind erreichbar** und überlappen nicht: Tür, Figur, Gegenstand getrennt.

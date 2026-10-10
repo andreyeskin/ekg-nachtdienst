@@ -108,8 +108,9 @@ for (dx, dz, w, h, rz) in ((-0.42, 0.22, 0.34, 0.26, 0.04), (0.0, 0.25, 0.3, 0.2
     box((w, 0.01, h), (-3.1 + dx, -0.06, 2.25 + dz), G["paper"], "bg", "pinnwand", bevel=0, rot=(0, rz, 0))
 cyl(0.30, 0.05, (2.75, -0.03, 2.35), G["paper"], "bg", "uhr", rot=(math.radians(90), 0, 0), bevel=0.01, name="clock")
 cyl(0.32, 0.03, (2.75, -0.01, 2.35), G["dark"], "bg", "uhr", rot=(math.radians(90), 0, 0), name="clock_rim")
-box((0.03, 0.02, 0.2), (2.75, -0.065, 2.44), G["dark"], "bg", "uhr", bevel=0)
-box((0.17, 0.02, 0.03), (2.69, -0.065, 2.32), G["dark"], "bg", "uhr", bevel=0, rot=(0, 0, math.radians(20)))
+# Zeiger werden NICHT gerendert: sie kommen als SVG-Overlay (#uhr-std, #uhr-min) aus gen/kunst.py
+# und folgen der Spielzeit. Nur Zifferblatt und Mittelpunkt hier.
+cyl(0.012, 0.02, (2.75, -0.07, 2.35), G["dark"], "bg", "uhr", rot=(math.radians(90), 0, 0), v=12, name="clock_pin")
 # дверной проём в правой части задней стены: тёмный коридор с тёплым светом в глубине
 box((1.0, 0.4, 2.2), (4.0, 0.1, 1.1), G["dark"], "bg", "ausgang", bevel=0, name="door_hole")
 box((1.1, 0.06, 0.1), (4.0, -0.05, 2.25), G["wood"], "bg", "ausgang", bevel=0.005, name="door_frame_top")
@@ -157,10 +158,11 @@ def chair(x, y, hit):
             cyl(0.016, 0.42, (x + dx, y + dy, 0.21), G["metal"], "mid", hit, v=10)
     box((0.04, 0.5, 0.02), (x - 0.26, y, 0.62), G["wood"], "mid", hit, bevel=0.005)
     box((0.04, 0.5, 0.02), (x + 0.26, y, 0.62), G["wood"], "mid", hit, bevel=0.005)
-for i, x in enumerate((1.5, 2.15, 2.8, 3.45)):
+# Stuhlreihe endet vor der Tür (Türrahmen ab x=3.47): freier Durchgang bleibt
+for i, x in enumerate((1.1, 1.75, 2.4, 3.05)):
     chair(x, -0.75, "herrk" if i == 2 else None)
-box((0.26, 0.2, 0.34), (2.42, -1.15, 0.17), G["paper"], "mid", "tuete", bevel=0.01, name="bag")
-box((0.08, 0.02, 0.12), (2.42, -1.26, 0.38), G["paper"], "mid", "tuete", bevel=0, name="bag_handle")
+box((0.26, 0.2, 0.34), (2.02, -1.15, 0.17), G["paper"], "mid", "tuete", bevel=0.01, name="bag")
+box((0.08, 0.02, 0.12), (2.02, -1.26, 0.38), G["paper"], "mid", "tuete", bevel=0, name="bag_handle")
 
 # ---------------- свет: рассвет 06:40 ----------------
 # свет из окна (тёплый, низкий, сквозь жалюзи к камере)

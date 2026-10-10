@@ -24,6 +24,7 @@ TINTE     = "#10212B"
 MAGENTA   = "#C2185B"
 PHOSPHOR  = "#39E58C"
 BERNSTEIN = "#E8A33D"
+LINIE     = "#1E2A30"   # Tuschelinie der ligne-claire-Szenen (docs/ART_BIBLE.md)
 
 
 # --------------------------------------------------------------- Werkzeug
@@ -827,6 +828,28 @@ def png_ebene(pfad):
             '" x="0" y="0" width="1600" height="900"/></svg>')
 
 
+def overlay_ebene(ordner):
+    """Bewegliche Teile über einer gerenderten Szene: Uhrzeiger (#uhr-std, #uhr-min), die die
+    Engine nach der Spielzeit dreht. Lage und Größe kommen aus hitboxes.json (Feld "uhr")."""
+    pfad = os.path.join(ordner, "hitboxes.json")
+    if not os.path.exists(pfad):
+        return ""
+    hb = json.load(open(pfad, encoding="utf-8"))
+    teile = []
+    if "uhr" in hb:
+        x0, y0, x1, y1 = hb["uhr"]
+        cx, cy, r = (x0 + x1) / 2, (y0 + y1) / 2, min(x1 - x0, y1 - y0) / 2 * 0.86
+        teile.append(f'<line id="uhr-std" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.52)}" '
+                     f'stroke="{LINIE}" stroke-width="5" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>')
+        teile.append(f'<line id="uhr-min" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.8)}" '
+                     f'stroke="{LINIE}" stroke-width="3" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>')
+        teile.append(f'<circle cx="{F(cx)}" cy="{F(cy)}" r="4" fill="{LINIE}"/>')
+    if not teile:
+        return ""
+    return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '
+            'xmlns="http://www.w3.org/2000/svg">' + "".join(teile) + '</svg>')
+
+
 def baue():
     aus = {"szenen": {}, "portraits": {}}
     hier = os.path.dirname(os.path.abspath(__file__))
@@ -838,7 +861,7 @@ def baue():
             if os.path.exists(pfad):
                 aus["szenen"][name][ebene] = png_ebene(pfad)
             elif os.path.isdir(ordner) and ebene == "vordergrund":
-                aus["szenen"][name][ebene] = ""          # gerenderte Szene: kein gezeichneter Rahmen
+                aus["szenen"][name][ebene] = overlay_ebene(ordner)
     for wer in ("marlene", "herr_k", "falk"):
         aus["portraits"][wer] = portrait(wer)
     return aus
