@@ -315,15 +315,15 @@ ok("Rückmeldung sagt, warum (und was im echten Herzen passiert)",
 await schuss("reizleitung_av_falsch");
 await setzeTeil("av", "av");
 
-/* Fehlaufbau 2: Sinusknoten heraus — keine P-Welle, nächstliegend Vorhofflimmern. */
+/* Fehlaufbau 2: Sinusknoten heraus — Knotenersatzrhythmus (Lektion 11), keine annotierte Aufnahme, kein Streifen. */
 await rl('.rl-teil[data-teil="sinus"]').click();
 await rl(".rl-raus").click();
 await seite.waitForSelector('#reizleitung-hof .rl-herz[data-bereit="ja"]', { timeout: 15000 });
 st = await seite.evaluate(() => ({ ...window.Reizleitung.zustand(),
   rueck: document.querySelector("#reizleitung-hof .rl-rueck").textContent,
   unter: document.querySelector("#reizleitung-hof .rl-unterschrift").textContent }));
-ok("Ohne Sinusknoten: keine P-Welle, Aufnahme 96 (Vorhofflimmern)",
-   st.fall === "ohne_sinus" && st.aufnahme === 96 && /Vorhofflimmern/.test(st.unter) && /keine P-Welle/.test(st.rueck),
+ok("Ohne Sinusknoten: Ersatzzentrum im AV-Übergang, kein Streifen (Lektion 11)",
+   st.fall === "ohne_sinus" && st.aufnahme === null && /Ersatz/.test(st.rueck) && /kein Streifen/.test(st.rueck),
    st.fall + "/" + st.aufnahme);
 await schuss("reizleitung_ohne_sinus");
 await setzeTeil("sinus", "sinus");
@@ -349,8 +349,8 @@ await warte(1600);
 ok("Dr. Falk spricht an", await seite.locator(".dialog.an").isVisible());
 await schuss("monitorzimmer");
 ok("Beste Antwort nur mit beiden Befunden",
-   (await seite.locator(".dialog-antwort", { hasText: "Sinusbradykardie" }).count()) === 1);
-await seite.locator(".dialog-antwort", { hasText: "Sinusbradykardie" }).click();
+   (await seite.locator(".dialog-antwort", { hasText: "Sinusrhythmus," }).count()) === 1);
+await seite.locator(".dialog-antwort", { hasText: "Sinusrhythmus," }).click();
 await warte(500);
 await dialogDurch();
 await schuss("nach_falk");

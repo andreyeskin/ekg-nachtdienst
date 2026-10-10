@@ -37,51 +37,51 @@
     /* Normale Anatomie → normale Leitung: P vor jedem QRS, PQ 120–200 ms, QRS < 120 ms. */
     richtig: {
       aufnahme: 119, zeige: "pq",
-      begruendung: "Richtige Anatomie, normale Leitung: Sinusrhythmus, PQ 120–200 ms, QRS unter 120 ms.",
+      begruendung: "Richtige Anatomie, normale Leitung: Sinusrhythmus, PQ 120–200 ms (Lektion 3), QRS 60–100 ms (Lektion 4).",
       passt: function (r) {
         return r.rhythmus === "Sinus rhythm." && !r.diagnose.length &&
                r.mess.pq >= 120 && r.mess.pq <= 200 && r.mess.qrs < 120;
       }
     },
-    /* Kein Taktgeber im Vorhof → keine P-Welle. Echter Ersatzrhythmus fehlt in den Daten;
-       nächstliegend: Vorhofflimmern (auch ohne P-Welle, aber unregelmäßig). */
+    /* Kein Taktgeber im Vorhof → AV-junktionaler Ersatzrhythmus (Lehrbuch Lektion 11): etwa 40–60/min,
+       schmale Kammerkomplexe, keine normale P-Welle davor. Keine annotierte Aufnahme davon → kein Streifen.
+       (Vorhofflimmern wäre etwas anderes: dort feuert der Vorhof chaotisch, er fällt nicht aus.) */
     ohne_sinus: {
-      aufnahme: 96, zeige: "r", naechstliegend: true,
-      begruendung: "Kein Taktgeber im Vorhof → keine P-Welle; nächstliegende Aufnahme: Vorhofflimmern.",
-      passt: function (r) { return r.rhythmus === "Atrial fibrillation." && r.mess.pq === null && r.mess.qrs < 120; }
+      aufnahme: null,
+      begruendung: "Ohne Sinusimpuls übernimmt die AV-junktionale Region als Ersatzschrittmacher (Lektion 11); keine annotierte Aufnahme → kein Streifen.",
+      passt: function () { return true; }
     },
-    /* Keine P-Welle und Kammer über den Muskel → Vorhofflimmern mit Linksschenkelblock. */
+    /* Ersatzrhythmus aus dem AV-Übergang plus Schenkelblock → breiter QRS (Lektion 11 und 13). Keine Aufnahme. */
     ohne_sinus_breit: {
-      aufnahme: 44, zeige: "qrs", naechstliegend: true,
-      begruendung: "Keine P-Welle und breiter QRS → Vorhofflimmern mit komplettem Linksschenkelblock (QRS > 120 ms).",
-      passt: function (r) {
-        return r.rhythmus === "Atrial fibrillation." && r.mess.qrs > 120 &&
-               r.diagnose.indexOf("Complete left bundle branch block.") >= 0;
-      }
+      aufnahme: null,
+      begruendung: "AV-junktionaler Ersatzrhythmus (Lektion 11) mit Schenkelblock (Lektion 13); keine annotierte Aufnahme → kein Streifen.",
+      passt: function () { return true; }
     },
-    /* Kein Weg durch die Klappenebene → kompletter AV-Block. Unbehandelt liegt keiner vor;
-       nächstliegend: AV-Block III° mit Kammerschrittmacher (breiter QRS aus dem Muskel). */
+    /* Kein Weg durch die Klappenebene → AV-Block III° (Lektion 10): Vorhöfe und Kammern unabhängig, ein Ersatz-
+       zentrum übernimmt (im AV-Knoten ca. 40–60/min schmal, tiefer ca. 30–40/min breit). Die einzigen annotierten
+       Aufnahmen mit AV-Block III° tragen einen Kammerschrittmacher (Lektion 30) — gezeigt wird eine davon, so benannt. */
     block: {
       aufnahme: 74, zeige: "qrs", naechstliegend: true,
-      begruendung: "Keine Verbindung Vorhof → Kammer → kompletter AV-Block; nächstliegende Aufnahme: AV-Block III. Grades mit Kammerschrittmacher.",
+      begruendung: "Keine Verbindung Vorhof → Kammer = AV-Block III° (Lektion 10); gezeigte Aufnahme: AV-Block III° mit Kammerschrittmacher (Lektion 30).",
       passt: function (r) { return r.diagnose.indexOf("III degree AV-block.") >= 0 && r.mess.qrs > 120; }
     },
-    /* Überleitung über Umweg → PQ > 200 ms (wie beim AV-Block I. Grades). */
+    /* Im Modell ein Umweg; im echten Herzen (Lektion 3 und 10): PQ > 200 ms = Leitungsverzögerung im AV-Knoten,
+       AV-Block I°, jede P-Welle wird übergeleitet. */
     av_umweg: {
       aufnahme: 39, zeige: "pq",
-      begruendung: "Verzögerte Überleitung Vorhof → Kammer → PQ über 200 ms (AV-Block I. Grades).",
+      begruendung: "PQ über 200 ms = verzögerte Leitung im AV-Knoten, AV-Block I. Grades, jede P-Welle übergeleitet (Lektion 3 und 10).",
       passt: function (r) { return r.mess.pq > 200 && r.mess.qrs < 120; }
     },
     /* Umweg plus Kammer über den Muskel → PQ > 200 ms und QRS > 120 ms in einer Aufnahme. */
     av_umweg_breit: {
       aufnahme: 23, zeige: "pq", marken: "qrs",
-      begruendung: "Verzögerte Überleitung und Kammer über den Muskel → PQ über 200 ms und QRS über 120 ms.",
+      begruendung: "AV-Block I. Grades (Lektion 10) und Schenkelblock (Lektion 13): PQ über 200 ms und QRS ab 120 ms in einer Aufnahme.",
       passt: function (r) { return r.mess.pq > 200 && r.mess.qrs > 120; }
     },
     /* Schenkel fehlt oder falsch → Kammer über den Muskel → QRS > 120 ms (Linksschenkelblock). */
     schenkel: {
       aufnahme: 24, zeige: "qrs",
-      begruendung: "Schenkel leitet nicht → Kammer Zelle für Zelle über den Muskel → QRS über 120 ms (kompletter Linksschenkelblock).",
+      begruendung: "Schenkel leitet nicht → Kammer Zelle für Zelle über den Muskel → QRS ab 120 ms, kompletter Linksschenkelblock (Lektion 13).",
       passt: function (r) {
         return r.mess.qrs > 120 && r.mess.pq <= 200 &&
                r.diagnose.indexOf("Complete left bundle branch block.") >= 0;
@@ -91,7 +91,7 @@
        Ein Herz ohne Purkinje-Fasern gibt es nicht; nächstliegend: unspezifische Leitungsverzögerung. */
     purkinje: {
       aufnahme: 59, zeige: "qrs", naechstliegend: true,
-      begruendung: "Langsame Ausbreitung in der Kammer → QRS über 120 ms; nächstliegende Aufnahme: unspezifische intraventrikuläre Leitungsverzögerung.",
+      begruendung: "Gestörte intraventrikuläre Erregungsausbreitung: QRS verlängert und deformiert (Lektion 4); nächstliegende Aufnahme: unspezifische intraventrikuläre Leitungsverzögerung.",
       passt: function (r) {
         return r.mess.qrs > 120 && r.mess.pq <= 200 &&
                r.diagnose.indexOf("Non-specific intravintricular conduction delay.") >= 0;
@@ -223,33 +223,33 @@
         e.echt = T("Richtige Anatomie, normales EKG. Das ist der ganze Zusammenhang.");
         break;
       case "ohne_sinus":
-        e.titel = T("Keine P-Welle.");
-        e.text = satzSinus(z) + " " + T("Die Vorhöfe bekommen keinen geordneten Anstoß, also gibt es keine P-Welle. Den Takt "
-               + "übernimmt ein langsameres Ersatzzentrum im Übergang zur Kammer, {ort}. Von dort leiten His-Bündel, Schenkel und "
-               + "Purkinje-Fasern wie gewohnt: Der QRS-Komplex bleibt schmal.", { ort: ort });
-        e.wo = T("Gestrichelt: jede R-Zacke. Vor keinem Kammerkomplex steht eine P-Welle, und die Abstände sind ungleich.");
-        e.echt = T("Eine Aufnahme eines solchen Ersatzrhythmus liegt uns nicht vor. Gezeigt wird die nächstliegende echte "
-               + "Aufnahme: Vorhofflimmern. Gemeinsam ist beiden: keine P-Welle, schmaler QRS. Der Unterschied: Vorhofflimmern "
-               + "ist unregelmäßig, ein Ersatzrhythmus regelmäßig und langsam.");
+        e.titel = T("Kein Sinusimpuls — ein Ersatzzentrum übernimmt.");
+        e.text = satzSinus(z) + " " + T("Ohne Impuls aus dem Sinusknoten springt die AV-junktionale Region als Ersatzschrittmacher "
+               + "ein (Knotenersatzrhythmus): langsam, etwa 40–60 pro Minute, und ohne normale P-Welle davor — der Vorhof wird, "
+               + "wenn überhaupt, rückwärts erregt. Von dort leiten His-Bündel, Schenkel und Purkinje-Fasern wie gewohnt: "
+               + "Der QRS-Komplex bleibt schmal.");
+        e.wo = "";
+        e.echt = T("Eine annotierte Aufnahme eines Knotenersatzrhythmus liegt uns nicht vor — deshalb hier kein Streifen. "
+               + "Vorhofflimmern wäre kein Ersatz dafür: Dort fällt der Vorhof nicht aus, er feuert chaotisch.");
         break;
       case "ohne_sinus_breit":
-        e.titel = T("Keine P-Welle, breiter QRS.");
-        e.text = satzSinus(z) + " " + T("Ohne geordneten Anstoß im Vorhof gibt es keine P-Welle; den Takt übernimmt ein "
-               + "Ersatzzentrum {ort}.", { ort: ort }) + " " + satzKammer(z);
-        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit (Norm unter 120 ms). Davor steht keine P-Welle.", { ms: m.ms });
-        e.echt = T("Eine Aufnahme mit Ersatzrhythmus und breitem QRS liegt uns nicht vor. Am nächsten kommt diese: "
-               + "Vorhofflimmern (keine P-Welle) mit Linksschenkelblock (QRS über 120 ms).");
+        e.titel = T("Kein Sinusimpuls, breiter QRS.");
+        e.text = satzSinus(z) + " " + T("Ohne Sinusimpuls übernimmt die AV-junktionale Region als Ersatzschrittmacher, langsam "
+               + "und ohne normale P-Welle davor.") + " " + satzKammer(z);
+        e.wo = "";
+        e.echt = T("Eine annotierte Aufnahme davon liegt uns nicht vor — deshalb hier kein Streifen.");
         break;
       case "block":
         e.titel = T("Nichts kommt in der Kammer an.");
         e.text = T("Der Sinusknoten feuert, die Vorhöfe werden erregt — das gäbe die P-Welle.") + " " + saetzeDurchgang(z) + " "
                + T("Die Klappenebene ist Bindegewebe und leitet nicht; das His-Bündel ist der einzige Durchgang. Vorhöfe und "
                + "Kammern sind elektrisch getrennt: ein kompletter AV-Block (III. Grades).");
-        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit. Er ist breit, weil der Schrittmacher im Kammermuskel zündet und "
-               + "die Erregung von dort Zelle für Zelle läuft, nicht über die Leitungsbahn.", { ms: m.ms });
-        e.echt = T("Unbehandelt springt in der Kammer nur ein langsamer Ersatzrhythmus ein — oder keiner. Eine Aufnahme davon "
-               + "ohne Schrittmacher liegt uns nicht vor. Gezeigt wird ein Patient mit AV-Block III. Grades, dessen Kammern "
-               + "ein Schrittmacher anregt.");
+        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit. In dieser Aufnahme stimuliert ein Herzschrittmacher die Kammer; "
+               + "die Erregung läuft vom Stimulationsort Zelle für Zelle durch den Muskel, nicht über die Leitungsbahn.", { ms: m.ms });
+        e.echt = T("Ohne Behandlung schlägt das Herz beim AV-Block III. Grades nur weiter, wenn ein Ersatzzentrum einspringt: "
+               + "im AV-Knoten etwa 40–60 pro Minute mit schmalen Komplexen, tiefer im His-Bündel oder in der Kammer etwa 30–40 "
+               + "pro Minute mit breiten, deformierten Komplexen. Eine annotierte Aufnahme ohne Schrittmacher liegt uns nicht vor; "
+               + "gezeigt wird ein Patient mit AV-Block III. Grades und Kammerschrittmacher.");
         break;
       case "still":
         e.titel = T("Kein Takt, kein Durchgang.");
@@ -266,7 +266,8 @@
         if (z.fall === "av_umweg") {
           e.wo = T("Markiert: die PQ-Zeit eines Schlags, {ms} ms (Norm 120–200 ms).", { ms: m.ms });
           e.echt = T("Im echten Herzen sitzt der AV-Knoten immer am selben Platz. Dort wird die PQ-Zeit länger, wenn der "
-                 + "AV-Knoten selbst langsamer leitet: AV-Block I. Grades — wie in dieser Aufnahme.");
+                 + "AV-Knoten selbst verzögert leitet: AV-Block I. Grades, jede P-Welle wird übergeleitet, nur verspätet — "
+                 + "wie in dieser Aufnahme.");
         } else {
           e.text += " " + satzKammer(z);
           e.wo = T("Markiert: die PQ-Zeit eines Schlags, {ms} ms. Gestrichelt: Anfang und Ende seines QRS-Komplexes, {qrs} ms.",
@@ -278,14 +279,14 @@
       case "schenkel":
         e.titel = T("Breiter Kammerkomplex.");
         e.text = T("Die Erregung kommt über AV-Knoten und His-Bündel bis oben in die Kammerscheidewand.") + " " + satzKammer(z);
-        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit (Norm unter 120 ms).", { ms: m.ms });
+        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit (Norm 60–100 ms; Schenkelblock ab 120 ms).", { ms: m.ms });
         e.echt = T("So sieht es aus, wenn ein Schenkel ausfällt: In dieser Aufnahme leitet der linke Schenkel nicht (kompletter "
                + "Linksschenkelblock). Die linke Kammer wird über den Muskel erregt, spät und langsam.");
         break;
       case "purkinje":
         e.titel = T("Breiter Kammerkomplex — trotz Schenkel.");
         e.text = satzKammer(z);
-        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit (Norm unter 120 ms).", { ms: m.ms });
+        e.wo = T("Markiert: ein Kammerkomplex, {ms} ms breit (Norm 60–100 ms).", { ms: m.ms });
         e.echt = T("Ein Herz ganz ohne Purkinje-Fasern gibt es nicht. Am nächsten kommt eine Leitungsverzögerung in der Kammer, "
                + "die keinem einzelnen Schenkel zuzuordnen ist (unspezifische intraventrikuläre Leitungsverzögerung) — wie in dieser Aufnahme.");
         break;
@@ -297,7 +298,7 @@
     if (z.fall === "block" && z.kammer !== "schmal") {
       e.echt += " " + T("Ob unterhalb der Klappenebene alles stimmt, verrät dieser Streifen nicht — es kommt ja nichts an.");
     }
-    if (m.satz && m.satz.rhythmus === "Sinus bradycardia." && m.satz.mess.frequenz) {
+    if (m.satz && m.satz.rhythmus === "Sinus bradycardia." && m.satz.mess.frequenz && m.satz.mess.frequenz < 50) {
       e.echt += " " + T("Dass dieser Patient langsam ist ({hf}/min, Sinusbradykardie), gehört zu ihm, nicht zum Modell.",
                         { hf: m.satz.mess.frequenz });
     }

@@ -8,7 +8,7 @@
 
   var FARBE = {
     papier: "#FFF8F4", fein: "#F0C2B0", grob: "#DB8A6E",
-    kurve: "#17181A", kurveMonitor: "#39E58C", papierMonitor: "#07130F",
+    kurve: "#17181A", kurveMonitor: "#17181A", papierMonitor: "#FFF8F4",   /* Monitor sieht aus wie Papier (Entscheidung 10.10.2026) */
     zirkel: "#C2185B", loesung: "#0E7C6B"
   };
   var VORLAUF_MM = 12;                      /* Platz für die Eichzacke */
@@ -59,16 +59,6 @@
       ctx.fillRect(0, 0, b, h);
       if (!S.raster) return;
       var i, n;
-      if (S.monitor) {
-        ctx.strokeStyle = "rgba(57,229,140,.14)"; ctx.lineWidth = 1;
-        for (n = Math.ceil(b / (mm * 5)), i = 0; i <= n; i++) {
-          ctx.beginPath(); ctx.moveTo(i * mm * 5 + .5, 0); ctx.lineTo(i * mm * 5 + .5, h); ctx.stroke();
-        }
-        for (n = Math.ceil(h / (mm * 5)), i = 0; i <= n; i++) {
-          ctx.beginPath(); ctx.moveTo(0, i * mm * 5 + .5); ctx.lineTo(b, i * mm * 5 + .5); ctx.stroke();
-        }
-        return;
-      }
       var spalten = Math.ceil(b / mm), zeilen = Math.ceil(h / mm);
       if (spalten > 4000 || zeilen > 4000) return;          /* Schutz gegen Unsinn */
       for (i = 0; i <= spalten; i++) {
@@ -110,7 +100,6 @@
       ctx.strokeStyle = S.monitor ? FARBE.kurveMonitor : FARBE.kurve;
       ctx.lineWidth = Math.max(1.1, (S.monitor ? 0.42 : 0.3) * mm);
       ctx.lineJoin = "round"; ctx.lineCap = "round";
-      if (S.monitor) { ctx.shadowColor = "rgba(57,229,140,.55)"; ctx.shadowBlur = 7; }
       ctx.beginPath();
       for (var i = i0; i < i1; i++) {
         var x = vl + (i - i0) / S.fs * S.mmProS * mm;

@@ -6,7 +6,7 @@
   "use strict";
 
   var SCHLUESSEL = "nachtdienst-1";
-  var AUFNAHME_EKG = 39;          /* Sinusbradykardie, PQ 228 ms — AV-Block I° */
+  var AUFNAHME_EKG = 39;          /* Sinusrhythmus 53/min (Datenbank: „Sinus bradycardia“; Lehrbuch Lektion 8: Bradykardie erst < 50), PQ 228 ms — AV-Block I° */
   /* Kapitel 2: die beiden anderen Betten an der Monitorwand. Gewählt nach den
      Feldern rhythmus und mess in data/ekg_daten.json. Von den drei Merkmalen,
      an denen man Herrn Baum erkennen kann (P vor jedem QRS · Frequenz · PQ),
@@ -319,7 +319,7 @@
         antworten: [
           {
             text: function () {
-              return T("Sinusbradykardie, {hf} pro Minute, PQ {pq} Millisekunden.",
+              return T("Sinusrhythmus, {hf} pro Minute, PQ {pq} Millisekunden.",
                        { hf: Z.werte.hf, pq: Z.werte.pq });
             },
             wenn: function () { return global.Mappe.hat("b-pq") && global.Mappe.hat("b-frequenz"); },
@@ -420,8 +420,8 @@
         weiter: "ampel_schluss"
       },
       ampel_pacer: {
-        text: "Ich hab die Klingel gehört. Langsam. — Er redet mit Ihnen. Seine Hände sind warm. Der Pacer ist "
-            + "für einen Kreislauf, der an der langsamen Frequenz scheitert. Seiner hält. Bleiben und mich rufen: "
+        text: "Ich hab die Klingel gehört. Langsam. — Er redet mit Ihnen. Seine Hände sind warm. Ob ein Pacer "
+            + "nötig ist, entscheidet der Arzt am Bett, nicht der Monitor und nicht die Famulantin. Bleiben und mich rufen: "
             + "Gelb, nicht Rot.",
         weiter: "ampel_schluss"
       },
@@ -507,7 +507,7 @@
         },
         {
           text: "Kammertachykardie — breite Komplexe, schnell.",
-          warum: "Die Komplexe sind schmal (unter 120 ms) und die Frequenz ist niedrig. Das Gegenteil davon."
+          warum: "Die Komplexe sind schmal (Norm 60–100 ms, Lektion 4) und die Frequenz ist niedrig. Das Gegenteil davon."
         }
       ],
       fertig: function () {
@@ -521,22 +521,28 @@
     });
   }
 
+  /* Lehrbuch, Lektion 8: normale Frequenz 50–100/min, Sinusbradykardie < 50/min, Sinustachykardie > 100/min. */
+  function frequenzSatz(hf) {
+    if (hf < 50) return T("Unter 50 — Sinusbradykardie.");
+    if (hf > 100) return T("Über 100 — Sinustachykardie.");
+    if (hf <= 60) return T("Norm 50–100: noch im Rahmen, aber am unteren Rand. Sinusbradykardie beginnt erst unter 50.");
+    return T("Norm 50–100: im Rahmen.");
+  }
+
   function messeFrequenz() {
     global.Zirkel.starte({
       satz: satz(AUFNAHME_EKG), was: "rr", toleranz: 25, mmProS: 25, von: 1.9, dauer: 7,
       titel: "Wie langsam ist langsam?",
       auftrag: "Miss einen RR-Abstand. Aus ihm kommt die Frequenz: 60 000 geteilt durch den RR-Abstand in Millisekunden.",
       deutung: function (ms) {
-        return T("60 000 : {ms} = {hf} pro Minute. Unter 60 — Bradykardie.",
-                 { ms: ms, hf: Math.round(60000 / ms) });
+        return T("60 000 : {ms} = {hf} pro Minute. ", { ms: ms, hf: Math.round(60000 / ms) }) + frequenzSatz(Math.round(60000 / ms));
       },
       fertig: function (erg) {
         var hf = Math.round(60000 / erg.wahrheit);
         Z.werte.hf = hf; Z.werte.rr = erg.wahrheit;
         befund({
           id: "b-frequenz", titel: T("Frequenz: {hf}/min", { hf: hf }), zeit: zeitText(),
-          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute. Norm 60–100, also Bradykardie.",
-                  { rr: erg.wahrheit, hf: hf }),
+          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute. ", { rr: erg.wahrheit, hf: hf }) + frequenzSatz(hf),
           ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.9, dauer: 6 }
         });
         zeitVor(6);
@@ -595,7 +601,7 @@
           id: "b-medis", titel: "Medikamente", zeit: zeitText(),
           text: "Bisoprolol 5 mg, Ramipril 5 mg, ASS 100 mg. Der Betablocker bremst Sinusknoten und AV-Knoten — "
               + "er erklärt die langsame Frequenz mit, aber keine Bewusstlosigkeit ohne Vorwarnung. "
-              + "Eine Bradykardie unter bremsender Medikation ist erwartbar, nicht verdächtig.",
+              + "Eine niedrige Frequenz unter bremsender Medikation ist erwartbar, nicht verdächtig.",
           symbol: tablettenBild()
         });
         zeitVor(4);
@@ -661,7 +667,7 @@
     var mB = satz(AUFNAHME_EKG).mess, mF = satz(SCHIRM_FLIMMERN_EKG).mess, mS = satz(SCHIRM_SCHNELL_EKG).mess;
 
     var unter = {};
-    unter[AUFNAHME_EKG] = T("Herr Baum. Sinusbradykardie, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger "
+    unter[AUFNAHME_EKG] = T("Herr Baum. Sinusrhythmus, {hf}/min, langsam. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger "
                           + "als ein großes Kästchen: AV-Block I. Grades.", { hf: mB.frequenz, pq: mB.pq });
     unter[SCHIRM_FLIMMERN_EKG] = T("Keine P-Wellen, die RR-Abstände springen, etwa {hf}/min: Vorhofflimmern.",
                                    { hf: mF.frequenz });
@@ -740,7 +746,7 @@
     zeitVor(7);
     befund({
       id: "b-monitor", titel: T("Monitor: Bett {n}", { n: n }), zeit: zeitText(),
-      text: T("Herr Baum am Monitor: Sinusbradykardie, {hf}/min. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger als "
+      text: T("Herr Baum am Monitor: Sinusrhythmus, {hf}/min, langsam. Vor jedem QRS eine P-Welle, PQ {pq} ms — länger als "
             + "ein großes Kästchen. Monitorwerte sind der Median aller Schläge im Streifen.", { hf: m.frequenz, pq: m.pq })
           + " " + (merkmal === "pq"
                    ? T("Erkannt an der PQ-Zeit: Die hat an der Wand nur er.")
