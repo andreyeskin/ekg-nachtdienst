@@ -16,7 +16,7 @@ BAU = os.path.join(WURZEL, "bau")
 DATEN = os.path.join(WURZEL, "data") if os.path.isdir(os.path.join(WURZEL, "data")) else BAU
 
 SKRIPTE = ["sprache.js", "ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js",
-           "raetsel_zirkel.js", "raetsel_reizleitung.js", "spiel.js"]
+           "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js", "raetsel_ampel.js", "spiel.js"]
 
 
 def lies(pfad):
@@ -42,12 +42,18 @@ def baue(ziel=None):
     kunst = json.load(open(os.path.join(BAU, "kunst.json"), encoding="utf-8"))
     ekg = json.load(open(os.path.join(DATEN, "ekg_daten.json"), encoding="utf-8"))
 
-    # Nur die Aufnahmen mitnehmen, die das Spiel wirklich anfasst, plus Reserve
+    # Nur die Aufnahmen mitnehmen, die das Spiel wirklich anfasst, plus Reserve.
+    # Jede Konstante, deren Name auf _EKG endet (AUFNAHME_EKG, SCHIRM_..._EKG),
+    # nennt eine Aufnahme, die das Spiel zeigt.
     gebraucht = set()
     for js in SKRIPTE:
-        # AUFNAHME_EKG = 39 (Kapitel) und aufnahme: 119 (Fall-Tabellen der Rätsel)
-        for m in re.finditer(r"(?:AUFNAHME_EKG\s*=|\baufnahme:)\s*(\d+)", lies(os.path.join(WEB, js))):
+        # Konstanten *_EKG = N (Kapitel) und aufnahme: N (Fall-Tabellen der Rätsel)
+        for m in re.finditer(r"(?:\b[A-Z][A-Z0-9_]*_EKG\s*=|\baufnahme:)\s*(\d+)", lies(os.path.join(WEB, js))):
             gebraucht.add(int(m.group(1)))
+    fehlt = gebraucht - {r["id"] for r in ekg}
+    if fehlt:
+        print("Aufnahmen fehlen in den Daten:", sorted(fehlt))
+        sys.exit(1)
     auswahl = [r for r in ekg if r["id"] in gebraucht] or ekg[:4]
     # Für den Wiederspielwert: je Rhythmusgruppe eine weitere Aufnahme
     gesehen = {r["rhythmus"] for r in auswahl}

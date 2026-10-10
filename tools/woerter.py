@@ -17,11 +17,12 @@ import sys
 WURZEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(WURZEL, "web")
 TEXT = os.path.join(WURZEL, "text")
-DATEIEN = ["spiel.js", "dialog.js", "mappe.js", "stand.js", "raetsel_zirkel.js", "szene.js"]
+DATEIEN = ["spiel.js", "dialog.js", "mappe.js", "stand.js", "raetsel_zirkel.js", "raetsel_schirme.js",
+           "raetsel_ampel.js", "szene.js"]
 
 # Felder, deren Inhalt der Spieler zu sehen bekommt
 FELDER = ["text", "warum", "titel", "auftrag", "name", "wie", "anfang", "ende",
-          "endeText", "fuss", "hinweis", "deutung"]
+          "endeText", "fuss", "hinweis", "deutung", "frage", "lage", "danach", "ampel"]
 
 STRING = r'"((?:[^"\\]|\\.)*)"'
 KETTE = re.compile(r'%s(?:\s*\+\s*%s)*' % (STRING, STRING))

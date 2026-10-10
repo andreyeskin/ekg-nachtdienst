@@ -67,6 +67,10 @@
   function zeigeKnoten(baum, id) {
     var k = baeume[baum] && baeume[baum][id];
     if (!k) { schliesse(); return; }
+    /* Umleiten: Derselbe Einstieg führt je nach Stand zu einem anderen Knoten —
+       eine Figur begrüßt nicht zweimal, wenn man schon weiter ist. */
+    var ziel = k.umleiten ? k.umleiten() : null;
+    if (ziel && ziel !== id && baeume[baum][ziel]) { zeigeKnoten(baum, ziel); return; }
     aktiv = { baum: baum, id: id, weiterKnopf: null, abbrechbar: !!k.abbrechbar };
     /* Erst den Text bilden, dann die Wirkung auslösen — sonst beschreibt der
        Knoten einen Zustand, den er selbst gerade erst hergestellt hat. */
