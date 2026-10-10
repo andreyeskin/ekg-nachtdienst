@@ -175,9 +175,9 @@
       start: {
         text: function () {
           return hat("vorgestellt")
-            ? "Na, schon schlauer?"
-            : "Du bist die Famulantin. Gut. Dann fang gleich an — der Herr dort sitzt seit zwanzig Minuten und "
-            + "entschuldigt sich alle fünf Minuten dafür, dass er da ist.";
+            ? T("Na, schon schlauer?")
+            : T("Du bist die Famulantin. Gut. Dann fang gleich an — der Herr dort sitzt seit zwanzig Minuten und "
+              + "entschuldigt sich alle fünf Minuten dafür, dass er da ist.");
         },
         tu: function () { setze("vorgestellt"); },
         antworten: [
@@ -249,9 +249,9 @@
       start: {
         text: function () {
           return hat("k_begruesst")
-            ? "Ja, Frau Doktor?"
-            : "Entschuldigen Sie. Ich wollte eigentlich gar nicht herkommen. Meine Tochter hat gesagt, ich soll. "
-            + "Da war ich dann halt brav.";
+            ? T("Ja, Frau Doktor?")
+            : T("Entschuldigen Sie. Ich wollte eigentlich gar nicht herkommen. Meine Tochter hat gesagt, ich soll. "
+              + "Da war ich dann halt brav.");
         },
         tu: function () { setze("k_begruesst"); },
         antworten: [

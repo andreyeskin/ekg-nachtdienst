@@ -23,21 +23,21 @@ body {
 
 /* ------------------------------------------------------------- Kopfleiste */
 .kopf {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   padding: 10px 16px;
   background: #081118;
   border-bottom: 1px solid rgba(244, 230, 210, .14);
 }
 .kopf .marke { font: 600 15px var(--anzeige); letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
 .kopf .ort { font-size: 14px; opacity: .6; }
-.kopf .luecke { flex: 1; }
+.kopf .luecke { flex: 1 1 0; min-width: 0; }
 .uhr {
   font: 600 19px var(--mono); letter-spacing: .04em;
   color: var(--bernstein);
   padding: 2px 10px; border: 1px solid rgba(232, 163, 61, .35); border-radius: 6px;
 }
 .knopf {
-  font: 500 14px var(--text);
+  font: 500 14px var(--text); white-space: nowrap;
   color: var(--papier); background: rgba(244, 230, 210, .08);
   border: 1px solid rgba(244, 230, 210, .22); border-radius: 7px;
   padding: 7px 13px; cursor: pointer;
@@ -238,3 +238,19 @@ body {
 .stand-liste li.leer::before { content: ""; }
 .stand-fuss { margin-top: 18px; font-size: 14px; line-height: 1.6; opacity: .65; }
 .stand-fuss:empty { display: none; }
+
+/* ------------------------------------------------------------- Sprachwahl */
+.sprachwahl {
+  font: 500 14px var(--text); color: var(--papier);
+  background: rgba(244, 230, 210, .08);
+  border: 1px solid rgba(244, 230, 210, .22); border-radius: 7px;
+  padding: 7px 9px; cursor: pointer;
+}
+.sprachwahl:hover { background: rgba(244, 230, 210, .16); }
+.fuss .quellen { display: block; margin-top: 4px; font-size: 12px; opacity: .8; }
+@media (max-width: 760px) {
+  .kopf { gap: 7px; padding: 8px 10px; }
+  .kopf .marke { font-size: 13px; }
+  .kopf .ort { display: none; }
+  .knopf { padding: 7px 10px; font-size: 13px; }
+}
