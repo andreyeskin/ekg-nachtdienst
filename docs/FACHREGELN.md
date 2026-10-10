@@ -64,6 +64,18 @@ für die Veröffentlichung: `QUELLEN.md`.
 - Therapieentscheidungen (Pacer, Medikamente, Überwachung) stehen nicht im Lehrbuch. Das Spiel
   behauptet dazu nichts Konkretes; Dr. Falk sagt, dass der Arzt am Bett entscheidet.
 
+## Anatomie des Reizleitungssystems (Lektion 1; Lagen nach offener Quelle, s. QUELLEN.md)
+- Sinusknoten: oben hinten im rechten Vorhof nahe der Einmündung der oberen Hohlvene.
+- AV-Knoten: unten im rechten Vorhof in der Vorhof-Kammer-Scheidewand (AV-Septum).
+- His-Bündel: vom AV-Knoten durch die Kammerscheidewand, teilt sich in rechten und linken Schenkel;
+  der linke Schenkel in anterioren und posterioren Faszikel (Lektion 1, 14).
+- Purkinje-Fasern: von der Spitze zur Basis durch das Kammermyokard.
+- Ersatzfrequenzen, wenn der Sinusknoten ausfällt: AV-Knoten ca. 40–60/min, His-Bündel ca.
+  30–40/min, darunter noch langsamer (Lektion 10 nennt 40–60 im AV-Knoten, 30–40 ventrikulär).
+- Folge für das Spiel: Das Herzschema im Rätsel „Reizleitung bauen" muss den linken Schenkel in
+  zwei Faszikel teilen (noch offen, Aufgabe für Lektion 14) und den Sinusknoten oben im rechten
+  Vorhof, den AV-Knoten unten in der Scheidewand zeigen (so gebaut).
+
 ## Offene Lektionen
 Noch nicht abgeglichen: 5–7, 9, 12, 14–29, 31–38. Vor jedem neuen Kapitel die passende Lektion
 lesen und hier nachtragen.

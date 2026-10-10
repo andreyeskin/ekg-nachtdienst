@@ -101,3 +101,26 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 Eine Zahl ohne Beleg wird nicht geschrieben. Lieber eine Aussage weniger als
 eine, die niemand nachschlagen kann. Wer eine neue Behauptung einbaut, trägt
 sie in die Belegtabelle ein — in derselben Sitzung, nicht später.
+
+
+---
+
+## 6. Abgleich mit dem Lehrbuch und ergänzende offene Quellen (10.10.2026)
+
+Das Lehrbuch (EKG-Kurs, Thieme 2024, 38 Lektionen) ist der **Prüfmaßstab**: Jede fachliche
+Aussage im Spiel wird gegen die passende Lektion gelesen (Ergebnis in `FACHREGELN.md`, in eigenen
+Worten, ohne Zitate). Es bleibt keine zitierte Quelle des Produkts; wo eine Aussage belegt werden
+muss, steht hier eine offene Quelle.
+
+| Kürzel | Quelle | wofür | Lizenz / Hinweis |
+|---|---|---|---|
+| **OpenStax-A&P-19.2** | OpenStax, *Anatomy and Physiology 2e*, 19.2 „Cardiac Muscle and Electrical Activity". https://openstax.org/books/anatomy-and-physiology-2e/pages/19-2-cardiac-muscle-and-electrical-activity | Lage von Sinusknoten, AV-Knoten, His-Bündel, Schenkeln (linker Schenkel mit zwei Faszikeln), Purkinje-Fasern; Ersatzfrequenzen (AV-Knoten 40–60/min, His-Bündel 30–40/min, tiefer langsamer); AV-Verzögerung ca. 100 ms | CC BY-NC-SA 4.0 — nur als Faktenquelle, kein Text übernommen |
+| **Lehrbuch L8** | EKG-Kurs, Lektion 8 | Frequenzgrenzen: Norm 50–100/min, Sinusbradykardie < 50/min | Entscheidung: Das Spiel folgt dem Lehrbuch. Viele andere Quellen setzen 60/min; die Datenbank LUDB etikettiert Aufnahme 39 (53/min) als „Sinus bradycardia". Das Spiel nennt deshalb 53/min „Sinusrhythmus, langsam" und die Grenze 50. |
+| **Lehrbuch L3/L10** | Lektionen 3 und 10 | PQ 120–200 ms; AV-Block I° > 200 ms, Verzögerung im AV-Knoten; AV-Block III° mit Ersatzzentren 40–60 bzw. 30–40/min | im Spiel so umgesetzt |
+| **Lehrbuch L11** | Lektion 11 | AV-junktionaler Ersatzrhythmus bei Ausfall des Sinusimpulses | Rätsel „Reizleitung": Fall „ohne Sinusknoten" zeigt keinen Vorhofflimmer-Streifen mehr |
+| **Lehrbuch L13** | Lektion 13 | kompletter Schenkelblock QRS ≥ 120 ms | im Rätsel so benannt |
+| **Lehrbuch L30** | Lektion 30 | Schrittmacher-EKG | Aufnahme 74 (AV-Block III° mit Kammerschrittmacher) wird als solche benannt |
+
+**Noch zu belegen (offen):** Therapie-Entscheidungen am Monitor (Beobachten · Arzt rufen · Pacer)
+stehen nicht im EKG-Kurs. Das Spiel behauptet dazu keine Kriterien mehr; falls später doch,
+Beleg aus ESC-Pacing-2021 / ERC-Leitlinie hier eintragen.
