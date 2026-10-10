@@ -51,3 +51,18 @@ Regeln, die aus Fehlern stammen:
   in der Parallaxe mit.
 
 Zwischenergebnisse liegen in `bau/blender/<raum>/` (nicht im Repository), Ergebnisse in `art/szenen/<raum>/`.
+
+## Porträts: Feinschliff über fal.ai (Flux Kontext)
+
+Die Brustbilder in `art/portraits/` entstehen aus dem 3D-Blockout (`ebenen_figuren.py portraits`) und einem
+Kontext-Durchlauf mit den Stilphrasen in `stil/` (weiche Variante, Seed 11), danach auf 400×440 gebracht und
+auf 160 Farben quantisiert (RGB, Alpha getrennt). Schlüssel kommt aus `FAL_KEY` oder dem Proxy der Cloud-Umgebung:
+
+```bash
+python3 gen/blender/malen.py kontext --image art/portraits/marlene.png --style gen/blender/stil/portrait_marlene.txt \
+        --seed 11 --size portrait_4_3 --out bau/blender/figuren/marlene_weich.png
+```
+
+Vor dem Übernehmen gegen docs/ART_BIBLE.md §5 prüfen (Dutt mit Lesebrille, Kuli, Thermoskanne; Schiebermütze,
+Hörgerät; Brille an der Kette, Zirkel, Stethoskop) — Kontext lässt gern ein Detail weg, dann neuer Seed.
+`stil/szene_ligne_claire.txt` ist die Phrase für ganze Räume (nur als Vergleich; Räume bleiben reine Blender-Ausgabe).
