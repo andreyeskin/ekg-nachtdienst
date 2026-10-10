@@ -538,24 +538,24 @@
       felder: [
         {
           id: "marlene", name: "Schwester Marlene",
-          punkte: [[318, 282], [492, 300], [500, 500], [296, 496]],
+          punkte: [[16, 365], [548, 365], [548, 707], [16, 707]],
           bei: function () { global.Dialog.starte("marlene", "start"); }
         },
         {
           id: "herrk", name: "Herr Baum",
-          punkte: [[1216, 440], [1360, 440], [1372, 716], [1206, 716]],
+          punkte: [[1365, 516], [1521, 516], [1521, 724], [1365, 724]],
           bei: function () { global.Dialog.starte("herr_k", "start"); }
         },
         {
           id: "tuete", name: "Plastiktüte",
-          punkte: [[1176, 630], [1244, 630], [1248, 716], [1168, 716]],
+          punkte: [[1333, 631], [1404, 631], [1404, 733], [1333, 733]],
           sichtbar: function () { return hat("darf_tuete"); },
           erledigt: function () { return global.Mappe.hat("b-medis"); },
           bei: tueteAnsehen
         },
         {
           id: "wagen", name: "EKG-Wagen",
-          punkte: [[700, 410], [860, 410], [870, 650], [690, 650]],
+          punkte: [[822, 422], [960, 422], [960, 738], [822, 738]],
           erledigt: function () { return global.Mappe.hat("b-rhythmus"); },
           bei: function () {
             if (!hat("auftrag_ekg")) {
@@ -568,14 +568,14 @@
         },
         {
           id: "uhr", name: "Wanduhr",
-          punkte: [[1206, 106], [1332, 106], [1332, 232], [1206, 232]],
+          punkte: [[1332, 167], [1466, 167], [1466, 295], [1332, 295]],
           bei: function () {
             melde(T("{zeit} · Schichtbeginn war 06:30.", { zeit: zeitText() }));
           }
         },
         {
           id: "pinnwand", name: "Pinnwand",
-          punkte: [[150, 104], [410, 104], [410, 284], [150, 284]],
+          punkte: [[284, 197], [486, 197], [486, 358], [284, 358]],
           bei: function () {
             melde("Dienstplan, ein Zettel über die Kaffeekasse, ein Kinderbild ohne Namen.");
           }
@@ -584,7 +584,7 @@
       ausgaenge: [
         {
           name: "Flur zum Monitorzimmer", nach: "monitor",
-          punkte: [[1432, 236], [1584, 236], [1584, 628], [1432, 628]],
+          punkte: [[1533, 228], [1600, 228], [1600, 701], [1533, 701]],
           wenn: function () { return anzahlKernbefunde() >= 2; },
           gesperrt: function () {
             melde("Noch nicht. Mit leerer Mappe meldet dich Marlene nirgends an.", "warnung");

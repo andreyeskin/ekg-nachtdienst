@@ -817,10 +817,28 @@ SZENEN = {
 }
 
 
+def png_ebene(pfad):
+    """Gerenderte Ebene (PNG) als SVG mit eingebettetem Bild — für Szenen aus der Blender-Pipeline."""
+    import base64
+    with open(pfad, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode("ascii")
+    return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '
+            'xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,' + b64 +
+            '" x="0" y="0" width="1600" height="900"/></svg>')
+
+
 def baue():
     aus = {"szenen": {}, "portraits": {}}
+    hier = os.path.dirname(os.path.abspath(__file__))
     for name, ebenen in SZENEN.items():
         aus["szenen"][name] = {k: f() for k, f in ebenen.items()}
+        ordner = os.path.join(os.path.dirname(hier), "art", "szenen", name)
+        for ebene in ("hintergrund", "mittelgrund", "figuren", "vordergrund"):
+            pfad = os.path.join(ordner, ebene + ".png")
+            if os.path.exists(pfad):
+                aus["szenen"][name][ebene] = png_ebene(pfad)
+            elif os.path.isdir(ordner) and ebene == "vordergrund":
+                aus["szenen"][name][ebene] = ""          # gerenderte Szene: kein gezeichneter Rahmen
     for wer in ("marlene", "herr_k", "falk"):
         aus["portraits"][wer] = portrait(wer)
     return aus

@@ -5,29 +5,54 @@ Wenn ein Bild gegen eine Regel hier verstößt, wird es neu gemacht — nicht di
 
 ## 1. Stilentscheid
 
-**Gewählt: A — Graphic Novel / Risograph.** Getuschte Linie mit wechselnder Strichstärke,
-Rasterpunkte in den Schatten, Papierkorn, leichter Druckversatz. Vier Druckfarben.
+**Gewählt (10.10.2026, nach Stilrecherche): Ligne claire.** Flache Lokalfarben, eine
+gleichmäßig dünne Tuschelinie, keine Schraffur, kein Raster. Licht nur als harte, geometrische
+Formen (Sonnenstreifen durch die Jalousie, Lampenkegel). Hell, klar, ruhig — der Raum ist Kulisse,
+der EKG-Streifen ist das einzige Objekt mit feiner Zeichnung.
 
 Warum dieser und kein anderer:
-- Die Figuren bekommen ein Gesicht und eine Handschrift — genau das fehlte dem flachen Vektor.
-- Der Stil verzeiht Vereinfachung: Wir brauchen keine Fototreue, sondern Wiedererkennung.
-- Er sieht handgemacht aus. Das ist die beste Versicherung gegen den „nach KI aussehenden" Look.
+- Die Recherche (docs/stil-recherche-2026-10-10.md im Projekt-Repository) zeigt: Spiele, in denen
+  Dokumente gelesen werden, halten die Welt ruhig und niedrigfrequent und den Beleg scharf.
+  Ligne claire ist genau das: große glatte Flächen, eine Linie, nichts flimmert.
+- Er lässt sich vollständig aus Code erzeugen (Blender → Flächen, Freestyle-Linie, Sonnenpass),
+  bleibt deshalb über alle Räume gleich und kostet Sekunden statt Stunden.
+- Er ist erwachsen (europäischer Comic, Moebius, Sable, Rollerdrome), nicht „Toon".
 
-Nebenrollen für andere Stile:
-- **D — Isometrische Diorama-Ansicht** nur für den Stationsplan zwischen den Szenen.
-- **C — Noir** nur für Rückblenden und für die eine Szene, in der es wirklich eng wird.
+Verworfen: Risograph-/Gouache-/Noir-Studien aus dem Bildgenerator (sehen generiert aus, sechs
+Bilder = sechs Stile), der flache Code-SVG-Look (Figuren ohne Gesicht, Krankenhaus-Mint) und
+pastelliges Low-Poly (Blender-Trend, wirkt wie Vorlage).
+
+Pipeline: `gen/blender/` (siehe README dort). Ergebnis je Raum: `art/szenen/<raum>/` mit
+`hintergrund.png`, `mittelgrund.png`, `hitboxes.json` — `gen/kunst.py` bettet sie ein.
+
+Nebenrollen: Isometrie nur für den Stationsplan; dunkler Monitor-Look (Grün auf Schwarz) nur als
+Bildschirm-Inhalt, nie als Raum.
 
 ## 2. Farben
 
 | Rolle | Farbe | Einsatz |
 |---|---|---|
-| Papier | warmes Creme `#F4E6D2` | Grundfläche, Licht |
-| Tinte | Mitternachtsblau-Petrol `#10212B` | Linien, Schatten, Dunkelheit |
-| Signal | Magenta `#C2185B` | **genau ein Objekt pro Bild** — das, was die Geschichte weitertreibt |
-| Puls | Phosphorgrün `#39E58C` | ausschließlich Bildschirme und EKG-Kurven |
-| Wärme | Bernstein `#E8A33D` | Lampenlicht, Sonne, Haut im Gegenlicht |
+| Sand | `#EFE6D3` | Wände, Grundfläche |
+| Papier | `#F7F1E4` | Tische, Rahmen, Zettel |
+| Mint | `#BFD9CF` | zweite Fläche (Wandpaneel, Vorhänge, Bezüge) |
+| Petrol | `#2C5560` | Möbel, Geräte — die dunkle Form |
+| Tinte | `#1E2A30` | **die Linie**; nie reines Schwarz (das gehört der EKG-Kurve) |
+| Holz | `#C99A5B` | Tresen, Rahmen, Armlehnen |
+| Rost | `#B5552D` | **genau ein Objekt pro Bild** — das, was die Geschichte weitertreibt |
+| Morgenlicht | `#F8E7BF` | Fenster, Sonnenstreifen; je Tageszeit abgewandelt |
+| Phosphor | `#39E58C` | ausschließlich Bildschirme und Monitorkurven |
 
-Magenta ist kein Dekor. Wer es benutzt, um „etwas bunter zu machen", macht das Bild kaputt.
+Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
+in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
+
+### Regeln, die aus der Recherche kommen
+1. Der Streifen ist das einzige hochfrequente Element am Bildschirm. Raster, Korn, Dithering
+   berühren ihn nie.
+2. Der Streifen ist heller als die Welt: eigenes Papier `#FFF8F4` mit Schatten, nie Sand.
+3. Hinweise auf dem Streifen sind statische Farbflächen unter der Kurve. Nichts blinkt.
+4. Jede Requisite besteht den Test „Würde ein Kardiologe sie zur Entscheidung brauchen?" —
+   sonst bleibt sie klein, still oder weg.
+5. Figuren tragen Emotion im Gesicht; Körperdetail und Realismus zählen wenig.
 
 ## 3. Licht und Tiefe
 
@@ -52,6 +77,10 @@ Die Geschichte läuft über **eine Schicht**, und das Licht erzählt mit:
 | 6 Ambulanz / Finale | 02:14 | tiefe Nacht, Regen — jetzt ist es verdient |
 
 ## 5. Figuren
+
+Umsetzung in ligne claire: einfache Formfamilien als 3D-Grundkörper (Blender), gerendert durch
+dieselbe Pipeline wie die Räume (Fläche + Linie), Gesicht als wenige klare Formen (Augen, Brauen,
+Mund) mit drei bis vier Ausdrücken. So bleibt dieselbe Person in jedem Raum dieselbe Person.
 
 Jede Figur erfüllt alle fünf Punkte, sonst ist sie nicht fertig:
 
@@ -90,6 +119,6 @@ Kittel, Bleistift hinterm Ohr, das EKG-Lineal aus dem Kurs in der Tasche.
 - Ein EKG, das vom Bildmodell gemalt wurde. **Alle Kurven kommen aus der Engine**, aus echten
   Aufnahmen. Gemalte Zacken sind medizinisch falsch und sofort als Fake erkennbar.
 - Sechs Finger, verbogene Hände, Instrumente, die es nicht gibt, Stethoskope mit zwei Schläuchen.
-- Symmetrische Frontalansicht ohne Vordergrund.
+- Frontalansicht ohne jede Tiefe (leichte Dreiviertelansicht oder ein Vordergrund-Element genügt).
 - Mehr als ein Magenta-Objekt.
 - Requisiten ohne Grund im Bild („sieht medizinisch aus") — jedes Ding gehört jemandem.
