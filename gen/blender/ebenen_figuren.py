@@ -3,10 +3,13 @@
 
     python3 ebenen_figuren.py probe      # alle drei Figuren auf neutraler Bühne -> bau/blender/figuren/probe.png
     python3 ebenen_figuren.py raum       # Aufnahme: Marlene + Herr K -> art/szenen/aufnahme/figuren/{marlene,herrk}.png + figuren.json
+    python3 ebenen_figuren.py monitor    # Monitorzimmer: Dr. Falk -> art/szenen/monitor/figuren/falk.png + figuren.json
     python3 ebenen_figuren.py portraits  # Brustbilder -> art/portraits/{marlene,herr_k,falk}.png (400x440, Alpha)
 
-Für den Raum wird szene_aufnahme.py nur gelesen (exec bis zum Render-Marker), die Raumobjekte werden
-als Holdout gerendert: die Figur hat dort Alpha 0, wo Tresen oder Stuhl sie verdecken.
+Der Raum wird aus seiner Szenendatei aufgebaut (Aufnahme: exec von szene_aufnahme.py; Monitorzimmer: Import
+von szene_monitor.py, werkzeug-Schnittstelle), die Raumobjekte werden als Holdout gerendert: die Figur hat
+dort Alpha 0, wo Tresen oder Stuhl sie verdecken. Danach: ebenen.py <raum> flat schreibt hitboxes.json neu,
+also die Figuren immer NACH den Raum-Durchgängen rendern (sie vereinigen ihre Klickzone dort hinein).
 """
 import json
 import math
@@ -162,15 +165,17 @@ def luma(a): return 0.2126 * a[..., 0] + 0.7152 * a[..., 1] + 0.0722 * a[..., 2]
 def weich(m, r=0.7):
     return np.asarray(Image.fromarray((np.clip(m, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(r))).astype(np.float32) / 255
 
-def komposit(flach, frei, sonne, linien, sun_t=0.35, unten=0):
+def komposit(flach, frei, sonne, linien, sun_t=0.35, unten=0, licht_farbe=None, anteil=0.32, weich_r=0.7):
     """flach: RGBA mit Holdout (Alpha = sichtbarer Teil), frei: RGBA ohne Raum (volle Figur),
     sonne/linien: RGB. `unten` zieht die sichtbare Alpha um n px nach unten in den verdeckten Teil
-    (weicher Auslauf unter der Tresenkante, damit die Atem-Animation keine harte Kante zeigt)."""
+    (weicher Auslauf unter der Tresenkante, damit die Atem-Animation keine harte Kante zeigt).
+    Lichtfarbe, Anteil, Schwelle und Weichheit wie in komposit.EINSTELLUNG des Raums."""
     col = frei[..., :3]; voll = frei[..., 3]; a = flach[..., 3]
+    L = LICHT if licht_farbe is None else np.array(hexc(licht_farbe), np.float32)
     ls = luma(sonne); ls = np.clip(ls / (np.percentile(ls, 99.5) + 1e-6), 0, 1)
     ls = np.asarray(Image.fromarray((ls * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
-    licht = weich((ls > sun_t).astype(np.float32))[..., None]
-    col = col * (1 - licht) + (col * (1 - 0.32) + LICHT * 0.32) * licht
+    licht = weich((ls > sun_t).astype(np.float32), weich_r)[..., None]
+    col = col * (1 - licht) + (col * (1 - anteil) + L * anteil) * licht
     ink = np.clip((1 - luma(linien)) * 1.3, 0, 1)
     if unten:
         for k in range(1, unten + 1):
@@ -240,42 +245,36 @@ if MODE == "probe":
     silhouette(img, OUT + "probe_silhouette.png", 480)
     print("saved", OUT + "probe.png")
 
-# ================================================================== raum: Aufnahme
-elif MODE == "raum":
-    base = open(os.path.join(HIER, "szene_aufnahme.py"), encoding="utf-8").read().split("# (рендер-проходы")[0]
-    _argv, _MODE, _OUT = sys.argv, MODE, OUT; sys.argv = ["x", "lit"]; exec(base)
-    sys.argv, MODE, OUT = _argv, _MODE, _OUT      # die Szenendatei überschreibt MODE und OUT
-    sc = bpy.context.scene; render_grund(1600, 900)
-    bpy.data.objects["bag"].data.materials[0] = G["paper"]; bpy.data.objects["folder"].data.materials[0] = G["paper"]
-    # Kamera exakt wie ebenen_aufnahme.py
-    cam = sc.camera; cam.location = (1.3, -7.5, 1.35)
-    cam.rotation_euler = (Vector((-0.45, 0.0, 1.2)) - cam.location).to_track_quat('-Z', 'Y').to_euler(); cam.data.lens = 30
-    # Marlene hinter dem Tresen (Tresenrückkante y = -0,83), dem Raum zugewandt, leicht zur Tür gedreht;
-    # Herr K auf dem dritten Stuhl (x = 2,4), etwas zur Tür gedreht; die Tüte steht schon im Mittelgrund
-    figs = {"marlene": figuren.marlene((-3.05, -0.5, 0), drehung=20, haltung="tresen", tag=_tag, fein=0.0055, tresen=1.1),
-            "herrk": figuren.herr_k((2.4, -0.75, 0), drehung=-8, haltung="sitzen", tag=_tag, fein=0.0055, tuete=False)}
+# ------------------------------------------------------------------ Figurenebene eines Raums
+def figuren_durchgaenge(figs, raum_sichtbar, sonne_sichtbar, sonne_richtung, energie, sonne_name):
+    """Je Figur drei Durchgänge (Fläche mit Raum als Holdout, Fläche frei, Linie hinter dem Raum) und einmal
+    die Sonne des Raums über allem. raum_sichtbar(o): Raumobjekt wird gerendert (Platzhalter nie)."""
     koerper = bpy.data.collections["figuren"]
-    ebene_ok = lambda o: (LAYER.get(o.name) != "fig")
-    for name, fig in figs.items():
-        nur = lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else "holdout"
-        pass_flach(OUT + f"{name}_flat.png", nur)
+    for name in figs:
+        pass_flach(OUT + f"{name}_flat.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else ("holdout" if raum_sichtbar(o) else False))
         pass_flach(OUT + f"{name}_frei.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else False)
-        pass_linien(OUT + f"{name}_lines.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else True, koerper)
-    # Sonne wie im Raum (ebenen_aufnahme.set_grey): von hinter dem Fenster, tief, zur Kamera
-    pass_sonne(OUT + "raum_sun.png", lambda o: True, (-0.30, -0.80, -0.52), energie=14.0)
-    sonne = lade(OUT + "raum_sun.png")
-    hit = json.load(open(SZENE + "hitboxes.json", encoding="utf-8"))
+        pass_linien(OUT + f"{name}_lines.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else raum_sichtbar(o), koerper)
+    pass_sonne(OUT + sonne_name, lambda o: True if ist_fig(o) else sonne_sichtbar(o), sonne_richtung, energie=energie)
+
+
+def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None):
+    """Komposit je Figur -> art/szenen/<raum>/figuren/<name>.png + figuren.json (Bühnenposition, Atem-Klasse);
+    Klickzone der Figur (sichtbarer Teil ∪ bestehende Zone, mindestens 44 CSS-px) in hitboxes.json."""
+    szene_dir = os.path.join(WURZEL, "art", "szenen", raum) + os.sep
+    e = einst or {}
+    sonne = lade(OUT + sonne_name)
+    hit = json.load(open(szene_dir + "hitboxes.json", encoding="utf-8"))
     platz = {}
     for name, fig in figs.items():
         img = komposit(lade(OUT + f"{name}_flat.png", True), lade(OUT + f"{name}_frei.png", True), sonne,
-                       lade(OUT + f"{name}_lines.png"), unten=3 if name == "marlene" else 0)
+                       lade(OUT + f"{name}_lines.png"), sun_t=e.get("schwelle", 0.35), unten=(unten or {}).get(name, 0),
+                       licht_farbe=e.get("licht"), anteil=e.get("anteil", 0.32), weich_r=e.get("weich", 0.7))
         a = np.asarray(img)[..., 3]; ys, xs = np.nonzero(a > 8)
         x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
-        speichern(img.crop((x0, y0, x1, y1)), SZENE + f"figuren/{name}.png")
+        speichern(img.crop((x0, y0, x1, y1)), szene_dir + f"figuren/{name}.png")
         silhouette(img.crop((x0, y0, x1, y1)), OUT + f"{name}_silhouette.png", 120)
         platz[name] = {"datei": f"{name}.png", "x": x0, "y": y0, "breite": x1 - x0, "hoehe": y1 - y0,
-                       "klasse": "atmet langsam" if name == "herrk" else "atmet"}
-        # Klickzone: Figur (sichtbarer Teil) vereinigt mit der bestehenden Zone, mindestens 44 CSS-px
+                       "klasse": klasse.get(name, "atmet")}
         k = bildkasten(fig, cam, 1600, 900)
         alt = hit.get(name, k)
         r = [min(alt[0], x0), min(alt[1], y0), max(alt[2], x1), max(alt[3], y1)]
@@ -284,16 +283,60 @@ elif MODE == "raum":
                 m = (r[i] + r[i + 2]) // 2; r[i], r[i + 2] = m - MIN_ZIEL // 2, m + MIN_ZIEL // 2
         hit[name] = [max(0, r[0]), max(0, r[1]), min(1600, r[2]), min(900, r[3])]
         print("FIGUR", name, platz[name], "| Kasten", k, "| Klickzone", hit[name])
-    json.dump(platz, open(SZENE + "figuren/figuren.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-    json.dump(hit, open(SZENE + "hitboxes.json", "w", encoding="utf-8"), indent=1)
+    json.dump(platz, open(szene_dir + "figuren/figuren.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    json.dump(hit, open(szene_dir + "hitboxes.json", "w", encoding="utf-8"), indent=1)
     # Vorschau: Raumebenen + Figuren übereinander (nur zur Kontrolle)
     try:
-        vor = Image.open(SZENE + "hintergrund.png").convert("RGBA"); vor.alpha_composite(Image.open(SZENE + "mittelgrund.png").convert("RGBA"))
+        vor = Image.open(szene_dir + "hintergrund.png").convert("RGBA"); vor.alpha_composite(Image.open(szene_dir + "mittelgrund.png").convert("RGBA"))
         for name, p in platz.items():
-            vor.alpha_composite(Image.open(SZENE + f"figuren/{name}.png").convert("RGBA"), (p["x"], p["y"]))
-        vor.save(OUT + "raum_vorschau.png"); print("saved", OUT + "raum_vorschau.png")
+            vor.alpha_composite(Image.open(szene_dir + f"figuren/{name}.png").convert("RGBA"), (p["x"], p["y"]))
+        vor.save(OUT + f"{raum}_vorschau.png"); print("saved", OUT + f"{raum}_vorschau.png")
     except Exception as e:
         print("keine Vorschau:", e)
+
+
+def raum_einstellung(raum):
+    """Licht-Einstellung des Raums aus komposit.py (Lichtfarbe, Anteil, Schwelle, Weichheit)."""
+    try:
+        import komposit
+        return komposit.EINSTELLUNG.get(raum, komposit.STANDARD)
+    except Exception:
+        return None
+
+
+# ================================================================== raum: Aufnahme
+if MODE == "raum":
+    base = open(os.path.join(HIER, "szene_aufnahme.py"), encoding="utf-8").read()
+    _argv, _MODE, _OUT = sys.argv, MODE, OUT; sys.argv = ["x", "lit"]; exec(base)
+    sys.argv, MODE, OUT = _argv, _MODE, _OUT      # die Szenendatei überschreibt MODE und OUT
+    sc = bpy.context.scene; render_grund(1600, 900)
+    bpy.data.objects["bag"].data.materials[0] = G["paper"]; bpy.data.objects["folder"].data.materials[0] = G["paper"]
+    cam = sc.camera   # Kamera wie in der Szene (ebenen.py rendert mit derselben)
+    # Marlene hinter dem Tresen (Tresenrückkante y = -0,83), dem Raum zugewandt, leicht zur Tür gedreht;
+    # Herr K auf dem dritten Stuhl (x = 2,4), etwas zur Tür gedreht; die Tüte steht schon im Mittelgrund
+    figs = {"marlene": figuren.marlene((-3.05, -0.5, 0), drehung=20, haltung="tresen", tag=_tag, fein=0.0055, tresen=1.1),
+            "herrk": figuren.herr_k((2.4, -0.75, 0), drehung=-8, haltung="sitzen", tag=_tag, fein=0.0055, tuete=False)}
+    # Sonne wie im Raum (szene_aufnahme.sonne_stellen): von hinter dem Fenster, tief, zur Kamera
+    figuren_durchgaenge(figs, lambda o: True, lambda o: True, (-0.30, -0.80, -0.52), 14.0, "raum_sun.png")
+    figuren_ebene("aufnahme", figs, cam, "raum_sun.png", {"marlene": "atmet", "herrk": "atmet langsam"},
+                  unten={"marlene": 3}, einst=raum_einstellung("aufnahme"))
+
+# ================================================================== monitor: Dr. Falk
+elif MODE == "monitor":
+    import importlib
+    import werkzeug as wz
+    szene = importlib.import_module("szene_monitor")      # baut Raum, Kamera (mit Verschiebung) und Sonne
+    PAL.update(szene.PALETTE)
+    sc = bpy.context.scene; render_grund(1600, 900); cam = sc.camera
+    # Falk steht am Platzhalter der Szene (rechts vom großen Schirm), Hände in den Taschen, dem Schirm zugewandt
+    pl = bpy.data.objects["platz_falk"]                     # Lage aus dem Welt-Kasten (location ist nach transform_apply 0)
+    bb = [pl.matrix_world @ Vector(v) for v in pl.bound_box]
+    px, py = sum(v.x for v in bb) / 8, sum(v.y for v in bb) / 8
+    figs = {"falk": figuren.falk((px, py, 0), drehung=-14, haltung="taschen", fein=0.0055)}
+    nie = set(wz.PLATZHALTER)
+    figuren_durchgaenge(figs, lambda o: o.name not in nie, lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
+                        (0.25, -0.75, -0.6), 12.0, "monitor_sun.png")   # Sonne wie in szene_monitor.py
+    figuren_ebene("monitor", figs, cam, "monitor_sun.png", {"falk": "atmet langsam"}, einst=raum_einstellung("monitor"))
 
 # ================================================================== portraits
 elif MODE == "portraits":

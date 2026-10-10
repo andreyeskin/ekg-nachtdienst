@@ -59,8 +59,11 @@ await warte(900);
 
 /* ---------------------------------------------------------- 1 Auftakt */
 ok("Seite lebt", await seite.locator("#buehne").isVisible());
-ok("Vier Ebenen gezeichnet", (await seite.locator("#buehne .ebene svg").count()) === 4,
-   "gefunden: " + (await seite.locator("#buehne .ebene svg").count()));
+/* Gerenderte Räume haben keinen Vordergrund (nichts steht vor der Kamera); Hintergrund, Mittelgrund und
+   Figuren müssen gezeichnet sein. */
+for (const n of ["hintergrund", "mittelgrund", "figuren"])
+  ok("Ebene " + n + " gezeichnet", (await seite.locator("#buehne .ebene-" + n + " svg").count()) === 1);
+ok("Uhrzeiger in der Hintergrund-Ebene", (await seite.locator("#buehne .ebene-hintergrund svg #uhr-std").count()) === 1);
 ok("Hotspots vorhanden", (await seite.locator(".feld").count()) >= 6);
 ok("Auftakt-Dialog erscheint", await seite.locator(".dialog.an").isVisible());
 await schuss("auftakt");

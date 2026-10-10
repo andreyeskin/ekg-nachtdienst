@@ -954,7 +954,7 @@
       beiBetreten: function () {
         Z.raum = "monitor"; Z.kapitel = 2;
         if (!hat("ankunft_monitor")) { Z.zeit = Math.max(Z.zeit, 9 * 60 + 15); setze("ankunft_monitor"); }
-        kopfAuffrischen(); sichere();
+        kopfAuffrischen(); uhrStellen(); sichere();
         starteMonitor();
         global.setTimeout(function () {
           if (global.Szene.aktueller() !== "monitor") return;
@@ -977,21 +977,21 @@
         /* --- Ende Kapitel 2: neue Felder --- */
         {
           id: "schirm", name: "Großer Monitor",
-          punkte: [[794, 372], [1116, 372], [1116, 604], [794, 604]],
+          punkte: [[638, 308], [955, 308], [955, 498], [638, 498]],
           bei: function () {
             grosserMonitor();
           }
         },
         {
           id: "falk", name: "Dr. Falk",
-          punkte: [[1178, 348], [1292, 348], [1300, 700], [1166, 700]],
+          punkte: [[1159, 341], [1299, 341], [1299, 717], [1159, 717]],
           bei: function () { global.Dialog.starte("falk", "start"); }
         }
       ],
       ausgaenge: [
         {
           name: "Zurück in die Aufnahme", nach: "aufnahme",
-          punkte: [[0, 300], [150, 300], [150, 880], [0, 880]]
+          punkte: [[0, 286], [132, 286], [132, 656], [0, 656]]
         }
       ]
     });

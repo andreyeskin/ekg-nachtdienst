@@ -990,36 +990,35 @@ SZENEN = {
 }
 
 
-def png_ebene(pfad):
-    """Gerenderte Ebene (PNG) als SVG mit eingebettetem Bild — für Szenen aus der Blender-Pipeline."""
+def png_ebene(pfad, extra=""):
+    """Gerenderte Ebene (PNG) als SVG mit eingebettetem Bild — für Szenen aus der Blender-Pipeline.
+    `extra`: weitere SVG-Elemente über dem Bild, in derselben Ebene (z. B. die Uhrzeiger)."""
     import base64
     with open(pfad, "rb") as f:
         b64 = base64.b64encode(f.read()).decode("ascii")
     return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '
             'xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,' + b64 +
-            '" x="0" y="0" width="1600" height="900"/></svg>')
+            '" x="0" y="0" width="1600" height="900"/>' + extra + '</svg>')
 
 
-def overlay_ebene(ordner):
-    """Bewegliche Teile über einer gerenderten Szene: Uhrzeiger (#uhr-std, #uhr-min), die die
-    Engine nach der Spielzeit dreht. Lage und Größe kommen aus hitboxes.json (Feld "uhr")."""
+def uhr_teile(ordner):
+    """Uhrzeiger (#uhr-std, #uhr-min) über einem gerenderten Zifferblatt; die Engine dreht sie nach der
+    Spielzeit. Lage und Größe kommen aus hitboxes.json (Feld "uhr"). Sie gehören in dieselbe Ebene wie das
+    Zifferblatt (Hintergrund), sonst wandern sie in der Parallaxe gegen die Uhr."""
     pfad = os.path.join(ordner, "hitboxes.json")
     if not os.path.exists(pfad):
         return ""
     hb = json.load(open(pfad, encoding="utf-8"))
-    teile = []
-    if "uhr" in hb:
-        x0, y0, x1, y1 = hb["uhr"]
-        cx, cy, r = (x0 + x1) / 2, (y0 + y1) / 2, min(x1 - x0, y1 - y0) / 2 * 0.86
-        teile.append(f'<line id="uhr-std" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.52)}" '
-                     f'stroke="{LINIE}" stroke-width="5" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>')
-        teile.append(f'<line id="uhr-min" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.8)}" '
-                     f'stroke="{LINIE}" stroke-width="3" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>')
-        teile.append(f'<circle cx="{F(cx)}" cy="{F(cy)}" r="4" fill="{LINIE}"/>')
-    if not teile:
+    if "uhr" not in hb:
         return ""
-    return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '
-            'xmlns="http://www.w3.org/2000/svg">' + "".join(teile) + '</svg>')
+    x0, y0, x1, y1 = hb["uhr"]
+    cx, cy, r = (x0 + x1) / 2, (y0 + y1) / 2, min(x1 - x0, y1 - y0) / 2 * 0.86
+    dick = 5 if r > 45 else 3.5
+    return (f'<line id="uhr-std" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.52)}" '
+            f'stroke="{LINIE}" stroke-width="{dick}" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>'
+            f'<line id="uhr-min" x1="{F(cx)}" y1="{F(cy)}" x2="{F(cx)}" y2="{F(cy - r * 0.8)}" '
+            f'stroke="{LINIE}" stroke-width="{dick * 0.6:.1f}" stroke-linecap="round" transform="rotate(0 {F(cx)} {F(cy)})"/>'
+            f'<circle cx="{F(cx)}" cy="{F(cy)}" r="{3 if r > 45 else 2.2}" fill="{LINIE}"/>')
 
 
 def _png64(pfad):
@@ -1056,14 +1055,17 @@ def baue():
     for name, ebenen in SZENEN.items():
         aus["szenen"][name] = {k: f() for k, f in ebenen.items()}
         ordner = os.path.join(os.path.dirname(hier), "art", "szenen", name)
+        if not os.path.isdir(ordner):
+            continue                                    # kein Render: die gezeichneten SVG-Ebenen bleiben
+        # Gerenderter Raum: jede Ebene kommt aus art/szenen/<name>/ — fehlt sie dort, bleibt sie leer
         for ebene in ("hintergrund", "mittelgrund", "figuren", "vordergrund"):
             pfad = os.path.join(ordner, ebene + ".png")
             if ebene == "figuren" and os.path.exists(os.path.join(ordner, "figuren", "figuren.json")):
                 aus["szenen"][name][ebene] = png_figuren(os.path.join(ordner, "figuren"))
             elif os.path.exists(pfad):
-                aus["szenen"][name][ebene] = png_ebene(pfad)
-            elif os.path.isdir(ordner) and ebene == "vordergrund":
-                aus["szenen"][name][ebene] = overlay_ebene(ordner)
+                aus["szenen"][name][ebene] = png_ebene(pfad, uhr_teile(ordner) if ebene == "hintergrund" else "")
+            else:
+                aus["szenen"][name][ebene] = ""
     for wer in ("marlene", "herr_k", "falk"):
         pfad = os.path.join(os.path.dirname(hier), "art", "portraits", wer + ".png")
         aus["portraits"][wer] = png_portrait(pfad) if os.path.exists(pfad) else portrait(wer)
