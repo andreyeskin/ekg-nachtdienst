@@ -152,3 +152,74 @@ Hörgerät; Brille an der Kette, Zirkel, Stethoskop) — Kontext lässt gern ein
 eine Bearbeitung mit einer einzigen Änderung (mehrere auf einmal gehen oft schief). Die Ganzkörperfigur danach
 mit `malen --portrait` gegen das neue Porträt zeichnen, damit beide dieselbe Person zeigen.
 `malen.py kontext` bleibt für Räume (nur als Vergleich; Räume bleiben reine Blender-Ausgabe).
+
+## Szenenbilder: Nahaufnahmen für Gesprächsanfänge
+
+Ein Szenenbild ist eine illustrierte Nahaufnahme ohne Klickzonen (Vorlage: `art/referenz/chatgpt_aufnahme_marlene.png` —
+Marlene reicht der Spielerin die Mappe über den Tresen). Das Bild aus dem Generator war im Licht falsch: Sonne im Fenster
+hinter Marlene, Jalousiestreifen aber von links auf Wand und Tresen, Gesicht frontal hell. Deshalb teilt die Pipeline die
+Arbeit: **Blender rechnet das Licht, der Bildgenerator malt nur.**
+
+1. `szenenbild.py` baut dieselbe Szene (Raum, `sonne_stellen()`, Figuren-Blockouts aus `figuren.py`) aus einer eigenen Kamera
+   (`EINSTELLUNG[raum][einstellung]`: Ort in Augenhöhe, Gier, Neigung, Brennweite, Haltungen und Orte der Figuren) und rendert
+   16:9 (1920×1080) die Durchgänge Fläche (mit Stufen nach Flächenrichtung wie `ebenen.py`), Linie (Freestyle, doppelt
+   aufgelöst, Gesichtsteile ohne Kontur), Tiefe, Figurenmaske, Kontaktschatten, Sonne und Lampe (nur der Spot im Lampenkopf).
+   Das Komposit ist das Ligne-claire-Komposit der Räume plus Lampeninsel: `art/szenenbilder/<raum>_<einstellung>/vorlage.png`,
+   dazu die Lichtmasken aus Blender `sonne.png`, `lampe.png` sowie `tiefe.png`, `maske.png`.
+2. `malen.py` schickt die Vorlage mit der Stilphrase `stil/szenenbild.txt` zum Generator — fal Kontext (`kontext`, mit
+   `--referenz` als max/multi mit Stilreferenz) oder OpenAI GPT Image (`openai`: Vorlage + Porträts + Stilreferenz als
+   Eingabebilder, `POST /v1/images/edits`, Standardmodell `gpt-image-2.5-sunburst`). Die Stilphrase beschreibt den Stil des
+   Referenzbilds und das Licht ausdrücklich (Sonne tief hinter dem Fenster der Rückwand zur Kamera, Streifen auf dem Boden zum
+   Betrachter, Gegenlicht, Lampe als warme Insel, „keep all light and shadow exactly as in the input") und verbietet Text,
+   gemalte EKG-Kurven, Uhrzeiger.
+3. `licht_pruefen.py` misst, ob das Licht im gemalten Bild dort liegt, wo Blender es hat (Korrelation der hellen Flächen mit der
+   Sonnenmaske, Kontrast, Versatz, Streifenrichtung, Fremdlicht) und schreibt ein Vergleichsbild.
+
+```bash
+BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen            # ≈ 2,5 min -> art/szenenbilder/aufnahme_tresen/
+python3 gen/blender/szenenbild.py aufnahme tresen --komposit                   # nur neu zusammensetzen
+BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen --probe --kamera -1.45,-2.45,1.62 --gier 23 --brennweite 16
+                                                                               # Kamera ausprobieren (klein, 10 s)
+python3 gen/blender/malen.py kontext --image art/szenenbilder/aufnahme_tresen/vorlage.png \
+        --style gen/blender/stil/szenenbild.txt --aspect 16:9 --seed 7 --out bau/blender/szenenbilder/aufnahme_tresen/kontext_s7.png
+python3 gen/blender/malen.py openai --image art/szenenbilder/aufnahme_tresen/vorlage.png \
+        --portrait art/portraits/marlene.png --portrait art/portraits/herr_k.png \
+        --referenz art/referenz/chatgpt_aufnahme_marlene.png [--dry-run]       # OPENAI_API_KEY; Ergebnis + JSON nach art/szenenbilder/aufnahme_tresen/
+python3 gen/blender/licht_pruefen.py <ergebnis.png> art/szenenbilder/aufnahme_tresen/sonne.png --lampe art/szenenbilder/aufnahme_tresen/lampe.png
+```
+
+Einstellung `aufnahme/tresen`: die Spielerin steht vor dem rechten Ende des Tresens (Augenhöhe 1,62 m), Marlene ist an dieses
+Ende gekommen (Haltung `reicht_mappe` in `figuren.py`: linker Arm mit der Mappe nach vorn, Kanne abgestellt auf der Ablage) und
+schaut zur Kamera; das Fenster liegt rechts hinter ihr, die Sonnenscheibe (Kulisse 40 m draußen) wird je Einstellung so
+gerückt, dass sie tief im rechten Flügel steht (`sonne_im_fenster`), das Licht selbst bleibt `sonne_stellen()`. Herr K. sitzt
+wie im Raum auf dem dritten Sitz, der EKG-Wagen davor. Der Raum ist breit (Bank 5 m rechts vom Tresen), daher 16 mm — mit
+einer engeren Brennweite fiele Herr K. aus dem Bild; Marlene ist deshalb kleiner als im Referenzbild. Was Blender für diese
+Kamera ergibt: die Sonne fällt rechts an Marlene vorbei (das Fenster liegt rechts vom Tresen); die Jalousiestreifen auf dem
+Boden liegen 1,75–3,5 m vor der Rückwand, also unter den Füßen der Spielerin und außerhalb des Bildes; im Bild trifft die Sonne
+die Oberseite des EKG-Wagens (Streifen), Fensterbank und Laibung und die rechte Ecke der Tresenablage. Marlene steht in
+Raumlicht und Lampeninsel, Herr K. im Schatten. Ein Gegenlicht-Saum entsteht nur dort, wo der Sonnen-Durchgang eine Figur
+wirklich trifft — die Stilphrase verlangt Streifen und Säume nur, wo die Vorlage sie zeigt. Die Kanne steht auf der Ablage der
+Sichtblende: auf der Arbeitsfläche dahinter liefe der Blick knapp durch den Spalt zwischen Fase der Sichtblende und
+Plattenunterseite, und Freestyle zeichnete die verdeckte Kanne durch die Platte.
+
+Nicht im Bild: Klickzonen, Uhrzeiger (bleiben SVG), Kurven auf Schirmen, Text. Die Szenenbilder werden später eingebunden; die
+Spiellogik kennt sie noch nicht.
+
+### Probe mit fal.ai am 11.10.2026 (sechs Aufrufe, Vorlage `aufnahme_tresen`)
+
+| Aufruf | Endpunkt, Eingaben | Licht (`licht_pruefen.py`, 4 Kriterien) | Figuren, Stil |
+|---|---|---|---|
+| Vorlage selbst | — | RICHTIG 4/4: Kontrast 0,57, Versatz 1 %, Richtung 7°, Fremdlicht 0 ‰ | Blockout |
+| Referenz (ChatGPT) | — | FALSCH 1/4: Kontrast 0,06, Versatz 4 %, Fremdlicht 42 ‰ (Streifen auf Wand und Tresen, wo Blender keine hat) | der Anlass |
+| 1 kontext, s7 | Vorlage + Stilphrase | TEILWEISE 3/4: Kontrast 0,51, Richtung 4°, Fremdlicht 6 ‰; Versatz 4,6 % (Glanz unter der Fensterbank) | hält Aufbau und Licht, malt aber plastisch wie ein 3D-Render; Mannequin-Gesicht, Dutt ohne Brille, Hand mit Fingern, Kanne rost, Mütze, Tüte als Blase, keine Schrift |
+| 2 kontext/max/multi | Vorlage + Referenzbild | FALSCH 1/4 | malt das Referenzbild nach, verwirft die Vorlage (Herr K. fehlt, Licht wie im Original falsch) |
+| 3 kontext, s11 | Vorlage + Stilphrase + „hand-drawn, not 3D" | FALSCH 2/4: Kontrast 0,27 | wie 1, dunkler |
+| 4 kontext/max/multi | Vorlage + Porträts | kein Bild (fal: downstream_service_unavailable) | — |
+| 5 kontext/max/multi, s7 | Vorlage + Porträts Marlene, Herr K. | FALSCH 1/4: Kontrast 0,05, Fremdlicht 32 ‰ | echte Ligne claire, Marlenes Gesicht/Dutt/Lesebrille/Kuli aus dem Porträt, Mütze; aber Mappe, Lampeninsel und Streifen weg, Hände ohne Finger, Kritzelschrift auf dem Namensschild |
+| 6 kontext/max, s7 | Vorlage + Stilphrase | TEILWEISE 3/4: Kontrast 0,10, Versatz 1,9 %, Fremdlicht 8 ‰ | fast eine Kopie der Vorlage, Streifen auf dem Wagen verblasst |
+
+Lehre: Flux Kontext kann Licht halten (einbildig) oder Personen treffen (multi mit Porträts), nicht beides in einem Bild. Für
+den GPT-Lauf mit Schlüssel heißt das: Vorlage + Porträts + Stilreferenz in einem Aufruf und prüfen, ob `licht_pruefen.py`
+den Kontrast der Vorlage (0,57) annähernd hält; wenn nicht, zweistufig — Szene einbildig fürs Licht, Figuren wie im Spiel
+getrennt gezeichnet und über `maske.png` eingesetzt. Bilder und Prüfungen der Probe liegen nicht im Repository
+(`bau/blender/szenenbilder/aufnahme_tresen/kontext_*.png` + `.json`).
