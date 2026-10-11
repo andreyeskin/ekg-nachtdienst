@@ -20,6 +20,23 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
   50 mm/s; die Geschwindigkeit steht jedes Mal dabei. Ein „großes Kästchen" wird immer mit Größe,
   Geschwindigkeit und Millisekunden genannt (5 mm, bei 25 mm/s 200 ms), weil das Buch den Begriff
   nicht einheitlich braucht (Lektion 7: 10-mm-Quadrat für die Frequenzregel; Lektion 36: 5 mm).
+- Nachtrag 11.10.2026 (Lektion 1, für den Lehrsaal): Im QRS heißt die negative Zacke vor R „Q", die
+  negative nach R „S"; eine weitere positive Zacke R′, eine weitere negative S′; Groß- und
+  Kleinbuchstaben nach der Größe des Ausschlags. In der Praxis sagt man „gespaltener Kammerkomplex".
+  Die QT-Zeit wird als absolute Zeit gemessen und in Relation zur Frequenz angegeben.
+- Nachtrag (Lektion 2, Lehrsaal): Zwölf Ableitungen — Einthoven I, II, III bipolar; Goldberger aVR,
+  aVL, aVF unipolar; Wilson V1–V6 unipolar in der Horizontalebene. Nehb wird kaum noch verwendet.
+  Anlegen der Extremitätenkabel nach der Ampel-Regel: rechtes Bein schwarz, rechter Arm rot, linker Arm
+  gelb, linkes Bein grün. Brustwand: V1 4. ICR rechts parasternal, V2 4. ICR links parasternal, V3 auf
+  der 5. Rippe zwischen V2 und V4, V4 5. ICR Medioklavikularlinie, V5 vordere und V6 mittlere
+  Axillarlinie auf der Höhe von V4. Was welche Ableitung sieht: II, III, aVF inferior (diaphragmal); I,
+  aVL hohe Seitenwand; V1, V2 Vorderwand (rechtspräkordial, sagen normalerweise wenig über den rechten
+  Ventrikel); V3, V4 Vorderwand/anteroseptal; V5, V6 tiefe Seitenwand und Spitze; dorsal (V7–V9) und
+  rechtsthorakal (V3R–V6R) nur bei besonderen Fragen. Inferiore und laterale Extremitätenableitungen
+  verhalten sich annähernd spiegelbildlich (reziprok) — wichtig für die Infarktdiagnose, nicht Stoff des
+  Lehrsaals.
+- Folge für das Spiel: Die Aufgabe „Elektroden kleben" prüft genau diese Zuordnung; „Welche Ableitung
+  sieht was" die vier Gruppen. Beides braucht keine Aufnahme.
 
 ## Vorhof und AV-Überleitung (Lektion 3)
 - P-Welle: 50–100 ms, bis 0,25 mV, positiv (Ausnahmen: V1 biphasisch, aVR negativ); am besten in
@@ -59,6 +76,13 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
   Kästchenzählen; der Wert aus einem Schlag wird auf der Karte ausdrücklich dem Median aller
   Schläge gegenübergestellt. Der Flimmer-Schirm nennt die Frequenz als „im Mittel etwa", nicht
   als feste Zahl.
+- Nachtrag 11.10.2026 (Lektion 7, Lehrsaal und Monitor): Mit dem EKG-Lineal (Kardiometer) legt man den
+  Pfeil auf eine R-Spitze und liest unter der zweiten oder dritten folgenden R-Zacke ab. Streng
+  genommen gehören Vorhof- und Kammerfrequenz getrennt angegeben; bei Sinusrhythmus mit 1:1-Überleitung
+  genügt eine Zahl, sonst beide (Beispiel im Buch: Vorhof 100, Kammer 43 beim totalen Block). In ein EKG
+  schreibt oder zeichnet man nicht — es ist ein Originaldokument. Im Lehrsaal bestimmt die Spielerin die
+  Frequenz dreimal (Quadrate, Lineal, Zirkel); im Monitorzimmer zählt sie bei Vorhofflimmern die
+  Komplexe in sechs Sekunden und nimmt mal zehn (geprüft gegen die Komplexe im gezeigten Fenster).
 
 ## Sinusrhythmus (Lektion 8)
 - Kriterien: regelmäßige, normal konfigurierte P-Wellen, konstante PP-Intervalle, jede P von
@@ -177,6 +201,20 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
   Vergleich, keine Messung; die Zahlen auf der Karte sind als Median aus der Annotation benannt.
   Vorschlag, nicht umgesetzt: Dr. Falk sagt einmal, dass der Monitor das 12-Kanal-EKG vom Morgen
   nicht ersetzt.
+- Nachtrag 11.10.2026 (Lektion 31, zweites Lesen, Fall Frau Lindner): Monitore haben Alarme für
+  Frequenzgrenzen und komplexe Arrhythmien, oft einen Speicher bis 24 h und einen Einkanalschreiber;
+  die Elektroden liegen so, dass P und QRS gut abgebildet sind und Pflege/Therapie wenig gestört werden.
+  Ausreichend sicher erkennbar: bradykard — Sinusbradykardie, bradykardes Vorhofflimmern, Ausfall der
+  Vorhoferregung (SA-Block III°/Sinusarrest), AV-Block II°/III°, Schrittmacherfehlfunktion, Asystolie;
+  tachykard — Sinustachykardie, tachykardes Vorhofflimmern, Schmalkomplextachykardie,
+  Breitkomplextachykardie (VT gegen SVT mit Aberranz am Einkanal-Monitor nicht sicher), Torsade,
+  Kammerflattern/-flimmern; Extrasystolen schmal/breit, gepaart, salvenförmig, sehr früh einfallend;
+  neu auftretende QRS-Verbreiterung (plump bei Myokardschaden/Elektrolyten/Medikamenten; M-förmig beim
+  Schenkelblock). Im Zweifel keine Feininterpretation — jede Auffälligkeit ist Anlass für ein
+  12-Kanal-EKG; der Monitor ersetzt es nicht.
+- Folge für das Spiel: Die Ampel bei Frau Lindner belohnt „bleiben, Arzt rufen, 12-Kanal-EKG"; die
+  Rückmeldung zu „nur beobachten" nennt den Satz vom 12-Kanal-EKG; „QRS schmal oder breit" wird am
+  Monitor nur grob gefragt, die Zahl kommt vom Papier.
 
 ## Rhythmus-Befundung, Technik, typische Fehler (Lektion 35, 36, 38)
 - Unter 50/min Bradykardie, über 100/min Tachykardie; bradykarder Sinusrhythmus typisch bei
@@ -225,7 +263,84 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
   124 ms über der Buchnorm — die LUDB-Marken setzen P-Grenzen großzügig. Das Spiel behauptet zur
   P-Dauer nichts.
 
+## Lagetyp (Lektion 5, 6 — gelesen 11.10.2026, für den Lehrsaal)
+- Lagetyp = Hauptvektor der Kammererregung (QRS) in der Frontalebene, bestimmt aus I, II, III, aVR,
+  aVL, aVF (Cabrera-Kreis). Felder: überdrehter Rechtstyp, Rechtstyp (+90° bis +120°), Steiltyp (+60°
+  bis +90°), Indifferenztyp (+30° bis +60°), Linkstyp (+30° bis −30°; darin Linkstyp 30°…0° und
+  ausgeprägter Linkstyp 0°…−30°), überdrehter Linkstyp (jenseits −30°). Das Buch zeichnet
+  traditionell +aVR (I, II, III, aVR, aVL, aVF), nicht −aVR.
+- Regeln: Zeigt der Vektor genau auf eine Ableitungsachse, ist die Ableitung rein positiv; genau
+  entgegen: rein negativ; senkrecht: R = S; Abweichung unter 90°: überwiegend positiv, über 90°:
+  überwiegend negativ. Praktisch: Der Vektor liegt in der Region des höchsten R; die beiden
+  Nachbarfelder trennt die Ableitung, die senkrecht auf ihrer Trennlinie steht (Beispiel im Buch:
+  höchstes R in II → Indifferenz- oder Steiltyp; aVL steht senkrecht auf II; aVL überwiegend positiv →
+  Indifferenztyp, überwiegend negativ → Steiltyp). Blickdiagnose aus einer Ableitung ist nie sicher.
+  Flussdiagramm im Buch: I überwiegend negativ → Rechtstyp; III überwiegend negativ → Linkstyp; II
+  überwiegend negativ → überdrehter Linkstyp; I und II negativ, III und aVR positiv → überdrehter
+  Rechtstyp.
+- Sonderformen: SI-SII-SIII-Typ (R und S in allen Extremitätenableitungen; Sagittaltyp, wenn R ≈ S),
+  SI-QIII-Typ (betontes Q in III ohne Q in II/aVF, mit S in I) — bei Rechtsbelastung (z. B.
+  Lungenembolie), abnormem Thorax, konstitutionell.
+- Bedeutung (Lektion 6): Beim Erwachsenen sind Rechtstyp und überdrehter Rechtstyp immer pathologisch;
+  Steiltyp beim jungen Schlanken häufig physiologisch, mit dem Alter eher pathologisch; Indifferenz-
+  und Linkstyp meist normal (beim Jüngeren kann der Linkstyp schon auffällig sein); überdrehter
+  Linkstyp in der Regel pathologisch (Linksanteriorer Hemiblock — weitere Kriterien nötig —,
+  Linkshypertrophie, Hinterwandinfarkt, konstitutionell/Adipositas). Achse nach rechts: Emphysem,
+  Kyphoskoliose, Rechtsbelastung/-hypertrophie, hoher Seitenwandinfarkt, LPH; nach links: Adipositas,
+  Linksbelastung/-hypertrophie, inferiorer Infarkt, LAH. Hypertrophie zieht die Achse zur Muskelmasse
+  und überhöht R dort (links: I, aVL, V5, V6; rechts: V1, V2); Infarkt tut das Gegenteil (R-Verlust über
+  der Narbe, Achse weg von ihr).
+- Folge für das Spiel: Die Aufgabe „Lagetyp" (Lehrsaal) folgt der Zwei-Schritt-Regel (höchstes R, dann
+  die senkrechte Trennableitung) und fragt danach die Bedeutung nach Alter. Sie wird erst gebaut, wenn
+  `data/` die Extremitätenableitungen enthält (heute nur II).
+
+## Systematische Befundung (Lektion 34 — gelesen 11.10.2026)
+- Fünf Schritte, feste Reihenfolge: 1. Rhythmus und Frequenz einschließlich P-Wellen und PQ-Zeit;
+  2. Lagetyp; 3. Q-Zacken; 4. R- und S-Zacken; 5. ST-Strecke und T-Welle. Blickdiagnosen gelingen
+  Erfahrenen, gehen bei Anfängern fast immer schief. Maximale ST-Hebung/-Senkung 80 ms nach dem J-Punkt
+  messen; regionale ST/T-Veränderungen sprechen für Hypertrophie, Ischämie/Infarkt oder Schenkelblock,
+  diffuse für metabolische/medikamentöse Einflüsse, Perikarditis, Prozesse des ganzen Myokards.
+- Folge für das Spiel: Reihenfolge der Aufgaben in jedem Fall; Befundraum (später) als
+  Fünf-Schritte-Formular.
+
+## Synkope — Einordnung und Differenzialdiagnose (ESC-Synkope-2018, ESC-Practical-2018; QUELLEN §8)
+Nicht aus dem EKG-Kurs; hier nur die Regeln, die der Fall Herr Baum braucht, in eigenen Worten:
+- Erst die Frage: echter vorübergehender Bewusstseinsverlust (T-LOC)? Vier Merkmale: kurz, Verlust der
+  Haltungskontrolle, keine Reaktion, Erinnerungslücke. Synkope = T-LOC durch Hirnminderdurchblutung;
+  drei Klassen: reflektorisch, orthostatisch, kardial (rhythmogen oder strukturell).
+- Nicht-Synkopen, die als Synkope fehlgedeutet werden: Krampfanfall, psychogene Pseudosynkope, Sturz
+  ohne Bewusstseinsverlust, TIA (vertebrobasilär: immer Herdzeichen; Karotis: ohne
+  Bewusstseinsverlust), Hirnblutung, Hypoglykämie/metabolisch, Intoxikation.
+- Was dafür spricht: Reflex — Prodrom (Übelkeit, Schwitzen, Blässe), Auslöser, langes Stehen, lange
+  Vorgeschichte, kein Herzleiden. Orthostase — beim/nach dem Aufstehen, Beginn oder Wechsel
+  blutdrucksenkender Mittel/Diuretika; Stehblutdruck bei allen messen. Kardial — unter Belastung oder
+  im Liegen, Herzrasen unmittelbar davor, strukturelle Herzkrankheit, Familie (plötzlicher Herztod jung),
+  EKG-Merkmale (bifaszikulärer Block, QRS ≥ 120 ms, Mobitz I oder AV-Block I° mit deutlich verlängerter
+  PQ, asymptomatische Sinusbradykardie 40–50 ohne bremsende Medikation, nsVT, Präexzitation, QT,
+  Brugada, ARVC-/HCM-Zeichen).
+- Beweisend für arrhythmische Synkope im Ruhe-EKG: Sinusbradykardie < 40/min dauerhaft, Pausen > 3 s im
+  Wachen, Mobitz II, AV-Block III°, alternierender Schenkelblock, VT/schnelle SVT,
+  Schrittmacherfehlfunktion.
+- Krampfanfall gegen Synkope: Myoklonien wenige (< 10), asynchron vs. 20–100 synchron; Zungenbiss
+  Spitze vs. seitlich; Wiederklarwerden 10–30 s vs. Minuten; Inkontinenz trennt wenig; Augen bei
+  Pseudosynkope meist geschlossen; Pseudosynkope dauert Minuten bis Stunden, oft mehrmals täglich.
+- Risikomerkmale (Major/Minor) bestimmen Beobachtung oder Entlassung; Minor-Merkmale (ohne Prodrom,
+  Familie, im Sitzen) zählen nur mit struktureller Herzkrankheit oder auffälligem EKG.
+- Medikamentenanamnese gehört dazu: Beginn/Wechsel einer Medikation; negativ chronotrope und dromotrope
+  Mittel beim älteren Patienten; medikamentös induzierte Orthostase ist die häufigste Orthostaseform.
+- Folge für das Spiel: DD-Tabelle, Anamnese-Optionen und Risikomerkmale in `docs/faelle/aufnahme_baum.md`;
+  die Rückmeldungen nennen die Merkmale, nie die Leitlinie.
+
+## Vorhofflimmern am Monitor (Lektion 25, 31, 7; ESC-AF-2020 — QUELLEN §8)
+- Erkennen: keine P-Wellen, absolut unregelmäßige RR, schmale Komplexe; Frequenz als Mittel aus sechs
+  Sekunden; die Diagnose bestätigt das 12-Kanal-EKG (oder ein ausreichend langer Streifen — Wortlaut
+  der Leitlinie am Original zu prüfen).
+- Was das Spiel fragt, ohne eine Ursache oder Therapie zu behaupten: Beginn, frühere Episoden,
+  Blutverdünner (ja/nein, notiert), Beschwerden (Schmerz, Atemnot, Schwindel — Zeichen der
+  Instabilität), Schilddrüse, Alkohol. Alles „notiert für den Arzt".
+
 ## Offene Lektionen
-Gegen das Buch gelesen: 1–4, 7–11, 13, 14, 17, 25, 30, 31, 35, 36, 38 (12 nur die Normwerte).
-Noch nicht: 5, 6, 12 (Rest), 15, 16, 18–24, 26–29, 32–34, 37. Vor jedem neuen Kapitel die passende
-Lektion lesen und hier nachtragen.
+Gegen das Buch gelesen: 1–11 (1–7 und 8–11 erneut am 11.10.2026), 13, 14, 17, 25, 30, 31 (erneut), 34,
+35, 36, 38 (12 nur die Normwerte). Noch nicht: 12 (Rest), 15, 16, 18–24, 26–29, 32, 33, 37 (nur Titel
+und Beispielüberschriften bekannt). Vor jedem neuen Kapitel die passende Lektion lesen und hier
+nachtragen.

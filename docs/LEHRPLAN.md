@@ -45,11 +45,14 @@ Abteilung hat die Patienten, an denen genau ihr Stoff sichtbar wird.
    Rhythmusambulanz ──────────────────┘
 ```
 
+Jeder Fall hat seinen eigenen Patienten und gehört zu einer Lektion oder Diagnose; die Akten liegen
+unter `docs/faelle/`, der Fallkatalog mit Aufnahme-Nummern in `docs/KONZEPT.md` §5.
+
 | Abteilung | Stoff | Kernpatienten | Nebenpatienten |
 |---|---|---|---|
-| **Lehrsaal** | 1, 2, 3, 4, 5, 6, 7 | — (Übungen am Gerät) | Normalbefunde |
-| **Aufnahme** | 8, 9, 10, 11 | Herr Baum (Synkope) | Brady-/Tachykardien |
-| **Monitorzimmer** | 31, 9, 10 | Herr Baum, Teil 2 | Monitorstreifen |
+| **Lehrsaal** | 1, 2, 3, 4, 5, 6, 7 (8: Varianten) | Jonas Prem, Tutor als Freiwilliger (Normal-EKG, LUDB 142) | anonymisierte Kursstreifen (Sinusarrhythmie 158, Sinusbradykardie 160) |
+| **Aufnahme** | 8, 10 (I°); Synkope nach ESC | Herr Baum (Synkope; Sinusrhythmus langsam, AV-Block I°, LUDB 39) | AV-Block I° (134, 78, 107, 77) |
+| **Monitorzimmer** | 31, 25, 7 | Frau Lindner (Herzstolpern; Vorhofflimmern am Monitor, LUDB 96); Herr Baum als Rückblick in einem anderen Bett | Monitorstreifen (173, 110, 129, 38) |
 | **Station** | 12, 13, 14, 15, 18 | Frau mit Luftnot (Schenkelblock) | Hypertrophien, Vorhofbefunde |
 | **Herzkatheter / Chest Pain** | 16, 19, 20 | Der Mann mit dem Druck auf der Brust | Infarkte aller Lokalisationen |
 | **Intensiv** | 17, 23, 26, 30 | Patient nach Reanimation | Elektrolyte, Schrittmacher, VES |
@@ -67,7 +70,8 @@ ohne dass jeder einzeln geschrieben werden muss.
 ## 3. Patienten: zwei Sorten
 
 **Kernpatient** — ein Mensch mit Namen, Geschichte, Zimmer und mehreren Szenen.
-Trägt eine Stufe. Etwa acht bis zehn im ganzen Spiel. Teuer zu bauen.
+Trägt **eine** Lektion oder Diagnose (nie eine ganze Stufe, `KONZEPT.md` §1). Etwa zehn bis
+fünfzehn im ganzen Spiel. Teuer zu bauen.
 
 **Nebenpatient** — eine echte Aufnahme, drei Zeilen Vorgeschichte, eine Aufgabe,
 eine Rückmeldung. Liegt im Bett, in der Ambulanz, im Archiv. Billig zu bauen,
@@ -142,6 +146,12 @@ Das ist kein Mangel, sondern die ehrliche Grenze offener Daten: Wer messen
 lehren will, braucht jemanden, der vorher von Hand markiert hat, wo die Welle
 anfängt. Das haben 199 Aufnahmen.
 
+**Nachtrag 11.10.2026:** `data/ekg_daten.json` enthält von diesen 199 Aufnahmen bisher **nur
+Ableitung II** (250 Hz, 10 s). Damit sind Lagetyp (Lektion 5, 6), Hemiblock (14), R-Progression
+(15) und Hypertrophie (18) noch nicht am echten Streifen prüfbar, obwohl LUDB alle zwölf
+Ableitungen samt Annotation hat. Der Export (`gen/export_spiel.py`) ist der erste Datenauftrag in
+`docs/UMBAU.md`; bis dahin stehen diese Lektionen im Fallkatalog als Lücke.
+
 ### Die fünf Lücken
 
 Lungenembolie, Peri-/Myokarditis, Elektrolytstörungen, ARVD/C und Dextrokardie
@@ -212,13 +222,17 @@ funktionieren.
 Nicht nach Lektionsnummern, sondern nach dem, was den größten Teil des Stoffes
 auf einmal nutzbar macht:
 
-1. **Befundungs-Trainer (Lektion 34).** Zuerst, weil er aus jeder Aufnahme der
+Die Reihenfolge des Umbaus steht in `docs/UMBAU.md` (Lehrsaal → Kapitel 1/2 auf das neue Konzept →
+Architektur). Danach:
+
+1. **Befundungs-Trainer (Lektion 34).** Weil er aus jeder Aufnahme der
    Datenbank sofort einen Patienten macht. Fünf Schritte, feste Reihenfolge,
    Prüfung gegen die Diagnose der Datenbank.
 2. **Lehrsaal (1–7).** Die Grundlagen, die alles andere voraussetzt. Viele kurze
-   Übungen, aus dem bestehenden Kurs übernehmbar.
-3. **Aufnahme und Monitorzimmer fertig (8–11, 31).** Herr Baum zu Ende erzählen,
-   jetzt mit echten AV-Block-II/III-Aufnahmen aus PTB-XL.
+   Übungen am Freiwilligen (`docs/faelle/lehrsaal.md`).
+3. **Aufnahme und Monitorzimmer auf dem neuen Konzept (8, 10 I°, 31, 25).** Herr Baum als
+   abgeschlossener Synkopen-Fall; Frau Lindner mit Vorhofflimmern am Monitor. AV-Block II/III
+   bekommen später eigene Patienten (PTB-XL, nur Ansehen).
 4. **Station (12–15, 18).** Schenkelblöcke und Hypertrophie — viel Stoff, gute
    Datenlage.
 5. **Herzkatheter (16, 19, 20).** Infarkt.

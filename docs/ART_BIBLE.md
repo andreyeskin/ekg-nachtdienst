@@ -54,7 +54,8 @@ sonst sind sie nicht zu unterscheiden:
 
 | Raum | Wand | Sockel | Boden | Möbel | Rost (das eine Objekt) |
 |---|---|---|---|---|---|
-| Aufnahme (06:40, warm) | Sand | Mint | Linoleum warm | Holz-Tresen, Petrol-Polster der Bank, Geräte Tinte | Betablocker-Schachtel in Herrn Baums Tüte |
+| Lehrsaal (08:10, neutral) | Papier | Mint | Linoleum warm | Holz-Seminartisch, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug | rote Elektrodenklemme am rechten Arm des Freiwilligen (`docs/raeume/lehrsaal.md`) |
+| Aufnahme (06:40, warm) | Sand | Mint | Linoleum warm | Holz-Tresen, Petrol-Polster der Bank, Geräte Tinte | Betablocker-Schachtel in Herrn Baums Tüte (die Tüte ist sein Gegenstand, keine Klickzone mit Fortschritt — `KONZEPT.md` §1.3) |
 | Monitorzimmer (09:15, kühl) | Mint hell | Sand | Linoleum kühl | Papier-Tischplatte auf Petrol-Blöcken, Holz-Aktenschrank | Dr. Falks Zirkel |
 
 Werkstoff-Logik: Holz für Arbeitsplatten, Tresen, Zargen, Armlehnen; Petrol für Polster und lackierte
@@ -85,16 +86,22 @@ Monitorzimmer: `#DCE9EA` / `#E6EFEE`), Silhouetten draußen in Petrol und Papier
 
 ## 4. Tageszeiten — kein ewiger Regen
 
-Die Geschichte läuft über **eine Schicht**, und das Licht erzählt mit:
+Die Geschichte läuft über **eine Rotation aus mehreren Diensten** (`docs/KONZEPT.md` §2), und das
+Licht erzählt mit. Kapitel 1 und 2 liegen im selben Frühdienst; jedes weitere Kapitel ist ein
+eigener Tag. Die Kopfzeile nennt Dienst und Uhrzeit („Dienst 1 · 06:40").
 
-| Kapitel | Zeit | Licht |
-|---|---|---|
-| 1 Aufnahme | 06:40 | Sonnenaufgang, langes warmes Licht durch die Jalousien |
-| 2 Monitorzimmer | 09:15 | heller Vormittag, kühles Tageslicht, Bildschirme blass |
-| 3 Station | 13:30 | Mittag, flaches Licht, Staub in der Luft |
-| 4 Intensiv | 18:50 | Abendrot, lange Schatten |
-| 5 Aufwachraum | 22:10 | Nacht, nur Lampeninseln |
-| 6 Ambulanz / Finale | 02:14 | tiefe Nacht, Regen — jetzt ist es verdient |
+| Kapitel | Dienst | Zeit | Licht |
+|---|---|---|---|
+| 0 Lehrsaal | Einschulungstag | 08:10 | Vormittag, neutrales Tageslicht von rechts, Beamer an, kurze Schatten |
+| 1 Aufnahme | Dienst 1 | 06:40 | Sonnenaufgang, langes warmes Licht durch die Jalousien |
+| 2 Monitorzimmer | Dienst 1 | 09:15 | heller Vormittag, kühles Tageslicht, Bildschirme blass |
+| 3 Station | Dienst 2 | 13:30 | Mittag, flaches Licht, Staub in der Luft |
+| 4 Intensiv | Dienst 3 | 18:50 | Abendrot, lange Schatten |
+| 5 Aufwachraum / Innere | Dienst 6 | 22:10 | Nacht, nur Lampeninseln |
+| 6 Befundraum / Finale | Nachtdienst | 02:14 | tiefe Nacht, Regen — jetzt ist es verdient |
+
+Herzkatheter (Dienst 4, 10:00, hartes Kunstlicht) und Rhythmusambulanz (Dienst 5, 15:00, Nachmittag)
+bekommen ihre Zeile, sobald ihre Räume beschrieben sind.
 
 ## 5. Figuren
 
@@ -130,7 +137,20 @@ Gegenstand: **Plastiktüte mit Tablettenschachteln und einem Foto der Enkelin**.
 Faden-Armband von der Enkelin. Details: Hausschuhe, Strickjacke unterm Patientenhemd, Hörgerät.
 
 **Die Spielfigur (KPJ-Student)** — nur als Hände, Schatten und Spiegelbild. Kapuzenpulli unterm
-Kittel, Bleistift hinterm Ohr, das EKG-Lineal aus dem Kurs in der Tasche.
+Kittel, Bleistift hinterm Ohr, das EKG-Lineal aus dem Kurs in der Tasche (Dr. Wieser hat es ihr am
+Einschulungstag aus der Schachtel gegeben).
+
+**Dr. Nora Wieser, 41** — Lehrperson im Lehrsaal; blaues EKG-Lineal, Akzent Kobaltblau `#2F5DA8`,
+nie sitzend, ein Fuß auf dem Tritt der Liege. Alle fünf Punkte und das Stimmprofil:
+`docs/raeume/lehrsaal.md` §2.
+
+**Jonas Prem, 24** — Tutor, liegt als Freiwilliger auf der Liege; Kopfhörer um den Hals, Akzent
+Senfgelb `#D9A441`. `docs/raeume/lehrsaal.md` §2.
+
+**Frau Gerda Lindner, 76** — Patientin im Monitorzimmer (Vorhofflimmern); runde Formfamilie, sitzt
+aufrecht im Bett, Strickzeug auf der Decke als Gegenstand, Akzent Flaschengrün `#3E6B4F` (Wolle).
+Akte: `docs/faelle/monitor.md`. Neue Patientenfiguren gehen denselben Weg wie Herr K. (Blockout →
+Kontext → einsetzen, `gen/blender/README.md`).
 
 ## 6. Was ein Bild sofort disqualifiziert
 

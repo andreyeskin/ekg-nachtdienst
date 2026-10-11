@@ -1,22 +1,29 @@
 # Spielkonzept — „Nachtdienst"
 
-Lernspiel zum EKG. Eine Schicht, ein Patient, viele Wege. Der Spieler lernt, weil er
+Lernspiel zum EKG. Eine Rotation, viele Patienten, echte Kurven. Der Spieler lernt, weil er
 Entscheidungen treffen muss, nicht weil er Text liest.
+
+**Zweite Fassung (11.10.2026):** Die Grundsätze, der Zeitrahmen, der Ablauf und der Fallkatalog stehen in
+`docs/KONZEPT.md`; dieses Blatt behält die Mechaniken, die warmen Räume, die Anspielungen und die
+technischen Grundsätze. Wo beide Blätter sich widersprächen, gilt `KONZEPT.md`.
 
 ## 1. Die Grundidee
 
-Du bist KPJ-Student in deiner ersten eigenständigen Schicht. **Herr Konrad Baum, 68**, kommt
-morgens zu Fuß in die Aufnahme: zweimal kurz bewusstlos geworden, beide Male im Stehen, keine
-Vorwarnung. Niemand weiß warum. Bis zum Ende der Schicht sollst du sagen können, was sein Herz
-macht — und es belegen.
+Du bist Famulantin/KPJ-Studentin in deiner ersten Rotation. Jeder Dienst hat seine Abteilung und
+seine eigenen Patienten, und jeder Patient trägt genau eine Lektion oder Diagnose (`KONZEPT.md` §1).
+Es beginnt im Lehrsaal (Einschulung, Lektionen 1–7) und führt über Aufnahme, Monitorzimmer, Station,
+Intensiv, Herzkatheter und Rhythmusambulanz bis zum Nachtdienst im Befundraum. Was dich durch alle
+Dienste trägt, sind die Menschen des Hauses — Marlene, Dr. Falk, Dr. Wieser — und deine Befundmappe.
 
-Der Fall ist medizinisch echt aufgebaut: Synkopen bei intermittierender Überleitungsstörung.
-Die Beweiskette führt über Rhythmus → Überleitung → Pausen → Lokalisation des Blocks.
+Der erste Patient, **Herr Konrad Baum, 68**, kommt am ersten Frühdienst zu Fuß in die Aufnahme:
+zweimal kurz bewusstlos geworden, beide Male im Stehen, keine Vorwarnung. Sein Fall ist die
+Synkopen-Abklärung mit einem EKG, das Sinusrhythmus, langsam, und einen AV-Block I° zeigt — und
+nicht mehr (`docs/faelle/aufnahme_baum.md`).
 
 ## 2. Struktur: ein Rückgrat, viele Abzweigungen
 
-Linear ist nur die **Zeit** (die Schicht läuft von 06:40 bis 02:14) und das **Ziel** (die
-Diagnose). Alles dazwischen ist offen.
+Linear sind nur die **Zeit** (innerhalb eines Dienstes läuft die Uhr weiter; die Dienste folgen
+aufeinander) und das **Ziel** jedes Falls (der Befund). Alles dazwischen ist offen.
 
 ```
           ┌── Monitorzimmer ──┐        ┌── Intensiv ──┐
@@ -36,7 +43,9 @@ Aufnahme ─┤                   ├─ Station ─┤            ├─ Finale
 ## 3. Inventar als Wissen
 
 Gesammelt werden keine Schlüssel, sondern **Befunde**: ein Streifen, eine Messung, ein Satz aus
-der Anamnese, ein altes EKG aus dem Archiv. Jeder Befund ist eine Karte mit echtem Bild aus der
+der Anamnese, ein altes EKG aus dem Archiv. Befunde entstehen im normalen klinischen Ablauf
+(Anamnese, Aufnahmebogen, Vitalzeichen, Untersuchung, EKG) — nie durch das Finden eines versteckten
+Gegenstands (`KONZEPT.md` §1.3). Jeder Befund ist eine Karte mit echtem Bild aus der
 Engine. Zwei Karten lassen sich **nebeneinanderlegen und vergleichen** — das ist der zentrale
 Denkvorgang beim EKG und damit die zentrale Spielmechanik.
 
@@ -47,8 +56,9 @@ Sie starten aus der Situation heraus, nicht aus einem Menü. Jedes dauert ein bi
 | Auslöser | Mini-Spiel | Was man dabei lernt |
 |---|---|---|
 | Du misst zum ersten Mal | **Zirkel** — PQ, QRS, QT am echten Streifen abgreifen; die Experten­markierung aus der Datenbank prüft auf die Millisekunde | Messen statt schätzen |
-| Marlene zeigt dir das Schema | **Reizleitung bauen** — Sinusknoten, AV-Knoten, His, Schenkel in ein Herz setzen und den Impuls laufen lassen; falsch gesetzt = falsches EKG unten im Streifen | Anatomie → Kurve |
-| Herr K. wird blass | **Ampelspiel am Monitor** — innerhalb von Sekunden entscheiden: beobachten, Arzt rufen, Pacer | Dringlichkeit |
+| Dr. Wieser zeigt das Whiteboard (Lehrsaal) | **Reizleitung bauen** — Sinusknoten, AV-Knoten, His, Schenkel in ein Herz setzen und den Impuls laufen lassen; falsch gesetzt = falsches EKG unten im Streifen | Anatomie → Kurve |
+| Der Monitor von Frau Lindner alarmiert | **Ampelspiel am Monitor** — innerhalb von Sekunden entscheiden: beobachten · bleiben, Arzt rufen, 12-Kanal-EKG · Notfallteam | Dringlichkeit, Grenzen des Monitors |
+| Kein Patient, nur Elektroden | **Elektroden kleben** (Lehrsaal) — vier Klemmen nach der Ampel-Regel, sechs Brustwandelektroden an ihren Platz | Ableitungen |
 | Nachtruhe, Archiv | **Karten vergleichen** — altes EKG gegen neues, Unterschied finden | Verlaufsbeurteilung |
 | Dr. Falk erklärt den Block | **Leiterdiagramm legen** — Linien im A-AV-V-Diagramm so setzen, dass sie zum Streifen passen | Mechanismus |
 | Finale | **Chefvisite** — drei Fragen, Antworten müssen mit deinen Befunden belegt werden | Argumentieren |
