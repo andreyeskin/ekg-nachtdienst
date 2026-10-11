@@ -47,6 +47,17 @@ Porträts als **ungeprüfter Zwischenstand** eingebettet; noch keine Spiellogik.
    Monitorzimmer mit Frau Lindner (UMBAU §2a–2c).
 3. Architektur-Umbau: eine Datei je Fall, Texte über IDs, Motor getrennt (KONZEPT §6).
 
+## Idee des Nutzers: ChatGPT (GPT Image) in die Bildpipeline
+
+Vorlage, die dem Nutzer gefällt: `art/referenz/chatgpt_aufnahme_marlene.png` (Marlene am Tresen in
+Ich-Perspektive, Herr K. im Hintergrund; Figuren stimmen mit unseren überein, keine Schrift, Uhr ohne
+Zeiger, Schirme dunkel). Weicher als strenge ligne claire (Verläufe, Lichtschimmer).
+Vorschlag: (1) **Szenenbilder** für Gesprächsanfänge und Schlüsselmomente (keine Klickzonen nötig),
+(2) Raumbilder nur als Überarbeitung des Blender-Renders mit erhaltenem Grundriss. Dafür braucht die
+Umgebung einen OpenAI-API-Schlüssel als Netzwerk-Secret bzw. Umgebungsvariable `OPENAI_API_KEY`
+(api.openai.com ist erreichbar); dann `malen.py openai` (Bildbearbeitung mit Blender-Render + Porträts
+als Vorlage). Offen: Soll ART_BIBLE §1 für Szenenbilder weiches Licht erlauben?
+
 ## Bekannte offene Punkte
 
 - Aufnahme um 09:20 zeigt noch das Sonnenaufgangslicht (zweite Lichtfassung fehlt).
