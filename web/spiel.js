@@ -52,19 +52,22 @@
     try { global.localStorage.removeItem(SCHLUESSEL); } catch (e) {}
     Z.raum = "aufnahme"; Z.zeit = 6 * 60 + 40; Z.befunde = []; Z.marken = {}; Z.werte = {}; Z.kapitel = 1;
     kopfAuffrischen(); global.Szene.zeige("aufnahme"); global.setTimeout(uhrStellen, 500);
+    auftakt();
+  }
+  /* Für den Titelbildschirm (web/huelle.js): Gibt es einen Spielstand, und wo steht er? */
+  function hatStand() {
+    try {
+      var g = JSON.parse(global.localStorage.getItem(SCHLUESSEL) || "null");
+      return g && g.raum ? { raum: g.raum, zeit: zeitText(g.zeit), befunde: (g.befunde || []).length } : null;
+    } catch (e) { return null; }
   }
 
-  /* ------------------------------------------------------------ Kopfleiste */
+  /* ------------------------------------------------------------ Anzeige: Uhr, Raum, Mappe im HUD (web/huelle.js) */
   function kopfAuffrischen() {
-    var u = document.getElementById("kopf-zeit");
-    if (u) u.textContent = zeitText();
-    var m = document.getElementById("kopf-mappe");
-    if (m) {
-      m.textContent = T("Befundmappe") + " · " + Z.befunde.length;
-      m.classList.toggle("voll", Z.befunde.length > 0);
-    }
-    var o = document.getElementById("kopf-ort");
-    if (o) o.textContent = T((global.Szene.raum(global.Szene.aktueller()) || {}).titel || "");
+    if (global.Huelle) global.Huelle.anzeige({
+      zeit: zeitText(), befunde: Z.befunde.length,
+      ort: T((global.Szene.raum(global.Szene.aktueller()) || {}).titel || "")
+    });
   }
 
   function uhrStellen() {
@@ -1310,8 +1313,10 @@
     return schirmLauf.map(function (s) { return { name: s.name, satz: s.satz, laeuft: s.streifen.laeuftGerade() }; });
   }
 
-  /* ------------------------------------------------------------ Start */
-  function start(kunst, ekgDaten) {
+  /* ------------------------------------------------------------ Start
+     Aufgerufen vom Titelbildschirm (web/huelle.js): „Weiterspielen" lädt den Spielstand,
+     „Neues Spiel" (opt.neu) beginnt die Schicht von vorn. */
+  function start(kunst, ekgDaten, opt) {
     ekgDaten.forEach(function (r) { SATZ[r.id] = r; });
     global.Szene.start(document.getElementById("buehne"));
     global.Mappe.start(Z, satz);
@@ -1322,31 +1327,25 @@
     });
     baueRaeume(kunst);
 
-    document.getElementById("kopf-mappe").addEventListener("click", global.Mappe.oeffne);
-    document.getElementById("kopf-stand").addEventListener("click", global.Stand.oeffne);
-    global.Sprache.waehler(document.getElementById("kopf-sprache"));
-    document.getElementById("kopf-zeigen").addEventListener("click", function () {
-      global.Szene.zeigeFelder(2400);
-    });
+    /* HUD-Knöpfe und Menü (auch „Neues Spiel") gehören der Hülle, web/huelle.js. */
     document.addEventListener("keydown", function (e) {
       if (e.key === "h" && !global.Dialog.laeuft()) global.Szene.zeigeFelder(2400);
       if (e.key === "s" && !global.Dialog.laeuft()) global.Stand.oeffne();
     });
-    document.getElementById("kopf-neu").addEventListener("click", function () {
-      if (global.confirm(T("Schicht von vorn beginnen? Die Befundmappe wird geleert."))) vonVorn();
-    });
 
-    var fortsetzung = lade();
+    var fortsetzung = !(opt && opt.neu) && lade();
     global.Szene.zeige(Z.raum || "aufnahme", true);
     kopfAuffrischen();
     global.setTimeout(uhrStellen, 120);
 
-    if (!fortsetzung) {
-      /* Nach dem Auftakt leuchten die Felder einmal auf — man muss „Was geht hier?" nicht erst finden. */
-      global.setTimeout(function () {
-        global.Dialog.starte("auftakt", "start", function () { global.Szene.zeigeFelder(2400); });
-      }, 700);
-    }
+    if (!fortsetzung) auftakt();
+  }
+
+  /* Nach dem Auftakt leuchten die Felder einmal auf — man muss „Was geht hier?" nicht erst finden. */
+  function auftakt() {
+    global.setTimeout(function () {
+      global.Dialog.starte("auftakt", "start", function () { global.Szene.zeigeFelder(2400); });
+    }, 700);
   }
 
   /* Sprachwechsel: der Zustand liegt im Speicher, also ist Neuladen der
@@ -1358,7 +1357,7 @@
 
   global.Spiel = {
     start: start, melde: melde, neuZeichnen: neuZeichnen, sichere: sichere, zaehlerAuffrischen: kopfAuffrischen,
-    zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn,
+    zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn, hatStand: hatStand,
     __dialoge: DIALOGE, __ekgSchreiben: ekgSchreiben, __messePq: messePq, __messeFrequenz: messeFrequenz,
     __tuete: tueteAnsehen,
     __betten: betten, __zentrale: zentrale, __ampel: ampelAusloesen, __schirme: schirmeStand,

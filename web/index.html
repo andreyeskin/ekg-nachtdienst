@@ -3,31 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nachtdienst">
+<meta name="theme-color" content="#1E2A30">
+<meta name="format-detection" content="telephone=no">
 <title>Nachtdienst — EKG-Lernspiel</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
-<header class="kopf">
-  <span class="marke">Nachtdienst</span>
-  <span class="ort" id="kopf-ort"></span>
-  <span class="luecke"></span>
-  <span class="uhr" id="kopf-zeit">06:40</span>
-  <span id="kopf-sprache"></span>
-  <button class="knopf" id="kopf-stand" type="button" data-t title="Was hast du, was ist offen">Stand</button>
-  <button class="knopf" id="kopf-zeigen" type="button" data-t title="Zeigt, was anklickbar ist">Was geht hier?</button>
-  <button class="knopf" id="kopf-mappe" type="button">Befundmappe · 0</button>
-  <button class="knopf" id="kopf-neu" type="button" data-t>Neu</button>
-</header>
-
-<main class="rahmen">
+<!-- Die Bühne füllt den Bildschirm (16:9, Rest Tinte). HUD, Menü, Titel und Quellen baut web/huelle.js. -->
+<main class="flaeche" id="flaeche">
   <div id="buehne"></div>
 </main>
-
-<p class="fuss">
-  <span data-t>Lernspiel zum EKG. Alle Kurven stammen aus echten Aufnahmen offener Datenbanken;
-  alle geprüften Zeiten aus deren Experten-Annotation. Kein Medizinprodukt.</span>
-  <span class="quellen">LUDB (ODC-By 1.0) · PTB-XL (CC BY 4.0) · Chapman-Shaoxing/Ningbo (CC BY 4.0)</span>
-</p>
 
 <script src="daten.js"></script>
 <script src="sprache.js"></script>
@@ -41,10 +30,11 @@
 <script src="raetsel_schirme.js"></script>
 <script src="raetsel_ampel.js"></script>
 <script src="spiel.js"></script>
+<script src="huelle.js"></script>
 <script>
   window.addEventListener("DOMContentLoaded", function () {
     window.Sprache.starte(window.WOERTER || {});
-    window.Spiel.start(window.KUNST, window.EKG_DATEN);
+    window.Huelle.start(window.KUNST, window.EKG_DATEN);
   });
 </script>
 </body>

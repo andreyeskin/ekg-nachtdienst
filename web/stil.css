@@ -3,7 +3,8 @@
    Grundsatz: Die Bedienung gehört in dieselbe Welt wie das Bild. Also Papier
    und Druckfarbe statt dunklem Glas, harte Kanten statt Rundungen, doppelte
    Linealstriche statt weicher Schatten, gestempelte Felder statt Schaltflächen.
-   Die Bühne ist das Fenster, das in dieses Blatt geschnitten ist.            */
+   Die Bühne füllt den Bildschirm wie bei einem Spiel (16:9, Rest Tinte); was
+   bedient wird, liegt als Papier darüber — HUD, Menü, Fenster (web/huelle.js). */
 :root {
   --papier: #F4E6D2;
   --papier-hell: #FBF2E3;
@@ -15,18 +16,38 @@
   --text: -apple-system, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, monospace;
   --raster: radial-gradient(circle at 1px 1px, rgba(16, 33, 43, .16) 1px, transparent 1.3px);
+  --nacht: #1E2A30;                       /* Tinte der Art Bible §2: Letterbox und Grund hinter allem */
+  --phosphor-schirm: #39E58C;             /* Art Bible §2: nur Bildschirme und Monitorkurven */
+
+  /* Bühnenmaß: die sichtbare Fenstergröße (huelle.js setzt sie in px; sonst 100vw/100vh), abzüglich der
+     sicheren Ränder (Notch, Home-Balken), darin das größte 16:9-Rechteck, mittig. */
+  --breite: 100vw;
+  --hoehe: 100vh;
+  --rand-l: env(safe-area-inset-left, 0px);
+  --rand-r: env(safe-area-inset-right, 0px);
+  --rand-o: env(safe-area-inset-top, 0px);
+  --rand-u: env(safe-area-inset-bottom, 0px);
+  --frei-b: calc(var(--breite) - var(--rand-l) - var(--rand-r));
+  --frei-h: calc(var(--hoehe) - var(--rand-o) - var(--rand-u));
+  --bw: min(var(--frei-b), calc(var(--frei-h) * 16 / 9));
+  --bh: min(var(--frei-h), calc(var(--frei-b) * 9 / 16));
+  --b-links: calc(var(--rand-l) + (var(--frei-b) - var(--bw)) / 2);
+  --b-oben: calc(var(--rand-o) + (var(--frei-h) - var(--bh)) / 2);
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; }
+[hidden] { display: none !important; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--nacht);
+  overscroll-behavior: none;
+}
 body {
-  background: var(--papier);
-  background-image: var(--raster);
-  background-size: 5px 5px;
   color: var(--tinte);
   font: 16px/1.55 var(--text);
   -webkit-text-size-adjust: 100%;
-  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* --------------------------------------------------------- Stempelfelder */
@@ -42,42 +63,20 @@ body {
 .knopf:active { transform: translate(1px, 1px); }
 .knopf.haupt { background: var(--magenta); border-color: var(--magenta); color: #fff; }
 .knopf.haupt:hover { background: var(--tinte); border-color: var(--tinte); }
-.knopf.voll { box-shadow: inset 0 -6px 0 rgba(199, 127, 24, .35); }
 .knopf:disabled { opacity: .3; cursor: default; }
 .knopf:disabled:hover { background: transparent; color: var(--tinte); }
 
-/* -------------------------------------------------------------- Kopfzeile */
-.kopf {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  padding: 11px 16px 9px;
-  border-bottom: 3px solid var(--tinte);
-  box-shadow: 0 4px 0 -1px var(--tinte);
-  margin-bottom: 6px;
-}
-.kopf .marke { font: 700 15px var(--anzeige); letter-spacing: .26em; text-transform: uppercase; }
-.kopf .ort {
-  font: 600 12px var(--anzeige); letter-spacing: .14em; text-transform: uppercase;
-  background: var(--tinte); color: var(--papier); padding: 4px 8px;
-}
-.kopf .luecke { flex: 1 1 0; min-width: 0; }
-.uhr {
-  font: 700 19px/1 var(--mono); letter-spacing: .06em;
-  color: var(--tinte); background: var(--papier-hell);
-  padding: 7px 11px; border: 2px solid var(--tinte);
-  box-shadow: 3px 3px 0 rgba(16, 33, 43, .22);
-}
-.sprachwahl {
-  font: 600 12px var(--anzeige); letter-spacing: .06em; text-transform: uppercase;
-  color: var(--tinte); background: transparent;
-  border: 2px solid var(--tinte); border-radius: 0; padding: 8px 6px; cursor: pointer;
-}
-
 /* ------------------------------------------------------------------ Bühne */
-.rahmen { max-width: 1600px; margin: 0 auto; padding: 10px 16px 24px; }
+/* Die Fläche ist das größte 16:9-Rechteck im Fenster; darum herum Tinte (Letterbox). Kein Rahmen, kein Scrollen. */
+.flaeche {
+  position: fixed; left: var(--b-links); top: var(--b-oben);
+  width: var(--bw); height: var(--bh);
+  overflow: hidden;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
 .buehne {
-  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  position: absolute; inset: 0;
   overflow: hidden; background: #1A262D;
-  border: 3px solid var(--tinte); border-radius: 0;
   touch-action: manipulation;
 }
 /* Die Ebenen ragen 16 px seitlich und 9 px oben/unten über die Bühne (Spielraum für die Parallaxe); so bleibt
@@ -127,6 +126,7 @@ body {
   position: fixed; inset: 0; display: none; align-items: flex-end;
   background: linear-gradient(to top, rgba(10, 22, 28, .5), rgba(10, 22, 28, 0) 45%);
   z-index: 40; padding: 18px; cursor: pointer;
+  padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
 }
 .dialog.an { display: flex; }
 .dialog-innen {
@@ -364,8 +364,9 @@ body {
 .stand-fuss:empty { display: none; }
 
 /* --------------------------------------------------------------- Meldungen */
-.meldungen {
-  position: fixed; right: 16px; top: 76px; z-index: 60;
+.meldungen {         /* rechts oben in der Bühne, unter dem HUD */
+  position: fixed; z-index: 60;
+  right: calc(var(--rand-r) + (var(--frei-b) - var(--bw)) / 2 + 14px); top: calc(var(--b-oben) + 74px);
   display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;
 }
 .meldung {
@@ -377,22 +378,11 @@ body {
 .meldung.warnung { box-shadow: 4px 4px 0 var(--bernstein); }
 .meldung.weg { opacity: 0; transform: translateX(16px) rotate(-.5deg); }
 
-/* -------------------------------------------------------------------- Fuß */
-.fuss {
-  max-width: 1600px; margin: 0 auto; padding: 10px 16px 28px;
-  font-size: 12px; line-height: 1.6; border-top: 1px solid rgba(16, 33, 43, .3);
-}
-.fuss .quellen { display: block; margin-top: 4px; font: 600 11px var(--mono); }
-
 @media (max-width: 760px) {
-  .kopf { gap: 7px; padding: 9px 10px 7px; }
-  .kopf .marke { font-size: 13px; letter-spacing: .18em; }
-  .kopf .ort { display: none; }
   .knopf { padding: 8px 10px; font-size: 12px; }
-  .rahmen { padding: 8px 10px 20px; }
   .verg-kopf, .verg-paar { grid-template-columns: 1fr; }
   .dialog-text { font-size: 17px; }
-  .dialog { padding: 10px; }
+  .dialog { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ------------------------------------------- Kapitel 2: Zentrale und Ampel */
@@ -447,3 +437,199 @@ body {
   .ampel-wahl { grid-template-columns: 1fr; }
   .knopf.ampel-knopf { min-height: 64px; }
 }
+
+/* ===================================================================== Hülle
+   web/huelle.js: HUD über der Bühne, Pausenmenü, Titel, Info & Quellen, Hochformat.
+   Jede Schaltfläche mindestens 44 × 44 px (LEHRPLAN §5). Nichts blinkt (ART_BIBLE §2, Regel 3). */
+
+/* ---------------------------------------------------------------------- HUD */
+.hud {
+  position: absolute; left: 0; right: 0; top: 0; z-index: 30;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; pointer-events: none;
+}
+.hud-gruppe { display: flex; gap: 8px; pointer-events: auto; }
+.hud-uhr, .hud-knopf {
+  height: 48px; border: 2px solid var(--tinte);
+  background: rgba(251, 242, 227, .94); color: var(--tinte);
+  box-shadow: 3px 3px 0 rgba(16, 33, 43, .28);
+}
+.hud-uhr { display: flex; align-items: stretch; }
+.hud-zeit { display: flex; align-items: center; padding: 0 12px; font: 700 20px/1 var(--mono); letter-spacing: .06em; }
+.hud-ort {
+  display: flex; align-items: center; padding: 0 11px;
+  background: var(--tinte); color: var(--papier);
+  font: 600 11px/1 var(--anzeige); letter-spacing: .16em; text-transform: uppercase;
+}
+.hud-knopf {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 48px; padding: 0 12px; border-radius: 0; cursor: pointer;
+  font: 600 12px/1 var(--anzeige); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap;
+  transition: background .12s, color .12s;
+}
+.hud-knopf:hover { background: var(--tinte); color: var(--papier); }
+.hud-knopf:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 rgba(16, 33, 43, .28); }
+.hud-knopf:focus-visible, .huelle-hof .knopf:focus-visible, .titel .knopf:focus-visible {
+  outline: 3px solid var(--magenta); outline-offset: 2px;
+}
+#hud-menue { padding: 0; width: 48px; }
+.symbol {
+  width: 22px; height: 22px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter;
+}
+.hud-zahl {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 5px;
+  background: var(--tinte); color: var(--papier); font: 700 12px/1 var(--mono); letter-spacing: 0;
+}
+.hud-knopf.voll .hud-zahl { background: var(--magenta); color: #fff; }
+.hud-knopf:hover .hud-zahl { background: var(--papier); color: var(--tinte); }
+/* Schmale oder flache Bühne (Telefon quer): nur Symbole, die Beschriftung steht im Tooltip und im aria-label. */
+@media (max-width: 980px), (max-height: 560px) {
+  .hud-text { display: none; }
+  .hud { padding: 8px 10px; }
+  .hud-uhr, .hud-knopf { height: 44px; }
+  .hud-knopf { min-width: 44px; }
+  #hud-menue { width: 44px; }
+  .hud-zeit { font-size: 18px; padding: 0 10px; }
+}
+
+/* ------------------------------------------------- Fenster der Hülle (Menü, Info, Sprache, Rückfrage) */
+.huelle-hof {
+  position: fixed; inset: 0; z-index: 70; display: none;
+  align-items: center; justify-content: center; padding: 16px;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+           max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(16, 26, 31, .62);
+}
+.huelle-hof.an { display: flex; }
+.huelle-hof.info, .huelle-hof.sprachwahl-hof, .huelle-hof.rueckfrage { z-index: 90; }   /* auch über dem Titel */
+.huelle-karte {
+  width: min(440px, 100%); max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: var(--papier-hell); background-image: var(--raster); background-size: 5px 5px;
+  border: 3px solid var(--tinte); box-shadow: 8px 8px 0 rgba(0, 0, 0, .35);
+  padding: 0 22px 22px; transform: rotate(-.2deg);
+}
+.huelle-hof.info .huelle-karte { width: min(720px, 100%); transform: none; -webkit-user-select: text; user-select: text; }
+.huelle-kopf {
+  position: sticky; top: 0; z-index: 1;
+  display: flex; align-items: center; gap: 14px;
+  margin: 0 -22px 16px; padding: 12px 22px;
+  background: var(--papier-hell); border-bottom: 3px solid var(--tinte);
+}
+.huelle-kopf h2 { flex: 1; margin: 0; font: 700 18px var(--anzeige); letter-spacing: .18em; text-transform: uppercase; }
+.huelle-hof .knopf { min-height: 44px; min-width: 44px; }
+.huelle-innen { display: flex; flex-direction: column; gap: 10px; }
+.knopf.gross {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; min-height: 52px; padding: 12px 16px; font-size: 14px; text-align: left;
+}
+.knopf.gross.haupt { justify-content: center; }
+.schalter {
+  font: 700 11px/1 var(--mono); letter-spacing: .08em; padding: 5px 7px;
+  background: var(--tinte); color: var(--papier);
+}
+.knopf.gross:hover .schalter { background: var(--papier); color: var(--tinte); }
+.umschalter[aria-pressed="true"] .schalter { background: var(--phosphor); color: #fff; }
+
+.menue-ort { margin: -4px 0 4px; font: 700 13px var(--mono); letter-spacing: .06em; opacity: .75; }
+.menue-zeile { display: flex; flex-direction: column; gap: 6px; padding: 6px 0 4px; }
+.menue-etikett { font: 700 11px var(--anzeige); letter-spacing: .16em; text-transform: uppercase; }
+.sprachen { display: grid; grid-template-columns: repeat(3, 1fr); }
+.sprachen .knopf.sprache {
+  min-height: 46px; padding: 8px 6px; font: 600 14px var(--text); letter-spacing: 0; text-transform: none;
+}
+.sprachen .knopf.sprache + .knopf.sprache { border-left-width: 0; }
+.sprachen .knopf.sprache[aria-pressed="true"] { background: var(--tinte); color: var(--papier); }
+.sprachen.senkrecht { grid-template-columns: 1fr; gap: 8px; }
+.sprachen.senkrecht .knopf.sprache + .knopf.sprache { border-left-width: 2px; }
+.sprachen.senkrecht .knopf.sprache { min-height: 52px; font-size: 16px; }
+
+.rueckfrage-text { margin: 0 0 6px; font-size: 17px; line-height: 1.55; }
+.rueckfrage-knoepfe { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rueckfrage-knoepfe .knopf.gross { justify-content: center; text-align: center; white-space: normal; }
+
+.info-lead { margin: 0; font-size: 16px; line-height: 1.6; }
+.info-warnung {
+  margin: 4px 0 0; padding: 10px 12px; font-size: 15px; line-height: 1.5;
+  border-left: 4px solid var(--magenta); background: rgba(194, 24, 91, .06);
+}
+.info-ueber {
+  margin: 14px 0 0; padding-bottom: 4px; border-bottom: 2px solid var(--tinte);
+  font: 700 12px var(--anzeige); letter-spacing: .16em; text-transform: uppercase;
+}
+.info-quellen { list-style: none; margin: 0; padding: 0; }
+.info-quelle {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 0; border-bottom: 1px solid rgba(16, 33, 43, .2); font-size: 14px; line-height: 1.45;
+}
+.info-bank { font: 700 15px var(--anzeige); }
+.info-lizenz { font: 600 12px/1.5 var(--mono); }
+.info-adresse { font: 12px/1.5 var(--mono); opacity: .75; word-break: break-all; }
+.info-klein { margin: 0; font-size: 13px; line-height: 1.55; opacity: .85; }
+
+/* ---------------------------------------------------------------- Titelbildschirm */
+.titel {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--nacht); color: var(--papier);
+  transition: opacity .45s ease;
+  -webkit-user-select: none; user-select: none;
+}
+.titel.weg { opacity: 0; pointer-events: none; }
+/* Die Aufnahme, ruhig: dieselbe Lage wie die Bühne, unscharf und gedimmt. */
+.titel-bild {
+  position: absolute; left: var(--b-links); top: var(--b-oben); width: var(--bw); height: var(--bh);
+  overflow: hidden;
+}
+.titel-ebenen { position: absolute; inset: -2%; filter: blur(3px) saturate(.85); }
+.titel-ebenen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.titel-bild::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(30, 42, 48, .62), rgba(30, 42, 48, .9));
+}
+.titel-innen {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  padding: 24px; text-align: center;
+}
+.titel-ober { margin: 0 0 12px; font: 600 13px var(--anzeige); letter-spacing: .34em; text-transform: uppercase; opacity: .85; }
+.titel-name {
+  margin: 0 -.2em 0 0;                 /* das Sperren hängt rechts Luft an — ausgleichen, damit es mittig steht */
+  font: 700 clamp(44px, 7.4vw, 108px)/1 var(--anzeige); letter-spacing: .2em; text-transform: uppercase;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, .35);
+}
+.titel-kurve { width: min(560px, 72vw); height: 70px; margin: 18px 0 26px; overflow: visible; }
+.titel-kurve polyline {
+  fill: none; stroke: var(--phosphor-schirm); stroke-width: 2; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke; opacity: .9;
+}
+.titel-knoepfe { display: flex; flex-direction: column; gap: 10px; width: min(360px, 82vw); }
+.titel .knopf.gross { background: var(--papier-hell); border-color: var(--tinte); color: var(--tinte); }
+.titel .knopf.gross:hover { background: var(--tinte); color: var(--papier); border-color: var(--papier); }
+.titel .knopf.gross.haupt { background: var(--magenta); border-color: var(--magenta); color: #fff; }
+.titel .knopf.gross.haupt:hover { background: var(--tinte); border-color: var(--papier); }
+.titel-stand { margin: -4px 0 6px; font: 600 12px var(--mono); letter-spacing: .04em; opacity: .8; }
+@media (max-height: 560px) {
+  .titel-innen { padding: 12px; }
+  .titel-ober { margin-bottom: 6px; }
+  .titel-name { font-size: clamp(32px, 11vh, 60px); }
+  .titel-kurve { height: 36px; margin: 8px 0 12px; }
+  .titel-knoepfe { display: grid; grid-template-columns: 1fr 1fr; width: min(560px, 90vw); gap: 8px; }
+  .titel-stand { grid-column: 1 / -1; order: 1; margin: 0; }
+  .titel .knopf.gross { min-height: 46px; padding: 8px 12px; }
+}
+
+/* ---------------------------------------------------------------- Hochformat */
+.quer-hinweis {
+  position: fixed; inset: 0; z-index: 100; display: none;
+  flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 24px; background: var(--nacht); color: var(--papier); text-align: center;
+}
+@media (orientation: portrait) { .quer-hinweis { display: flex; } }
+.quer-bild {
+  width: 132px; height: auto; margin-bottom: 14px;
+  fill: none; stroke: var(--papier); stroke-width: 2.4; stroke-linecap: square; stroke-linejoin: round;
+}
+.quer-bild .alt { stroke-dasharray: 4 4; opacity: .5; }
+.quer-text { margin: 0; font: 700 18px var(--anzeige); letter-spacing: .2em; text-transform: uppercase; }
+.quer-klein { margin: 0; font-size: 15px; opacity: .75; }
