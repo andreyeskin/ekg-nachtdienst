@@ -1,0 +1,24 @@
+{
+ "raum": "lehrsaal",
+ "kasten": [
+  697,
+  491,
+  911,
+  633
+ ],
+ "skala": 4,
+ "grund": "#2FBF3A",
+ "seitenverhaeltnis": "3:2",
+ "verdeckt": false,
+ "art": "figur",
+ "vorlage": "bau/blender/figuren/vorlage_jonas.png",
+ "datei": "jonas.png",
+ "seed": 21,
+ "endpunkt": "fal-ai/flux-pro/kontext",
+ "stil": "gen/blender/stil/figur_jonas.txt",
+ "prompt": "Redraw the plain 3D mannequin in this picture as a finished ligne claire illustration in the manner of European graphic novels: flat local colours, one uniform thin dark ink outline around every shape, no hatching, no gradients, no texture, no shading. Keep exactly the same pose, the same body position, size and placement inside the frame, the same camera angle and the same colours of skin, hair and clothes. Adult proportions, a real neck and shoulders, hands with five fingers. Draw only what the mannequin picture shows: keep the flat uniform bright green background exactly as it is and do not add a floor, a wall, a shadow, a chair, a seat or any other object behind or under the figure. No text, no letters, no logos, no scribbles. The character: Jonas, a 24-year-old medical student volunteering as the ECG demonstration subject, long and lanky, lying flat and relaxed on his back for an ECG, seen slightly from above; his head is at the upper left of the picture, his feet at the lower right, exactly as in the mannequin. The examination couch is NOT in the picture and must not be drawn — there is only flat green behind and under him. Keep his pose exactly: both legs straight and slightly apart, not bent, not crossed, not touching; both arms relaxed beside his body with the palms up, hands open with five fingers. Short dark-brown slightly messy hair, a round friendly face, eyes open looking up at the ceiling, a relaxed half-smile. Black over-ear headphones hang around his neck like a collar, not on his ears. His grey T-shirt is rolled up to his armpits: his whole chest and belly are bare skin, exactly where the mannequin shows skin, only a roll of grey fabric remains at the shoulders. Grey jeans with both legs rolled up to mid-calf, so the lower legs are bare skin, exactly where the mannequin shows skin. No shoes, mustard-yellow socks. Four small ECG limb clamps clipped onto bare skin, exactly where the mannequin shows small coloured blocks, each with a very short dark lead stub: a rust-red clamp on the near wrist, a yellow clamp on the far wrist, a black clamp on the near lower leg just above the sock, a green clamp on the far lower leg just above the sock. No chest electrodes, no other cables, nothing else in the picture.",
+ "datum": "2026-10-11",
+ "freistellen": "farbschluessel",
+ "roh": "bau/blender/figuren/ki_jonas_s21.png",
+ "bearbeitet_aus": null
+}

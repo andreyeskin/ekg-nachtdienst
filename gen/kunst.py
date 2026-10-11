@@ -996,7 +996,16 @@ SZENEN = {
         "figuren": monitor_figuren,
         "vordergrund": monitor_vordergrund,
     },
+    # Lehrsaal (Einschulungstag, 08:10): nur gerendert (art/szenen/lehrsaal/, gen/blender/szene_lehrsaal.py),
+    # kein gezeichneter Rückfall — ohne Render bleiben die Ebenen leer
+    "lehrsaal": {
+        "hintergrund": lambda: "",
+        "mittelgrund": lambda: "",
+        "figuren": lambda: "",
+        "vordergrund": lambda: "",
+    },
 }
+PORTRAITS = ("marlene", "herr_k", "falk", "wieser", "jonas")   # art/portraits/<wer>.png; ohne Datei der gezeichnete Rückfall
 
 
 def png_ebene(pfad, extra=""):
@@ -1083,9 +1092,12 @@ def baue():
             if os.path.exists(pfad):
                 with open(pfad, encoding="utf-8") as f:
                     aus["szenen"][name][feld] = json.load(f)
-    for wer in ("marlene", "herr_k", "falk"):
+    for wer in PORTRAITS:
         pfad = os.path.join(os.path.dirname(hier), "art", "portraits", wer + ".png")
-        aus["portraits"][wer] = png_portrait(pfad) if os.path.exists(pfad) else portrait(wer)
+        if os.path.exists(pfad):
+            aus["portraits"][wer] = png_portrait(pfad)
+        elif wer in ("marlene", "herr_k", "falk"):
+            aus["portraits"][wer] = portrait(wer)
     return aus
 
 

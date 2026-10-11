@@ -31,8 +31,8 @@ Einzelne Durchgänge: `python3 gen/blender/ebenen.py aufnahme lines` usw. (Liste
 * `komposit.py` — Farbe × Kontaktschatten × Sonne × Linie; Ebenen mit Alpha für die Parallaxe.
   Je Raum einstellbar (`EINSTELLUNG`): Lichtfarbe, Weichheit, AO-Schwelle, Kontaktschatten an/aus.
 * `malen.py` — optionaler Feinschliff über fal.ai (Flux Kontext), Schlüssel aus `FAL_KEY`.
-* `figuren.py` — Marlene, Herr K. und Dr. Falk als Grundkörper (Art Bible §5), mit Haltungen und Kopf-Leerobjekt.
-  `PLATZ` ist die EINE Stelle je Figur für Ort (Meter, Weltkoordinaten der Szene), Drehung und Haltung;
+* `figuren.py` — Marlene, Herr K., Dr. Falk, Dr. Wieser und Jonas als Grundkörper (Art Bible §5), mit Haltungen und
+  Kopf-Leerobjekt. `PLATZ` ist die EINE Stelle je Figur für Ort (Meter, Weltkoordinaten der Szene), Drehung und Haltung;
   Falk mit `ort=None` steht am Platzhalter `platz_falk` der Szene.
 * `ebenen_figuren.py` — Blockout-Figuren durch dieselben Durchgänge (Fläche, Linie, Sonne), Raumobjekte als
   Holdout. `aufbau(raum)` baut Raum + Figuren (gemeinsam mit `figuren_zeichnen.py`); die Sonne kommt aus
@@ -100,6 +100,29 @@ wie das Zifferblatt, sonst wandern sie in der Parallaxe); das Spiel dreht sie na
 `kunst.py` bettet `hitboxes.json` (→ `kunst.szenen.<raum>.zonen`, daraus baut `spiel.js` die Klickfelder) und
 `schirme.json` (→ `.schirme`, Leinwände mit laufenden Kurven in der Ebene des Schirms) mit ein — Zahlen werden
 nirgends abgeschrieben.
+
+## Lehrsaal (Einschulungstag, 08:10)
+
+`szene_lehrsaal.py` nach `docs/raeume/lehrsaal.md`; Rückwand y = 0, Raum nach −y (die Beschreibung misst y von der
+Rückwand in den Raum, die Szene negiert). Kamera 28 mm bei (0,9 / −9,0 / 2,0) statt der vorgeschlagenen −7,6 m: Tür ganz
+links und Whiteboard an der rechten Seitenwand brauchen 63° Sichtwinkel. Schirmflächen `projektion` (Leinwand, exaktes
+Rechteck), `whiteboard` (Seitenwand: `ebenen.py` nimmt die große Seite der dünnen Kiste, die der Kamera näher liegt —
+vier Ecken, kein Rechteck) und `wagen_schirm`. Zonen `jonas` (Kopfende) und `liege` (Fußende, Elektroden-Aufgabe)
+sind Platzhalter, `figuren_zeichnen.py einsetzen lehrsaal` hält sie getrennt. Die vier Extremitätenleitungen sind
+Raumobjekte (Mittelgrund) und enden unter Jonas' Armen und Beinen; die Klemmen selbst gehören zur Figur (rote Klemme =
+das Rost-Objekt). Der Tisch steht näher an der Rückwand als beschrieben ((−2,1 / −2,0) statt (−2,6 / −3,2)), sonst
+schnitte der 28-mm-Ausschnitt die Stühle an.
+
+```bash
+BLENDER_THREADS=2 python3 gen/blender/ebenen.py lehrsaal alle && python3 gen/blender/komposit.py lehrsaal --layers
+BLENDER_THREADS=2 python3 gen/blender/ebenen_figuren.py lehrsaal            # Blockout-Vorschau (Haltung, Platz)
+BLENDER_THREADS=2 python3 gen/blender/ebenen_figuren.py portraits wieser jonas
+python3 gen/blender/figuren_zeichnen.py portrait wieser --seed 3 --uebernehmen
+python3 gen/blender/figuren_zeichnen.py vorlage lehrsaal
+python3 gen/blender/figuren_zeichnen.py malen wieser --seed 7 --portrait    # Stilphrase stil/figur_wieser.txt
+python3 gen/blender/figuren_zeichnen.py malen jonas --seed 7 --portrait     # liegend: Liege nicht in der Vorlage (wie Herrn K.s Stuhl)
+BLENDER_THREADS=2 python3 gen/blender/figuren_zeichnen.py einsetzen lehrsaal
+```
 
 Regeln, die aus Fehlern stammen:
 * Raum nicht aus sich durchdringenden Kisten bauen — die Fugen bekommen sonst keine oder flackernde Linien.
