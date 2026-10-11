@@ -2,9 +2,13 @@
 (Fläche, Freestyle-Linie, Sonne), zusammengesetzt wie in komposit.py.
 
     python3 ebenen_figuren.py probe      # alle drei Figuren auf neutraler Bühne -> bau/blender/figuren/probe.png
-    python3 ebenen_figuren.py raum       # Aufnahme: Marlene + Herr K -> art/szenen/aufnahme/figuren/{marlene,herrk}.png + figuren.json
-    python3 ebenen_figuren.py monitor    # Monitorzimmer: Dr. Falk -> art/szenen/monitor/figuren/falk.png + figuren.json
-    python3 ebenen_figuren.py portraits  # Brustbilder -> art/portraits/{marlene,herr_k,falk}.png (400x440, Alpha)
+    python3 ebenen_figuren.py raum       # Aufnahme: Blockout von Marlene + Herr K -> bau/blender/figuren/blockout/aufnahme/
+    python3 ebenen_figuren.py monitor    # Monitorzimmer: Blockout von Dr. Falk -> bau/blender/figuren/blockout/monitor/
+    python3 ebenen_figuren.py portraits  # Brustbild-Blockouts -> bau/blender/figuren/portrait_<wer>_blockout.png (400x440, Alpha)
+
+Die Figuren im Spiel (art/szenen/<raum>/figuren/) und die Porträts (art/portraits/) entstehen aus diesen Blockouts
+über figuren_zeichnen.py (Kontext-Feinschliff, dann deterministisches Einsetzen); aufbau(raum) hier ist die
+gemeinsame Szene dafür. Orte der Figuren: figuren.PLATZ.
 
 Der Raum wird aus seiner Szenendatei aufgebaut (Aufnahme: exec von szene_aufnahme.py; Monitorzimmer: Import
 von szene_monitor.py, werkzeug-Schnittstelle), die Raumobjekte werden als Holdout gerendert: die Figur hat
@@ -38,6 +42,7 @@ PAL = {
     "accent": "#B5552D", "dawn": "#F8E7BF", "corridor": "#F3D9A8", "ground": "#CFD9C2", "buehne": "#EFE6D3",
 }
 INK = np.array(hexc("#1E2A30"), np.float32); LICHT = np.array(hexc("#FFF6DC"), np.float32)
+LINIE = 1.5                   # Freestyle-Strichstärke (px); figuren_zeichnen.py skaliert sie mit dem Ausschnitt
 STUFE = 1440 / 1600          # Bühne im Spiel: 1440 px breit -> 44 CSS-px Mindestziel = 49 Bühnen-px
 MIN_ZIEL = int(math.ceil(44 / STUFE))
 
@@ -100,7 +105,7 @@ def freestyle(an, sammlung=None):
     ls.select_silhouette = True; ls.select_crease = True; ls.select_border = True; ls.select_contour = True
     if ls.linestyle is None:
         ls.linestyle = bpy.data.linestyles.new("claire") if not len(bpy.data.linestyles) else bpy.data.linestyles[0]
-    ls.linestyle.color = (0, 0, 0); ls.linestyle.alpha = 1.0; ls.linestyle.thickness = 1.5
+    ls.linestyle.color = (0, 0, 0); ls.linestyle.alpha = 1.0; ls.linestyle.thickness = LINIE
     fs.crease_angle = math.radians(120)
     ls.select_by_collection = sammlung is not None
     if sammlung is not None: ls.collection = sammlung; ls.collection_negation = 'INCLUSIVE'
@@ -108,6 +113,8 @@ def freestyle(an, sammlung=None):
 def render_grund(bx, by):
     sc = bpy.context.scene
     sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'
+    if os.environ.get("BLENDER_THREADS"):      # z. B. BLENDER_THREADS=2, wenn nebenan ein zweiter Render läuft
+        sc.render.threads_mode = 'FIXED'; sc.render.threads = max(1, int(os.environ["BLENDER_THREADS"]))
     sc.render.resolution_x, sc.render.resolution_y = bx, by; sc.render.resolution_percentage = 100
     sc.render.image_settings.file_format = 'PNG'
     sc.view_settings.view_transform = 'Standard'; sc.view_settings.look = 'None'
@@ -257,10 +264,12 @@ def figuren_durchgaenge(figs, raum_sichtbar, sonne_sichtbar, sonne_richtung, ene
     pass_sonne(OUT + sonne_name, lambda o: True if ist_fig(o) else sonne_sichtbar(o), sonne_richtung, energie=energie)
 
 
-def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None):
-    """Komposit je Figur -> art/szenen/<raum>/figuren/<name>.png + figuren.json (Bühnenposition, Atem-Klasse);
-    Klickzone der Figur (sichtbarer Teil ∪ bestehende Zone, mindestens 44 CSS-px) in hitboxes.json."""
+def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None, ziel=None):
+    """Komposit je Figur -> <ziel>/figuren/<name>.png + figuren.json (Bühnenposition, Atem-Klasse) und
+    hitboxes.json (Klickzone der Figur: sichtbarer Teil ∪ bestehende Zone, mindestens 44 CSS-px).
+    ziel: Standard art/szenen/<raum>/ (ins Spiel); die Raumebenen für die Vorschau kommen immer von dort."""
     szene_dir = os.path.join(WURZEL, "art", "szenen", raum) + os.sep
+    ziel = ziel or szene_dir; os.makedirs(ziel + "figuren", exist_ok=True)
     e = einst or {}
     sonne = lade(OUT + sonne_name)
     hit = json.load(open(szene_dir + "hitboxes.json", encoding="utf-8"))
@@ -271,7 +280,7 @@ def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None):
                        licht_farbe=e.get("licht"), anteil=e.get("anteil", 0.32), weich_r=e.get("weich", 0.7))
         a = np.asarray(img)[..., 3]; ys, xs = np.nonzero(a > 8)
         x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
-        speichern(img.crop((x0, y0, x1, y1)), szene_dir + f"figuren/{name}.png")
+        speichern(img.crop((x0, y0, x1, y1)), ziel + f"figuren/{name}.png")
         silhouette(img.crop((x0, y0, x1, y1)), OUT + f"{name}_silhouette.png", 120)
         platz[name] = {"datei": f"{name}.png", "x": x0, "y": y0, "breite": x1 - x0, "hoehe": y1 - y0,
                        "klasse": klasse.get(name, "atmet")}
@@ -283,13 +292,13 @@ def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None):
                 m = (r[i] + r[i + 2]) // 2; r[i], r[i + 2] = m - MIN_ZIEL // 2, m + MIN_ZIEL // 2
         hit[name] = [max(0, r[0]), max(0, r[1]), min(1600, r[2]), min(900, r[3])]
         print("FIGUR", name, platz[name], "| Kasten", k, "| Klickzone", hit[name])
-    json.dump(platz, open(szene_dir + "figuren/figuren.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-    json.dump(hit, open(szene_dir + "hitboxes.json", "w", encoding="utf-8"), indent=1)
+    json.dump(platz, open(ziel + "figuren/figuren.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    json.dump(hit, open(ziel + "hitboxes.json", "w", encoding="utf-8"), indent=1)
     # Vorschau: Raumebenen + Figuren übereinander (nur zur Kontrolle)
     try:
         vor = Image.open(szene_dir + "hintergrund.png").convert("RGBA"); vor.alpha_composite(Image.open(szene_dir + "mittelgrund.png").convert("RGBA"))
         for name, p in platz.items():
-            vor.alpha_composite(Image.open(szene_dir + f"figuren/{name}.png").convert("RGBA"), (p["x"], p["y"]))
+            vor.alpha_composite(Image.open(ziel + f"figuren/{name}.png").convert("RGBA"), (p["x"], p["y"]))
         vor.save(OUT + f"{raum}_vorschau.png"); print("saved", OUT + f"{raum}_vorschau.png")
     except Exception as e:
         print("keine Vorschau:", e)
@@ -304,39 +313,62 @@ def raum_einstellung(raum):
         return None
 
 
-# ================================================================== raum: Aufnahme
-if MODE == "raum":
-    base = open(os.path.join(HIER, "szene_aufnahme.py"), encoding="utf-8").read()
-    _argv, _MODE, _OUT = sys.argv, MODE, OUT; sys.argv = ["x", "lit"]; exec(base)
-    sys.argv, MODE, OUT = _argv, _MODE, _OUT      # die Szenendatei überschreibt MODE und OUT
-    sc = bpy.context.scene; render_grund(1600, 900)
-    bpy.data.objects["bag"].data.materials[0] = G["paper"]; bpy.data.objects["folder"].data.materials[0] = G["paper"]
-    cam = sc.camera   # Kamera wie in der Szene (ebenen.py rendert mit derselben)
-    # Marlene hinter dem Tresen (Tresenrückkante y = -0,83), dem Raum zugewandt, leicht zur Tür gedreht;
-    # Herr K auf dem dritten Stuhl (x = 2,4), etwas zur Tür gedreht; die Tüte steht schon im Mittelgrund
-    figs = {"marlene": figuren.marlene((-3.05, -0.5, 0), drehung=20, haltung="tresen", tag=_tag, fein=0.0055, tresen=1.1),
-            "herrk": figuren.herr_k((2.4, -0.75, 0), drehung=-8, haltung="sitzen", tag=_tag, fein=0.0055, tuete=False)}
-    # Sonne wie im Raum (szene_aufnahme.sonne_stellen): von hinter dem Fenster, tief, zur Kamera
-    figuren_durchgaenge(figs, lambda o: True, lambda o: True, (-0.30, -0.80, -0.52), 14.0, "raum_sun.png")
-    figuren_ebene("aufnahme", figs, cam, "raum_sun.png", {"marlene": "atmet", "herrk": "atmet langsam"},
-                  unten={"marlene": 3}, einst=raum_einstellung("aufnahme"))
+# ------------------------------------------------------------------ Raum mit Figuren aufbauen
+def aufbau(raum):
+    """Baut den Raum aus seiner Szenendatei (Kamera, Licht) und stellt die Figuren an die Orte aus figuren.PLATZ.
+    Gibt zurück: cam, figs {name: Figur}, raum_sichtbar(o), sonne_sichtbar(o), sonne (Richtung), energie,
+    klasse (Atem-Klassen), unten (Auslauf unter der Tresenkante), kontext {name: [Objektnamen, die als
+    Vorlage mitgerendert werden, z. B. der Tresen vor Marlene]}, verdecker {name: None (jedes Raumobjekt vor
+    der Figur verdeckt sie) oder [Objektnamen] (nur diese) — Herr K sitzt IM Stuhl, Armlehnen und Tüte liegen
+    fast in seiner Tiefe und schnitten sonst Löcher in die gezeichneten Ärmel}.
+    Gemeinsam für die Modi raum/monitor hier und für figuren_zeichnen.py."""
+    P = figuren.PLATZ
+    if raum == "aufnahme":
+        ns = {"__file__": os.path.join(HIER, "szene_aufnahme.py"), "__name__": "szene_aufnahme"}
+        _argv = sys.argv; sys.argv = ["x", "lit"]                    # die Szenendatei liest ihren Modus aus argv
+        try: exec(open(ns["__file__"], encoding="utf-8").read(), ns)
+        finally: sys.argv = _argv
+        sc = bpy.context.scene; render_grund(1600, 900); G, tag = ns["G"], ns["_tag"]
+        bpy.data.objects["bag"].data.materials[0] = G["paper"]; bpy.data.objects["folder"].data.materials[0] = G["paper"]
+        # Marlene hinter dem Tresen, dem Raum zugewandt, leicht zur Tür gedreht; Herr K auf dem dritten Stuhl,
+        # etwas zur Tür gedreht; die Tüte steht schon im Mittelgrund (Raumobjekt, er hält sie nicht)
+        m, k = P["marlene"], P["herrk"]
+        figs = {"marlene": figuren.marlene(m["ort"], drehung=m["drehung"], haltung=m["haltung"], tag=tag, fein=0.0055, tresen=m["tresen"]),
+                "herrk": figuren.herr_k(k["ort"], drehung=k["drehung"], haltung=k["haltung"], tag=tag, fein=0.0055, tuete=False)}
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: True, sonne_sichtbar=lambda o: True,
+                    sonne=(-0.30, -0.80, -0.52), energie=14.0,          # wie szene_aufnahme.sonne_stellen
+                    klasse={"marlene": "atmet", "herrk": "atmet langsam"}, unten={"marlene": 3},
+                    kontext={"marlene": ["desk", "desk_top", "desk_panel"], "herrk": []},   # Stuhl bleibt Raumobjekt: Kontext zeichnet ihn sonst doppelt
+                    verdecker={"marlene": None, "herrk": []})
+    if raum == "monitor":
+        import importlib
+        import werkzeug as wz
+        szene = importlib.import_module("szene_monitor")      # baut Raum, Kamera (mit Verschiebung) und Sonne
+        PAL.update(szene.PALETTE)
+        sc = bpy.context.scene; render_grund(1600, 900)
+        f = P["falk"]; ort = f["ort"]
+        if ort is None:                                       # am Platzhalter der Szene (rechts vom großen Schirm)
+            pl = bpy.data.objects["platz_falk"]               # Lage aus dem Welt-Kasten (location ist nach transform_apply 0)
+            bb = [pl.matrix_world @ Vector(v) for v in pl.bound_box]
+            ort = (sum(v.x for v in bb) / 8, sum(v.y for v in bb) / 8, 0.0)
+        figs = {"falk": figuren.falk(ort, drehung=f["drehung"], haltung=f["haltung"], fein=0.0055)}
+        nie = set(wz.PLATZHALTER)
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: o.name not in nie,
+                    sonne_sichtbar=lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
+                    sonne=(0.25, -0.75, -0.6), energie=12.0,            # wie in szene_monitor.py
+                    klasse={"falk": "atmet langsam"}, unten={}, kontext={"falk": []}, verdecker={"falk": None})
+    raise SystemExit(f"unbekannter Raum {raum}")
 
-# ================================================================== monitor: Dr. Falk
-elif MODE == "monitor":
-    import importlib
-    import werkzeug as wz
-    szene = importlib.import_module("szene_monitor")      # baut Raum, Kamera (mit Verschiebung) und Sonne
-    PAL.update(szene.PALETTE)
-    sc = bpy.context.scene; render_grund(1600, 900); cam = sc.camera
-    # Falk steht am Platzhalter der Szene (rechts vom großen Schirm), Hände in den Taschen, dem Schirm zugewandt
-    pl = bpy.data.objects["platz_falk"]                     # Lage aus dem Welt-Kasten (location ist nach transform_apply 0)
-    bb = [pl.matrix_world @ Vector(v) for v in pl.bound_box]
-    px, py = sum(v.x for v in bb) / 8, sum(v.y for v in bb) / 8
-    figs = {"falk": figuren.falk((px, py, 0), drehung=-14, haltung="taschen", fein=0.0055)}
-    nie = set(wz.PLATZHALTER)
-    figuren_durchgaenge(figs, lambda o: o.name not in nie, lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
-                        (0.25, -0.75, -0.6), 12.0, "monitor_sun.png")   # Sonne wie in szene_monitor.py
-    figuren_ebene("monitor", figs, cam, "monitor_sun.png", {"falk": "atmet langsam"}, einst=raum_einstellung("monitor"))
+
+# ================================================================== raum / monitor: Blockout-Figuren (nur noch Vorschau)
+# Die Figuren im Spiel kommen aus figuren_zeichnen.py (Blockout -> Kontext -> einsetzen). Diese Modi rendern die
+# reinen Blockout-Figuren nach bau/blender/figuren/blockout/<raum>/ — zum Prüfen von Haltung und Platz, nicht ins Spiel.
+if MODE in ("raum", "monitor"):
+    raum = "aufnahme" if MODE == "raum" else "monitor"
+    A = aufbau(raum)
+    figuren_durchgaenge(A["figs"], A["raum_sichtbar"], A["sonne_sichtbar"], A["sonne"], A["energie"], f"{raum}_sun.png")
+    figuren_ebene(raum, A["figs"], A["cam"], f"{raum}_sun.png", A["klasse"], unten=A["unten"], einst=raum_einstellung(raum),
+                  ziel=os.path.join(OUT, "blockout", raum) + os.sep)
 
 # ================================================================== portraits
 elif MODE == "portraits":
@@ -354,8 +386,8 @@ elif MODE == "portraits":
         pass_sonne(OUT + f"portrait_{wer}_sun.png", lambda o: True, (0.55, 0.75, -0.6), energie=6.0)
         flach = lade(OUT + f"portrait_{wer}_flat.png", True)
         img = komposit(flach, flach, lade(OUT + f"portrait_{wer}_sun.png"), lade(OUT + f"portrait_{wer}_lines.png"), sun_t=0.45)
-        speichern(img, PORTRAITS + f"{wer}.png", 128)
+        speichern(img, OUT + f"portrait_{wer}_blockout.png", 128)      # Vorlage für Kontext (figuren_zeichnen.py portrait)
         klein = Image.new("RGBA", (92, 100), (247, 241, 228, 255)); klein.alpha_composite(img.resize((92, 101), Image.LANCZOS).crop((0, 0, 92, 100)))
         klein.save(OUT + f"portrait_{wer}_klein.png")
-else:
+elif __name__ == "__main__" and MODE != "modul":
     print("unbekannter Modus", MODE)

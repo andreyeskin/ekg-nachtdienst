@@ -21,12 +21,23 @@ from mathutils import Vector, Euler
 # was den Figuren gehört. Rost ist der eine Akzent pro Bild: Marlenes Thermoskanne.
 FARBEN = {
     "fig_haut": "#EBC4A0", "fig_tinte": "#1E2A30", "fig_rost": "#B5552D",
-    "fig_kasack": "#2C5560", "fig_haar_marlene": "#D8BE8F", "fig_socke": "#BFD9CF",
+    "fig_kasack": "#426E73", "fig_haar_marlene": "#7A4A2C", "fig_socke": "#BFD9CF",
     "fig_clog": "#C99A5B", "fig_schild": "#F7F1E4", "fig_dunkel": "#2C3E46",
     "fig_kittel": "#F7F1E4", "fig_haar_grau": "#B9BDB8", "fig_messing": "#C99A5B",
     "fig_fleck": "#E4D2B2", "fig_metall": "#8A9598", "fig_hose": "#8A9598",
-    "fig_strick": "#C99A5B", "fig_hemd": "#BFD9CF", "fig_muetze": "#2C3E46",
-    "fig_armband": "#8A3A33", "fig_tuete": "#F7F1E4",
+    "fig_strick": "#5A4228", "fig_hemd": "#BFD9CF", "fig_muetze": "#525A66",
+    "fig_armband": "#B5302A", "fig_tuete": "#F7F1E4", "fig_hemd_falk": "#8CA4B6", "fig_krawatte": "#2B3A50",
+}
+# Kasack, Strickjacke, Mütze und Haar tragen die Farben, die die Porträts (art/portraits) zeigen, damit die
+# Ganzkörperfiguren dieselben Leute bleiben; Rost (Kanne) bleibt der eine Akzent im Raum Aufnahme.
+
+# Wo jede Figur im Raum steht — die EINE Stelle für Ort (Meter, Weltkoordinaten der Szene), Drehung (Grad) und
+# Haltung. ebenen_figuren.aufbau() und figuren_zeichnen.py lesen hier. Falk: ort=None heißt „am Platzhalter
+# platz_falk der Szene“ (szene_monitor.py); ein Tupel überschreibt ihn.
+PLATZ = {
+    "marlene": dict(ort=(-3.05, -0.5, 0.0), drehung=20, haltung="tresen", tresen=1.1),   # hinter dem Tresen (Rückkante y=-0,83)
+    "herrk": dict(ort=(2.4, -0.75, 0.0), drehung=-8, haltung="sitzen"),                  # dritter Stuhl der Wartereihe
+    "falk": dict(ort=None, drehung=-14, haltung="taschen"),                              # rechts vom großen Schirm
 }
 TINTE = "fig_tinte"
 
@@ -246,12 +257,28 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
     KS = (0.115, 0.108, 0.12)
     F.kugel(1, (0, 0, 0), "fig_haut", skala=KS, eltern=kopf, name="kopf")
     F.ohren(kopf, KS, z=0.0)
-    # Haar: offene Schale, Haaransatz hoch auf der Stirn; großer schiefer Dutt oben links (+x, zur Kamera)
-    F.kappe(1, (0, 0.012, 0.012), "fig_haar_marlene", skala=(0.121, 0.115, 0.122), ebene=((0, 0, 0.28), (0, 0.35, 0.94)), eltern=kopf, name="haar")
-    F.kugel(1, (0.05, 0.06, 0.13), "fig_haar_marlene", skala=(0.082, 0.078, 0.066), rot=(0, math.radians(-22), 0), eltern=kopf, name="dutt")
-    F.kugel(1, (0.0, 0.055, 0.118), "fig_haar_marlene", skala=(0.06, 0.055, 0.05), eltern=kopf, name="dutt2", seg=24)
-    # Lesebrille im Dutt: liegt schräg oben vorn im Haar
-    F.brille(kopf, (0.02, -0.05, 0.118), R=0.02, abstand=0.03, rot=(math.radians(35), 0, math.radians(8)))
+    # Haar (kastanie, eine Farbe): offene Schale, Haaransatz sichtbar, seitlich und vorn zurückgekämmt
+    F.kappe(1, (0, 0.012, 0.012), "fig_haar_marlene", skala=(0.121, 0.115, 0.122), ebene=((0, 0, 0.22), (0, 0.38, 0.92)), eltern=kopf, name="haar")
+    for s in (-1, 1):   # Haarvolumen über den Ohren, nach hinten gestrichen
+        F.kugel(1, (s * 0.1, 0.03, 0.03), "fig_haar_marlene", skala=(0.03, 0.07, 0.055), eltern=kopf, name="haarseite", seg=24)
+    # Großer schiefer Knoten oben-hinten (zur Kamera hin): Kern, darum ein gewickelter Ring und drei Strähnen,
+    # die als Tuschelinien erscheinen — ein Dutt, keine Haube
+    DZ = (0.045, 0.055, 0.125); DR = (math.radians(-38), math.radians(22), 0)
+    F.kugel(1, DZ, "fig_haar_marlene", skala=(0.052, 0.05, 0.046), eltern=kopf, name="dutt", seg=32)
+    F.ring(0.05, 0.026, DZ, "fig_haar_marlene", rot=DR, eltern=kopf, fein=False, name="duttring")
+    dm = Euler(DR).to_matrix()
+    for k, (a0, a1) in enumerate(((0.2, 2.6), (2.9, 5.2), (1.4, 3.9))):
+        pts = []
+        for t in (a0, (a0 + a1) / 2, a1):
+            lok = Vector((0.062 * math.cos(t), 0.062 * math.sin(t), 0.012 * (k - 1)))
+            pts.append(tuple(Vector(DZ) + dm @ lok))
+        F.rohr(pts, fein * 1.1, "fig_haar_marlene", eltern=kopf, fein=False, name="duttstraehne")
+    # zwei lose Strähnen: eine aus dem Knoten, eine vor dem Ohr
+    F.rohr([(0.085, 0.07, 0.1), (0.1, 0.085, 0.05), (0.095, 0.08, -0.01)], fein * 0.9, "fig_haar_marlene", eltern=kopf, name="straehne")
+    F.rohr([(-0.1, -0.03, 0.06), (-0.112, -0.045, 0.0), (-0.105, -0.04, -0.05)], fein * 0.8, "fig_haar_marlene", eltern=kopf, name="straehne")
+    # Lesebrille steckt schräg IM Knoten: Gläser vor dem Knoten, Bügel greifen ins Haar
+    F.brille(kopf, (0.03, -0.005, 0.138), R=0.019, abstand=0.028, rot=(math.radians(52), 0, math.radians(12)),
+             buegel=[(0.046, -0.002, 0.14), (0.06, 0.04, 0.13)])
     # Kuli hinterm linken Ohr (zur Kamera hin)
     F.zylinder(0.004, 0.14, (0.118, 0.0, 0.035), "fig_kasack", rot=(math.radians(-20), math.radians(8), 0), v=10, eltern=kopf, fein=True, name="kuli")
     # Gesicht: schwere Lider, Lachfalten, warmes halbes Lächeln, runde Nase
@@ -264,7 +291,7 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
     if haltung == "tresen":
         # rechter Arm (-x): Ellbogen unten, Hand liegt flach auf dem Tresen; linke Hand um die Kanne auf dem Tresen
         ER, HR = Vector((-0.31, -0.13, tresen - 0.04)), Vector((-0.2, -0.46, tresen + 0.02))
-        EL, HL = Vector((0.26, -0.2, tresen - 0.08)), Vector((0.14, -0.48, tresen + 0.07))
+        EL, HL = Vector((0.3, -0.18, tresen - 0.08)), Vector((0.31, -0.44, tresen + 0.07))
     else:
         ER, HR = Vector((-0.3, -0.03, 1.02)), Vector((-0.2, -0.1, 0.9))      # Hand in der Hüfte
         EL, HL = Vector((0.3, -0.03, 1.02)), Vector((0.26, -0.14, 0.86))     # Kanne hängt in der Hand
@@ -379,7 +406,13 @@ def falk(ort=(0, 0, 0), drehung=0.0, haltung="taschen", tag=None, hit="falk", fe
         r = 0.165 + (0.3 - 0.165) * (KZ0 + KH - z) / KH
         return Figur.vorne((r, r * 0.62, 1), x, 0, tief)
     # Kittelöffnung: Strich in der Mitte, Revers als zwei flache Keile, Brusttasche links (+x), Taschen unten
-    F.rohr([(0, kittel_y(0, 1.5, 0.004), 1.5), (0.005, kittel_y(0.005, 1.1, 0.004), 1.1), (0.01, kittel_y(0.01, KZ0 + 0.02, 0.004), KZ0 + 0.02)], fein * 0.8, "fig_dunkel", name="oeffnung")
+    F.rohr([(0, kittel_y(0, 1.33, 0.004), 1.33), (0.005, kittel_y(0.005, 1.1, 0.004), 1.1), (0.01, kittel_y(0.01, KZ0 + 0.02, 0.004), KZ0 + 0.02)], fein * 0.8, "fig_dunkel", name="oeffnung")
+    # Hemd (blaugrau) und dunkle Krawatte im V des Kittels, Kragenspitzen am Hals — wie im Porträt
+    F.quader((0.12, 0.008, 0.22), (0, kittel_y(0, 1.45, 0.001), 1.45), "fig_hemd_falk", fase=0.003, rot=(math.radians(-6), 0, 0), name="hemd")
+    F.quader((0.028, 0.008, 0.2), (0.0, kittel_y(0, 1.42, 0.003), 1.42), "fig_krawatte", fase=0.004, rot=(math.radians(-6), 0, 0), name="krawatte")
+    F.quader((0.034, 0.008, 0.03), (0.0, kittel_y(0, 1.535, 0.003), 1.535), "fig_krawatte", fase=0.004, rot=(math.radians(-6), 0, 0), name="knoten")
+    for s in (-1, 1):
+        F.quader((0.045, 0.008, 0.055), (s * 0.032, kittel_y(s * 0.032, 1.53, 0.002), 1.53), "fig_hemd_falk", fase=0.003, rot=(math.radians(-6), 0, s * math.radians(28)), name="kragen")
     for s in (-1, 1):
         F.quader((0.06, 0.01, 0.17), (s * 0.045, kittel_y(s * 0.045, 1.45, 0.004), 1.45), "fig_kittel", fase=0.004, rot=(math.radians(-6), 0, s * math.radians(32)), name="revers")
         F.quader((0.13, 0.01, 0.1), (s * 0.19, kittel_y(s * 0.19, 1.0, 0.004), 1.0), "fig_kittel", fase=0.004, rot=(math.radians(-5), 0, 0), name="tasche")
