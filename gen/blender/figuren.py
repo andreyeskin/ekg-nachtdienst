@@ -247,11 +247,14 @@ class Figur:
 
 
 # ====================================================================== Marlene
-def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene", fein=0.0045, tresen=1.1):
+def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene", fein=0.0045, tresen=1.1, kanne=None):
     """Schwester Marlene, 54: runde Formfamilie, kompakt (1,62 m), Dutt mit Lesebrille, Kuli hinterm Ohr,
     Thermoskanne (Rost) in der linken Hand. Haltungen: "tresen" (rechte Hand liegt auf dem Tresen, der
     ~0,35 m vor ihr steht und `tresen` m hoch ist; die Kanne steht auf dem Tresen, die linke Hand bleibt
-    daran), "stehen" (Kanne hängt in der Hand, andere Hand in der Hüfte)."""
+    daran), "stehen" (Kanne hängt in der Hand, andere Hand in der Hüfte), "reicht_mappe" (Szenenbild
+    `szenenbild.py`: der linke Arm streckt sich über den Tresen zur Kamera und hält eine Mappe am oberen
+    Rand, sie hängt schräg nach vorn; der rechte Arm hängt locker; die Kanne steht abgestellt auf dem Tresen
+    an `kanne` = (x, y, z) in Figurkoordinaten, sonst 0,9 m vor ihr auf Höhe `tresen`)."""
     F = Figur("marlene", ort, drehung, tag, hit, fein)
     # Füße: grüne Socken in Clogs
     for s in (-1, 1):
@@ -304,6 +307,11 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
         # rechter Arm (-x): Ellbogen unten, Hand liegt flach auf dem Tresen; linke Hand um die Kanne auf dem Tresen
         ER, HR = Vector((-0.31, -0.13, tresen - 0.04)), Vector((-0.2, -0.46, tresen + 0.02))
         EL, HL = Vector((0.3, -0.18, tresen - 0.08)), Vector((0.31, -0.44, tresen + 0.07))
+    elif haltung == "reicht_mappe":
+        # linker Arm (+x, von vorn gesehen rechts) fast gestreckt nach vorn, Hand in Brusthöhe mit der Mappe;
+        # rechter Arm hängt locker an der Seite, Hand an der Hüfte
+        EL, HL = Vector((0.27, -0.30, 1.14)), Vector((0.14, -0.58, 1.22))
+        ER, HR = Vector((-0.30, -0.06, 0.98)), Vector((-0.27, -0.16, 0.84))
     else:
         ER, HR = Vector((-0.3, -0.03, 1.02)), Vector((-0.2, -0.1, 0.9))      # Hand in der Hüfte
         EL, HL = Vector((0.3, -0.03, 1.02)), Vector((0.26, -0.14, 0.86))     # Kanne hängt in der Hand
@@ -312,13 +320,22 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
         F.zylinder(0.066, 0.05, el + (ha - el).normalized() * 0.04, "fig_kasack", rot=(ha - el).to_track_quat('Z', 'Y').to_euler(), name="krempel")
         F.glied(el, ha, 0.046, "fig_haut", name="unterarm")
     F.hand(HR, skala=(1.1, 1.25, 0.55) if haltung == "tresen" else (1, 1.1, 0.8))
-    F.hand(HL, skala=(1.05, 1.05, 0.9))
+    F.hand(HL, skala=(1.05, 1.05, 0.9) if haltung != "reicht_mappe" else (1.0, 1.15, 0.8))
+    if haltung == "reicht_mappe":
+        # Mappe (Papier, Klammer dunkel): an der Oberkante gehalten, hängt um 55° nach vorn-unten zur Kamera —
+        # ihre Fläche zeigt zur Kamera, die etwas höher steht als Marlenes Augen
+        a = math.radians(55); runter = Vector((0.0, -math.cos(a), -math.sin(a)))
+        F.quader((0.24, 0.32, 0.012), HL + runter * 0.15 + Vector((-0.01, -0.02, 0.0)), "fig_schild", rot=(a, 0, 0), fase=0.003, name="mappe")
+        F.quader((0.05, 0.035, 0.018), HL + runter * 0.02 + Vector((0.05, -0.02, 0.0)), "fig_dunkel", rot=(a, 0, 0), fase=0.003, name="mappenclip")
     # Thermoskanne (Rost) — der eine Akzent; Deckel dunkel
-    kz = tresen + 0.125 if haltung == "tresen" else HL.z - 0.1     # auf dem Tresen stehend bzw. hängend
-    ky = HL.y - 0.01
-    F.zylinder(0.043, 0.25, (HL.x, ky, kz), "fig_rost", name="kanne")
-    F.zylinder(0.036, 0.045, (HL.x, ky, kz + 0.147), "fig_dunkel", name="kannendeckel")
-    F.rohr([(HL.x + 0.04, ky, kz + 0.08), (HL.x + 0.075, ky, kz + 0.02), (HL.x + 0.04, ky, kz - 0.06)], 0.006, "fig_rost", fein=False, name="henkel")
+    if haltung == "reicht_mappe":                                  # abgestellt auf dem Tresen (Ort von der Szene)
+        kx, ky, kz = kanne if kanne is not None else (-0.32, -0.9, tresen + 0.125)
+    else:
+        kz = tresen + 0.125 if haltung == "tresen" else HL.z - 0.1     # auf dem Tresen stehend bzw. hängend
+        kx, ky = HL.x, HL.y - 0.01
+    F.zylinder(0.043, 0.25, (kx, ky, kz), "fig_rost", name="kanne")
+    F.zylinder(0.036, 0.045, (kx, ky, kz + 0.147), "fig_dunkel", name="kannendeckel")
+    F.rohr([(kx + 0.04, ky, kz + 0.08), (kx + 0.075, ky, kz + 0.02), (kx + 0.04, ky, kz - 0.06)], 0.006, "fig_rost", fein=False, name="henkel")
     F.kopf = kopf; F.kopfmitte = (0, -0.005, 1.49); F.hoehe = 1.64
     return F
 
