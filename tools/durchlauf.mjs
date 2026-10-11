@@ -27,9 +27,14 @@ const seite = await browser.newPage({ viewport: { width: 1340, height: 900 }, de
 /* Der Durchlauf prüft die deutschen Sätze — Sprache vor dem Laden festlegen. */
 await seite.addInitScript(() => {
   try {
-    if (!window.localStorage.getItem("nachtdienst-sprache")) {
+    window.__spracheBeimStart = !!window.localStorage.getItem("nachtdienst-sprache");
+    window.__ursprung = window.origin;
+    if (!window.__spracheBeimStart) {
       window.localStorage.setItem("nachtdienst-sprache", "de");
     }
+    /* Still vermerken, was beim Dokumentstart im Speicher lag — damit ein verlorener Spielstand beim
+       Neuladen (selten beobachtet, Herr Baum auf Bett 1) sich im Fehlertext selbst erklärt. */
+    window.__speicherBeimStart = (window.localStorage.getItem("nachtdienst-1") || "").length;
   } catch (e) {}
 });
 seite.on("console", (m) => { if (m.type() === "error") fehler.push("Konsole: " + m.text().slice(0, 160)); });
@@ -42,6 +47,7 @@ function abbruch(e) {
   if (abgebrochen) return;
   abgebrochen = true;
   console.log(schritte.join("\n"));
+  if (fehler.length) console.log("\nBIS DAHIN GESAMMELT:\n - " + fehler.join("\n - "));
   console.log("\nABBRUCH: " + String((e && e.message) || e).split("\n")[0]);
   seite.screenshot({ path: `${BILDER}/abbruch.png` }).catch(() => {}).finally(() => process.exit(1));
 }
@@ -66,6 +72,12 @@ for (const n of ["hintergrund", "mittelgrund", "figuren"])
 ok("Uhrzeiger in der Hintergrund-Ebene", (await seite.locator("#buehne .ebene-hintergrund svg #uhr-std").count()) === 1);
 ok("Hotspots vorhanden", (await seite.locator(".feld").count()) >= 6);
 ok("Auftakt-Dialog erscheint", await seite.locator(".dialog.an").isVisible());
+/* Die Erzählstimme hat kein Porträt und keinen Namen — sie beschreibt Marlene, statt Marlene zu sein. */
+ok("Auftakt: Erzähler ohne Porträt und ohne Namensschild", await seite.evaluate(() => {
+  const d = document.querySelector(".dialog.an");
+  return d.classList.contains("ohne-bild") && !d.querySelector(".dialog-bild svg") &&
+         !d.querySelector(".dialog-name").textContent.trim();
+}));
 /* Bildschirme: auf dem EKG-Wagen läuft Herrn Baums Aufnahme aus data/ (Leinwand in der Mittelgrund-Ebene),
    Marlenes Verwaltungs-PC zeigt keine Kurve — in der Aufnahme gibt es genau diese eine Leinwand. */
 const schirme1 = await seite.evaluate(() => window.Spiel.__schirme());
@@ -81,6 +93,8 @@ async function dialogDurch(maxKlicks = 14) {
     if (!(await seite.locator(".dialog.an").count())) return;
     await seite.locator(".dialog-text").click();          // Tippen überspringen
     await warte(140);
+    /* War der Text schon fertig, hat dieser Klick bei einem Endknopf-Knoten bereits „weiter“ ausgelöst. */
+    if (!(await seite.locator(".dialog.an").count())) return;
     const w = seite.locator(".dialog-antwort.weiter");
     if (await w.count()) { await w.first().click(); await warte(280); continue; }
     const a = seite.locator(".dialog-antwort");
@@ -90,6 +104,8 @@ async function dialogDurch(maxKlicks = 14) {
 }
 await dialogDurch();
 ok("Auftakt beendet", (await seite.locator(".dialog.an").count()) === 0);
+ok("Nach dem Auftakt leuchten die Klickfelder einmal von selbst auf",
+   await seite.evaluate(() => document.querySelector(".felder").classList.contains("zeigen")));
 
 /* Antwort im laufenden Dialog wählen (Text muss enthalten sein) */
 async function antworte(teil) {
@@ -142,8 +158,28 @@ await warte(500);
 ok("Rhythmusfrage erscheint", await seite.locator("#frage-hof.an").isVisible());
 ok("EKG in der Frage gezeichnet", (await seite.locator("#frage-hof canvas").count()) === 1);
 await schuss("rhythmusfrage");
+/* Die Antworten sind bloße Diagnosen; die Kriterien tragen die Rückmeldungen (Fachabgleich, Lektion 8, 25, 26). */
+ok("Rhythmusfrage: Antworten ohne Spickzettel (keine Kriterien im Antworttext)",
+   (await seite.locator("#frage-hof .wahl").allTextContents()).every((t) => !/P-Welle|regelmäßig|breite|schnell/.test(t)));
+await seite.locator("#frage-hof .wahl", { hasText: "Vorhofflimmern" }).click();
+await warte(300);
+const rFlimmern = (await seite.locator("#frage-hof .rueck").textContent()) || "";
+ok("Falsch „Vorhofflimmern“: beide Kriterien genannt und am Streifen widerlegt",
+   /keine P-Wellen/.test(rFlimmern) && /unregelmäßig/.test(rFlimmern) && /vor jedem QRS eine P-Welle/.test(rFlimmern),
+   rFlimmern.slice(0, 100));
+await warte(2300);                                            /* Knöpfe wieder frei */
 await seite.locator("#frage-hof .wahl", { hasText: "Sinusrhythmus" }).click();
+await warte(300);
+const rSinus = (await seite.locator("#frage-hof .rueck").textContent()) || "";
+ok("Richtig „Sinusrhythmus“: P vor jedem QRS, normal geformt, gleiche Abstände; Frequenz bleibt dem Zirkel",
+   /Vor jedem QRS eine P-Welle/.test(rSinus) && /normal geformt/.test(rSinus) && /Abstände bleiben gleich/.test(rSinus) &&
+   /Zirkel/.test(rSinus), rSinus.slice(0, 120));
 await warte(3000);
+ok("Nichts schließt sich von allein: Fenster nach 3 s noch offen, „Weiter“ sichtbar",
+   (await seite.locator("#frage-hof.an").count()) === 1 && await seite.locator("#frage-hof .weiter").isVisible());
+ok("Kein Befund, bevor „Weiter“ getippt ist", !(await seite.evaluate(() => window.Mappe.hat("b-rhythmus"))));
+await seite.keyboard.press("Enter");                          /* Eingabe führt weiter */
+await warte(400);
 ok("Befund Rhythmus in der Mappe", await seite.evaluate(() => window.Mappe.hat("b-rhythmus")));
 
 /* ---------------------------------------------------------- 4 Zirkel: RR */
@@ -226,18 +262,27 @@ await seite.locator(".mappe .zu").click();
 await warte(300);
 
 /* ---------------------------------------------------------- 7 Dialog mit Bedingung */
+/* Ohne Marlenes Bericht bleibt der Flur zu — auch mit drei Befunden in der Mappe. */
+await seite.locator("#buehne .felder polygon.ausgang").first().click();
+await warte(400);
+ok("Flur vor dem Bericht an Marlene gesperrt", await seite.evaluate(() => window.Szene.aktueller() === "aufnahme"));
+ok("Sperrmeldung sagt, wer anmeldet", /Marlene/.test((await seite.locator(".meldung").last().textContent()) || ""));
 await feld("marlene").click();
 await warte(450);
 await seite.locator(".dialog-text").click();
 await warte(150);
 ok("Antwort erscheint erst mit Befund",
-   (await seite.locator(".dialog-antwort", { hasText: "PQ-Zeit gemessen" }).count()) === 1);
+   (await seite.locator(".dialog-antwort", { hasText: "Ich hab gemessen" }).count()) === 1);
 const gemessen = await seite.evaluate(() => window.Spiel.zustand.werte.pq);
-ok("Dialog nennt den selbst gemessenen Wert",
-   ((await seite.locator(".dialog-antwort", { hasText: "PQ-Zeit gemessen" }).textContent()) || "")
-     .includes(String(gemessen)), "gemessen: " + gemessen);
-await seite.locator(".dialog-antwort", { hasText: "PQ-Zeit gemessen" }).click();
+const hfGemessen = await seite.evaluate(() => window.Spiel.zustand.werte.hf);
+const berichtKnopf = (await seite.locator(".dialog-antwort", { hasText: "Ich hab gemessen" }).textContent()) || "";
+ok("Dialog nennt die selbst gemessenen Werte",
+   berichtKnopf.includes(String(gemessen)) && berichtKnopf.includes(String(hfGemessen)), "gemessen: " + hfGemessen + " / " + gemessen);
+await seite.locator(".dialog-antwort", { hasText: "Ich hab gemessen" }).click();
 await warte(400);
+const bericht = await dialogLesen();
+ok("Marlene: Monitor begründet, Dr. Falk entscheidet, die zwei Stunden sind erklärt",
+   /Monitor/.test(bericht) && /Falk/.test(bericht) && /gegen neun/.test(bericht), bericht.slice(-100));
 await dialogDurch();
 ok("Monitorzimmer freigegeben", await seite.evaluate(() => window.Spiel.hat("monitor_frei")));
 
@@ -249,6 +294,7 @@ ok("Stand zählt die Befunde auf", habe.length >= 3, habe.length + " Einträge")
 const offen1 = await seite.locator("#stand-hof .offen li").allTextContents();
 ok("Stand weist auf das Monitorzimmer hin",
    /Flur|Monitorzimmer/.test(offen1.join(" ")), offen1.join(" | ").slice(0, 120));
+ok("Stand nennt Marlenes Schema — ausdrücklich keine Pflicht", /Keine Pflicht/.test(offen1.join(" ")));
 await schuss("stand_mitte");
 await seite.locator("#stand-hof .zu").click();
 await warte(300);
@@ -256,7 +302,9 @@ await warte(300);
 /* -------------------------------------------- 7c Rätsel „Reizleitung bauen" */
 await feld("marlene").click();
 await warte(450);
-ok("Marlene bietet ihr Schema an", await antworte("Wie kommt der Takt"));
+ok("Marlene bietet ihr Schema an — nach der PQ-Messung als Frage nach den Millisekunden",
+   await antworte("zwischen P und QRS"));
+ok("Marlene knüpft an die gemessene PQ-Zeit an", /wo sie bleiben/.test(await dialogLesen()));
 ok("Schema öffnet sich", await antworte("Zeig her"));
 await warte(500);
 const rl = (sel) => seite.locator("#reizleitung-hof " + sel);
@@ -382,21 +430,57 @@ ok("Bettmonitore: drei laufende Kurven in Bettenfolge",
    new Set(kleine.map((s) => s.satz)).size === 3, JSON.stringify(kleine) + " Betten " + bettenJetzt.join(","));
 ok("Keine Leinwand der Aufnahme mehr aktiv", schirme2.every((s) => s.name !== "wagen_schirm"));
 await warte(1600);
-ok("Dr. Falk spricht an", await seite.locator(".dialog.an").isVisible());
+ok("Kapitelwechsel: der Erzähler erklärt die zweieinhalb Stunden, ohne Porträt",
+   (await seite.locator(".dialog.an.ohne-bild").count()) === 1 && /Zweieinhalb Stunden/.test(await dialogLesen()));
 await schuss("monitorzimmer");
+await seite.locator(".dialog-antwort.weiter").click();
+await warte(350);
+ok("Dr. Falk spricht an", (await seite.locator(".dialog-bild svg").count()) === 1 && /Falk/.test(await dialogLesen()));
 ok("Beste Antwort nur mit beiden Befunden",
    (await seite.locator(".dialog-antwort", { hasText: "Sinusrhythmus," }).count()) === 1);
 await seite.locator(".dialog-antwort", { hasText: "Sinusrhythmus," }).click();
 await warte(500);
-await dialogDurch();
+/* Die Tüte wurde übersprungen: Falk fragt nach dem Medikament und reicht es aus dem Aufnahmebogen nach. */
+ok("Falk fragt nach dem Medikament, das beides bremst",
+   /Nimmt er etwas/.test(await dialogLesen()) && (await seite.locator(".dialog-antwort", { hasText: "Das weiß ich nicht" }).count()) === 1);
+const textFalk = await dialogDurchLesen();
+ok("Falk nennt das Bisoprolol aus dem Aufnahmebogen und behält den Beweis-Satz (plötzlich)",
+   /Aufnahmebogen/.test(textFalk) && /Bisoprolol/.test(textFalk) && /plötzlich Schläge ausfallen/.test(textFalk), textFalk.slice(0, 120));
+ok("Medikamentenkarte ohne Tüte: als Aufnahmebogen benannt",
+   await seite.evaluate(() => { const b = window.Spiel.zustand.befunde.find((x) => x.id === "b-medis"); return !!b && /Aufnahmebogen/.test(b.titel); }));
+ok("Falk: der Monitor ersetzt das Zwölfkanal-EKG nicht", /Zwölfkanal/.test(textFalk));
+ok("Auftrag mit den drei Betten erst nach beiden Zahlen", await seite.evaluate(() => window.Spiel.hat("k2_auftrag")));
 await schuss("nach_falk");
 
 /* ---------------------------------------------------------- 9 Neu laden */
+const gespeichert = await seite.evaluate(() => {
+  try { const g = JSON.parse(window.localStorage.getItem("nachtdienst-1") || "null"); return g ? g.raum + "/" + g.befunde.length : "leer"; }
+  catch (e) { return "kaputt: " + e; }
+});
+ok("Zustand vor dem Neuladen gespeichert (Raum/Befunde)", gespeichert === "monitor/4", gespeichert);
 await seite.reload();
 await warte(1200);
-ok("Zustand übersteht Neuladen", await seite.evaluate(() => window.Szene.aktueller() === "monitor"));
-ok("Befunde noch da", (await seite.evaluate(() => window.Spiel.zustand.befunde.length)) === 3);
-ok("Kein Auftakt bei Fortsetzung", (await seite.locator(".dialog.an").count()) === 0);
+const nachLaden = await seite.evaluate(() => ({
+  raum: window.Szene && window.Szene.aktueller(),
+  befunde: window.Spiel && window.Spiel.zustand.befunde.length,
+  dialogOffen: document.querySelectorAll(".dialog.an").length,
+  dialog: ((document.querySelector(".dialog.an .dialog-text") || {}).textContent || "").slice(0, 60),
+  zeichenBeimStart: window.__speicherBeimStart,
+  spracheBeimStart: window.__spracheBeimStart,
+  ursprung: window.__ursprung,
+  betten: (window.Spiel.zustand.werte.betten || []).join(","),
+  speicher: (() => { try { const g = JSON.parse(window.localStorage.getItem("nachtdienst-1") || "null"); return g ? g.raum + "/" + g.befunde.length : "leer"; } catch (e) { return "kaputt"; } })()
+}));
+/* Beobachtet (selten, Herr Baum auf Bett 1): Chromium reicht dem neu geladenen Dokument einen ganz leeren
+   file://-Speicher — auch ohne den Sprachschlüssel, den nur dieser Durchlauf setzt und nichts löscht. Dann hat
+   der Browser verworfen, nicht das Spiel. Die Prüfung bleibt streng; der Text sagt nur, wo man suchen muss. */
+const browserVerwarf = nachLaden.zeichenBeimStart === 0 && nachLaden.spracheBeimStart === false;
+ok("Zustand übersteht Neuladen", nachLaden.raum === "monitor",
+   JSON.stringify(nachLaden) + (browserVerwarf
+     ? " — Browser lieferte beim Neuladen einen leeren file://-Speicher (auch ohne Sprachschlüssel); vorher war gespeichert: " + gespeichert
+     : ""));
+ok("Befunde noch da", nachLaden.befunde === 4, String(nachLaden.befunde));
+ok("Kein Auftakt bei Fortsetzung", nachLaden.dialogOffen === 0, nachLaden.dialog);
 await schuss("nach_neuladen");
 
 /* --------------------------------------------------- 9b Hotspots zeigen */
@@ -571,6 +655,8 @@ await warte(1200);
 const breite2 = await seite.evaluate(() => document.querySelector("#ampel-hof .ampel-balken").getBoundingClientRect().width);
 ok("A: Zeitbalken schrumpft sichtbar", breite2 < breite1 - 20, Math.round(breite1) + " → " + Math.round(breite2));
 ok("A: drei Handlungen", (await seite.locator("#ampel-hof .ampel-knopf").count()) === 3);
+ok("A: Gelb heißt bleiben und rufen — so, wie Falk es danach lobt",
+   /bleiben/.test((await seite.locator("#ampel-hof .ampel-knopf").nth(1).textContent()) || ""));
 zuKlein = await fingergross("#ampel-hof");
 ok("A: Ampel-Knöpfe fingergroß", !zuKlein.length, zuKlein.join(", "));
 blinkt = await ohneBlinken("#ampel-hof");
@@ -584,9 +670,12 @@ const textA2 = await dialogDurchLesen();
 ok("A: Schlussszene nennt die Frequenz aus den Daten",
    textA2.includes("Sinus, " + MESS.baum.frequenz + " pro Minute"), textA2.slice(0, 120));
 ok("A: Kapitel endet offen", /Speicher/.test(textA2) && /Ende des spielbaren Teils/.test(textA2), textA2.slice(-140));
+ok("A: Falk bleibt in der Rolle (Pause über drei Sekunden, wach); was das Spiel über sich sagt, sagt danach der Erzähler",
+   /Pause über drei Sekunden/.test(textA2) && textA2.indexOf("Verstanden.]") >= 0 &&
+   textA2.indexOf("Verstanden.]") < textA2.indexOf("Hier endet"), textA2.slice(-200));
 let z = await zustand();
 ok("A: Ziel erreicht (Wahl: Arzt)", z.marken.k2_fertig && z.werte.ampel === "arzt", JSON.stringify(z.werte.ampel));
-ok("A: vier Befunde", z.befunde.length === 4, String(z.befunde.length));
+ok("A: fünf Befunde (Medikamente kamen über Dr. Falk)", z.befunde.length === 5, String(z.befunde.length));
 
 await seite.locator("#kopf-stand").click();
 await warte(400);
@@ -754,6 +843,99 @@ await warte(400);
 ok("Ausgang ohne Befunde gesperrt", await seite.evaluate(() => window.Szene.aktueller() === "aufnahme"));
 ok("Begründung als Meldung", (await seite.locator(".meldung").count()) >= 1);
 await schuss("gesperrt");
+
+/* ------------------------------------------------- 11 Falk verlangt beide Zahlen: der Rückweg
+   Nur die Frequenz gemessen → Marlene meldet an, warnt aber → Falk schickt zum Wagen zurück, ohne
+   Auftrag → unten sitzt Herr Baum nicht mehr, der Wagen schon → PQ nachgemessen → Falk nimmt an.
+   Danach derselbe Weg mit nur der PQ-Zeit.                                                   */
+await feld("marlene").click(); await warte(450);
+await antworte("Was soll ich tun"); await dialogDurch();
+await wagen.click(); await warte(500);
+await seite.locator("#frage-hof .wahl", { hasText: "Sinusrhythmus" }).click(); await warte(300);
+await seite.locator("#frage-hof .weiter").click(); await warte(400);
+const nachRhythmus = await seite.evaluate(() => window.localStorage.getItem("nachtdienst-1"));
+async function zirkel(was, von, bis) {
+  await wagen.click(); await warte(400);
+  await seite.locator("#wahl-hof .wahl", { hasText: was }).click(); await warte(600);
+  await messe(von, bis);
+  await seite.locator("#zirkel-hof .uebernehmen").click(); await warte(400);
+}
+const letzteMeldung = async () => ((await seite.locator(".meldung").last().textContent()) || "").trim();
+await zirkel("RR-Abstand", wahrheit.r1, wahrheit.r2);
+ok("R: nach der zweiten Karte der Hinweis auf Marlene", /Marlene/.test(await letzteMeldung()), await letzteMeldung());
+await feld("marlene").click(); await warte(450);
+ok("R: Bericht mit der Frequenz allein", await antworte("Ich hab gemessen"));
+const warnung = await dialogLesen();
+ok("R: Marlene meldet an, warnt aber vor Falks Frage nach der Überleitung",
+   /meld dich oben an/.test(warnung) && /Überleitung/.test(warnung), warnung.slice(-90));
+await dialogDurch();
+ok("R: Flur offen mit Rhythmus und Frequenz", await seite.evaluate(() => window.Spiel.hat("monitor_frei")));
+await seite.locator("#buehne .felder polygon.ausgang").first().click(); await warte(1100); await warte(1600);
+await seite.locator(".dialog-antwort.weiter").click(); await warte(350);        /* Erzähler → Falk */
+ok("R: ohne PQ gibt es nur die halbe Antwort",
+   (await seite.locator(".dialog-antwort", { hasText: "Sinusrhythmus," }).count()) === 0 && await antworte("Der Puls ist langsam"));
+ok("R: Falk fragt nach der Überleitung", /Überleitung/.test(await dialogLesen()));
+await antworte("nicht gemessen");
+const zurueck = await dialogLesen();
+ok("R: Falk schickt zum Wagen zurück — und gibt keinen Auftrag", /Wagen/.test(zurueck) && !/drei Betten/.test(zurueck), zurueck.slice(0, 90));
+await dialogDurch();
+ok("R: kein Bett-Auftrag ohne beide Zahlen",
+   !(await seite.evaluate(() => window.Spiel.hat("k2_auftrag"))) && (await seite.evaluate(() => window.Spiel.hat("falk_schickt_zurueck"))));
+await schuss("rueckweg_falk");
+await feld("wand").click(); await warte(300);
+ok("R: die Monitorwand verweist vor dem Auftrag auf Falk",
+   (await seite.locator("#schirme-hof.an").count()) === 0 && /Falk/.test(await letzteMeldung()), await letzteMeldung());
+await seite.locator("#kopf-stand").click(); await warte(400);
+const offenR = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
+ok("R: Stand nennt beide Zahlen und den Wagen", /zwei Zahlen/.test(offenR) && /Wagen/.test(offenR), offenR.slice(0, 160));
+ok("R: Stand ohne tote Fäden aus der Aufnahme", !/Mit Herrn Baum selbst|Marlene weiß|Frag ihn/.test(offenR), offenR.slice(0, 160));
+await seite.locator("#stand-hof .zu").click(); await warte(300);
+await seite.locator("#buehne .felder polygon.ausgang").first().click(); await warte(1100);
+ok("R: wieder in der Aufnahme", await seite.evaluate(() => window.Szene.aktueller() === "aufnahme"));
+ok("R: Herr Baum sitzt nicht mehr da — Klickfeld weg, Figur ausgeblendet",
+   (await feld("herrk").count()) === 0 && (await feld("tuete").count()) === 0 &&
+   await seite.evaluate(() => { const f = document.querySelector("#fig-herrk"); return !!f && getComputedStyle(f).display === "none"; }));
+ok("R: der EKG-Wagen steht noch da", (await feld("wagen").count()) === 1);
+/* Nur Herr Baum geht: Die Kurve auf dem Wagen läuft weiter — der Streifen von heute früh liegt ja noch dort. */
+const schirmeUnten = await seite.evaluate(() => window.Spiel.__schirme());
+ok("R: auf dem EKG-Wagen läuft weiter die Kurve von heute früh",
+   schirmeUnten.some((s) => s.name === "wagen_schirm" && s.satz === 39 && s.laeuft) &&
+   (await seite.locator("#buehne .ebene-mittelgrund .schirm-lauf[data-schirm=wagen_schirm] canvas").isVisible()),
+   JSON.stringify(schirmeUnten));
+await schuss("aufnahme_ohne_baum");
+await feld("marlene").click(); await warte(450);
+const grussUnten = await dialogLesen();
+ok("R: Marlene kennt Falks Art", /zurückgeschickt/.test(grussUnten));
+ok("R: Marlene sagt einmal, dass die Tüte mit ihm oben ist (das Foto steht am Bett)",
+   /Tüte .*mit ihm hoch/.test(grussUnten) && /Foto/.test(grussUnten), grussUnten.slice(-80));
+ok("R: die Tüte steht nicht mehr in der Aufnahme",
+   await seite.evaluate(() => { const f = document.querySelector("#fig-tuete"); return !!f && getComputedStyle(f).display === "none"; }));
+ok("R: kein „Schreib ihm ein EKG“ mehr", (await seite.locator(".dialog-antwort", { hasText: "Was soll ich tun" }).count()) === 0);
+await antworte("Später");
+await zirkel("PQ-Zeit", wahrheit.p0, wahrheit.q0);
+ok("R: nach der fehlenden Zahl der Hinweis auf Falk", /Falk/.test(await letzteMeldung()), await letzteMeldung());
+await seite.locator("#buehne .felder polygon.ausgang").first().click(); await warte(1100); await warte(1600);
+ok("R: Falk spricht beim Wiederkommen von selbst an", /Haben Sie, was fehlt/.test(await dialogLesen()));
+ok("R: jetzt die ganze Antwort", await antworte("Sinusrhythmus,"));
+await dialogDurchLesen();
+ok("R: Auftrag mit beiden Zahlen", await seite.evaluate(() => window.Spiel.hat("k2_auftrag")));
+
+/* Nur die PQ-Zeit: Falk fragt nach der Frequenz. */
+await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachRhythmus);
+await seite.reload(); await warte(1200);
+await zirkel("PQ-Zeit", wahrheit.p0, wahrheit.q0);
+await feld("marlene").click(); await warte(450);
+await antworte("Ich hab gemessen");
+const berichtPq = await dialogLesen();
+ok("R2: Marlene mit PQ ohne Frequenz mahnt die Frequenz an", /miss die Frequenz/.test(berichtPq), berichtPq.slice(-90));
+await dialogDurch();
+await seite.locator("#buehne .felder polygon.ausgang").first().click(); await warte(1100); await warte(1600);
+await seite.locator(".dialog-antwort.weiter").click(); await warte(350);
+ok("R2: mit der PQ-Zeit allein lässt sich die Zahl nennen", await antworte("Sinusrhythmus, PQ"));
+ok("R2: Falk fragt nach der Frequenz", /wie langsam/.test(await dialogLesen()));
+await antworte("Hol ich nach");
+await dialogDurch();
+ok("R2: zurück zum Wagen, kein Auftrag", !(await seite.evaluate(() => window.Spiel.hat("k2_auftrag"))));
 
 await browser.close();
 
