@@ -12,12 +12,12 @@
  "verdeckt": false,
  "vorlage": "bau/blender/figuren/vorlage_herrk.png",
  "datei": "herrk.png",
- "seed": 23,
+ "seed": 43,
  "endpunkt": "fal-ai/flux-pro/kontext",
- "stil": "gen/blender/stil/figur_herr_k.txt",
- "prompt": "Redraw the plain 3D mannequin in this picture as a finished ligne claire illustration in the manner of European graphic novels: flat local colours, one uniform thin dark ink outline around every shape, no hatching, no gradients, no texture, no shading. Keep exactly the same pose, the same body position, size and placement inside the frame, the same camera angle and the same colours of skin, hair and clothes. Adult proportions, a real neck and shoulders, hands with five fingers. Draw only what the mannequin picture shows: keep the flat uniform bright green background exactly as it is and do not add a floor, a wall, a shadow, a chair, a seat or any other object behind or under the figure. No text, no letters, no logos, no scribbles. The character: Konrad, a 68-year-old man with a broad back, sitting slightly hunched forward, elbows on his knees, hands loosely clasped between them, each hand with five clearly drawn fingers; the chair he sits on is not in the picture and must not be drawn, there is only green behind and under him. A grey-blue flat cap he never takes off, grey tufts of hair at the temples, bushy grey brows, a grey moustache, bags under the eyes, a small beige hearing aid behind his right ear. A dark-brown knitted cardigan worn open over a mint-green sweater, grey trousers, dark felt house slippers (not shoes). A thin red string bracelet, clearly visible, on his left wrist. Polite, slightly out of breath, apologetic half-smile.",
- "datum": "2026-10-10",
+ "stil": "gen/blender/stil/figur_herr_k_schuhe.txt",
+ "prompt": "Change only two small details of this ligne claire illustration of the seated man: (1) replace his dark shoes with soft, flat house slippers in light grey-beige felt with a small checked pattern, open at the heel, drawn with a few thin ink lines; (2) add a thin red string bracelet around his left wrist. Everything else — face, cap, body, clothes, hands, pose, size and position — stays exactly as it is. Keep everything else exactly identical, including the flat uniform bright green background; no text, no letters, no scribbles.",
+ "datum": "2026-10-11",
  "freistellen": "farbschluessel",
- "roh": "bau/blender/figuren/ki_herrk_s23.png",
- "bearbeitet_aus": null
+ "roh": "bau/blender/figuren/ki_herrk_s43e.png",
+ "bearbeitet_aus": "bau/blender/figuren/ki_herrk_s41p.png"
 }
