@@ -45,7 +45,9 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 
 | Kürzel | Quelle | geprüft gegen |
 |---|---|---|
-| **ESC-Synkope-2018** | Brignole M, et al. *2018 ESC Guidelines for the diagnosis and management of syncope.* Eur Heart J 2018;39(21):1883–1948. doi:10.1093/eurheartj/ehy037 | Volltext-PDF, Abschnitt 4.1.1, Tabellen 5 und 7 |
+| **ESC-Synkope-2018** | Brignole M, et al. *2018 ESC Guidelines for the diagnosis and management of syncope.* Eur Heart J 2018;39(21):1883–1948. doi:10.1093/eurheartj/ehy037 | Volltext-PDF, Abschnitt 4.1.1, Tabellen 5 und 7 (10.10.2026); am 11.10.2026 am Online-Volltext (academic.oup.com) zusätzlich: §3.1, §3.2.1/Tab. 3, §3.2.2/Tab. 4, §4.1, §4.1.1/Tab. 5, §4.2.4.x, §6.1.1, §7.1.2, §8.1.2/Tab. 10, §8.1.3, §10 (Schlüsselbotschaften). Tabelle 6 nur über eine adaptierte Wiedergabe (siehe §5) |
+| **ESC-Practical-2018** | Brignole M, et al. *Practical Instructions for the 2018 ESC Guidelines for the diagnosis and management of syncope.* Eur Heart J 2018;39(21):e43–e80. doi:10.1093/eurheartj/ehy071 | Online-Volltext 11.10.2026: Web Table 4 (vier T-LOC-Merkmale), Web Tables 5.1–5.6 (Anamnese: vor, Beginn, während/Zeugen, andere Aspekte, danach, Vorerkrankungen — darunter „kürzlicher Beginn oder Wechsel einer Medikation", Familienanamnese, Herzkrankheit, Diabetes), §1.3, §2.1.2, §2.3.1, §2.3.3 |
+| **ESC-AF-2020** | Hindricks G, Potpara T, et al. *2020 ESC Guidelines for the diagnosis and management of atrial fibrillation.* Eur Heart J 2021;42(5):373–498. doi:10.1093/eurheartj/ehaa612 | nur Inhaltsverzeichnis und Abkürzungen am Online-Volltext (11.10.2026): §3.1 Definition (Tab. 3), §3.2 Diagnosekriterien, §8.1 Symptome (Tab. 6 EHRA), Fig. 3 Risikofaktoren, Fig. 5 4S-AF, §10.3.1 Alkohol, §11.1 Instabilität, §11.10 endokrin — Wortlaut der Kriterien noch nicht gelesen (§5) |
 | **ESC-Pacing-2021** | Glikson M, Nielsen JC, Kronborg MB, et al. *2021 ESC Guidelines on cardiac pacing and cardiac resynchronization therapy.* Eur Heart J 2021;42:3427–3520 | Zusammenfassung des American College of Cardiology |
 | **AHA-EKG-2007-I** | Kligfield P, Gettes LS, Bailey JJ, et al. *Recommendations for the standardization and interpretation of the electrocardiogram, Part I: The electrocardiogram and its technology.* Circulation 2007;115(10). doi:10.1161/CIRCULATIONAHA.106.180200 | Bibliografischer Nachweis |
 | **Chou** | Surawicz B, Knilans TK. *Chou's Electrocardiography in Clinical Practice.* 6. Auflage | noch nicht am Original geprüft |
@@ -86,6 +88,21 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 
 ## 5. Offen
 
+- **ESC-Synkope-2018, Tabelle 6** (Risikomerkmale Major/Minor/Low-risk) wurde am 11.10.2026 nur
+  über eine adaptierte Wiedergabe gegengeprüft (Tabelle 1 in *Exploration of Cardiology*,
+  explorationpub.com/Journals/Tables/1012114/t1, „adapted from Brignole 2018"); der Online-Volltext
+  liefert die Tabelle nicht als Text. Vor der Veröffentlichung am PDF der Leitlinie nachprüfen —
+  insbesondere die Minor-EKG-Zeile „AV-Block I° mit deutlich verlängerter PQ-Zeit".
+- **ESC-Synkope-2018, §4.2.1** (Stehversuch: Kriterium für orthostatische Hypotonie — Abfall des
+  systolischen Drucks ≥ 20 mmHg oder des diastolischen ≥ 10 mmHg oder systolisch < 90 mmHg innerhalb
+  von 3 min) ist aus dem Gedächtnis zitiert; die Zeile in `docs/faelle/aufnahme_baum.md` §4 trägt den
+  Vermerk. Am Original prüfen.
+- **ESC-AF-2020**: Wortlaut und Klasse der Diagnosekriterien (§3.2: 12-Kanal-EKG oder Einkanalstreifen
+  ≥ 30 s mit unregelmäßigen RR ohne erkennbare P-Wellen), das Kriterium „hämodynamische Instabilität"
+  (§11.1) und die Risikofaktorenliste (Fig. 3, §10.3.1, §11.10) am Volltext lesen, bevor die
+  Monitor-Dialoge gebaut werden.
+- **LUDB-Alter und -Geschlecht** der Aufnahmen 39, 96, 142 (und Ersatz) aus der Rohdatenbank
+  nachtragen; die Figuren (68 m, 76 w, 24 m) daran anpassen.
 - Untergrenze der PQ-Norm (120 ms): gegen das Lehrbuch geprüft (Lektion 3); für die
   Veröffentlichung noch an einer offenen Quelle (Chou, AHA-Empfehlungen) belegen.
 - Für Kapitel 2 und folgende: Aufnahmen mit AV-Block II°/III° **mit**
@@ -137,3 +154,49 @@ bradycardia" bei 50–59/min (Nr. 39, 24, 59, 134); „Sinus tachycardia" bei Nr
 **Noch zu belegen (offen):** Therapie-Entscheidungen am Monitor (Beobachten · Arzt rufen · Pacer)
 stehen nicht im EKG-Kurs. Das Spiel behauptet dazu keine Kriterien mehr; falls später doch,
 Beleg aus ESC-Pacing-2021 / ERC-Leitlinie hier eintragen.
+
+---
+
+## 8. Belegtabelle Fallakten (11.10.2026)
+
+Jede Zeile gehört zu einer Aussage in `docs/faelle/*.md`; der Spieler sieht nie die Quelle, nur das
+Merkmal. Lehrbuchbelege stehen in `FACHREGELN.md` (eigene Worte, Lektionsnummer) und werden hier nicht
+wiederholt.
+
+### 8a. Herr Baum (`aufnahme_baum.md`)
+
+| Aussage | Beleg | Anmerkung |
+|---|---|---|
+| T-LOC hat vier Merkmale: kurze Dauer, Verlust der Haltungskontrolle, keine Reaktion, Amnesie; alle vier → T-LOC sicher | ESC-Synkope-2018 §4.1; ESC-Practical-2018 Web Table 4 | |
+| Synkope = T-LOC durch globale Hirnminderdurchblutung, rascher Beginn, kurz, spontane vollständige Erholung; Klassen reflektorisch / orthostatisch / kardial | ESC-Synkope-2018 §3.1, §3.2.1, Tabelle 3 | |
+| Bedingungen, die als Synkope fehlgedeutet werden: generalisierte Anfälle, komplex-partielle/Absencen, psychogene Pseudosynkope, Sturz ohne T-LOC, Kataplexie, intrazerebrale/Subarachnoidalblutung, vertebrobasiläre TIA, Karotis-TIA, Subclavian-Steal, metabolisch (Hypoglykämie, Hypoxie, Hyperventilation), Intoxikation, Herzstillstand, Koma | ESC-Synkope-2018 §3.2.2, Tabelle 4 | |
+| Vertebrobasiläre TIA: immer fokale Zeichen, meist ohne Bewusstseinsverlust, wenn doch, länger; Karotis-TIA: Bewusstsein erhalten; „TIA = fokales Defizit ohne LOC, Synkope das Gegenteil"; Parese, Ataxie, Hirnstammzeichen → vertebrobasilär | ESC-Synkope-2018 Tabelle 4, §8.1.3; ESC-Practical-2018 Web Table 5.4 | Grundlage der Option „Ist das nicht eine TIA?" |
+| Epileptischer Anfall vs. Synkope: Myoklonien < 10, asynchron, asymmetrisch vs. 20–100 synchron; Zungenbiss Spitze/selten vs. seitlich; Wiederklarwerden 10–30 s vs. Minuten; Verwirrtheit danach; Inkontinenz, Augen offen, Müdigkeit, blaues Gesicht von begrenztem Nutzen | ESC-Synkope-2018 §8.1.2, Tabelle 10; ESC-Practical-2018 Web Tables 5.3–5.5 (Bewegungen ab Beginn → Epilepsie, nach LOC → Synkope; Dauer < 30 s Synkope, > 1 min Anfall; „sofort klar" → Synkope) | |
+| Psychogene Pseudosynkope: scheinbare Bewusstlosigkeit Minuten bis Stunden, hohe Frequenz bis mehrmals täglich; Augen meist geschlossen | ESC-Synkope-2018 Tabelle 4, §7.1.1–7.1.2; ESC-Practical-2018 Web Table 5.4 | |
+| Hypoglykämie: metabolische Störung, die als Synkope fehlgedeutet wird; Verlauf zu lang für T-LOC | ESC-Synkope-2018 Tabelle 4; ESC-Practical-2018 Web Table 5.6 (Diabetes) | |
+| Merkmale der Erstbewertung: Reflex (lange Vorgeschichte, v. a. vor 40; Auslöser Anblick/Geräusch/Geruch/Schmerz; langes Stehen; Mahlzeit; Hitze/Gedränge; Prodrom Blässe/Schwitzen/Übelkeit; Kopfdrehung/Karotisdruck; kein Herzleiden); OH (beim/nach dem Aufstehen, langes Stehen, nach Belastung, postprandial, zeitlicher Zusammenhang mit Beginn/Dosisänderung vasodepressiver Mittel oder Diuretika, autonome Neuropathie/Parkinson); kardial (unter Belastung/im Liegen, plötzliches Herzrasen davor, Familie, strukturelle/koronare Herzkrankheit, EKG: bifaszikulärer Block, QRS ≥ 0,12 s, Mobitz I oder AV-Block I° mit deutlich verlängerter PQ, nsVT, Präexzitation, QT, frühe Repolarisation, Brugada, ARVC, LVH/HCM; asymptomatische Sinusbradykardie 40–50 „ohne negativ chronotrope Medikation") | ESC-Synkope-2018 §4.1.1, Tabelle 5 | am Online-Volltext gelesen 11.10.2026 |
+| Medikamentös induzierte OH ist die häufigste OH-Form (Vasodilatatoren, Diuretika, Phenothiazine, Antidepressiva); Synkope wahrscheinlicher/schwerer unter blutdrucksenkender Medikation | ESC-Synkope-2018 Tabelle 3 | |
+| Medikamentenanamnese: „kürzlicher Beginn oder Wechsel einer Medikation" als Anamnesefrage (OH, Reflex, langes QT); Hypertonie → OH durch Medikation; Familienanamnese plötzlicher Tod < 40; Herzkrankheit; frühere Ohnmachten; Verletzungen | ESC-Practical-2018 Web Table 5.6 (Vorerkrankungen), §2.3.1, §2.3.3 | Beleg dafür, dass die Medikamentenfrage Pflichtteil der Synkopen-Anamnese ist (KONZEPT §1.3) |
+| Polypharmazie, kardiovaskuläre, psychotrope und dopaminerge Mittel erhöhen Synkopen- und Sturzrisiko; negativ dromotrope und chronotrope Mittel beim älteren Patienten sorgfältig bewerten | ESC-Synkope-2018 §6.1.1 | Bisoprolol |
+| Bei allen Patienten: vollständige Anamnese, körperliche Untersuchung einschließlich Stehblutdruck, Standard-EKG; bei Verdacht auf arrhythmische Synkope sofortige EKG-Überwachung bei Hochrisiko | ESC-Synkope-2018 §10 Schlüsselbotschaften 3 und 4; §4.1.1 | |
+| Hochrisiko → Überwachung dort, wo Reanimation möglich ist; In-Hospital-Monitoring bei Hochrisikomerkmalen, v. a. unmittelbar nach der Synkope (Ausbeute 1,9–17,6 %) | ESC-Synkope-2018 §4.1.2, §4.2.4.1 | Klasse/Level nicht aus dem Online-Text lesbar |
+| Risikomerkmale Major (neuer Brustschmerz/Atemnot/Bauch-/Kopfschmerz; unter Belastung/im Liegen; Herzrasen unmittelbar davor; schwere strukturelle/koronare Herzkrankheit; systolisch < 90; Blutung; Bradykardie < 40 wach; unklares Systolikum; EKG: Ischämie, Mobitz II, III°, langsames VHF < 40, Sinusbradykardie < 40 / SA-Block / Pausen > 3 s wach, Schenkelblock/IVCD/Hypertrophie/Q, VT, Gerätefehlfunktion, Brugada Typ 1, QTc > 460) und Minor (ohne Vorwarnung oder Prodrom < 10 s; Familie SCD jung; im Sitzen; EKG: Mobitz I / AV-Block I° deutlich verlängert, Sinusbradykardie oder langsames VHF 40–50, paroxysmale SVT/VHF, Präexzitation, kurzes QT, atypisches Brugada, rechtspräkordiale T-Negativierung/Epsilon); Minor zählen nur mit struktureller Herzkrankheit oder auffälligem EKG | ESC-Synkope-2018 Tabelle 6 — gegengeprüft über adaptierte Wiedergabe (§5) | Herr Baum: Minor „ohne Prodrom" + auffälliges EKG |
+| Synkope ohne Prodrom, Verletzung durch die Synkope → eher Beobachtung/Aufnahme | ESC-Synkope-2018 Tabelle 7 | |
+
+### 8b. Frau Lindner (`monitor.md`)
+
+| Aussage | Beleg | Anmerkung |
+|---|---|---|
+| Vorhofflimmern: Diagnose am 12-Kanal-EKG oder Einkanalstreifen ≥ 30 s (unregelmäßige RR, keine erkennbaren P-Wellen) | ESC-AF-2020 §3.1 (Tab. 3), §3.2 | Wortlaut/Klasse am Original zu prüfen (§5) |
+| Symptomlast (EHRA-Skala) und 4S-AF (Schlaganfallrisiko, Symptomschwere, Flimmerlast, Substrat) als Charakterisierung | ESC-AF-2020 §8.1 (Tab. 6), Fig. 5 | begründet die Fragen „Beschwerden?", „seit wann?" |
+| Risikofaktoren/Komorbiditäten: Hypertonie, Alkohol, Schilddrüse u. a. | ESC-AF-2020 Fig. 3, §10.3.1, §11.10 | das Spiel notiert nur, behauptet keine Ursache |
+| Hämodynamische Instabilität als Kriterium für dringliches Handeln | ESC-AF-2020 §11.1 | nur das Kriterium; am Original zu prüfen |
+| Monitor erkennt tachykardes/bradykardes VHF sicher; jede Auffälligkeit → 12-Kanal-EKG | Lehrbuch Lektion 31 (FACHREGELN) | |
+| mittlere Frequenz: Komplexe in 6 s × 10 | Lehrbuch Lektion 7 (FACHREGELN) | gegen `schlaege` im gezeigten Fenster geprüft |
+
+### 8c. Lehrsaal (`lehrsaal.md`)
+
+Alle Aussagen stammen aus dem Lehrbuch (Lektionen 1–8, 17, 34–38) und stehen in `FACHREGELN.md`.
+Offene Quellen für die Veröffentlichung: Elektrodenpositionen und Ableitungsgruppen nach
+AHA-EKG-2007-I (Kligfield 2007, bibliografisch nachgewiesen in §2; Stelle noch zu lesen); Ampel-Regel
+der Kabelfarben entspricht IEC 60601-2-25 (Farbcode Europa) — noch nicht am Original geprüft.
