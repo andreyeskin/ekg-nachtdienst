@@ -362,7 +362,7 @@ def einsetzen(raum, skala_aus=1):
         pass_tiefe(OUT + f"{name}_tiefe_fig.png", fig_sichtbar(name))
         ef.pass_flach(OUT + f"{name}_frei.png", fig_sichtbar(name))            # Blockout-Alpha: Ausrichtung, Umgriff
         ef.pass_sonne(OUT + f"{name}_sonne.png", lambda o, n=name: (ef.fig_name(o) == n) if ef.ist_fig(o) else A["sonne_sichtbar"](o),
-                      A["sonne"], energie=A["energie"])
+                      stellen=A["sonne_stellen"])
         rahmen_aus()
         # --- Masken
         zr, kr = tiefe_lesen(OUT + f"{name}_tiefe_raum.png"); zf, kf = tiefe_lesen(OUT + f"{name}_tiefe_fig.png")
@@ -371,11 +371,14 @@ def einsetzen(raum, skala_aus=1):
         frei_a = auf_groesse(lade(OUT + f"{name}_frei.png", True), groesse)[..., 3]
         fy = np.nonzero(frei_a.max(1) > 0.5)[0]; fig_h = (fy.max() - fy.min() + 1) if len(fy) else groesse[1]
         umgriff = max(48, int(0.12 * fig_h))               # so weit darf die gezeichnete Figur über den Blockout hinaus (Ärmel, Mantel)
-        zf_voll, _ = naechste_fuellung(zf, kf, umgriff + 2)
+        kf = np.asarray(Image.fromarray(kf.astype(np.uint8) * 255).filter(ImageFilter.MinFilter(5))) > 127   # Kantenpixel (Tiefe mit dem fernen Grund gemischt) nicht ausbreiten
+        zf_voll, _ = naechste_fuellung(zf, kf, umgriff + 4)
         verdeckt = kr & (zr < zf_voll - 0.004)             # Raum liegt vor der Figur (4 mm je 0,001 bei nah..fern = 6 m)
         sichtbar = 1 - dilatiere(verdeckt.astype(np.float32), 0)
         frei_a = auf_groesse(lade(OUT + f"{name}_frei.png", True), groesse)[..., 3]
         zone = dilatiere(frei_a, umgriff)                  # Figur ± Umgriff: nichts, was Kontext dazuerfand (Stuhl, Schatten)
+        if os.environ.get("FIGUREN_DEBUG"):
+            bild(np.stack([verdeckt, zone, kf], -1).astype(np.float32), "RGB").save(OUT + f"{name}_debug_masken.png")
         # --- Quellbild: auf Vorlagengröße, am Blockout ausrichten (Kopf oben, Fußlinie)
         q = vormultipliziert_skalieren(lade(QUELLE + f"{name}.png", True), groesse)
         q = ausrichten(q, frei_a, voll=not meta.get("verdeckt"))

@@ -12,7 +12,8 @@ gemeinsame Szene dafür. Orte der Figuren: figuren.PLATZ.
 
 Der Raum wird aus seiner Szenendatei aufgebaut (Aufnahme: exec von szene_aufnahme.py; Monitorzimmer: Import
 von szene_monitor.py, werkzeug-Schnittstelle), die Raumobjekte werden als Holdout gerendert: die Figur hat
-dort Alpha 0, wo Tresen oder Stuhl sie verdecken. Danach: ebenen.py <raum> flat schreibt hitboxes.json neu,
+dort Alpha 0, wo Tresen oder Stuhl sie verdecken. Die Sonne kommt aus `szene.sonne_stellen()`, Objekte in
+`SONNE_AUS` (Leuchtflächen vor dem Fenster) werfen keinen Schatten — wie in ebenen.py. Danach: ebenen.py <raum> flat schreibt hitboxes.json neu,
 also die Figuren immer NACH den Raum-Durchgängen rendern (sie vereinigen ihre Klickzone dort hinein).
 """
 import json
@@ -144,14 +145,19 @@ def pass_linien(pfad, sichtbar, sammlung):
         if o.data.materials and o.data.materials[0].name == "slat": o.hide_render = True   # wie im Raum: Lamellen ohne Kontur
     freestyle(True, sammlung); render(pfad, 4, False)
 
-def pass_sonne(pfad, sichtbar, richtung, energie=14.0):
+def pass_sonne(pfad, sichtbar, richtung=None, energie=14.0, stellen=None):
+    """Sonnen-Durchgang. stellen(sonne): die Sonne der Szene (szene.sonne_stellen) — dann haben Figur und Raum
+    dasselbe Licht; sonst Richtung/Energie von Hand (probe, portraits)."""
     material_grau(); welt((0, 0, 0), 0.0)
     sc = bpy.context.scene; sc.cycles.max_bounces = 0
     sonne = next((o for o in bpy.data.objects if o.type == 'LIGHT' and o.data.type == 'SUN'), None)
     if sonne is None:
         bpy.ops.object.light_add(type='SUN'); sonne = bpy.context.object
-    sonne.data.energy = energie; sonne.data.angle = math.radians(0.6); sonne.data.color = (1, 1, 1)
-    sonne.rotation_euler = Vector(richtung).to_track_quat('-Z', 'Y').to_euler()
+    if stellen is not None: stellen(sonne)
+    else:
+        sonne.data.energy = energie; sonne.data.angle = math.radians(0.6)
+        sonne.rotation_euler = Vector(richtung).to_track_quat('-Z', 'Y').to_euler()
+    sonne.data.color = (1, 1, 1)
     lichter(lambda o: o is sonne)
     for n in ("dawn", "corridor"):
         if n in bpy.data.materials: bpy.data.materials[n].node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = 0.0
@@ -253,15 +259,16 @@ if MODE == "probe":
     print("saved", OUT + "probe.png")
 
 # ------------------------------------------------------------------ Figurenebene eines Raums
-def figuren_durchgaenge(figs, raum_sichtbar, sonne_sichtbar, sonne_richtung, energie, sonne_name):
+def figuren_durchgaenge(figs, raum_sichtbar, sonne_sichtbar, sonne_stellen, sonne_name):
     """Je Figur drei Durchgänge (Fläche mit Raum als Holdout, Fläche frei, Linie hinter dem Raum) und einmal
-    die Sonne des Raums über allem. raum_sichtbar(o): Raumobjekt wird gerendert (Platzhalter nie)."""
+    die Sonne des Raums über allem. raum_sichtbar(o): Raumobjekt wird gerendert (Platzhalter nie);
+    sonne_sichtbar(o): wirft im Sonnen-Durchgang Schatten (SONNE_AUS der Szene nicht)."""
     koerper = bpy.data.collections["figuren"]
     for name in figs:
         pass_flach(OUT + f"{name}_flat.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else ("holdout" if raum_sichtbar(o) else False))
         pass_flach(OUT + f"{name}_frei.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else False)
         pass_linien(OUT + f"{name}_lines.png", lambda o, n=name: (fig_name(o) == n) if ist_fig(o) else raum_sichtbar(o), koerper)
-    pass_sonne(OUT + sonne_name, lambda o: True if ist_fig(o) else sonne_sichtbar(o), sonne_richtung, energie=energie)
+    pass_sonne(OUT + sonne_name, lambda o: True if ist_fig(o) else sonne_sichtbar(o), stellen=sonne_stellen)
 
 
 def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None, ziel=None):
@@ -299,7 +306,8 @@ def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None, z
         vor = Image.open(szene_dir + "hintergrund.png").convert("RGBA"); vor.alpha_composite(Image.open(szene_dir + "mittelgrund.png").convert("RGBA"))
         for name, p in platz.items():
             vor.alpha_composite(Image.open(ziel + f"figuren/{name}.png").convert("RGBA"), (p["x"], p["y"]))
-        vor.save(OUT + f"{raum}_vorschau.png"); print("saved", OUT + f"{raum}_vorschau.png")
+        vp = (ziel + "vorschau.png") if ziel != szene_dir else (OUT + f"{raum}_vorschau.png")
+        vor.save(vp); print("saved", vp)
     except Exception as e:
         print("keine Vorschau:", e)
 
@@ -335,10 +343,11 @@ def aufbau(raum):
         m, k = P["marlene"], P["herrk"]
         figs = {"marlene": figuren.marlene(m["ort"], drehung=m["drehung"], haltung=m["haltung"], tag=tag, fein=0.0055, tresen=m["tresen"]),
                 "herrk": figuren.herr_k(k["ort"], drehung=k["drehung"], haltung=k["haltung"], tag=tag, fein=0.0055, tuete=False)}
-        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: True, sonne_sichtbar=lambda o: True,
-                    sonne=(-0.30, -0.80, -0.52), energie=14.0,          # wie szene_aufnahme.sonne_stellen
+        aus = set(ns.get("SONNE_AUS", set()))                          # Leuchtflächen draußen schatten nie ab
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: True, sonne_sichtbar=lambda o: o.name not in aus,
+                    sonne_stellen=ns.get("sonne_stellen", lambda s: None),   # dieselbe Sonne wie ebenen.py (sonst die der Szene)
                     klasse={"marlene": "atmet", "herrk": "atmet langsam"}, unten={"marlene": 3},
-                    kontext={"marlene": ["desk", "desk_top", "desk_panel"], "herrk": []},   # Stuhl bleibt Raumobjekt: Kontext zeichnet ihn sonst doppelt
+                    kontext={"marlene": ["desk", "desk_top", "desk_panel", "desk_wange"], "herrk": []},   # Bank bleibt Raumobjekt: Kontext zeichnet sie sonst doppelt
                     verdecker={"marlene": None, "herrk": []})
     if raum == "monitor":
         import importlib
@@ -355,7 +364,7 @@ def aufbau(raum):
         nie = set(wz.PLATZHALTER)
         return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: o.name not in nie,
                     sonne_sichtbar=lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
-                    sonne=(0.25, -0.75, -0.6), energie=12.0,            # wie in szene_monitor.py
+                    sonne_stellen=getattr(szene, "sonne_stellen", lambda s: None),   # dieselbe Sonne wie ebenen.py (sonst die der Szene)
                     klasse={"falk": "atmet langsam"}, unten={}, kontext={"falk": []}, verdecker={"falk": None})
     raise SystemExit(f"unbekannter Raum {raum}")
 
@@ -366,7 +375,7 @@ def aufbau(raum):
 if MODE in ("raum", "monitor"):
     raum = "aufnahme" if MODE == "raum" else "monitor"
     A = aufbau(raum)
-    figuren_durchgaenge(A["figs"], A["raum_sichtbar"], A["sonne_sichtbar"], A["sonne"], A["energie"], f"{raum}_sun.png")
+    figuren_durchgaenge(A["figs"], A["raum_sichtbar"], A["sonne_sichtbar"], A["sonne_stellen"], f"{raum}_sun.png")
     figuren_ebene(raum, A["figs"], A["cam"], f"{raum}_sun.png", A["klasse"], unten=A["unten"], einst=raum_einstellung(raum),
                   ziel=os.path.join(OUT, "blockout", raum) + os.sep)
 

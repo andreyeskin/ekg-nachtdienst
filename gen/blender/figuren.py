@@ -35,7 +35,7 @@ FARBEN = {
 # Haltung. ebenen_figuren.aufbau() und figuren_zeichnen.py lesen hier. Falk: ort=None heißt „am Platzhalter
 # platz_falk der Szene“ (szene_monitor.py); ein Tupel überschreibt ihn.
 PLATZ = {
-    "marlene": dict(ort=(-3.05, -0.5, 0.0), drehung=20, haltung="tresen", tresen=1.1),   # hinter dem Tresen (Rückkante y=-0,83)
+    "marlene": dict(ort=(-3.05, -0.5, 0.0), drehung=20, haltung="tresen", tresen=1.09),  # hinter dem Tresen (Oberkante der Ablage 1,09 m)
     "herrk": dict(ort=(2.4, -0.75, 0.0), drehung=-8, haltung="sitzen"),                  # dritter Stuhl der Wartereihe
     "falk": dict(ort=None, drehung=-14, haltung="taschen"),                              # rechts vom großen Schirm
 }
