@@ -97,13 +97,9 @@ def blender_laden():
     global bpy, Vector, ef, fz, figuren, wz
     import bpy
     from mathutils import Vector
-    _argv = sys.argv; sys.argv = ["x", "modul"]
-    try:
-        import ebenen_figuren as ef
-        import figuren_zeichnen as fz
-    finally:
-        sys.argv = _argv
-    import figuren
+    import figuren_zeichnen as fz
+    fz.blender_laden()                     # importiert ebenen_figuren als Modul (argv „modul") und figuren
+    ef, figuren = fz.ef, fz.figuren
     import werkzeug as wz
 
 
