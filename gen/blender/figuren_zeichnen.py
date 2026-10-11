@@ -85,6 +85,18 @@ def freistellen(rgb, grund=GRUEN, t0=0.10, t1=0.30):
     a = np.where(fest, a, 0)
     return np.concatenate([np.clip(col, 0, 1), a[..., None]], axis=-1)
 
+def einpassen(rgba, groesse, rand=0.006):
+    """Quellbild auf die Vorlagengröße: Höhe passend, Seitenverhältnis gehalten (Kontext liefert z. B. 752x1392 statt
+    9:16), Breite mittig beschnitten oder aufgefüllt; ein schmaler Randstreifen wird transparent (Streupixel)."""
+    h0, w0 = rgba.shape[:2]; r = max(1, int(rand * max(h0, w0)))
+    rgba = rgba.copy(); rgba[:r, :, 3] = 0; rgba[-r:, :, 3] = 0; rgba[:, :r, 3] = 0; rgba[:, -r:, 3] = 0
+    gw, gh = groesse; nw = int(round(w0 * gh / h0))
+    s = vormultipliziert_skalieren(rgba, (nw, gh))
+    out = np.zeros((gh, gw, 4), np.float32)
+    if nw >= gw: o = (nw - gw) // 2; out[:] = s[:, o:o + gw]
+    else: o = (gw - nw) // 2; out[:, o:o + nw] = s
+    return out
+
 def vormultipliziert_skalieren(rgba, groesse, resample=Image.LANCZOS):
     """Skalieren ohne dunkle Säume: RGB mit Alpha vormultipliziert, danach wieder gelöst."""
     a = rgba[..., 3:4]; pm = np.concatenate([rgba[..., :3] * a, a], axis=-1)
@@ -243,9 +255,16 @@ def fig_sichtbar(name):
 
 
 # ================================================================== vorlage
-def vorlage(raum):
+def vorlage(raum, nur=None, neu=False):
     blender_laden(); A = ef.aufbau(raum); figs = A["figs"]; koerper = bpy.data.collections["figuren"]
     for name, fig in figs.items():
+        if nur and name not in nur: continue
+        alt = QUELLE + f"{name}.json"
+        if os.path.exists(alt) and not neu:
+            try: schon = json.load(open(alt, encoding="utf-8")).get("datei")
+            except Exception: schon = None
+            if schon:   # Quellbild schon übernommen: sein Ausschnitt muss bleiben (sonst passt das Bild nicht mehr) — --neu erzwingt
+                print("VORLAGE", name, "übersprungen: Quelle vorhanden, Ausschnitt bleibt (--neu zum Erneuern)"); continue
         # 1. Kasten der sichtbaren Figur (1x, Raum als Holdout), Rand, erlaubtes Seitenverhältnis
         ef.pass_flach(OUT + f"{name}_kasten.png", lambda o, n=name: (ef.fig_name(o) == n) if ef.ist_fig(o) else ("holdout" if A["raum_sichtbar"](o) else False))
         a = lade(OUT + f"{name}_kasten.png", True)[..., 3]; ys, xs = np.nonzero(a > 0.3)
@@ -265,7 +284,8 @@ def vorlage(raum):
         sicht = lambda o, n=name, k=kontext: (ef.fig_name(o) == n) if ef.ist_fig(o) else (o.name in k)
         ef.pass_flach(OUT + f"{name}_vorlage_flat.png", sicht)
         gelinkt = []
-        for n in kontext:
+        eigene = [o.name for o in bpy.data.objects if o.type == 'MESH' and ef.ist_fig(o) and ef.fig_name(o) == name]
+        for n in list(kontext) + eigene:                   # Linie (Freestyle) nur für die Sammlung "figuren": Kontext und Raum-Figuren (Tüte) dazulinken
             o = bpy.data.objects[n]
             if o.name not in koerper.objects: koerper.objects.link(o); gelinkt.append(o)
         try: ef.pass_linien(OUT + f"{name}_vorlage_lines.png", sicht, koerper)
@@ -280,8 +300,8 @@ def vorlage(raum):
         col = col * (1 - ink) + ef.INK * ink
         pfad = OUT + f"vorlage_{name}.png"; bild(col, "RGB").save(pfad)
         meta = {"raum": raum, "kasten": kasten, "skala": SKALA, "grund": GRUEN, "seitenverhaeltnis": sv,
-                "verdeckt": verdeckt, "vorlage": os.path.relpath(pfad, WURZEL), "datei": None}
-        alt = QUELLE + f"{name}.json"
+                "verdeckt": verdeckt, "art": "ding" if name in A.get("dinge", set()) else "figur",
+                "vorlage": os.path.relpath(pfad, WURZEL), "datei": None}
         if os.path.exists(alt):                             # Herkunft eines schon übernommenen Bildes behalten
             try: meta.update({k: v for k, v in json.load(open(alt, encoding="utf-8")).items() if k in ("datei", "seed", "endpunkt", "stil", "prompt", "datum")})
             except Exception: pass
@@ -294,19 +314,26 @@ def malen(name, a):
     meta = json.load(open(QUELLE + f"{name}.json", encoding="utf-8"))
     vor = os.path.join(WURZEL, meta["vorlage"])
     if not os.path.exists(vor): sys.exit(f"Vorlage fehlt: {vor} — erst `vorlage {meta['raum']}`")
-    stil = a.stil or (STIL + f"figur_{PORTRAIT_NAME[name]}.txt")
-    prompt = stil_text(STIL + "figur_rahmen.txt") + " " + stil_text(stil)
+    stil = a.stil or (STIL + f"figur_{PORTRAIT_NAME.get(name, name)}.txt")
+    rahmen_datei = STIL + ("figur_rahmen_ding.txt" if meta.get("art") == "ding" else "figur_rahmen.txt")
+    prompt = stil_text(rahmen_datei) + " " + stil_text(stil)
     fc = fal_laden(a.dry_run)
+    portrait_pfad = PORTRAITS + f"{PORTRAIT_NAME.get(name, name)}.png"
     if a.bearbeiten:                                       # fertige Figur nachbessern (z. B. ein Requisit): Quelle = Kontext-Bild
-        endpunkt = "fal-ai/flux-pro/kontext"; quelle = a.quelle or vor
+        quelle = a.quelle or vor
         if not a.stil: sys.exit("--bearbeiten braucht --stil (Datei mit der Änderung)")
         prompt = stil_text(stil) + " Keep everything else exactly identical, including the flat uniform bright green background; no text, no letters, no scribbles."
-        payload = {"prompt": prompt, "image_url": None if a.dry_run else fc.encode_file(quelle)}
+        if a.portrait:                                     # mit Porträt als Identitätsbild (Gesicht nachzeichnen)
+            endpunkt = "fal-ai/flux-pro/kontext/max/multi"
+            payload = {"prompt": prompt, "image_urls": None if a.dry_run else [fc.encode_file(quelle), fc.encode_file(portrait_pfad)]}
+        else:
+            endpunkt = "fal-ai/flux-pro/kontext"
+            payload = {"prompt": prompt, "image_url": None if a.dry_run else fc.encode_file(quelle)}
     elif a.portrait:
         endpunkt = "fal-ai/flux-pro/kontext/max/multi"
         prompt = ("The first image is a plain 3D mannequin; the second image is the finished portrait of the same person. "
                   "Draw the mannequin as a full figure of exactly that person (same face, hair, glasses, skin and clothing colours). " + prompt)
-        payload = {"prompt": prompt, "image_urls": None if a.dry_run else [fc.encode_file(vor), fc.encode_file(PORTRAITS + f"{PORTRAIT_NAME[name]}.png")]}
+        payload = {"prompt": prompt, "image_urls": None if a.dry_run else [fc.encode_file(vor), fc.encode_file(portrait_pfad)]}
     else:
         endpunkt = "fal-ai/flux-pro/kontext"
         payload = {"prompt": prompt, "image_url": None if a.dry_run else fc.encode_file(vor)}
@@ -377,10 +404,11 @@ def einsetzen(raum, skala_aus=1):
         sichtbar = 1 - dilatiere(verdeckt.astype(np.float32), 0)
         frei_a = auf_groesse(lade(OUT + f"{name}_frei.png", True), groesse)[..., 3]
         zone = dilatiere(frei_a, umgriff)                  # Figur ± Umgriff: nichts, was Kontext dazuerfand (Stuhl, Schatten)
+        if len(fy): zone[fy.max() + int(0.02 * fig_h) + 1:, :] = 0   # unter der Fußlinie des Blockouts nichts (Bodenschatten)
         if os.environ.get("FIGUREN_DEBUG"):
             bild(np.stack([verdeckt, zone, kf], -1).astype(np.float32), "RGB").save(OUT + f"{name}_debug_masken.png")
-        # --- Quellbild: auf Vorlagengröße, am Blockout ausrichten (Kopf oben, Fußlinie)
-        q = vormultipliziert_skalieren(lade(QUELLE + f"{name}.png", True), groesse)
+        # --- Quellbild: auf Vorlagengröße (Seitenverhältnis halten), Randstreifen weg, am Blockout ausrichten (Kopf oben, Fußlinie)
+        q = einpassen(lade(QUELLE + f"{name}.png", True), groesse)
         q = ausrichten(q, frei_a, voll=not meta.get("verdeckt"))
         alpha = q[..., 3] * zone * sichtbar
         unten = (A["unten"] or {}).get(name, 0) * S
@@ -407,7 +435,8 @@ def einsetzen(raum, skala_aus=1):
         bx, by = x0 + cx0 / skala_aus, y0 + cy0 / skala_aus
         bw, bh = (cx1 - cx0) / skala_aus, (cy1 - cy0) / skala_aus
         rund = (lambda v: int(round(v))) if skala_aus == 1 else (lambda v: round(v, 1))
-        platz[name] = {"datei": f"{name}.png", "x": rund(bx), "y": rund(by), "breite": rund(bw), "hoehe": rund(bh), "klasse": A["klasse"].get(name, "atmet")}
+        platz[name] = {"datei": f"{name}.png", "x": rund(bx), "y": rund(by), "breite": rund(bw), "hoehe": rund(bh)}
+        if A["klasse"].get(name, "atmet"): platz[name]["klasse"] = A["klasse"].get(name, "atmet")   # Gegenstände atmen nicht
         # --- Klickzone: sichtbare Figur ∪ bestehende Zone, mindestens 44 CSS-px
         k = [int(bx), int(by), int(math.ceil(bx + bw)), int(math.ceil(by + bh))]
         alt = hit.get(name, k)
@@ -416,6 +445,13 @@ def einsetzen(raum, skala_aus=1):
             if r[i + 2] - r[i] < MIN_ZIEL:
                 m = (r[i] + r[i + 2]) // 2; r[i], r[i + 2] = m - MIN_ZIEL // 2, m + MIN_ZIEL // 2
         hit[name] = [max(0, r[0]), max(0, r[1]), min(1600, r[2]), min(900, r[3])]
+        andere = (A.get("getrennt") or {}).get(name)       # z. B. Tüte neben Herrn K: Zonen dürfen sich nicht überlappen
+        if andere in hit:
+            z, w = hit[name], hit[andere]
+            if z[0] < w[2] and w[0] < z[2] and z[1] < w[3] and w[1] < z[3]:
+                if z[0] < w[0]: z[2] = min(z[2], w[0] - 1)   # links daneben: rechte Kante vor der anderen Zone
+                else: z[0] = max(z[0], w[2] + 1)
+                if z[2] - z[0] < MIN_ZIEL: z[0] = max(0, z[2] - MIN_ZIEL)
         print("FIGUR", name, platz[name], "| Klickzone", hit[name])
     if not platz: sys.exit("nichts eingesetzt")
     os.makedirs(szene_dir + "figuren", exist_ok=True)
@@ -432,16 +468,22 @@ def einsetzen(raum, skala_aus=1):
         print("keine Vorschau:", ex)
 
 
+def zeilen(m):
+    """Erste und letzte Zeile mit echtem Inhalt (mindestens 0,4 % der Breite) — einzelne Streupixel am Bildrand
+    (Kontext malt dort gern Reste) zählen nicht, sonst stimmt die Höhe nicht und die Füße schweben."""
+    n = m.sum(1); z = np.nonzero(n >= max(4, int(0.004 * m.shape[1])))[0]
+    return (int(z.min()), int(z.max())) if len(z) else (None, None)
+
 def ausrichten(q, ref, voll):
     """Richtet das KI-Bild am Blockout aus: Kopfoberkante und Kopfmitte decken sich; ist die Figur ganz zu sehen,
     auch die Höhe (Füße auf der Bodenlinie). Kontext verschiebt die Figur sonst um einige Prozent."""
     ka = q[..., 3] > 0.5; ra = ref > 0.5
     ky, kx = np.nonzero(ka); ry, rx = np.nonzero(ra)
     if len(ky) < 50 or len(ry) < 50: return q
-    kt, kb, rt, rb = ky.min(), ky.max(), ry.min(), ry.max()
+    (kt, kb), (rt, rb) = zeilen(ka), zeilen(ra)
     def kopfmitte(ys, xs, t, b):
         m = ys < t + 0.12 * (b - t); return xs[m].mean()
-    s = float(np.clip((rb - rt) / max(kb - kt, 1), 0.85, 1.15)) if voll else 1.0
+    s = float(np.clip((rb - rt) / max(kb - kt, 1), 0.7, 1.4)) if voll else 1.0
     dy = rt - s * kt; dx = kopfmitte(ry, rx, rt, rb) - s * kopfmitte(ky, kx, kt, kb)
     print(f"AUSRICHTEN s={s:.3f} dx={dx:.1f} dy={dy:.1f}")
     if abs(s - 1) < 0.002 and abs(dx) < 0.5 and abs(dy) < 0.5: return q
@@ -494,9 +536,11 @@ def main():
     ap.add_argument("--skala", type=int, default=1, help="einsetzen: Auflösung der Figur-PNGs als Vielfaches der Bühne")
     ap.add_argument("--aus", help="malen/portrait: schon geholtes Kontext-Bild verwenden statt fal aufzurufen")
     ap.add_argument("--quelle", help="--bearbeiten: dieses Bild umzeichnen (Standard: art/portraits/<wer>.png bzw. die Vorlage)")
+    ap.add_argument("--nur", action="append", help="vorlage: nur diese Figur(en)")
+    ap.add_argument("--neu", action="store_true", help="vorlage: Ausschnitt auch für Figuren mit übernommener Quelle neu bestimmen")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
-    if a.modus == "vorlage": vorlage(a.was)
+    if a.modus == "vorlage": vorlage(a.was, nur=a.nur, neu=a.neu)
     elif a.modus == "malen": malen(a.was, a)
     elif a.modus == "einsetzen": einsetzen(a.was, a.skala)
     elif a.modus == "portrait": portrait(a.was, a)

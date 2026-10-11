@@ -227,13 +227,19 @@ for i in range(len(SITZE) + 1):
 # schauen heraus — die Betablocker-Schachtel in Rost, das eine Rost-Objekt des Bildes. Steht vor der Bank links
 # neben seinem Sitz ("bag" muss so heißen).
 TX, TY = 1.82, -1.22
-box((0.3, 0.19, 0.33), (TX, TY, 0.165), G["paper"], "mid", "tuete", bevel=0.038, rot=(0, 0, math.radians(14)), name="bag")
-box((0.2, 0.11, 0.1), (TX + 0.01, TY, 0.36), G["paper"], "mid", "tuete", bevel=0.035, rot=(0, math.radians(-6), math.radians(14)), name="bag_top")
-for dx in (-0.055, 0.055):
-    torus(0.06, 0.007, (TX + dx, TY, 0.44), G["paper"], "mid", "tuete", rot=(math.radians(90), 0, math.radians(14)), name="bag_handle")
+# Weicher Körper statt Kasten (zwei Ellipsoide: Bauch, zusammengesackte Öffnung) und flache, hohe Folienschlaufen
+# statt Ringen — die Vorlage für figuren_zeichnen.py soll schon nach Tüte aussehen, nicht nach Kanister.
+_tb = sphere(1.0, (TX, TY, 0.15), G["paper"], "mid", "tuete", name="bag"); _tb.scale = (0.17, 0.11, 0.165); _tb.rotation_euler = (0, 0, math.radians(14))
+_to = sphere(1.0, (TX + 0.01, TY, 0.31), G["paper"], "mid", "tuete", name="bag_top"); _to.scale = (0.12, 0.085, 0.075); _to.rotation_euler = (0, math.radians(-6), math.radians(14))
+for dx in (-0.05, 0.05):
+    _th = torus(0.042, 0.0035, (TX + dx, TY, 0.44), G["paper"], "mid", "tuete", rot=(math.radians(90), 0, math.radians(14)), name="bag_handle"); _th.scale = (1.0, 1.0, 1.7)
 box((0.09, 0.03, 0.13), (TX - 0.05, TY - 0.02, 0.39), G["accent"], "mid", "tuete", bevel=0.004, rot=(0, math.radians(-18), math.radians(20)), name="schachtel_rost")
 box((0.1, 0.035, 0.12), (TX + 0.05, TY + 0.03, 0.38), G["schachtel_mint"], "mid", "tuete", bevel=0.004, rot=(math.radians(8), math.radians(14), math.radians(10)), name="schachtel_mint")
 box((0.08, 0.03, 0.11), (TX + 0.0, TY - 0.05, 0.37), G["schachtel"], "mid", "tuete", bevel=0.004, rot=(math.radians(-10), 0, math.radians(30)), name="schachtel")
+# Die Tüte kommt als gezeichnete Figur aus figuren_zeichnen.py (art/szenen/aufnahme/figuren/tuete.png): im Raumrender
+# unsichtbar wie ein Platzhalter, Klickzone bleibt; die Grundkörper dienen dort als Vorlage und Holdout.
+import werkzeug as _wz
+_wz.PLATZHALTER.update(HIT["tuete"])
 
 # ---------------- свет: рассвет 06:40 ----------------
 # свет из окна (тёплый, низкий, сквозь жалюзи к камере)

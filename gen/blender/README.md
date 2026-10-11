@@ -83,7 +83,17 @@ Vorschau: `bau/blender/figuren/<raum>_vorschau.png`; `FIGUREN_DEBUG=1` schreibt 
 
 Bewegt sich eine Figur (neuer Stuhl, anderer Platz): `figuren.PLATZ` ändern, (b) erneut ausführen. Ändert sich
 die Pose, braucht es (a) neu. Der Ausschnitt in `art/figuren_quelle/<name>.json` stammt aus `vorlage` und bleibt
-gültig, solange die Figur am Platz bleibt.
+gültig, solange die Figur am Platz bleibt; `vorlage` überspringt Figuren mit übernommener Quelle (`--neu` erzwingt,
+`--nur NAME` beschränkt).
+
+Auch Gegenstände einer Figur gehen diesen Weg: Herrn K.s **Tüte** sind die Raumobjekte der Zone `tuete` in
+`szene_aufnahme.py` (dort `PLATZHALTER`: im Raumrender unsichtbar, Klickzone bleibt). `aufbau()` führt sie als
+`Raumfigur` „tuete“ (Stilphrase `stil/figur_tuete.txt`, Rahmen `figur_rahmen_ding.txt`), (b) schreibt
+`figuren/tuete.png` ohne Atem-Klasse, nach Herrn K gezeichnet, Klickzone `tuete` getrennt von `herrk`
+(`getrennt` in `aufbau()`). Nach einer Änderung an der Tüte: `ebenen.py aufnahme flat` (Klickzone), dann (b).
+Kontext hält sich eng an die Vorlage — ein weicher Blockout (Ellipsoide, flache Schlaufen) gibt eine Tüte,
+ein Kasten mit Ringen einen Kanister. Gesichter: `malen --portrait` (Vorlage + Porträt) trifft die Person;
+eine nachträgliche Gesichts-Bearbeitung mit Porträt (`--bearbeiten --portrait`) komponiert das Bild neu — nicht nutzen.
 
 Die Uhrzeiger setzt `gen/kunst.py` aus der Klickzone `uhr` als SVG über das Hintergrundbild (gleiche Ebene
 wie das Zifferblatt, sonst wandern sie in der Parallaxe); das Spiel dreht sie nach der Spielzeit.

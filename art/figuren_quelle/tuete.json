@@ -1,0 +1,24 @@
+{
+ "raum": "aufnahme",
+ "kasten": [
+  1179,
+  604,
+  1278,
+  736
+ ],
+ "skala": 4,
+ "grund": "#2FBF3A",
+ "seitenverhaeltnis": "3:4",
+ "verdeckt": false,
+ "art": "ding",
+ "vorlage": "bau/blender/figuren/vorlage_tuete.png",
+ "datei": "tuete.png",
+ "seed": 21,
+ "endpunkt": "fal-ai/flux-pro/kontext",
+ "stil": "gen/blender/stil/figur_tuete_falten.txt",
+ "prompt": "Add only creases to this white carrier bag so it reads as thin plastic film: five or six short, thin dark ink crease lines where the film sags — a few slanted wrinkles below the handles, two at the lower side edges, one bunched fold near the bottom. Change nothing else: the handles, the three medicine boxes, the outline, size, position and colours stay exactly as they are. Keep everything else exactly identical, including the flat uniform bright green background; no text, no letters, no scribbles.",
+ "datum": "2026-10-11",
+ "freistellen": "farbschluessel",
+ "roh": "bau/blender/figuren/ki_tuete_s21e.png",
+ "bearbeitet_aus": "bau/blender/figuren/ki_tuete_s19e.png"
+}

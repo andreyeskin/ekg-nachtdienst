@@ -1044,7 +1044,8 @@ def png_figuren(ordner):
         platz = json.load(f)
     g = []
     for name, p in platz.items():
-        g.append(f'<g id="fig-{name}" class="{p.get("klasse", "atmet")}"><image href="data:image/png;base64,'
+        kl = p.get("klasse")                       # ohne Klasse (Gegenstände wie die Tüte): atmet nicht
+        g.append(f'<g id="fig-{name}"' + (f' class="{kl}"' if kl else "") + '><image href="data:image/png;base64,'
                  + _png64(os.path.join(ordner, p["datei"])) +
                  f'" x="{p["x"]}" y="{p["y"]}" width="{p["breite"]}" height="{p["hoehe"]}"/></g>')
     return ('<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" '

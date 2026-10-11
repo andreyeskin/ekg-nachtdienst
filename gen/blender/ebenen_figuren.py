@@ -233,8 +233,14 @@ def bildkasten(fig, cam, bx, by):
             p = world_to_camera_view(sc, cam, o.matrix_world @ Vector(v)); xs.append(p.x * bx); ys.append((1 - p.y) * by)
     return [max(0, int(min(xs))), max(0, int(min(ys))), min(bx, int(math.ceil(max(xs)))), min(by, int(math.ceil(max(ys))))]
 
-def ist_fig(o): return o.name.split("_")[0] in ("marlene", "herrk", "falk")
-def fig_name(o): return o.name.split("_")[0]
+FIGNAMEN = {"marlene", "herrk", "falk"}
+ZUORDNUNG = {}      # Objektname -> Figurname für Raumobjekte, die wie eine Figur gezeichnet werden (Herrn K.s Tüte)
+def ist_fig(o): return o.name in ZUORDNUNG or o.name.split("_")[0] in FIGNAMEN
+def fig_name(o): return ZUORDNUNG.get(o.name) or o.name.split("_")[0]
+
+class Raumfigur:
+    """Raumobjekte, die als eigene Figurendatei gezeichnet werden (Tüte): nur Name und Teile, kein Kopf."""
+    def __init__(self, name, teile): self.name, self.teile = name, teile
 
 
 # ================================================================== probe
@@ -289,8 +295,8 @@ def figuren_ebene(raum, figs, cam, sonne_name, klasse, unten=None, einst=None, z
         x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
         speichern(img.crop((x0, y0, x1, y1)), ziel + f"figuren/{name}.png")
         silhouette(img.crop((x0, y0, x1, y1)), OUT + f"{name}_silhouette.png", 120)
-        platz[name] = {"datei": f"{name}.png", "x": x0, "y": y0, "breite": x1 - x0, "hoehe": y1 - y0,
-                       "klasse": klasse.get(name, "atmet")}
+        platz[name] = {"datei": f"{name}.png", "x": x0, "y": y0, "breite": x1 - x0, "hoehe": y1 - y0}
+        if klasse.get(name, "atmet"): platz[name]["klasse"] = klasse.get(name, "atmet")
         k = bildkasten(fig, cam, 1600, 900)
         alt = hit.get(name, k)
         r = [min(alt[0], x0), min(alt[1], y0), max(alt[2], x1), max(alt[3], y1)]
@@ -343,12 +349,20 @@ def aufbau(raum):
         m, k = P["marlene"], P["herrk"]
         figs = {"marlene": figuren.marlene(m["ort"], drehung=m["drehung"], haltung=m["haltung"], tag=tag, fein=0.0055, tresen=m["tresen"]),
                 "herrk": figuren.herr_k(k["ort"], drehung=k["drehung"], haltung=k["haltung"], tag=tag, fein=0.0055, tuete=False)}
+        # Herrn K.s Tüte (Raumobjekte der Zone "tuete", im Raumrender Platzhalter): eigene Figurendatei, nach ihm gezeichnet
+        tuete = [bpy.data.objects[n] for n in ns["HIT"].get("tuete", [])]
+        for o in tuete: ZUORDNUNG[o.name] = "tuete"
+        figs["tuete"] = Raumfigur("tuete", tuete)
+        import werkzeug as wz
+        nie = set(wz.PLATZHALTER) - set(ZUORDNUNG)
         aus = set(ns.get("SONNE_AUS", set()))                          # Leuchtflächen draußen schatten nie ab
-        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: True, sonne_sichtbar=lambda o: o.name not in aus,
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: o.name not in nie,
+                    sonne_sichtbar=lambda o: o.name not in aus and o.name not in nie,
                     sonne_stellen=ns.get("sonne_stellen", lambda s: None),   # dieselbe Sonne wie ebenen.py (sonst die der Szene)
-                    klasse={"marlene": "atmet", "herrk": "atmet langsam"}, unten={"marlene": 3},
-                    kontext={"marlene": ["desk", "desk_top", "desk_panel", "desk_wange"], "herrk": []},   # Bank bleibt Raumobjekt: Kontext zeichnet sie sonst doppelt
-                    verdecker={"marlene": None, "herrk": []})
+                    klasse={"marlene": "atmet", "herrk": "atmet langsam", "tuete": None}, unten={"marlene": 3},
+                    kontext={"marlene": ["desk", "desk_top", "desk_panel", "desk_wange"], "herrk": [], "tuete": []},   # Bank bleibt Raumobjekt: Kontext zeichnet sie sonst doppelt
+                    verdecker={"marlene": None, "herrk": [], "tuete": []}, dinge={"tuete"},
+                    getrennt={"tuete": "herrk"})                      # Klickzonen, die sich nicht überlappen dürfen
     if raum == "monitor":
         import importlib
         import werkzeug as wz

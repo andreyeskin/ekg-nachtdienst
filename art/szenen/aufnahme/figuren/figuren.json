@@ -9,10 +9,17 @@
  },
  "herrk": {
   "datei": "herrk.png",
-  "x": 1262,
+  "x": 1276,
   "y": 400,
-  "breite": 178,
+  "breite": 154,
   "hoehe": 336,
   "klasse": "atmet langsam"
+ },
+ "tuete": {
+  "datei": "tuete.png",
+  "x": 1189,
+  "y": 615,
+  "breite": 76,
+  "hoehe": 112
  }
 }
