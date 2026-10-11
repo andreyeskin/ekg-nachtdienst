@@ -1,0 +1,24 @@
+{
+ "raum": "lehrsaal",
+ "kasten": [
+  519,
+  350,
+  738,
+  740
+ ],
+ "skala": 4,
+ "grund": "#2FBF3A",
+ "seitenverhaeltnis": "9:16",
+ "verdeckt": true,
+ "art": "figur",
+ "vorlage": "bau/blender/figuren/vorlage_wieser.png",
+ "datei": "wieser.png",
+ "seed": 17,
+ "endpunkt": "fal-ai/flux-pro/kontext",
+ "stil": "gen/blender/stil/figur_wieser.txt",
+ "prompt": "Redraw the plain 3D mannequin in this picture as a finished ligne claire illustration in the manner of European graphic novels: flat local colours, one uniform thin dark ink outline around every shape, no hatching, no gradients, no texture, no shading. Keep exactly the same pose, the same body position, size and placement inside the frame, the same camera angle and the same colours of skin, hair and clothes. Adult proportions, a real neck and shoulders, hands with five fingers. Draw only what the mannequin picture shows: keep the flat uniform bright green background exactly as it is and do not add a floor, a wall, a shadow, a chair, a seat or any other object behind or under the figure. No text, no letters, no logos, no scribbles. The character: Dr. Nora Wieser, a 41-year-old WOMAN, an internist teaching an ECG course, slim and narrow, 1.72 m, with a slim feminine face with high cheekbones and a small nose (clearly a woman, not a man), standing mid-sentence with her body turned three-quarters to the right and her head turned towards the viewer; her left foot rests on the low dark step stool in front of her (keep the stool exactly as it is, drawn flat like everything else), the right foot stands on the floor behind it. Very short cropped grey hair (a buzz cut close to the skull, ears visible, no bob, no fringe) with one single dark streak at the front hairline, delicate features, no facial hair, no glasses, a long white doctor's coat worn open over a dark petrol turtleneck sweater, dark grey trousers, cobalt-blue sneakers with white soles. No stethoscope. Her right arm is bent sharply at the elbow and holds a short flat cobalt-blue plastic ECG ruler upright between two fingers, like a card; the left hand hangs loosely at her side, slightly forward, each hand with five clearly drawn fingers. Alert, neutral expression with slightly raised eyebrows, as if waiting for an answer, a thin calm mouth.",
+ "datum": "2026-10-11",
+ "freistellen": "farbschluessel",
+ "roh": "bau/blender/figuren/ki_wieser_s17e.png",
+ "bearbeitet_aus": null
+}

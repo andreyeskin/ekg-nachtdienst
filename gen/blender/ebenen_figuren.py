@@ -4,7 +4,8 @@
     python3 ebenen_figuren.py probe      # alle drei Figuren auf neutraler Bühne -> bau/blender/figuren/probe.png
     python3 ebenen_figuren.py raum       # Aufnahme: Blockout von Marlene + Herr K -> bau/blender/figuren/blockout/aufnahme/
     python3 ebenen_figuren.py monitor    # Monitorzimmer: Blockout von Dr. Falk -> bau/blender/figuren/blockout/monitor/
-    python3 ebenen_figuren.py portraits  # Brustbild-Blockouts -> bau/blender/figuren/portrait_<wer>_blockout.png (400x440, Alpha)
+    python3 ebenen_figuren.py lehrsaal   # Lehrsaal: Blockout von Dr. Wieser + Jonas -> bau/blender/figuren/blockout/lehrsaal/
+    python3 ebenen_figuren.py portraits [wer …]  # Brustbild-Blockouts -> bau/blender/figuren/portrait_<wer>_blockout.png (400x440, Alpha)
 
 Die Figuren im Spiel (art/szenen/<raum>/figuren/) und die Porträts (art/portraits/) entstehen aus diesen Blockouts
 über figuren_zeichnen.py (Kontext-Feinschliff, dann deterministisches Einsetzen); aufbau(raum) hier ist die
@@ -233,7 +234,7 @@ def bildkasten(fig, cam, bx, by):
             p = world_to_camera_view(sc, cam, o.matrix_world @ Vector(v)); xs.append(p.x * bx); ys.append((1 - p.y) * by)
     return [max(0, int(min(xs))), max(0, int(min(ys))), min(bx, int(math.ceil(max(xs)))), min(by, int(math.ceil(max(ys))))]
 
-FIGNAMEN = {"marlene", "herrk", "falk"}
+FIGNAMEN = {"marlene", "herrk", "falk", "wieser", "jonas"}
 ZUORDNUNG = {}      # Objektname -> Figurname für Raumobjekte, die wie eine Figur gezeichnet werden (Herrn K.s Tüte)
 def ist_fig(o): return o.name in ZUORDNUNG or o.name.split("_")[0] in FIGNAMEN
 def fig_name(o): return ZUORDNUNG.get(o.name) or o.name.split("_")[0]
@@ -380,14 +381,40 @@ def aufbau(raum):
                     sonne_sichtbar=lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
                     sonne_stellen=getattr(szene, "sonne_stellen", lambda s: None),   # dieselbe Sonne wie ebenen.py (sonst die der Szene)
                     klasse={"falk": "atmet langsam"}, unten={}, kontext={"falk": []}, verdecker={"falk": None})
+    if raum == "lehrsaal":
+        import importlib
+        import werkzeug as wz
+        szene = importlib.import_module("szene_lehrsaal")     # Raum, Kamera (mit Verschiebung), Sonne
+        PAL.update(szene.PALETTE)
+        sc = bpy.context.scene; render_grund(1600, 900)
+        w, j = P["wieser"], P["jonas"]
+        figs = {"wieser": figuren.wieser(w["ort"], drehung=w["drehung"], haltung=w["haltung"], fein=0.0055),
+                "jonas": figuren.jonas(j["ort"], drehung=j["drehung"], haltung=j["haltung"], fein=0.0055)}
+        nie = set(wz.PLATZHALTER)
+        # Nichts im Raum steht vor den beiden (Wieser vor dem Tritt, Jonas AUF der Liege): keine Verdeckung, sonst
+        # schnitten Tritt und Polsterkante Löcher in die gezeichneten Figuren. Die Zonen `jonas` und `liege` (Fußende,
+        # Elektroden-Aufgabe) bleiben getrennt.
+        # Der Tritt steht in Wiesers Vorlage mit (Kontext zeichnet den Fuß sonst auf den Boden) und wird beim Einsetzen
+        # aus ihrem Bild geschnitten, wo ihr Blockout ihn nicht deckt (`ausschneiden`): im Raum steht er im Mittelgrund.
+        tritt = ["tritt", "tritt_flaeche"]
+        # Jonas' vier Extremitätenklemmen zeichnet klemmen_setzen.py in sein Quellbild (Kontext setzt so kleine Dinge
+        # nicht an die Gelenke); die Blockout-Klemmen in figuren.jonas() sind nur die Vorlage dafür.
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: o.name not in nie,
+                    sonne_sichtbar=lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
+                    sonne_stellen=getattr(szene, "sonne_stellen", lambda s: None),
+                    klasse={"wieser": "atmet", "jonas": "atmet"}, unten={}, kontext={"wieser": tritt, "jonas": []},
+                    verdecker={"wieser": [], "jonas": []}, ausschneiden={"wieser": tritt}, getrennt={"jonas": "liege"},
+                    ausrichten={"jonas": False, "wieser": False}, weicht={"projektion": "wieser"})
+        # ausrichten: Kontext hält hier die Lage der Vorlage; die Kopf-Ausrichtung verschöbe Wieser samt gezeichnetem Tritt
+        # neben den echten (ausschneiden träfe dann daneben) und bei Jonas sind die obersten Zeilen Knie und Kopf zugleich.
     raise SystemExit(f"unbekannter Raum {raum}")
 
 
 # ================================================================== raum / monitor: Blockout-Figuren (nur noch Vorschau)
 # Die Figuren im Spiel kommen aus figuren_zeichnen.py (Blockout -> Kontext -> einsetzen). Diese Modi rendern die
 # reinen Blockout-Figuren nach bau/blender/figuren/blockout/<raum>/ — zum Prüfen von Haltung und Platz, nicht ins Spiel.
-if MODE in ("raum", "monitor"):
-    raum = "aufnahme" if MODE == "raum" else "monitor"
+if MODE in ("raum", "monitor", "lehrsaal"):
+    raum = "aufnahme" if MODE == "raum" else MODE
     A = aufbau(raum)
     figuren_durchgaenge(A["figs"], A["raum_sichtbar"], A["sonne_sichtbar"], A["sonne_stellen"], f"{raum}_sun.png")
     figuren_ebene(raum, A["figs"], A["cam"], f"{raum}_sun.png", A["klasse"], unten=A["unten"], einst=raum_einstellung(raum),
@@ -397,6 +424,7 @@ if MODE in ("raum", "monitor"):
 elif MODE == "portraits":
     BX, BY = 400, 440
     for wer, bau in figuren.FIGUREN.items():
+        if len(sys.argv) > 2 and wer not in sys.argv[2:]: continue      # portraits wieser jonas: nur diese
         bpy.ops.wm.read_factory_settings(use_empty=True); sc = bpy.context.scene
         render_grund(BX, BY)
         fig = bau((0, 0, 0), drehung=0, haltung="stehen" if wer != "falk" else "taschen", fein=0.0035)

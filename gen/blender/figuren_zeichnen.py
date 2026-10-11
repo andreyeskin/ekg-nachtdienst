@@ -51,7 +51,7 @@ GRUEN = "#2FBF3A"                          # flacher Grund der Vorlage; kommt in
 RAND = 0.10                                # Rand um die Figur in der Vorlage (Anteil der Figurgröße)
 SEITEN = {"9:21": 9 / 21, "9:16": 9 / 16, "2:3": 2 / 3, "3:4": 3 / 4, "1:1": 1.0, "4:3": 4 / 3, "3:2": 1.5, "16:9": 16 / 9}
 STUFE = 1440 / 1600; MIN_ZIEL = int(math.ceil(44 / STUFE))       # Klickzone: 44 CSS-px bei 1440 px Bühnenbreite
-PORTRAIT_NAME = {"marlene": "marlene", "herrk": "herr_k", "falk": "falk"}   # Figurname -> Datei in art/portraits/
+PORTRAIT_NAME = {"marlene": "marlene", "herrk": "herr_k", "falk": "falk", "wieser": "wieser", "jonas": "jonas"}   # Figurname -> Datei in art/portraits/
 
 hexc = lambda s: tuple(int(s[i:i + 2], 16) / 255 for i in (1, 3, 5))
 def hexa(s): return np.array(hexc(s), np.float32)
@@ -386,6 +386,8 @@ def einsetzen(raum, skala_aus=1):
         rahmen(meta["kasten"], S)
         verd = (A.get("verdecker") or {}).get(name)          # None: jedes Raumobjekt; Liste: nur diese
         pass_tiefe(OUT + f"{name}_tiefe_raum.png", lambda o, v=verd: False if ef.ist_fig(o) else (A["raum_sichtbar"](o) and (v is None or o.name in v)))
+        raus = (A.get("ausschneiden") or {}).get(name)       # Kontext-Objekte der Vorlage (Wiesers Tritt), die im Raum bleiben
+        if raus: pass_tiefe(OUT + f"{name}_tiefe_raus.png", lambda o, r=raus: o.name in r)
         pass_tiefe(OUT + f"{name}_tiefe_fig.png", fig_sichtbar(name))
         ef.pass_flach(OUT + f"{name}_frei.png", fig_sichtbar(name))            # Blockout-Alpha: Ausrichtung, Umgriff
         ef.pass_sonne(OUT + f"{name}_sonne.png", lambda o, n=name: (ef.fig_name(o) == n) if ef.ist_fig(o) else A["sonne_sichtbar"](o),
@@ -405,11 +407,16 @@ def einsetzen(raum, skala_aus=1):
         frei_a = auf_groesse(lade(OUT + f"{name}_frei.png", True), groesse)[..., 3]
         zone = dilatiere(frei_a, umgriff)                  # Figur ± Umgriff: nichts, was Kontext dazuerfand (Stuhl, Schatten)
         if len(fy): zone[fy.max() + int(0.02 * fig_h) + 1:, :] = 0   # unter der Fußlinie des Blockouts nichts (Bodenschatten)
+        if raus:                                           # mitgezeichnetes Raumobjekt weg, wo der Blockout der Figur es nicht deckt
+            _, kraus = tiefe_lesen(OUT + f"{name}_tiefe_raus.png")
+            kraus = auf_groesse(kraus.astype(np.float32)[..., None], groesse)[..., 0] > 0.5
+            zone = zone * (1 - (kraus & (dilatiere(frei_a, 3) < 0.5)).astype(np.float32))
         if os.environ.get("FIGUREN_DEBUG"):
             bild(np.stack([verdeckt, zone, kf], -1).astype(np.float32), "RGB").save(OUT + f"{name}_debug_masken.png")
         # --- Quellbild: auf Vorlagengröße (Seitenverhältnis halten), Randstreifen weg, am Blockout ausrichten (Kopf oben, Fußlinie)
         q = einpassen(lade(QUELLE + f"{name}.png", True), groesse)
-        q = ausrichten(q, frei_a, voll=not meta.get("verdeckt"))
+        if (A.get("ausrichten") or {}).get(name, True):     # liegende Figur (Jonas): oberste Zeilen sind Knie und Kopf — nicht ausrichten
+            q = ausrichten(q, frei_a, voll=not meta.get("verdeckt"))
         alpha = q[..., 3] * zone * sichtbar
         unten = (A["unten"] or {}).get(name, 0) * S
         if unten:                                          # Auslauf unter die Tresenkante: die Atem-Animation zeigt sonst eine Kante
@@ -437,6 +444,8 @@ def einsetzen(raum, skala_aus=1):
         rund = (lambda v: int(round(v))) if skala_aus == 1 else (lambda v: round(v, 1))
         platz[name] = {"datei": f"{name}.png", "x": rund(bx), "y": rund(by), "breite": rund(bw), "hoehe": rund(bh)}
         if A["klasse"].get(name, "atmet"): platz[name]["klasse"] = A["klasse"].get(name, "atmet")   # Gegenstände atmen nicht
+        if name in (A.get("ohne_zone") or ()):              # z. B. die Klemmen auf Jonas: keine eigene Klickzone
+            print("FIGUR", name, platz[name], "| ohne Klickzone"); continue
         # --- Klickzone: sichtbare Figur ∪ bestehende Zone, mindestens 44 CSS-px
         k = [int(bx), int(by), int(math.ceil(bx + bw)), int(math.ceil(by + bh))]
         alt = hit.get(name, k)
@@ -452,6 +461,8 @@ def einsetzen(raum, skala_aus=1):
                 if z[0] < w[0]: z[2] = min(z[2], w[0] - 1)   # links daneben: rechte Kante vor der anderen Zone
                 else: z[0] = max(z[0], w[2] + 1)
                 if z[2] - z[0] < MIN_ZIEL: z[0] = max(0, z[2] - MIN_ZIEL)
+        for zone, fig in (A.get("weicht") or {}).items():   # Raumzone weicht der Figur davor (Leinwand hinter Wieser): größter Rest
+            if fig == name and zone in hit: hit[zone] = ausweichen(hit[zone], hit[name])
         print("FIGUR", name, platz[name], "| Klickzone", hit[name])
     if not platz: sys.exit("nichts eingesetzt")
     os.makedirs(szene_dir + "figuren", exist_ok=True)
@@ -466,6 +477,14 @@ def einsetzen(raum, skala_aus=1):
         vor.save(OUT + f"{raum}_vorschau.png"); print("saved", os.path.relpath(OUT + f"{raum}_vorschau.png", WURZEL))
     except Exception as ex:
         print("keine Vorschau:", ex)
+
+
+def ausweichen(z, w):
+    """Rechteck z ohne Überlappung mit w: der größte der vier Reststreifen (oben, unten, links, rechts)."""
+    if not (z[0] < w[2] and w[0] < z[2] and z[1] < w[3] and w[1] < z[3]): return z
+    reste = [[z[0], z[1], z[2], w[1] - 1], [z[0], w[3] + 1, z[2], z[3]], [z[0], z[1], w[0] - 1, z[3]], [w[2] + 1, z[1], z[2], z[3]]]
+    reste = [r for r in reste if r[2] - r[0] >= MIN_ZIEL and r[3] - r[1] >= MIN_ZIEL]
+    return max(reste, key=lambda r: (r[2] - r[0]) * (r[3] - r[1])) if reste else z
 
 
 def zeilen(m):

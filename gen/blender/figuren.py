@@ -27,6 +27,13 @@ FARBEN = {
     "fig_fleck": "#E4D2B2", "fig_metall": "#8A9598", "fig_hose": "#8A9598",
     "fig_strick": "#5A4228", "fig_hemd": "#BFD9CF", "fig_muetze": "#525A66",
     "fig_armband": "#B5302A", "fig_tuete": "#F7F1E4", "fig_hemd_falk": "#8CA4B6", "fig_krawatte": "#2B3A50",
+    # Lehrsaal (docs/raeume/lehrsaal.md §2): Dr. Wieser — Kobaltblau nur bei ihr (Lineal, Sneaker), dunkler Rollkragen,
+    # graues Haar mit dunkler Strähne; Jonas — Senfgelb nur bei ihm (Socken), T-Shirt, Jeans, Kopfhörer; die rote
+    # Extremitätenklemme an seinem rechten Arm ist das eine Rost-Objekt des Raums, die anderen Klemmen gelb/grün/schwarz
+    "fig_kobalt": "#2F5DA8", "fig_rollkragen": "#2C3E46", "fig_hose_wieser": "#3E4A55", "fig_haar_wieser": "#A9AEAA",
+    "fig_straehne": "#3A3F44", "fig_senf": "#D9A441", "fig_shirt_jonas": "#5B6770", "fig_jeans": "#6F7580",
+    "fig_haar_jonas": "#4E3B2A", "fig_klemme_rot": "#B5552D", "fig_klemme_gelb": "#E8D44D", "fig_klemme_gruen": "#1F6B5A",
+    "fig_klemme_schwarz": "#1E2A30", "fig_sohle": "#F7F1E4",
 }
 # Kasack, Strickjacke, Mütze und Haar tragen die Farben, die die Porträts (art/portraits) zeigen, damit die
 # Ganzkörperfiguren dieselben Leute bleiben; Rost (Kanne) bleibt der eine Akzent im Raum Aufnahme.
@@ -38,6 +45,11 @@ PLATZ = {
     "marlene": dict(ort=(-3.05, -0.5, 0.0), drehung=20, haltung="tresen", tresen=1.09),  # hinter dem Tresen (Oberkante der Ablage 1,09 m)
     "herrk": dict(ort=(2.4, -0.75, 0.0), drehung=-8, haltung="sitzen"),                  # dritter Stuhl der Wartereihe
     "falk": dict(ort=None, drehung=-14, haltung="taschen"),                              # rechts vom großen Schirm
+    # Lehrsaal (szene_lehrsaal.py: Rückwand y=0, Raum nach −y; die Raumbeschreibung misst y in den Raum hinein).
+    # Dr. Wieser links neben dem Kopfende der Liege, linker Fuß auf dem Tritt, Körper zu Jonas gedreht, Kopf zur Kamera;
+    # Jonas auf der Liegefläche (0,75 m), Körperachse entlang der um 20° gedrehten Liege, Kopf zur Rückwand.
+    "wieser": dict(ort=(-0.45, -2.05, 0.0), drehung=35, haltung="tritt"),
+    "jonas": dict(ort=(0.6, -2.4, 0.75), drehung=20, haltung="liegen"),
 }
 TINTE = "fig_tinte"
 
@@ -460,4 +472,144 @@ def falk(ort=(0, 0, 0), drehung=0.0, haltung="taschen", tag=None, hit="falk", fe
     return F
 
 
-FIGUREN = {"marlene": marlene, "herr_k": herr_k, "falk": falk}
+# ====================================================================== Dr. Wieser
+def wieser(ort=(0, 0, 0), drehung=0.0, haltung="tritt", tag=None, hit="wieser", fein=0.0045):
+    """Dr. Nora Wieser, 41 (1,72 m): schmale Ovale (Kopf, Rumpf, Ärmel), Gegenakzent der harte Winkel des rechten
+    Ellbogens — der Arm hält das blaue EKG-Lineal hoch. Kittel offen über dunklem Rollkragen, kurzes graues Haar mit
+    dunkler Strähne, keine Brille, kein Stethoskop (liegt über der Stuhllehne), kobaltblaue Sneaker.
+    "tritt": linker Fuß (lokal +x, vorn) auf einem 0,25 m hohen Tritt, der nicht Teil der Figur ist; der Kopf dreht
+    sich um −drehung zurück, also zur Kamera, während der Körper zur Liege zeigt. "stehen": beide Füße am Boden."""
+    F = Figur("wieser", ort, drehung, tag, hit, fein)
+    # Beine (dunkle Hose) und Sneaker (Kobalt, helle Sohle)
+    def sneaker(ort, rot=(0, 0, 0)):
+        F.quader((0.1, 0.27, 0.055), (ort[0], ort[1], ort[2] + 0.0475), "fig_kobalt", fase=0.02, rot=rot, name="sneaker")
+        F.quader((0.1, 0.27, 0.02), (ort[0], ort[1], ort[2] + 0.01), "fig_sohle", fase=0.006, rot=rot, name="sohle")
+    sneaker((-0.1, 0.0, 0.0))
+    F.glied((-0.1, 0.0, 0.08), (-0.09, 0.0, 0.9), 0.062, "fig_hose_wieser", name="bein")
+    if haltung == "tritt":
+        knie, fuss = Vector((0.24, -0.3, 0.6)), Vector((0.3, -0.27, 0.33))
+        F.glied((0.1, 0.0, 0.9), knie, 0.066, "fig_hose_wieser", name="schenkel")
+        F.glied(knie, fuss, 0.058, "fig_hose_wieser", name="schienbein")
+        sneaker((0.3, -0.29, 0.25), rot=(0, 0, math.radians(8)))
+    else:
+        sneaker((0.1, 0.0, 0.0))
+        F.glied((0.1, 0.0, 0.08), (0.09, 0.0, 0.9), 0.062, "fig_hose_wieser", name="bein")
+    # Rumpf: schmale Ovale — Hüfte, Rollkragen-Oberkörper; darüber der offene Kittel als hinten geschlossene Schale
+    F.kugel(1, (0, 0.0, 0.93), "fig_hose_wieser", skala=(0.19, 0.14, 0.14), name="huefte")
+    F.kugel(1, (0, 0.0, 1.2), "fig_rollkragen", skala=(0.185, 0.125, 0.3), name="rumpf")
+    F.kappe(1, (0, 0.0, 1.2), "fig_kittel", skala=(0.215, 0.15, 0.34), ebene=((0, -0.03, 0), (0, 1, 0)), name="kittel")
+    F.kappe(1, (0, 0.0, 0.8), "fig_kittel", skala=(0.21, 0.145, 0.3), ebene=((0, -0.05, 0), (0, 1, 0)), name="kittelsaum")
+    for s in (-1, 1):   # Revers
+        F.quader((0.055, 0.01, 0.16), (s * 0.06, Figur.vorne((0.185, 0.125, 0.3), s * 0.06, 0.2, 0.006), 1.4), "fig_kittel", fase=0.004,
+                 rot=(math.radians(-6), 0, s * math.radians(30)), name="revers")
+    F.zylinder(0.058, 0.09, (0, -0.005, 1.53), "fig_rollkragen", name="kragen")
+    # Schultern und Arme (Kittelärmel, Hände Haut)
+    F.kugel(1, (0, 0.0, 1.42), "fig_kittel", skala=(0.21, 0.13, 0.08), name="schultern")
+    SR, SL = Vector((-0.2, 0.0, 1.42)), Vector((0.2, 0.0, 1.42))
+    for p in (SR, SL): F.kugel(0.06, p, "fig_kittel", name="schulter", seg=24)
+    ER, HR = Vector((-0.27, -0.1, 1.17)), Vector((-0.21, -0.31, 1.3))        # rechter Arm: harter Winkel, Lineal neben dem Kinn
+    EL, HL = Vector((0.3, 0.0, 1.17)), Vector((0.27, -0.14, 0.95))           # linker Arm hängt leicht vor
+    for sch, el, ha in ((SR, ER, HR), (SL, EL, HL)):
+        F.glied(sch, el, 0.056, "fig_kittel", name="oberarm")
+        F.glied(el, ha, 0.048, "fig_kittel", name="unterarm")
+    F.hand(HR, r=0.04, skala=(1.0, 1.1, 0.8)); F.hand(HL, r=0.04, skala=(1.0, 1.15, 0.7))
+    # Das blaue Lineal zwischen zwei Fingern, hochgehalten
+    F.quader((0.045, 0.004, 0.19), (HR.x + 0.01, HR.y - 0.03, HR.z + 0.09), "fig_kobalt", fase=0, rot=(math.radians(8), 0, math.radians(25)), name="lineal")
+    F.glied((0, -0.005, 1.56), (0, -0.01, 1.6), 0.046, "fig_haut", name="hals")
+    # Kopf: schmales Oval, zur Kamera zurückgedreht
+    kopf = F.leer((0, -0.01, 1.62), rot=(math.radians(3), 0, math.radians(-drehung if haltung == "tritt" else 0)))
+    KS = (0.09, 0.1, 0.12)
+    F.kugel(1, (0, 0, 0), "fig_haut", skala=KS, eltern=kopf, name="kopf")
+    F.ohren(kopf, KS, z=-0.005, groesse=(0.011, 0.02, 0.03))
+    # kurzes graues Haar, zurückgekämmt; eine dunkle Strähne vorn
+    F.kappe(1, (0, 0.012, 0.012), "fig_haar_wieser", skala=(0.1, 0.106, 0.125), ebene=((0, 0, 0.2), (0, 0.42, 0.9)), eltern=kopf, name="haar")
+    for s in (-1, 1):
+        F.kugel(1, (s * 0.088, 0.02, 0.02), "fig_haar_wieser", skala=(0.024, 0.06, 0.055), eltern=kopf, name="schlaefe", seg=24)
+    # Die dunkle Strähne steht nur in der Stilphrase: als Grundkörper (Rohr auf der Haarschale) zeichnete Kontext
+    # sie als Stab auf dem Kopf.
+    # Gesicht: neutral-wach, Brauen leicht hoch („und?"), schmaler Mund; Brauen dünn, Nase klein, Augen groß —
+    # mit dicken Brauen und großer Nase zeichnete Kontext aus dem Blockout einen Mann
+    F.gesicht(kopf, KS, augen=(0.036, 0.014), augenform=(0.018, 0.005, 0.0105), brauen=(0.018, 0.042, 0.046, 0.004),
+              mund=(0.04, -0.058, 0.004), nase=(0.009, 0.011, 0.018), nase_z=-0.018, brauen_r=fein * 0.75)
+    F.kopf = kopf; F.kopfmitte = (0, -0.01, 1.62); F.hoehe = 1.72
+    return F
+
+
+# ====================================================================== Jonas
+def jonas(ort=(0, 0, 0), drehung=0.0, haltung="liegen", tag=None, hit="jonas", fein=0.0045):
+    """Jonas Prem, 24 (1,80 m): lange Rechtecke (Rumpf, Beine), Gegenakzent der runde Kopf mit den Kopfhörern um den
+    Hals. "liegen": Ursprung ist die Liegefläche unter der Körpermitte, lokale +y-Achse zum Kopfende, Gesicht nach
+    oben. Lage zum EKG (docs/FACHREGELN.md, Lektion 2): flach und entspannt auf dem Rücken, beide Beine gestreckt und
+    nicht übereinander, Arme locker neben dem Körper; T-Shirt bis unter die Achseln hochgeschoben (Brust frei — die
+    Brustwandelektroden sind die Aufgabe der Spielerin), Hosenbeine hochgekrempelt, Klemmen auf der Haut: Handgelenke
+    und Unterschenkel knapp über den Knöcheln. Ampel-Regel je Körperseite: rechter Arm ROT (lokal −x; das Rost-Objekt),
+    linker Arm GELB, linkes Bein GRÜN, rechtes Bein SCHWARZ. Die Leitungen dazu sind Raumobjekte (szene_lehrsaal.py),
+    hier nur kurze Stummel. Socken senfgelb, die Schuhe stehen unter der Liege.
+    "stehen": aufrecht, Kopfhörer um den Hals (Porträt-Blockout)."""
+    F = Figur("jonas", ort, drehung, tag, hit, fein)
+    if haltung == "liegen":
+        F.kugel(1, (0, -0.02, 0.09), "fig_jeans", skala=(0.2, 0.17, 0.1), name="becken")
+        F.quader((0.36, 0.42, 0.18), (0, 0.22, 0.09), "fig_haut", fase=0.07, name="bauch")           # Brust und Bauch frei
+        F.quader((0.42, 0.14, 0.21), (0, 0.5, 0.1), "fig_shirt_jonas", fase=0.05, name="shirt")       # T-Shirt, gerollt unter den Achseln
+        SCH = [Vector((s * 0.2, 0.55, 0.1)) for s in (-1, 1)]
+        for p in SCH: F.kugel(0.065, p, "fig_shirt_jonas", name="schulter", seg=24)
+        # Arme locker neben dem Körper, Handflächen oben; rechts (−x) rot, links (+x) gelb am Handgelenk
+        for s in (-1, 1):
+            el, ha = Vector((s * 0.3, 0.25, 0.06)), Vector((s * 0.33, -0.06, 0.06))
+            F.glied(SCH[0 if s < 0 else 1], el, 0.052, "fig_shirt_jonas", name="oberarm")
+            F.glied(el, ha, 0.044, "fig_haut", name="unterarm")
+            F.hand(ha, r=0.042, skala=(1.0, 1.2, 0.6))
+        def klemme(ort, mat, nach):
+            F.quader((0.04, 0.06, 0.036), ort, mat, fase=0.005, name="klemme")
+            F.rohr([ort, (ort[0] + nach[0] * 0.5, ort[1] + nach[1] * 0.5, ort[2] - 0.02), (ort[0] + nach[0], ort[1] + nach[1], ort[2] - 0.045)],
+                   fein * 0.9, "fig_dunkel", fein=False, name="klemmenkabel")
+        klemme((-0.33, 0.02, 0.09), "fig_klemme_rot", (-0.06, 0.0))
+        klemme((0.33, 0.02, 0.09), "fig_klemme_gelb", (0.06, 0.0))
+        # Beine gestreckt, leicht auseinander; Jeans bis zur Wade hochgekrempelt, darunter Haut, Füße in senfgelben Socken
+        for s, mat in ((-1, "fig_klemme_schwarz"), (1, "fig_klemme_gruen")):
+            F.glied((s * 0.11, -0.05, 0.08), (s * 0.14, -0.6, 0.075), 0.075, "fig_jeans", name="schenkel")
+            F.zylinder(0.08, 0.05, (s * 0.14, -0.6, 0.075), "fig_jeans", rot=(math.radians(90), 0, 0), name="krempel")
+            F.glied((s * 0.14, -0.62, 0.07), (s * 0.15, -0.86, 0.065), 0.058, "fig_haut", name="schienbein")
+            F.kugel(1, (s * 0.15, -0.91, 0.1), "fig_senf", skala=(0.05, 0.07, 0.11), name="fuss")
+            klemme((s * 0.15, -0.78, 0.1), mat, (s * 0.06, 0.0))
+        # Hals, Kopfhörer um den Hals (Bügel als Ring, zwei Muscheln), Kabel zur Hosentasche (links)
+        F.glied((0, 0.6, 0.09), (0, 0.7, 0.1), 0.05, "fig_haut", name="hals")
+        F.ring(0.085, 0.012, (0, 0.64, 0.085), "fig_dunkel", rot=(math.radians(90), 0, 0), fein=False, name="kopfhoerer")
+        for s in (-1, 1):
+            F.kugel(1, (s * 0.1, 0.62, 0.07), "fig_dunkel", skala=(0.03, 0.04, 0.045), name="muschel", seg=24)
+        F.rohr([(0.11, 0.6, 0.05), (0.19, 0.42, 0.12), (0.2, 0.15, 0.1), (0.2, 0.0, 0.12)], fein * 0.7, "fig_dunkel", name="kopfhoererkabel")
+        kopf_ort, kopf_rot = (0, 0.8, 0.11), (math.radians(-84), 0, 0)      # Gesicht nach oben, Scheitel zum Kopfende
+        F.hoehe = 0.45
+    else:
+        for s in (-1, 1):
+            F.kugel(1, (s * 0.11, -0.04, 0.05), "fig_senf", skala=(0.05, 0.13, 0.05), name="fuss")
+            F.glied((s * 0.11, 0.0, 0.08), (s * 0.1, 0.0, 0.95), 0.07, "fig_jeans", name="bein")
+        F.kugel(1, (0, 0.0, 0.98), "fig_jeans", skala=(0.2, 0.15, 0.1), name="becken")
+        F.quader((0.38, 0.2, 0.5), (0, 0.0, 1.27), "fig_shirt_jonas", fase=0.07, name="rumpf")
+        for s in (-1, 1):
+            F.kugel(0.065, (s * 0.2, 0.0, 1.5), "fig_shirt_jonas", name="schulter", seg=24)
+            F.glied((s * 0.2, 0.0, 1.5), (s * 0.24, -0.02, 1.22), 0.052, "fig_shirt_jonas", name="oberarm")
+            F.glied((s * 0.24, -0.02, 1.22), (s * 0.23, -0.08, 0.98), 0.044, "fig_haut", name="unterarm")
+            F.hand((s * 0.23, -0.09, 0.95), r=0.042)
+        F.glied((0, 0.0, 1.52), (0, -0.01, 1.6), 0.05, "fig_haut", name="hals")
+        F.ring(0.085, 0.012, (0, -0.01, 1.52), "fig_dunkel", rot=(math.radians(10), 0, 0), fein=False, name="kopfhoerer")
+        for s in (-1, 1):
+            F.kugel(1, (s * 0.1, -0.03, 1.5), "fig_dunkel", skala=(0.03, 0.04, 0.045), name="muschel", seg=24)
+        kopf_ort, kopf_rot = (0, -0.01, 1.68), (math.radians(2), 0, 0)
+        F.hoehe = 1.8
+    # Kopf: rund (Gegenakzent zu den langen Rechtecken), dunkles kurzes Haar, ein paar abstehende Strähnen
+    kopf = F.leer(kopf_ort, rot=kopf_rot)
+    KS = (0.105, 0.105, 0.118)
+    F.kugel(1, (0, 0, 0), "fig_haut", skala=KS, eltern=kopf, name="kopf")
+    F.ohren(kopf, KS, z=-0.005, groesse=(0.011, 0.021, 0.03))
+    F.kappe(1, (0, 0.012, 0.014), "fig_haar_jonas", skala=(0.11, 0.112, 0.122), ebene=((0, 0, 0.18), (0, 0.4, 0.9)), eltern=kopf, name="haar")
+    for s in (-1, 1):
+        F.kugel(1, (s * 0.095, 0.02, 0.01), "fig_haar_jonas", skala=(0.025, 0.065, 0.06), eltern=kopf, name="schlaefe", seg=24)
+    # Gesicht: entspannt, halbes Lächeln, offene Augen (er redet mit der Decke)
+    F.gesicht(kopf, KS, augen=(0.038, 0.012), augenform=(0.017, 0.005, 0.0095), brauen=(0.02, 0.038, 0.04, 0.002),
+              mund=(0.05, -0.058, 0.01), nase=(0.012, 0.013, 0.022), nase_z=-0.018)
+    F.kopf = kopf; F.kopfmitte = kopf_ort
+    return F
+
+
+FIGUREN = {"marlene": marlene, "herr_k": herr_k, "falk": falk, "wieser": wieser, "jonas": jonas}

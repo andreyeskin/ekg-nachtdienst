@@ -199,12 +199,13 @@ for v in (0.32, 0.19):
     kiste((0.11, 0.3, 0.09), L(-0.55, v, 0.045), M["dunkel"], "mitte", fase=0.025, dreh=LROT, name="schuh")
 # Klickzonen: `liege` (ohne Figur) am Fußende, `jonas` am Kopfende — figuren_zeichnen.py vereinigt die
 # Figur mit ihrer Zone und hält beide getrennt (getrennt in ebenen_figuren.aufbau)
-platzhalter("liege", (0.6, 0.55, 0.3), L(-0.68, 0, LIEGE_OBEN + 0.12))
+platzhalter("liege", (0.4, 0.4, 0.25), L(-0.75, 0, LIEGE_OBEN + 0.12))
 platzhalter("jonas", (0.6, 1.0, 0.3), L(0.4, 0, LIEGE_OBEN + 0.15))
 
 # EKG-Wagen am Kopfende rechts neben der Liege, Schirm zur Kamera (gleiches Bauteil wie in der Aufnahme):
 # zwei Böden auf vier Pfosten mit Rollen, Gerät mit geneigtem Schirm (dunkles Glas, Kurve aus dem Code über
-# "wagen_schirm"), Papierfach vorn, Haken mit den sechs Saugelektroden (noch nicht geklebt — das ist die Aufgabe)
+# "wagen_schirm"), Papierfach vorn, Haken mit den sechs Saugelektroden (noch nicht geklebt — das ist die Aufgabe).
+# Klickzone "wagen" nur Gerät, Schirm und obere Ablage: das Gestell darunter überlappte sonst das Fußende der Liege (§7.6)
 WC = Vector((1.25, -1.4, 0.0)); WA = math.radians(-8)
 
 
@@ -215,37 +216,38 @@ def W(dx, dy, z):
 
 WROT = (0, 0, WA)
 kiste((0.56, 0.46, 0.05), W(0, 0, 0.92), M["petrol"], "mitte", "wagen", fase=0.012, dreh=WROT, name="wagen_boden_oben")
-kiste((0.56, 0.46, 0.04), W(0, 0, 0.24), M["petrol"], "mitte", "wagen", fase=0.012, dreh=WROT, name="wagen_boden_unten")
+kiste((0.56, 0.46, 0.04), W(0, 0, 0.24), M["petrol"], "mitte", None, fase=0.012, dreh=WROT, name="wagen_boden_unten")
 for dx in (-0.23, 0.23):
     for dy in (-0.18, 0.18):
-        zylinder(0.012, 0.9, W(dx, dy, 0.5), M["metall"], "mitte", "wagen", v=10, name="wagen_pfosten")
-        kugel(0.035, W(dx, dy, 0.035), M["dunkel"], "mitte", "wagen", name="wagen_rolle")
+        zylinder(0.012, 0.9, W(dx, dy, 0.5), M["metall"], "mitte", None, v=10, name="wagen_pfosten")
+        kugel(0.035, W(dx, dy, 0.035), M["dunkel"], "mitte", None, name="wagen_rolle")
 kiste((0.5, 0.36, 0.11), W(0, 0, 1.0), M["dunkel"], "mitte", "wagen", fase=0.014, dreh=WROT, name="wagen_geraet")
 kiste((0.34, 0.03, 0.25), W(0, -0.12, 1.185), M["dunkel"], "mitte", "wagen", fase=0.008, dreh=(math.radians(-14), 0, WA), name="wagen_schirm_rahmen")
 wschirm = kiste((0.30, 0.004, 0.19), W(0, -0.137, 1.19), M["glas"], "mitte", "wagen", fase=0, dreh=(math.radians(-14), 0, WA), name="wagen_schirm")
 schirmflaeche("wagen_schirm", wschirm, "mittelgrund")
 kiste((0.22, 0.02, 0.01), W(0.02, -0.19, 0.985), M["petrol"], "mitte", "wagen", fase=0, dreh=WROT, name="papierfach")
 kiste((0.12, 0.08, 0.003), W(0.02, -0.22, 0.99), M["papier"], "mitte", "wagen", fase=0, dreh=(math.radians(10), 0, WA), name="streifen")
-kiste((0.12, 0.003, 0.22), W(0.02, -0.262, 0.88), M["papier"], "mitte", "wagen", fase=0, dreh=(math.radians(4), 0, WA), name="streifen_hang")
+kiste((0.12, 0.003, 0.22), W(0.02, -0.262, 0.88), M["papier"], "mitte", None, fase=0, dreh=(math.radians(4), 0, WA), name="streifen_hang")
 # Haken an der rechten Seite mit den Brustwand-Saugelektroden (sechs Bälle an kurzen Leitungen)
-kiste((0.03, 0.06, 0.03), W(0.28, -0.02, 0.9), M["dunkel"], "mitte", "wagen", fase=0.004, name="haken_wagen")
+kiste((0.03, 0.06, 0.03), W(0.28, -0.02, 0.9), M["dunkel"], "mitte", None, fase=0.004, name="haken_wagen")
 for k in range(6):
     dz = 0.1 + 0.035 * (k % 3); dy = -0.06 + 0.04 * (k // 3) + 0.01 * (k % 3)
-    rohr([W(0.29, -0.02, 0.9), W(0.31, dy, 0.9 - dz * 0.5), W(0.3, dy, 0.9 - dz)], 0.003, M["kabel"], "mitte", "wagen", name="saug_leitung")
-    kugel(0.018, W(0.3, dy, 0.9 - dz - 0.02), M["petrol"], "mitte", "wagen", name="saugelektrode")
+    rohr([W(0.29, -0.02, 0.9), W(0.31, dy, 0.9 - dz * 0.5), W(0.3, dy, 0.9 - dz)], 0.003, M["kabel"], "mitte", None, name="saug_leitung")
+    kugel(0.018, W(0.3, dy, 0.9 - dz - 0.02), M["petrol"], "mitte", None, name="saugelektrode")
 # Patientenkabel: vom Gerät (linke Seite) zur Liege, dort am Kopfende die Verteilung in vier Leitungen entlang
 # der Polsterkanten — zu den Extremitätenklemmen des Freiwilligen (die Klemmen gehören zur Figur Jonas; die
-# Leitungsenden liegen unter seinen Armen und Beinen, damit die Figurenebene sie deckt). Rot = rechter Arm
-# (kameralinks), gelb = linker Arm (hinter dem Kopf), grün = linker Fuß, schwarz = rechter Fuß.
+# Leitungsenden liegen unter seinen Armen und Beinen, damit die Figurenebene sie deckt). Ampel-Regel
+# (docs/FACHREGELN.md): rot = rechter Arm und schwarz = rechtes Bein (seine rechte Seite liegt zur Kamera, lokal +v),
+# gelb = linker Arm und grün = linkes Bein (zum Wagen, −v). Er liegt flach, Arme neben dem Körper, Beine gestreckt.
 STAMM = [W(-0.25, 0.0, 0.96), W(-0.33, 0.0, 0.93), L(1.1, -0.4, 0.85), L(1.08, -0.3, LIEGE_OBEN + 0.015)]
 rohr(STAMM, 0.007, M["kabel"], "mitte", None, name="patientenkabel")
 kugel(0.02, L(1.08, -0.3, LIEGE_OBEN + 0.02), M["dunkel"], "mitte", None, name="kabelverteiler")
 Z = LIEGE_OBEN + 0.012
 LEITUNGEN = {
-    "rot": [L(1.08, -0.3, Z), L(1.1, 0.0, Z), L(1.05, 0.3, Z), L(0.7, 0.31, Z), L(0.3, 0.31, Z), L(0.2, 0.26, Z + 0.02)],
-    "gelb": [L(1.08, -0.3, Z), L(1.02, -0.28, Z), L(0.92, -0.22, Z + 0.03)],
-    "gruen": [L(1.08, -0.3, Z), L(0.4, -0.31, Z), L(-0.4, -0.31, Z), L(-0.7, -0.2, Z + 0.02)],
-    "schwarz": [L(1.08, -0.3, Z), L(0.4, -0.32, Z), L(-0.7, -0.32, Z), L(-1.0, -0.2, Z), L(-1.02, 0.1, Z), L(-0.85, 0.2, Z + 0.02)],
+    "rot": [L(1.08, -0.3, Z), L(1.1, 0.0, Z), L(1.05, 0.33, Z), L(0.6, 0.36, Z), L(0.15, 0.36, Z), L(0.03, 0.32, Z + 0.02)],
+    "gelb": [L(1.08, -0.3, Z), L(0.7, -0.36, Z), L(0.15, -0.36, Z), L(0.03, -0.32, Z + 0.02)],
+    "gruen": [L(1.08, -0.3, Z), L(0.4, -0.34, Z), L(-0.5, -0.35, Z), L(-0.8, -0.2, Z + 0.02)],
+    "schwarz": [L(1.08, -0.3, Z), L(0.4, -0.33, Z), L(-0.6, -0.34, Z), L(-1.0, -0.25, Z), L(-1.03, 0.08, Z), L(-0.9, 0.22, Z), L(-0.8, 0.19, Z + 0.02)],
 }
 for name, pts in LEITUNGEN.items():
     rohr(pts, 0.004, M["kabel"], "mitte", None, name="leitung_" + name)
