@@ -1,0 +1,23 @@
+{
+ "raum": "monitor",
+ "kasten": [
+  1133,
+  305,
+  1326,
+  753
+ ],
+ "skala": 4,
+ "grund": "#2FBF3A",
+ "seitenverhaeltnis": "9:21",
+ "verdeckt": false,
+ "vorlage": "bau/blender/figuren/vorlage_falk.png",
+ "datei": "falk.png",
+ "seed": 8,
+ "endpunkt": "fal-ai/flux-pro/kontext",
+ "stil": "gen/blender/stil/figur_falk_zirkel.txt",
+ "prompt": "Change only the object in the breast pocket of this ligne claire illustration of the physician: replace the round brass medallion by a brass ECG caliper, which is a pair of dividers like a drawing compass — two very thin straight brass legs ending in sharp points at the bottom, joined at a small round hinge at the top, standing in the pocket with the hinge sticking out above the pocket edge. Also add a small pale-brown coffee stain on the white coat low on his right side, below the chest. Do not change anything else: the stethoscope around his neck with its tube and chest piece stays exactly as it is, the hands stay in the pockets, the face, glasses, tie, shirt and all colours stay unchanged. Keep everything else exactly identical, including the flat uniform bright green background; no text, no letters, no scribbles.",
+ "datum": "2026-10-10",
+ "freistellen": "farbschluessel",
+ "roh": "bau/blender/figuren/ki_falk_s8e.png",
+ "bearbeitet_aus": "bau/blender/figuren/ki_falk_s7p.png"
+}

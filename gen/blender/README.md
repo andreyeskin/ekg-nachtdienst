@@ -32,28 +32,64 @@ Einzelne Durchgänge: `python3 gen/blender/ebenen.py aufnahme lines` usw. (Liste
   Je Raum einstellbar (`EINSTELLUNG`): Lichtfarbe, Weichheit, AO-Schwelle, Kontaktschatten an/aus.
 * `malen.py` — optionaler Feinschliff über fal.ai (Flux Kontext), Schlüssel aus `FAL_KEY`.
 * `figuren.py` — Marlene, Herr K. und Dr. Falk als Grundkörper (Art Bible §5), mit Haltungen und Kopf-Leerobjekt.
-* `ebenen_figuren.py` — Figuren durch dieselben Durchgänge (Fläche, Linie, Sonne), Raumobjekte als Holdout:
-  `raum` schreibt `art/szenen/aufnahme/figuren/{marlene,herrk}.png`, `monitor` schreibt
-  `art/szenen/monitor/figuren/falk.png`, jeweils mit `figuren.json` (Bühnenposition, Atem-Klasse), und
-  vereinigt die Klickzone der Figur in `hitboxes.json`; `portraits` schreibt `art/portraits/*.png` (400×440);
-  `probe` stellt alle drei auf eine neutrale Bühne (`bau/blender/figuren/probe.png`, Silhouettentest).
-  Licht und Sonnenschwelle kommen aus `komposit.EINSTELLUNG` des Raums.
+  `PLATZ` ist die EINE Stelle je Figur für Ort (Meter, Weltkoordinaten der Szene), Drehung und Haltung;
+  Falk mit `ort=None` steht am Platzhalter `platz_falk` der Szene.
+* `ebenen_figuren.py` — Blockout-Figuren durch dieselben Durchgänge (Fläche, Linie, Sonne), Raumobjekte als
+  Holdout. `aufbau(raum)` baut Raum + Figuren (gemeinsam mit `figuren_zeichnen.py`); die Sonne kommt aus
+  `szene.sonne_stellen()`, `SONNE_AUS` wirft keinen Schatten. `raum`/`monitor` schreiben nur noch eine Vorschau
+  nach `bau/blender/figuren/blockout/<raum>/` (Haltung und Platz prüfen), `portraits` die Brustbild-Blockouts nach
+  `bau/blender/figuren/portrait_<wer>_blockout.png`, `probe` alle drei auf eine neutrale Bühne (Silhouettentest).
+* `figuren_zeichnen.py` — die Figuren im Spiel: Blockout → Flux Kontext → einsetzen (unten).
 
-Figuren immer NACH den Raum-Durchgängen rendern (`ebenen.py <raum> flat` schreibt `hitboxes.json` neu):
+## Figuren im Raum: zwei Schritte
+
+Die Figuren in `art/szenen/<raum>/figuren/` sind ligne-claire-Zeichnungen, die Flux Kontext aus dem Blockout
+ausmalt. Der teure Schritt läuft einmal, sein geprüftes Ergebnis liegt im Repository (`art/figuren_quelle/`:
+PNG in voller Auflösung mit Alpha + JSON mit Ausschnitt, Seed, Endpunkt, Prompt). Der billige Schritt setzt die
+Figur in den Raum und läuft nach jeder Raumänderung erneut — ohne fal, nur Masken aus Blender (Sekunden).
+
+**(a) Zeichnen** — nur, wenn eine Figur neu entstehen soll (Kosten ≈ 0,04–0,08 $ je Aufruf):
 
 ```bash
-python3 gen/blender/ebenen_figuren.py raum && python3 gen/blender/ebenen_figuren.py monitor
-python3 gen/blender/ebenen_figuren.py portraits
+python3 gen/blender/figuren_zeichnen.py vorlage aufnahme          # Blockout-Ausschnitte (4× Bühnenmaßstab, grüner Grund)
+python3 gen/blender/figuren_zeichnen.py malen marlene --seed 7 --portrait   # Kontext (max/multi, Porträt = dieselbe Person)
+python3 gen/blender/figuren_zeichnen.py malen herrk --seed 23               # Kontext (pro), Stilphrase stil/figur_herr_k.txt
+python3 gen/blender/figuren_zeichnen.py malen falk --seed 8 --bearbeiten --quelle bau/blender/figuren/ki_falk_s7p.png \
+        --stil gen/blender/stil/figur_falk_zirkel.txt                       # ein Requisit nachbessern (Zirkel)
+python3 gen/blender/figuren_zeichnen.py malen herrk --seed 23 --aus bau/blender/figuren/ki_herrk_s23.png --uebernehmen
 ```
+
+`malen` legt `bau/blender/figuren/ki_<name>_s<seed>[p|e].png` ab, dazu `_frei.png` (Farbschlüssel auf dem grünen
+Grund) und `_pruef.png` (Vorlage | Kontext | freigestellt). Erst prüfen (Art Bible §5/§6: Requisiten, Finger,
+keine Schrift, ein Schlauch), dann mit `--aus … --uebernehmen` nach `art/figuren_quelle/<name>.png` übernehmen.
+Stilphrasen: `stil/figur_rahmen.txt` (Rahmen: Stil, Pose halten, grüner Grund, nichts dazuerfinden) +
+`stil/figur_<name>.txt` (die Person). Das Quellbild ist im eigenen, neutralen Licht — Raumlicht kommt in (b).
+
+**(b) Einsetzen** — nach jedem Raum-Render, immer NACH `ebenen.py <raum> flat` (das schreibt `hitboxes.json` neu):
+
+```bash
+BLENDER_THREADS=2 python3 gen/blender/figuren_zeichnen.py einsetzen aufnahme
+BLENDER_THREADS=2 python3 gen/blender/figuren_zeichnen.py einsetzen monitor
+python3 gen/kunst.py && python3 tools/baue.py
+```
+
+Je Figur rendert das drei billige Durchgänge im Ausschnitt (Tiefe des Raums, Tiefe des Blockouts, Sonne) und
+rechnet daraus: Verdeckung (Raum vor der Figur: Tresen, PC, Becher vor Marlene; für Herrn K keine, er sitzt IN
+der Bank — `verdecker` in `aufbau()`), Ausrichtung am Blockout (Kopfoberkante, Fußlinie), Umgriff (nichts, was
+Kontext um die Figur herum dazuerfand), Sonnenfleck und Lichtfarbe aus `komposit.EINSTELLUNG` des Raums, dann
+Bühnengröße (`--skala 2` für doppelte Auflösung), 160 Farben mit eigenem Alpha, `figuren.json` (Position, Atem-
+Klasse) und die Klickzone der Figur in `hitboxes.json` (vereinigt mit der bestehenden Zone, mindestens 44 CSS-px).
+Vorschau: `bau/blender/figuren/<raum>_vorschau.png`; `FIGUREN_DEBUG=1` schreibt die Masken daneben.
+
+Bewegt sich eine Figur (neuer Stuhl, anderer Platz): `figuren.PLATZ` ändern, (b) erneut ausführen. Ändert sich
+die Pose, braucht es (a) neu. Der Ausschnitt in `art/figuren_quelle/<name>.json` stammt aus `vorlage` und bleibt
+gültig, solange die Figur am Platz bleibt.
 
 Die Uhrzeiger setzt `gen/kunst.py` aus der Klickzone `uhr` als SVG über das Hintergrundbild (gleiche Ebene
 wie das Zifferblatt, sonst wandern sie in der Parallaxe); das Spiel dreht sie nach der Spielzeit.
 `kunst.py` bettet `hitboxes.json` (→ `kunst.szenen.<raum>.zonen`, daraus baut `spiel.js` die Klickfelder) und
 `schirme.json` (→ `.schirme`, Leinwände mit laufenden Kurven in der Ebene des Schirms) mit ein — Zahlen werden
 nirgends abgeschrieben.
-
-Draußen vor den Fenstern (Himmel, Nachbarflügel, Bäume) liegt niedrig genug, dass es nie im Weg der Sonne steht:
-`ebenen_figuren.py raum` lässt alle Raumobjekte die Sonne der Figuren abschatten, unabhängig von `SONNE_AUS`.
 
 Regeln, die aus Fehlern stammen:
 * Raum nicht aus sich durchdringenden Kisten bauen — die Fugen bekommen sonst keine oder flackernde Linien.
@@ -66,15 +102,20 @@ Zwischenergebnisse liegen in `bau/blender/<raum>/` (nicht im Repository), Ergebn
 
 ## Porträts: Feinschliff über fal.ai (Flux Kontext)
 
-Die Brustbilder in `art/portraits/` entstehen aus dem 3D-Blockout (`ebenen_figuren.py portraits`) und einem
-Kontext-Durchlauf mit den Stilphrasen in `stil/` (weiche Variante, Seed 11), danach auf 400×440 gebracht und
-auf 160 Farben quantisiert (RGB, Alpha getrennt). Schlüssel kommt aus `FAL_KEY` oder dem Proxy der Cloud-Umgebung:
+Die Brustbilder in `art/portraits/` entstehen aus dem 3D-Blockout (`ebenen_figuren.py portraits` →
+`bau/blender/figuren/portrait_<wer>_blockout.png`) und einem Kontext-Durchlauf mit der Stilphrase
+`stil/portrait_<wer>.txt`, danach 400×440 und 160 Farben. Ein fertiges Porträt lässt sich auch gezielt umzeichnen
+(`--bearbeiten`, Gesicht bleibt) — so bekam Marlene den Dutt (`stil/portrait_marlene_dutt.txt`) und den Kuli
+hinterm Ohr (`stil/portrait_marlene_kuli.txt`). Schlüssel aus `FAL_KEY` oder dem Proxy der Cloud-Umgebung:
 
 ```bash
-python3 gen/blender/malen.py kontext --image art/portraits/marlene.png --style gen/blender/stil/portrait_marlene.txt \
-        --seed 11 --size portrait_4_3 --out bau/blender/figuren/marlene_weich.png
+python3 gen/blender/figuren_zeichnen.py portrait marlene --seed 3                       # aus dem Blockout
+python3 gen/blender/figuren_zeichnen.py portrait marlene --seed 5 --bearbeiten --stil gen/blender/stil/portrait_marlene_kuli.txt
+python3 gen/blender/figuren_zeichnen.py portrait marlene --seed 5 --bearbeiten --aus bau/blender/figuren/portrait_marlene_s5.png --uebernehmen
 ```
 
 Vor dem Übernehmen gegen docs/ART_BIBLE.md §5 prüfen (Dutt mit Lesebrille, Kuli, Thermoskanne; Schiebermütze,
-Hörgerät; Brille an der Kette, Zirkel, Stethoskop) — Kontext lässt gern ein Detail weg, dann neuer Seed.
-`stil/szene_ligne_claire.txt` ist die Phrase für ganze Räume (nur als Vergleich; Räume bleiben reine Blender-Ausgabe).
+Hörgerät; Brille an der Kette, Zirkel, Stethoskop) — Kontext lässt gern ein Detail weg, dann neuer Seed oder
+eine Bearbeitung mit einer einzigen Änderung (mehrere auf einmal gehen oft schief). Die Ganzkörperfigur danach
+mit `malen --portrait` gegen das neue Porträt zeichnen, damit beide dieselbe Person zeigen.
+`malen.py kontext` bleibt für Räume (nur als Vergleich; Räume bleiben reine Blender-Ausgabe).

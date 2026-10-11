@@ -1,18 +1,18 @@
 {
  "marlene": {
   "datei": "marlene.png",
-  "x": 275,
-  "y": 365,
-  "breite": 125,
-  "hoehe": 115,
+  "x": 312,
+  "y": 368,
+  "breite": 99,
+  "hoehe": 109,
   "klasse": "atmet"
  },
  "herrk": {
   "datei": "herrk.png",
-  "x": 1279,
-  "y": 399,
-  "breite": 145,
-  "hoehe": 338,
+  "x": 1262,
+  "y": 400,
+  "breite": 178,
+  "hoehe": 336,
   "klasse": "atmet langsam"
  }
 }

@@ -1,0 +1,23 @@
+{
+ "raum": "aufnahme",
+ "kasten": [
+  272,
+  356,
+  417,
+  501
+ ],
+ "skala": 4,
+ "grund": "#2FBF3A",
+ "seitenverhaeltnis": "1:1",
+ "verdeckt": true,
+ "vorlage": "bau/blender/figuren/vorlage_marlene.png",
+ "datei": "marlene.png",
+ "seed": 7,
+ "endpunkt": "fal-ai/flux-pro/kontext/max/multi",
+ "stil": "gen/blender/stil/figur_marlene.txt",
+ "prompt": "The first image is a plain 3D mannequin; the second image is the finished portrait of the same person. Draw the mannequin as a full figure of exactly that person (same face, hair, glasses, skin and clothing colours). Redraw the plain 3D mannequin in this picture as a finished ligne claire illustration in the manner of European graphic novels: flat local colours, one uniform thin dark ink outline around every shape, no hatching, no gradients, no texture, no shading. Keep exactly the same pose, the same body position, size and placement inside the frame, the same camera angle and the same colours of skin, hair and clothes. Adult proportions, a real neck and shoulders, hands with five fingers. Draw only what the mannequin picture shows: keep the flat uniform bright green background exactly as it is and do not add a floor, a wall, a shadow, a chair, a seat or any other object behind or under the figure. No text, no letters, no logos, no scribbles. The character: Marlene, a 54-year-old nurse, compact and round, standing behind a reception counter and visible only from the waist up above the counter top. Chestnut-brown hair combed back from a visible hairline into a large, slightly askew messy bun at the top-back of her head, wound strands with a few loose wisps; a pair of dark-framed reading glasses is clearly tucked into the bun; a ballpoint pen is tucked behind her ear. Petrol-blue scrubs with short sleeves, a small blank white name badge on her chest. Both hands rest on the counter top; her hand on the right side of the picture holds a dented rust-orange steel thermos flask that stands on the counter. Warm lived-in face with heavy eyelids and laugh lines, a dry half-smile. The counter is a plain wooden desk with a light top, drawn flat like everything else.",
+ "datum": "2026-10-10",
+ "freistellen": "farbschluessel",
+ "roh": "bau/blender/figuren/ki_marlene_s7p_v1.png",
+ "bearbeitet_aus": null
+}
