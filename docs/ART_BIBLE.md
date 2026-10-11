@@ -76,12 +76,12 @@ Monitorzimmer: `#DCE9EA` / `#E6EFEE`), Silhouetten draußen in Petrol und Papier
 
 ## 3. Licht und Tiefe
 
-1. **Drei Helligkeitszonen pro Bild**: fast schwarzer Vordergrundrahmen → mittlerer Raum →
-   eine helle Lichtinsel dort, wo das Wichtige liegt. Das Auge geht ins Licht, immer.
+1. **Gestufte Tonwerte**: Boden und Möbel eine Stufe dunkler als die Wand, dazu eine helle
+   Lichtinsel dort, wo das Wichtige liegt. Das Auge geht ins Licht, immer.
 2. **Die Lichtquelle ist im Bild sichtbar** (Lampe, Monitor, Fenster, Notausgangsschild).
-3. **Vordergrund schneidet an**: Türrahmen, Infusionsständer, Rollstuhlgriff — dunkel, knapp,
-   leicht unscharf. Das erzeugt Raum und das Gefühl, selbst dort zu stehen.
-4. **Vier Ebenen für Parallaxe**: Vordergrund · Figur · Mittelgrund · Hintergrund.
+3. **Kein angeschnittener dunkler Vordergrund** (Türrahmen, Ständer o. Ä. am Bildrand): der Raum
+   bleibt offen und ruhig. Tiefe entsteht durch Dreiviertelansicht, Tonwerte und Parallaxe.
+4. **Drei Ebenen für Parallaxe**: Figur · Mittelgrund · Hintergrund.
 
 ## 4. Tageszeiten — kein ewiger Regen
 
@@ -139,7 +139,7 @@ Kittel, Bleistift hinterm Ohr, das EKG-Lineal aus dem Kurs in der Tasche.
 - Ein EKG, das vom Bildmodell gemalt wurde. **Alle Kurven kommen aus der Engine**, aus echten
   Aufnahmen. Gemalte Zacken sind medizinisch falsch und sofort als Fake erkennbar.
 - Sechs Finger, verbogene Hände, Instrumente, die es nicht gibt, Stethoskope mit zwei Schläuchen.
-- Frontalansicht ohne jede Tiefe (leichte Dreiviertelansicht oder ein Vordergrund-Element genügt).
+- Frontalansicht ohne jede Tiefe (leichte Dreiviertelansicht genügt).
 - Mehr als ein Magenta-Objekt.
 - Requisiten ohne Grund im Bild („sieht medizinisch aus") — jedes Ding gehört jemandem.
 

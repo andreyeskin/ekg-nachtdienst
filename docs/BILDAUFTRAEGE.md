@@ -18,7 +18,7 @@ diesem Stil bestellt.
 Jeder Auftrag hat denselben Bau:
 
 ```
-<Stil> · <Raum, Blickwinkel> · <Licht> · <Vordergrund> · <Farben> · <Verbote>
+<Stil> · <Raum, Blickwinkel> · <Licht> · <Farben> · <Verbote>
 ```
 
 Die letzte Zeile steht in **jedem** Auftrag, wörtlich:
@@ -107,20 +107,19 @@ sich bewegen müssen.
 Durchgehen, bevor etwas übernommen wird. Fällt ein Punkt durch, wird das Bild
 neu gemacht, nicht die Regel geändert.
 
-1. **Drei Helligkeitszonen** erkennbar: dunkler Rahmen vorn, mittlerer Raum,
-   helle Insel dort, wo das Wichtige liegt.
+1. **Gestufte Tonwerte**: Boden und Möbel dunkler als die Wand, helle Insel dort,
+   wo das Wichtige liegt. Kein angeschnittener dunkler Vordergrund.
 2. **Die Lichtquelle ist im Bild** — Fenster, Lampe, Tür. Kein Licht aus dem Nichts.
-3. **Etwas schneidet vorn an** und ist dunkler als alles andere.
-4. **Keine Schrift**, nirgends, auch nicht verschwommen im Hintergrund.
-5. **Keine gemalte EKG-Kurve**, kein Zackenmuster auf irgendeinem Schirm.
-6. **Höchstens ein Magenta-Objekt** — und nur, wenn es die Geschichte weitertreibt.
-7. **Keine Requisite ohne Besitzer.** Jedes Ding gehört jemandem oder hat einen Grund.
-8. **16:9**, weil die Bühne 1600 × 900 ist.
+3. **Keine Schrift**, nirgends, auch nicht verschwommen im Hintergrund.
+4. **Keine gemalte EKG-Kurve**, kein Zackenmuster auf irgendeinem Schirm.
+5. **Höchstens ein Magenta-Objekt** — und nur, wenn es die Geschichte weitertreibt.
+6. **Keine Requisite ohne Besitzer.** Jedes Ding gehört jemandem oder hat einen Grund.
+7. **16:9**, weil die Bühne 1600 × 900 ist.
 
 ## Danach
 
-Das fertige Bild wird in vier Ebenen zerlegt (Hintergrund, Mittelgrund, Figuren,
-Vordergrund), damit die Parallaxe funktioniert. Figuren kommen **nicht** aus
+Das fertige Bild wird in drei Ebenen zerlegt (Hintergrund, Mittelgrund, Figuren),
+damit die Parallaxe funktioniert. Figuren kommen **nicht** aus
 Recraft: sie bleiben gezeichnet, weil dieselbe Person in sechs Bildern sechs
 verschiedene Menschen würde — das ist der sicherste Weg, dass ein Spiel nach
 Maschine aussieht.
