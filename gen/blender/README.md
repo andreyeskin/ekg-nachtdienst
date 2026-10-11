@@ -204,3 +204,22 @@ Plattenunterseite, und Freestyle zeichnete die verdeckte Kanne durch die Platte.
 
 Nicht im Bild: Klickzonen, Uhrzeiger (bleiben SVG), Kurven auf Schirmen, Text. Die Szenenbilder werden später eingebunden; die
 Spiellogik kennt sie noch nicht.
+
+### Probe mit fal.ai am 11.10.2026 (sechs Aufrufe, Vorlage `aufnahme_tresen`)
+
+| Aufruf | Endpunkt, Eingaben | Licht (`licht_pruefen.py`, 4 Kriterien) | Figuren, Stil |
+|---|---|---|---|
+| Vorlage selbst | — | RICHTIG 4/4: Kontrast 0,57, Versatz 1 %, Richtung 7°, Fremdlicht 0 ‰ | Blockout |
+| Referenz (ChatGPT) | — | FALSCH 1/4: Kontrast 0,06, Versatz 4 %, Fremdlicht 42 ‰ (Streifen auf Wand und Tresen, wo Blender keine hat) | der Anlass |
+| 1 kontext, s7 | Vorlage + Stilphrase | TEILWEISE 3/4: Kontrast 0,51, Richtung 4°, Fremdlicht 6 ‰; Versatz 4,6 % (Glanz unter der Fensterbank) | hält Aufbau und Licht, malt aber plastisch wie ein 3D-Render; Mannequin-Gesicht, Dutt ohne Brille, Hand mit Fingern, Kanne rost, Mütze, Tüte als Blase, keine Schrift |
+| 2 kontext/max/multi | Vorlage + Referenzbild | FALSCH 1/4 | malt das Referenzbild nach, verwirft die Vorlage (Herr K. fehlt, Licht wie im Original falsch) |
+| 3 kontext, s11 | Vorlage + Stilphrase + „hand-drawn, not 3D" | FALSCH 2/4: Kontrast 0,27 | wie 1, dunkler |
+| 4 kontext/max/multi | Vorlage + Porträts | kein Bild (fal: downstream_service_unavailable) | — |
+| 5 kontext/max/multi, s7 | Vorlage + Porträts Marlene, Herr K. | FALSCH 1/4: Kontrast 0,05, Fremdlicht 32 ‰ | echte Ligne claire, Marlenes Gesicht/Dutt/Lesebrille/Kuli aus dem Porträt, Mütze; aber Mappe, Lampeninsel und Streifen weg, Hände ohne Finger, Kritzelschrift auf dem Namensschild |
+| 6 kontext/max, s7 | Vorlage + Stilphrase | TEILWEISE 3/4: Kontrast 0,10, Versatz 1,9 %, Fremdlicht 8 ‰ | fast eine Kopie der Vorlage, Streifen auf dem Wagen verblasst |
+
+Lehre: Flux Kontext kann Licht halten (einbildig) oder Personen treffen (multi mit Porträts), nicht beides in einem Bild. Für
+den GPT-Lauf mit Schlüssel heißt das: Vorlage + Porträts + Stilreferenz in einem Aufruf und prüfen, ob `licht_pruefen.py`
+den Kontrast der Vorlage (0,57) annähernd hält; wenn nicht, zweistufig — Szene einbildig fürs Licht, Figuren wie im Spiel
+getrennt gezeichnet und über `maske.png` eingesetzt. Bilder und Prüfungen der Probe liegen nicht im Repository
+(`bau/blender/szenenbilder/aufnahme_tresen/kontext_*.png` + `.json`).

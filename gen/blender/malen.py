@@ -2,8 +2,11 @@
 """malen.py — eine Blender-Vorlage von einem Bildgenerator ausmalen lassen. Blender rechnet das Licht, hier wird nur gemalt.
 
 Modi:
-  kontext  fal-ai/flux-pro/kontext: zeichnet unseren Render nach Anweisung um, Grundriss und Dinge bleiben (≈ 0,04 $/Bild).
-           Mit --referenz BILD (ein- oder mehrmals) läuft kontext/max/multi: Vorlage + Stilreferenz(en) als weitere Bilder.
+  kontext  fal-ai/flux-pro/kontext: zeichnet unseren Render nach Anweisung um, Grundriss und Dinge bleiben (≈ 0,04 $/Bild);
+           --max nimmt kontext/max (≈ 0,08 $). Mit --referenz BILD (ein- oder mehrmals) läuft kontext/max/multi: Vorlage +
+           weitere Bilder (Stilreferenz, Porträts). Erfahrung aus der Probe am 11.10.2026: einbildig hält Kontext Aufbau und
+           Licht, malt aber plastisch mit Mannequin-Gesichtern; multi mit dem Referenzbild malt das Referenzbild nach und
+           verwirft die Vorlage; multi mit den Porträts trifft die Gesichter, verliert aber Mappe, Lampeninsel und Streifen.
   general  fal-ai/flux-general: Erzeugung mit ControlNet (Tiefe/Kanten aus dem Render) und optionalen LoRA-Stilen.
   openai   OpenAI GPT Image, Bildbearbeitung mit mehreren Eingabebildern (POST /v1/images/edits, multipart, Feld image[]
            mehrfach; Antwort data[0].b64_json; Dokumentation gelesen am 11.10.2026): Vorlage + Porträts (--portrait, mehrfach,
@@ -154,13 +157,14 @@ def fal(a):
 
     if a.mode == "kontext":
         prompt = "Repaint this exact scene, keep the layout, furniture, camera and light positions unchanged. Style: " + full_prompt
+        basis = "fal-ai/flux-pro/kontext" + ("/max" if a.max else "")
         if a.referenz:
-            endpoint = "fal-ai/flux-pro/kontext/max/multi"
+            endpoint = basis + "/multi" if a.max else "fal-ai/flux-pro/kontext/max/multi"   # mehrere Bilder gibt es nur bei max
             prompt = ("The first image is the scene to paint. " + ("The second image is" if len(a.referenz) == 1 else "The following images are")
                       + " a style reference: match its drawing style, line and colour treatment, but not its layout and not its light. " + prompt)
             payload = {"prompt": prompt, "image_urls": None if dry else [fal_client.encode_file(p) for p in [a.image] + a.referenz]}
         else:
-            endpoint = "fal-ai/flux-pro/kontext"
+            endpoint = basis
             payload = {"prompt": prompt, "image_url": None if dry else fal_client.encode_file(a.image)}
         payload.update({"seed": a.seed, "guidance_scale": a.guidance, "num_inference_steps": a.steps, "output_format": "png", "safety_tolerance": "2"})
         if a.aspect: payload["aspect_ratio"] = a.aspect
@@ -216,6 +220,7 @@ def main():
     ap.add_argument("--steps", type=int, default=28)
     ap.add_argument("--guidance", type=float, default=3.5)
     ap.add_argument("--aspect", default=None, help="kontext: aspect_ratio, z. B. 16:9")
+    ap.add_argument("--max", action="store_true", help="kontext: Endpunkt kontext/max (teurer, hält Stil und Anweisung genauer)")
     ap.add_argument("--strength", type=float, default=0.65, help="general: Stärke reference/img2img 0..1")
     ap.add_argument("--control-scale", type=float, default=0.7, help="general: Gewicht ControlNet 0..1")
     ap.add_argument("--lora", action="append", default=[], help="general: LoRA-URL (mehrfach), Form url|scale")
