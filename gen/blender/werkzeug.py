@@ -18,11 +18,19 @@ EBENE = {}   # Objektname -> 'hinten' | 'mitte' | 'vorn'
 ZONE = {}    # Klickzone -> [Objektnamen]
 MAT = {}     # Materialname -> Material
 PLATZHALTER = set()   # Objekte nur für Klickzonen, nie gerendert
+SCHIRME = {}  # Schirmname -> (Objektname, Ebene): Bildflächen, auf die das Spiel laufende Kurven legt
 
 
 def leeren():
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    EBENE.clear(); ZONE.clear(); MAT.clear(); PLATZHALTER.clear()
+    EBENE.clear(); ZONE.clear(); MAT.clear(); PLATZHALTER.clear(); SCHIRME.clear()
+
+
+def schirmflaeche(name, o, ebene="hintergrund"):
+    """Merkt eine Bildschirmfläche (dünne Kiste, Vorderseite = lokale −y-Seite) vor: ebenen.py exportiert ihre
+    vier Bildecken nach art/szenen/<raum>/schirme.json, das Spiel zeichnet dort die laufende Kurve (nie das Bild)."""
+    SCHIRME[name] = (o.name, ebene)
+    return o
 
 
 def material(name, farbe, rauh=0.6, metall=0.0, leuchten=None, staerke=1.0):
@@ -80,6 +88,83 @@ def kugel(r, ort, m, ebene, zone=None, name="kugel"):
     bpy.ops.mesh.primitive_ico_sphere_add(radius=r, subdivisions=3, location=ort)
     o = bpy.context.object; o.name = name; o.data.materials.append(m); bpy.ops.object.shade_smooth()
     return markiere(o, ebene, zone)
+
+
+def platte(breite, tiefe, ort, m, ebene, zone=None, dreh=(0, 0, 0), name="platte"):
+    """Eine einzelne Fläche ohne Dicke (ungedreht in der XY-Ebene): Lamellen, Himmelsbänder. Eine hauchdünne
+    Kiste gäbe zwei Striche übereinander, eine Fläche genau eine Kontur."""
+    bpy.ops.mesh.primitive_plane_add(size=1, location=ort, rotation=dreh)
+    o = bpy.context.object; o.name = name; o.scale = (breite, tiefe, 1); bpy.ops.object.transform_apply(scale=True)
+    o.data.materials.append(m)
+    return markiere(o, ebene, zone)
+
+
+FUGE = 0.002   # Abstand zu Laibung und Wand: deckungsgleiche Flächen flimmern, eine 2-mm-Fuge sieht niemand
+
+
+def fenster(x0, x1, z0, z1, rahmen, griff, ebene="hinten", zone=None, y=0.08, tiefe=0.07, breite=0.07,
+            pfosten=0.09, kaempfer=None, fluegel=0.05, bank=(0.22, 0.05), griff_z=None, name="fenster"):
+    """Fenster in einer Wandöffnung x0..x1 / z0..z1 (Innenfläche der Wand y=0, Öffnung nach +y, Laibung
+    aus der Wand selbst): Blendrahmen in der Laibung (y..y+tiefe), Pfosten in der Mitte, optional ein
+    Kämpfer (Höhe z), je Licht ein Flügelrahmen, der etwas in den Raum vorsteht, ein Griff am rechten
+    unteren Flügel neben dem Pfosten, Fensterbank vor der Wand. Gibt die Glasflächen als (x0, x1, z0, z1) zurück."""
+    f = FUGE; xm = (x0 + x1) / 2; ym = y + tiefe / 2; b = breite
+    kiste((b, tiefe, z1 - z0 - 2 * f), (x0 + f + b / 2, ym, (z0 + z1) / 2), rahmen, ebene, zone, fase=0.01, name=name + "_rahmen")
+    kiste((b, tiefe, z1 - z0 - 2 * f), (x1 - f - b / 2, ym, (z0 + z1) / 2), rahmen, ebene, zone, fase=0.01, name=name + "_rahmen")
+    kiste((x1 - x0 - 2 * b - 2 * f, tiefe, b), (xm, ym, z1 - f - b / 2), rahmen, ebene, zone, fase=0.01, name=name + "_rahmen")
+    kiste((x1 - x0 - 2 * b - 2 * f, tiefe, b), (xm, ym, z0 + f + b / 2), rahmen, ebene, zone, fase=0.01, name=name + "_rahmen")
+    ix0, ix1, iz0, iz1 = x0 + f + b, x1 - f - b, z0 + f + b, z1 - f - b
+    kiste((pfosten, tiefe, iz1 - iz0), (xm, ym, (iz0 + iz1) / 2), rahmen, ebene, zone, fase=0.01, name=name + "_pfosten")
+    spalten = [(ix0, xm - pfosten / 2), (xm + pfosten / 2, ix1)]
+    zeilen = [(iz0, iz1)]
+    if kaempfer is not None:
+        kiste((ix1 - ix0, tiefe, 0.08), (xm, ym, kaempfer), rahmen, ebene, zone, fase=0.01, name=name + "_kaempfer")
+        zeilen = [(iz0, kaempfer - 0.04), (kaempfer + 0.04, iz1)]
+    glas = []
+    for (gx0, gx1) in spalten:
+        for (gz0, gz1) in zeilen:   # Flügelrahmen: bündig mit dem Licht, 4 cm vor dem Blendrahmen
+            fy = y - 0.04 + 0.03; ft = 0.06
+            kiste((fluegel, ft, gz1 - gz0), (gx0 + fluegel / 2, fy, (gz0 + gz1) / 2), rahmen, ebene, zone, fase=0.006, name=name + "_fluegel")
+            kiste((fluegel, ft, gz1 - gz0), (gx1 - fluegel / 2, fy, (gz0 + gz1) / 2), rahmen, ebene, zone, fase=0.006, name=name + "_fluegel")
+            kiste((gx1 - gx0 - 2 * fluegel, ft, fluegel), (gx0 + (gx1 - gx0) / 2, fy, gz1 - fluegel / 2), rahmen, ebene, zone, fase=0.006, name=name + "_fluegel")
+            kiste((gx1 - gx0 - 2 * fluegel, ft, fluegel), (gx0 + (gx1 - gx0) / 2, fy, gz0 + fluegel / 2), rahmen, ebene, zone, fase=0.006, name=name + "_fluegel")
+            glas.append((gx0 + fluegel, gx1 - fluegel, gz0 + fluegel, gz1 - fluegel))
+    # Griff: Rosette auf dem linken Holm des rechten unteren Flügels, Hebel zeigt nach unten (geschlossen)
+    gx = spalten[1][0] + fluegel / 2; gz = griff_z if griff_z is not None else (zeilen[0][0] + zeilen[0][1]) / 2
+    kiste((0.028, 0.02, 0.07), (gx, y - 0.04 - 0.01, gz), griff, ebene, zone, fase=0.004, name=name + "_griff")
+    kiste((0.016, 0.016, 0.11), (gx, y - 0.04 - 0.028, gz - 0.045), griff, ebene, zone, fase=0.003, name=name + "_griff")
+    # Fensterbank: vor der Wand, breiter als die Öffnung, Oberkante knapp über der Laibung
+    kiste((x1 - x0 + 0.16, bank[0], bank[1]), (xm, -bank[0] / 2 - f, z0 + bank[1] / 2 + f), rahmen, ebene, zone, fase=0.008, name=name + "_bank")
+    return glas
+
+
+def jalousie(x0, x1, z_oben, z_unten, lamelle, band, kasten, ebene="hinten", zone=None, y=0.0, pitch=0.085,
+             breite=0.075, neigung=20, schnur=0.75, name="jalousie"):
+    """Lamellenjalousie vor dem Fenster, heruntergelassen bis z_unten: Kasten oben, jede Lamelle eine
+    eigene Fläche mit Kontur, zwei Leiterbänder davor, Unterschiene, Zugschnur mit Griff rechts.
+    neigung > 0: raumseitige Kante oben — von unten sieht man zwischen den Lamellen den Himmel."""
+    xm = (x0 + x1) / 2; w = x1 - x0; a = math.radians(neigung)
+    kiste((w, 0.08, 0.08), (xm, y, z_oben - 0.04), kasten, ebene, zone, fase=0.006, name=name + "_kasten")
+    z = z_oben - 0.08 - pitch * 0.6
+    while z > z_unten + 0.03:
+        platte(w - 0.02, breite, (xm, y, z), lamelle, ebene, zone, dreh=(-a, 0, 0), name=name + "_lamelle")
+        z -= pitch
+    kiste((w - 0.02, 0.05, 0.022), (xm, y, z_unten + 0.011), kasten, ebene, zone, fase=0.004, name=name + "_schiene")
+    yv = y - breite / 2 * math.cos(a) - 0.004   # knapp vor der Vorderkante der Lamellen
+    for t in (0.28, 0.72):
+        kiste((0.026, 0.004, z_oben - 0.08 - z_unten), (x0 + t * w, yv, (z_oben - 0.08 + z_unten) / 2), band, ebene, zone, fase=0, name=name + "_band")
+    L = (z_oben - z_unten) * schnur
+    kiste((0.012, 0.012, L), (x1 - 0.09, yv - 0.012, z_oben - 0.08 - L / 2), band, ebene, zone, fase=0, name=name + "_schnur")
+    zylinder(0.014, 0.05, (x1 - 0.09, yv - 0.012, z_oben - 0.08 - L - 0.02), kasten, ebene, zone, v=16, name=name + "_schnurgriff")
+
+
+def himmel_baender(y, baender, breite=300.0, name="himmel"):
+    """Flacher Himmel als Farbbänder: `baender` = [(z_unten, z_oben, material), ...], senkrechte Flächen
+    bei y. Niedrig genug halten, dass sie nie im Weg der Sonne stehen (Sonnen-Durchgang, Figuren)."""
+    aus = []
+    for i, (zu, zo, m) in enumerate(baender):
+        aus.append(platte(breite, zo - zu, (0, y, (zu + zo) / 2), m, "hinten", dreh=(math.radians(90), 0, 0), name=f"{name}_{i}"))
+    return aus
 
 
 def loch(wand, groesse, ort):

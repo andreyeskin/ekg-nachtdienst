@@ -22,8 +22,8 @@ Produkt.
 | 5 · Die Leitung | SA-Block, AV-Block, Ersatzrhythmen | 9, 10, 11 |
 | 6 · Der Muskel | Vorhöfe, Schenkel, Faszikel, R-Progression, Hypertrophie | 12, 13, 14, 15, 18 |
 | 7 · Die Durchblutung | ST/T, Infarkt, Lokalisation, QT | 16, 17, 19, 20 |
-| 8 · Das schnelle Herz und der Rest | Tachykardien, Flimmern, Spezialfälle, Schrittmacher | 21–31 |
-| Abschluss | Systematisch befunden, fünf Schritte, jedes EKG | 32 |
+| 8 · Das schnelle Herz und der Rest | Tachykardien, Flimmern, Spezialfälle, Schrittmacher, Monitor | 21–33 |
+| Abschluss | Systematisch befunden, fünf Schritte, jedes EKG | 34 (dazu 35–38: Rhythmus-Tricks, Technik, Artefakte, typische Fehler) |
 
 Jede Stufe endet erst, wenn der Spieler sie an echten Aufnahmen **gezeigt** hat.
 Gelesen zu haben reicht nirgends.
@@ -49,13 +49,13 @@ Abteilung hat die Patienten, an denen genau ihr Stoff sichtbar wird.
 |---|---|---|---|
 | **Lehrsaal** | 1, 2, 3, 4, 5, 6, 7 | — (Übungen am Gerät) | Normalbefunde |
 | **Aufnahme** | 8, 9, 10, 11 | Herr Baum (Synkope) | Brady-/Tachykardien |
-| **Monitorzimmer** | 30, 9, 10 | Herr Baum, Teil 2 | Monitorstreifen |
+| **Monitorzimmer** | 31, 9, 10 | Herr Baum, Teil 2 | Monitorstreifen |
 | **Station** | 12, 13, 14, 15, 18 | Frau mit Luftnot (Schenkelblock) | Hypertrophien, Vorhofbefunde |
 | **Herzkatheter / Chest Pain** | 16, 19, 20 | Der Mann mit dem Druck auf der Brust | Infarkte aller Lokalisationen |
-| **Intensiv** | 17, 23, 26, 29 | Patient nach Reanimation | Elektrolyte, Schrittmacher, VES |
+| **Intensiv** | 17, 23, 26, 30 | Patient nach Reanimation | Elektrolyte, Schrittmacher, VES |
 | **Rhythmusambulanz** | 24, 25, 27, 28 | Junge Frau mit Herzrasen | Flimmern, Flattern, WPW |
-| **Innere / Pulmologie** | 21, 22, 31 | Der Kurzatmige nach der Reise | Perikarditis, Dextrokardie |
-| **Befundraum** | 32 | — | **alle** Aufnahmen aus der Datenbank |
+| **Innere / Pulmologie** | 21, 22, 32 | Der Kurzatmige nach der Reise | Perikarditis, Dextrokardie |
+| **Befundraum** | 34 | — | **alle** Aufnahmen aus der Datenbank |
 
 Der **Befundraum** ist der Motor für die Menge: Dort liegt jede Aufnahme der
 Datenbank als Fall bereit, und das Spiel prüft den Befund gegen die Diagnose,
@@ -113,16 +113,22 @@ Gezählt am 10.10.2026 aus den Dateien selbst, nicht geschätzt. Drei Quellen:
 | 25 | Vorhofflimmern und -flattern | 18 | 67 | 300 | 385 | ok |
 | 26 | Ventrikuläre Störungen | 0 | 53 | 224 | 277 | ok |
 | 27 | Brugada | 0 | 0 | 5 | 5 | dünn |
-| 28 | **ARVD/C** | 0 | 0 | 0 | **0** | **Lücke** |
-| 29 | Schrittmacher | 0 | 15 | 67 | 82 | ok |
-| 30 | Monitor-EKG | alle | | | alle | ok |
-| 31 | **Situs inversus / Dextrokardie** | 0 | 0 | 0 | **0** | **Lücke** |
-| 32 | Systematische Befundung | alle | | | alle | ok |
+| 28 | Short-QT-Syndrom (Titel laut Verweis in Lektion 38; noch nicht gelesen) | – | – | – | – | offen |
+| 29 | **ARVD/C** | 0 | 0 | 0 | **0** | **Lücke** |
+| 30 | Schrittmacher | 0 | 15 | 67 | 82 | ok |
+| 31 | Monitor-EKG | alle | | | alle | ok |
+| 32 | **Situs inversus / Dextrokardie** | 0 | 0 | 0 | **0** | **Lücke** |
+| 34 | Systematische Befundung | alle | | | alle | ok |
+
+Die Lektionsnummern folgen dem Inhaltsverzeichnis der Kapitel-PDFs (Stand 10.10.2026): 29 ARVD/C,
+30 Schrittmacher, 31 Monitor-EKG, 32 Situs inversus, 33 Kinder und Jugendliche, 34 systematische
+Befundung, 35–38 Rhythmus-Tricks, Technik, Artefakte, typische Fehler. Eine frühere Fassung dieser
+Tabelle zählte ab 28 um eins zu niedrig.
 
 ### Was daraus folgt
 
-**26 von 32 Lektionen sind mit echten Aufnahmen gedeckt.** Fünf Lücken bleiben,
-eine Lektion ist dünn.
+**26 von 33 aufgeführten Lektionen sind mit echten Aufnahmen gedeckt.** Fünf Lücken bleiben,
+eine Lektion ist dünn, eine (28) noch ungelesen.
 
 **Die wichtigste Zahl steht nicht in der Spalte „gesamt", sondern in der Spalte
 „LUDB": 199.** Nur diese Aufnahmen tragen eine Wellen-Annotation von
@@ -206,19 +212,19 @@ funktionieren.
 Nicht nach Lektionsnummern, sondern nach dem, was den größten Teil des Stoffes
 auf einmal nutzbar macht:
 
-1. **Befundungs-Trainer (Lektion 32).** Zuerst, weil er aus jeder Aufnahme der
+1. **Befundungs-Trainer (Lektion 34).** Zuerst, weil er aus jeder Aufnahme der
    Datenbank sofort einen Patienten macht. Fünf Schritte, feste Reihenfolge,
    Prüfung gegen die Diagnose der Datenbank.
 2. **Lehrsaal (1–7).** Die Grundlagen, die alles andere voraussetzt. Viele kurze
    Übungen, aus dem bestehenden Kurs übernehmbar.
-3. **Aufnahme und Monitorzimmer fertig (8–11, 30).** Herr Baum zu Ende erzählen,
+3. **Aufnahme und Monitorzimmer fertig (8–11, 31).** Herr Baum zu Ende erzählen,
    jetzt mit echten AV-Block-II/III-Aufnahmen aus PTB-XL.
 4. **Station (12–15, 18).** Schenkelblöcke und Hypertrophie — viel Stoff, gute
    Datenlage.
 5. **Herzkatheter (16, 19, 20).** Infarkt.
 6. **Rhythmusambulanz (24–26).** Tachykardien.
-7. **Intensiv (17, 23, 29).** Spezialfälle mit Schemata, wo Daten fehlen.
-8. **Innere (21, 22, 27, 28, 31).** Der Rest, zuletzt, weil die Datenlage dünn ist.
+7. **Intensiv (17, 23, 30).** Spezialfälle mit Schemata, wo Daten fehlen.
+8. **Innere (21, 22, 27, 29, 32).** Der Rest, zuletzt, weil die Datenlage dünn ist.
 
 ---
 
