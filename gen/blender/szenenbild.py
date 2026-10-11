@@ -2,13 +2,14 @@
 
     BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen           # Durchgänge + Vorlage
     python3 gen/blender/szenenbild.py aufnahme tresen --komposit                  # nur neu zusammensetzen (ohne Blender)
+    BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen --durchgang sun,lampe   # nur diese Durchgänge, dann Komposit
     BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen --probe   # Fläche + Linie klein (Kamera prüfen)
 
 Grundsatz: Blender rechnet das Licht, der Bildgenerator malt nur. Die Vorlage (`art/szenenbilder/<raum>_<einstellung>/
 vorlage.png`) ist dasselbe Ligne-claire-Komposit wie die Räume — Lokalfarbe, Kontaktschatten, Sonnenstreifen, Lampeninsel,
 Tuschelinie — nur aus einer anderen Kamera und mit den Figuren-Blockouts (figuren.py) im Raum. Daneben liegen die
-Lichtmasken aus Blender (`sonne.png`, `lampe.png`), an denen `licht_pruefen.py` das gemalte Ergebnis misst, und
-`tiefe.png` / `maske.png` (Figuren) für spätere Bearbeitungen. `malen.py` malt die Vorlage aus (fal Kontext oder
+Lichtmasken aus Blender (`sonne.png`, `lampe.png`), an denen `licht_pruefen.py` das gemalte Ergebnis misst, `quellen.png`
+(Leuchtflächen: Himmel, Sonne, Flur — zählen dort nicht als Fremdlicht) und `tiefe.png` / `maske.png` (Figuren). `malen.py` malt die Vorlage aus (fal Kontext oder
 OpenAI GPT Image, Stilphrase `stil/szenenbild.txt`).
 
 Dieselbe Szene, dieselbe Sonne (`szene.sonne_stellen()`), dieselben Figuren wie im Raumbild; nur Kamera und Haltungen
@@ -42,13 +43,16 @@ EINSTELLUNG = {
             kamera=(-1.45, -2.45, 1.62), gier=23.0, neigung=-6.0, brennweite=16.0,
             figuren={
                 "marlene": dict(ort=(-1.95, -0.42, 0.0), haltung="reicht_mappe", blick="kamera", tresen=1.09,
-                                kanne=(-0.2, -1.05, 1.09 + 0.125)),   # Kanne abgestellt auf der Ablage der Sichtblende (Figurkoordinaten)
+                                kanne=(-0.16, -0.87, 1.09 + 0.125)),  # Kanne abgestellt auf der Ablage der Sichtblende (1,09 m), vorn links neben der Mappe
+                # (nicht auf die Arbeitsfläche dahinter: dort liefe der Blick knapp durch den Spalt zwischen Fase der
+                # Sichtblende und Plattenunterseite, und Freestyle zeichnete die verdeckte Kanne durch die Platte)
                 "herrk": dict(),                                       # wie in PLATZ: dritter Sitz, Tüte daneben
             },
             # Die Sonnenscheibe draußen ist Kulisse (40 m hinter dem Fenster): sie wird so gerückt, dass sie aus dieser
             # Kamera an dieser Stelle der Fensterebene (x, z in Metern) steht — tief, im rechten Flügel. Das Licht
             # selbst kommt unverändert aus szene.sonne_stellen().
             sonne_im_fenster=(0.55, 1.78),
+            lampe_ziel=(-1.9, -1.4, 1.09),        # wohin die Tischlampe leuchtet: Ablage der Sichtblende bei Kanne und Mappe
             # Licht im Komposit: Sonne wie komposit.EINSTELLUNG["aufnahme"], dazu die Lampe als warme Insel
             licht=dict(sonne="#FFF0C6", anteil=0.5, schwelle=0.35, weich=0.6, lampe="#FFE3B0", lampe_anteil=0.38,
                        lampe_schwelle=0.18, lampe_weich=6.0, kontakt=True),
@@ -130,15 +134,15 @@ def aufbau(raum, e):
     for o in tuete: ef.ZUORDNUNG[o.name] = "tuete"
     nie = set(wz.PLATZHALTER) - set(ef.ZUORDNUNG)
     aus = set(ns.get("SONNE_AUS", set()))
-    # Lampe: der Spot sitzt im Lampenkopf und leuchtet auf die Arbeitsfläche (Lampeninsel). Die Szene stellt ihn für
-    # ihre eigene Vorschau anders; hier zählt, was man im Bild sieht: Kopf über der Arbeitsfläche, Kegel nach unten.
+    # Lampe: der Spot sitzt im Lampenkopf und leuchtet auf die Arbeitsfläche vor Marlene (Lampeninsel um Kanne und Mappe).
+    # Die Szene stellt ihn für ihre eigene Vorschau anders; hier zählt, was man im Bild sieht.
     kopf = bpy.data.objects.get("lamp_head")
     spot = next((o for o in bpy.data.objects if o.type == 'LIGHT' and o.data.type == 'SPOT'), None)
     if kopf is not None and spot is not None:
         spot.location = (kopf.location.x, kopf.location.y, kopf.location.z - 0.06)
-        ziel = Vector((kopf.location.x - 0.25, kopf.location.y - 0.15, 0.75))
+        ziel = Vector(e.get("lampe_ziel", (kopf.location.x + 0.3, kopf.location.y - 0.15, 0.75)))
         spot.rotation_euler = (ziel - spot.location).to_track_quat('-Z', 'Y').to_euler()
-        spot.data.spot_size = math.radians(80); spot.data.spot_blend = 0.5; spot.data.energy = 120
+        spot.data.spot_size = math.radians(70); spot.data.spot_blend = 0.6; spot.data.energy = 120
     # Sonnenscheibe draußen (Kulisse) auf den Strahl Kamera -> Fensterpunkt legen, in ihrer alten Entfernung
     scheibe = bpy.data.objects.get("aussen_sonne")
     if scheibe is not None and e.get("sonne_im_fenster"):
@@ -153,7 +157,7 @@ def aufbau(raum, e):
     return dict(figs=figs, nie=nie, aus=aus, sonne_stellen=ns.get("sonne_stellen", lambda s: None), ns=ns,
                 hinten={n for n, eb in ebene.items() if eb in ("bg", "hinten")},
                 ohne_linie=set(ns.get("OHNE_LINIE", set())), ohne_schattierung=set(ns.get("OHNE_SCHATTIERUNG", set())),
-                himmel=ns.get("HIMMEL", "#F8E7BF"), spot=spot)
+                himmel=ns.get("HIMMEL", "#F8E7BF"), spot=spot.name if spot else None)
 
 
 def stufen(ohne):
@@ -209,10 +213,10 @@ def pass_linien(pfad, sichtbar, fein):
 
 
 def pass_lampe(pfad, sichtbar, spot):
-    """Nur die Tischlampe auf grauen Flächen: die Lampeninsel."""
+    """Nur die Tischlampe (Objektname `spot`) auf grauen Flächen: die Lampeninsel."""
     sc = bpy.context.scene
     ef.material_grau(); ef.welt((0, 0, 0), 0.0); sc.cycles.max_bounces = 0
-    ef.lichter(lambda o: o is spot)
+    ef.lichter(lambda o: o.name == spot)                 # nach Name: bpy liefert je Zugriff einen neuen Wrapper, `is` greift nicht
     for n in ("dawn", "corridor", "screen", "sonne"):
         if n in bpy.data.materials:
             b = bpy.data.materials[n].node_tree.nodes.get("Principled BSDF")
@@ -255,11 +259,14 @@ def pass_kontakt(pfad, sichtbar, hinten):
             if o.type == 'MESH': o.visible_shadow = True
 
 
-def pass_maske(pfad, sichtbar):
-    """Figuren weiß, Raum schwarz."""
+QUELLEN = {"himmel_oben", "himmel_mitte", "himmel_unten", "sonne", "corridor", "screen"}   # Leuchtflächen (Materialnamen)
+
+
+def pass_maske(pfad, sichtbar, weiss=lambda n: n.startswith("fig_")):
+    """Materialien, für die weiss(name) gilt, weiß; alles andere schwarz (Figuren bzw. Leuchtflächen)."""
     ef.material_flach(schwarz=True)
     for m in bpy.data.materials:
-        if m.use_nodes and m.name.startswith("fig_"):
+        if m.use_nodes and weiss(m.name):
             em = m.node_tree.nodes.get("ebene_em")
             if em: em.inputs["Color"].default_value = (1, 1, 1, 1)
     sc = bpy.context.scene; ef.lichter(lambda o: False); ef.welt((0, 0, 0), 1.0); sc.cycles.max_bounces = 0
@@ -286,15 +293,19 @@ def rendern(raum, einstellung, e, out, probe=False):
         col = hexc(A["himmel"]) * (1 - flach[..., 3:4]) + flach[..., :3] * flach[..., 3:4]
         t = np.clip((1 - luma(linien)) * 1.3, 0, 1)[..., None]
         bild(col * (1 - t) + TINTE * t).save(out + "probe.png"); print("saved", out + "probe.png"); return
-    ef.material_flach(); stufen(A["ohne_schattierung"])
-    ef.pass_flach(out + "pass_flat.png", sichtbar); stufen_weg()
-    pass_linien(out + "pass_lines.png", sichtbar_linie, fein)
-    fz.pass_tiefe(out + "pass_tiefe.png", sichtbar, nah=0.3, fern=12.0)
-    pass_maske(out + "pass_maske.png", sichtbar)
-    pass_kontakt(out + "pass_kontakt.png", sichtbar, A["hinten"])
-    ef.pass_sonne(out + "pass_sun.png", sichtbar_sonne, stellen=A["sonne_stellen"])
-    pass_lampe(out + "pass_lampe.png", sichtbar, A["spot"])
-    open(out + "himmel.txt", "w").write(A["himmel"])
+    nur = sys.argv[sys.argv.index("--durchgang") + 1].split(",") if "--durchgang" in sys.argv else None   # einzelne Durchgänge
+    will = lambda n: nur is None or n in nur
+    if will("flat"):
+        ef.material_flach(); stufen(A["ohne_schattierung"])
+        ef.pass_flach(out + "pass_flat.png", sichtbar); stufen_weg()
+        open(out + "himmel.txt", "w").write(A["himmel"])
+    if will("lines"): pass_linien(out + "pass_lines.png", sichtbar_linie, fein)
+    if will("tiefe"): fz.pass_tiefe(out + "pass_tiefe.png", sichtbar, nah=0.3, fern=12.0)
+    if will("maske"): pass_maske(out + "pass_maske.png", sichtbar)
+    if will("quellen"): pass_maske(out + "pass_quellen.png", sichtbar, weiss=lambda n: n in QUELLEN)
+    if will("kontakt"): pass_kontakt(out + "pass_kontakt.png", sichtbar, A["hinten"])
+    if will("sun"): ef.pass_sonne(out + "pass_sun.png", sichtbar_sonne, stellen=A["sonne_stellen"])
+    if will("lampe"): pass_lampe(out + "pass_lampe.png", sichtbar, A["spot"])
 
 
 # ================================================================== Komposit (ohne Blender)
@@ -325,7 +336,7 @@ def komposit(e, out, ziel):
     os.makedirs(ziel, exist_ok=True)
     bild(col).save(ziel + "vorlage.png", optimize=True)
     grau_png(sonne, ziel + "sonne.png"); grau_png(lampe, ziel + "lampe.png")
-    for n in ("pass_maske.png", "pass_tiefe.png"):
+    for n in ("pass_maske.png", "pass_quellen.png", "pass_tiefe.png"):
         if os.path.exists(out + n):
             Image.open(out + n).convert("L").save(ziel + n.replace("pass_", ""), optimize=True)
     for n in ("vorlage.png", "sonne.png", "lampe.png"):
