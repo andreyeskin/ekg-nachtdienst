@@ -47,8 +47,8 @@
       autoren: "Wagner P., Strodthoff N., Bousseljot R.-D. et al. · PhysioNet",
       lizenz: "Creative Commons Attribution 4.0 (CC BY 4.0)",
       adresse: "physionet.org/content/ptb-xl/1.0.3/" },
-    { kurz: "chapman", bank: "Chapman-Shaoxing / Ningbo — 12-lead ECG database for arrhythmia study",
-      autoren: "Zheng J. et al. · Chapman University, Shaoxing People’s Hospital, Ningbo First Hospital · PhysioNet",
+    { kurz: "chapman", bank: "Chapman-Shaoxing / Ningbo — A large scale 12-lead electrocardiogram database for arrhythmia study v1.0.0",
+      autoren: "Zheng J., Guo H., Chu H. · PhysioNet",
       lizenz: "Creative Commons Attribution 4.0 (CC BY 4.0)",
       adresse: "physionet.org/content/ecg-arrhythmia/1.0.0/" }
   ];
