@@ -60,8 +60,66 @@ async function schuss(name) {
 }
 const warte = (ms) => seite.waitForTimeout(ms);
 
+/* Nach jedem Laden steht der Titelbildschirm da: „Weiterspielen“, wenn es einen Spielstand gibt, sonst nur
+   „Neues Spiel“. Fehlt der Spielstand unerwartet, startet so ein neues Spiel — die Prüfungen danach sagen es. */
+async function vomTitel() {
+  await seite.locator("#titel").waitFor({ state: "visible", timeout: 5000 });
+  const weiter = seite.locator("#titel-weiter");
+  if (await weiter.count()) await weiter.click();
+  else await seite.locator("#titel-neu").click();
+}
+async function neuLaden() { await seite.reload(); await vomTitel(); }
+/* Was außer der Bühne sichtbar im Dokument steht (Spielfenster wie Dialog und Meldungen ausgenommen):
+   Kopfzeile, Fußzeile, Seitenleiste dürfen nicht dabei sein. */
+const webseitenReste = () => seite.evaluate(() => {
+  const sichtbar = (e) => { const r = e.getBoundingClientRect(); return getComputedStyle(e).display !== "none" && r.width > 0 && r.height > 0; };
+  return [...document.querySelectorAll("header, footer, aside, nav, select, .kopf, .fuss, .rahmen")].filter(sichtbar)
+    .concat([...document.body.children].filter((e) => e.tagName !== "SCRIPT" && e.id !== "flaeche" && sichtbar(e) &&
+      !e.classList.contains("dialog") && !e.classList.contains("meldungen")))
+    .map((e) => e.tagName + "#" + e.id + "." + e.className);
+});
+
 await seite.goto("file://" + DATEI);
+await warte(700);
+
+/* ---------------------------------------------------------- 0 Titelbildschirm */
+ok("Titelbildschirm erscheint beim Start", await seite.locator("#titel").isVisible());
+ok("Titel: Spieltitel vom Code gesetzt", ((await seite.locator("#titel .titel-name").textContent()) || "").trim() === "Nachtdienst");
+ok("Titel: Hintergrund ist die Aufnahme (drei Ebenen als Bilder, unscharf)",
+   (await seite.locator("#titel .titel-ebenen img").count()) === 3 &&
+   /blur/.test(await seite.evaluate(() => getComputedStyle(document.querySelector("#titel .titel-ebenen")).filter)));
+ok("Titel: Kurve aus der echten Aufnahme (Herr Baum, data/)", await seite.evaluate(() => {
+  const l = document.querySelector("#titel .titel-kurve polyline");
+  return !!l && l.getAttribute("points").split(" ").length > 500;
+}));
+ok("Titel: ohne Spielstand kein „Weiterspielen“", (await seite.locator("#titel-weiter").count()) === 0);
+ok("Titel: Neues Spiel, Sprache, Info & Quellen",
+   await seite.locator("#titel-neu").isVisible() && await seite.locator("#titel-sprache").isVisible() &&
+   await seite.locator("#titel-info").isVisible());
+let zuKleinT = await fingergross("#titel");
+ok("Titel: Knöpfe fingergroß", !zuKleinT.length, zuKleinT.join(", "));
+ok("Titel: das Spiel läuft noch nicht (kein Dialog, keine Szene)",
+   (await seite.locator(".dialog.an").count()) === 0 && await seite.evaluate(() => !window.Szene.aktueller()));
+await seite.screenshot({ path: `${BILDER}/00_titel.png` });
+await seite.locator("#titel-sprache").click();
+await warte(200);
+ok("Titel: Sprache bietet Deutsch, English, Русский",
+   (await seite.locator("#sprache-hof.an .knopf.sprache").allTextContents()).join("|") === "Deutsch|English|Русский");
+await seite.keyboard.press("Escape");
+await warte(200);
+ok("Titel: Escape schließt die Sprachwahl, der Titel bleibt",
+   (await seite.locator("#sprache-hof.an").count()) === 0 && await seite.locator("#titel").isVisible());
+await seite.locator("#titel-info").click();
+await warte(200);
+ok("Titel: Info & Quellen erreichbar", await seite.locator("#info-hof.an").isVisible());
+await seite.locator("#info-hof .zu").click();
+await warte(200);
+await seite.locator("#titel-neu").click();
 await warte(900);
+ok("„Neues Spiel“ startet: Titel weg, Szene steht",
+   !(await seite.locator("#titel").isVisible()) && await seite.evaluate(() => window.Szene.aktueller() === "aufnahme"));
+ok("Beim ersten Tippen Vollbild angefordert (wo es das gibt)",
+   await seite.evaluate(() => !!(document.fullscreenElement || document.webkitFullscreenElement)));
 
 /* ---------------------------------------------------------- 1 Auftakt */
 ok("Seite lebt", await seite.locator("#buehne").isVisible());
@@ -87,6 +145,12 @@ ok("EKG-Wagen: Leinwand in der Mittelgrund-Ebene",
    (await seite.locator("#buehne .ebene-mittelgrund .schirm-lauf[data-schirm=wagen_schirm] canvas").count()) === 1);
 ok("Marlenes PC zeigt kein EKG", (await seite.locator("#buehne .schirm-lauf").count()) === 1);
 await schuss("auftakt");
+let reste = await webseitenReste();
+ok("Keine Kopf-, Fuß- oder Seitenleiste neben der Bühne", !reste.length, reste.join(", "));
+await seite.keyboard.press("Escape");
+await warte(200);
+ok("Escape bei offenem Dialog: kein Menü, der Dialog bleibt",
+   (await seite.locator("#menue-hof.an").count()) === 0 && (await seite.locator(".dialog.an").count()) === 1);
 
 async function dialogDurch(maxKlicks = 14) {
   for (let i = 0; i < maxKlicks; i++) {
@@ -107,6 +171,91 @@ ok("Auftakt beendet", (await seite.locator(".dialog.an").count()) === 0);
 ok("Nach dem Auftakt leuchten die Klickfelder einmal von selbst auf",
    await seite.evaluate(() => document.querySelector(".felder").classList.contains("zeigen")));
 
+/* -------------------------------------------- 1a HUD und Pausenmenü */
+const hud = await seite.evaluate(() => {
+  const b = document.getElementById("buehne").getBoundingClientRect();
+  return [...document.querySelectorAll("#hud button")].map((k) => {
+    const r = k.getBoundingClientRect();
+    return { id: k.id, b: Math.round(r.width), h: Math.round(r.height),
+             drin: r.left >= b.left && r.right <= b.right && r.top >= b.top && r.bottom <= b.bottom };
+  });
+});
+ok("HUD: Hinweis, Stand, Befundmappe und Menü als Knöpfe",
+   ["hud-hinweis", "hud-stand", "hud-mappe", "hud-menue"].every((id) => hud.some((k) => k.id === id)), hud.map((k) => k.id).join(","));
+ok("HUD: alle Knöpfe mindestens 44 × 44 px", hud.every((k) => k.b >= 44 && k.h >= 44), hud.map((k) => k.id + " " + k.b + "×" + k.h).join(", "));
+ok("HUD: liegt über der Bühne", hud.every((k) => k.drin));
+ok("HUD: Symbole zeichnet der Code (SVG, kein Bild)",
+   (await seite.locator("#hud button svg path").count()) >= 4 && (await seite.locator("#hud img").count()) === 0);
+ok("HUD: jeder Knopf hat Text oder Tooltip", await seite.evaluate(() =>
+  [...document.querySelectorAll("#hud button")].every((k) => k.title && k.getAttribute("aria-label"))));
+ok("HUD: Uhr zeigt die Spielzeit, dazu der Raum",
+   ((await seite.locator("#hud-zeit").textContent()) || "") === "06:40" && ((await seite.locator("#hud-ort").textContent()) || "") === "Aufnahme");
+ok("HUD: Mappe zählt", ((await seite.locator("#hud-mappe .hud-zahl").textContent()) || "") === "0");
+const ebenenLage = () => seite.evaluate(() => document.querySelector("#buehne .ebene-figuren").style.transform);
+const ebenenLage1 = await ebenenLage();
+await warte(400);
+ok("Parallaxe läuft in der Vollbild-Bühne weiter", !!ebenenLage1 && ebenenLage1 !== (await ebenenLage()), ebenenLage1);
+let blinktHud = await ohneBlinken("#hud");
+ok("HUD: nichts blinkt", !blinktHud.length, blinktHud.join(", "));
+await warte(2600);                                      /* Klickfelder wieder ruhig */
+await schuss("hud");
+await seite.locator("#hud-menue").click();
+await warte(250);
+ok("≡ öffnet das Menü", await seite.locator("#menue-hof.an").isVisible());
+const menueText = (await seite.locator("#menue-hof").textContent()) || "";
+ok("Menü: Fortsetzen · Neues Spiel · Sprache · Vollbild · Info & Quellen",
+   ["Fortsetzen", "Neues Spiel", "Sprache", "Deutsch", "English", "Русский", "Vollbild", "Info & Quellen"].every((t) => menueText.includes(t)),
+   menueText.slice(0, 160));
+ok("Menü: Vollbild steht auf „an“", await seite.evaluate(() =>
+  document.querySelector("#menue-vollbild").getAttribute("aria-pressed") === "true"));
+let zuKleinM = await fingergross("#menue-hof");
+ok("Menü: Knöpfe fingergroß", !zuKleinM.length, zuKleinM.join(", "));
+let blinktM = await ohneBlinken("#menue-hof");
+ok("Menü: nichts blinkt", !blinktM.length, blinktM.join(", "));
+await schuss("menue");
+await seite.keyboard.press("s");
+await warte(200);
+ok("Solange das Menü offen ist, erreichen Tasten das Spiel nicht (S öffnet keinen Stand)",
+   (await seite.locator("#stand-hof.an").count()) === 0);
+await seite.locator("#menue-neu").click();
+await warte(200);
+ok("Neues Spiel fragt erst nach", await seite.locator("#frage-neu-hof.an").isVisible() &&
+   /von vorn/.test((await seite.locator("#frage-neu-hof").textContent()) || ""));
+await seite.locator("#frage-nein").click();
+await warte(200);
+ok("Abbrechen: Rückfrage zu, Menü offen, Spielstand bleibt",
+   (await seite.locator("#frage-neu-hof.an").count()) === 0 && await seite.locator("#menue-hof.an").isVisible() &&
+   await seite.evaluate(() => !!window.localStorage.getItem("nachtdienst-1")));
+await seite.locator("#menue-info").click();
+await warte(250);
+ok("Info & Quellen öffnet aus dem Menü", await seite.locator("#info-hof.an").isVisible());
+const quellen = await seite.locator("#info-hof .info-quelle").allTextContents();
+ok("Info: drei Datenquellen, jede mit Lizenz",
+   quellen.length === 3 && /LUDB/.test(quellen[0]) && /ODC-By 1\.0/.test(quellen[0]) &&
+   /PTB-XL/.test(quellen[1]) && /CC BY 4\.0/.test(quellen[1]) &&
+   /Chapman-Shaoxing/.test(quellen[2]) && /Ningbo/.test(quellen[2]) && /CC BY 4\.0/.test(quellen[2]), quellen.join(" | ").slice(0, 200));
+ok("Info: Namensnennung je Quelle (Autoren, PhysioNet)",
+   /Kalyakulina/.test(quellen[0]) && /Wagner/.test(quellen[1]) && /Zheng/.test(quellen[2]) && quellen.every((q) => /PhysioNet/.test(q)));
+const infoText = (await seite.locator("#info-hof").textContent()) || "";
+ok("Info: Lernspiel, kein Medizinprodukt", /Lernspiel zum EKG/.test(infoText) && /Kein Medizinprodukt/.test(infoText));
+let zuKleinI = await fingergross("#info-hof");
+ok("Info: Knöpfe fingergroß", !zuKleinI.length, zuKleinI.join(", "));
+await schuss("info");
+await seite.keyboard.press("Escape");
+await warte(200);
+ok("Escape schließt Info & Quellen, das Menü bleibt",
+   (await seite.locator("#info-hof.an").count()) === 0 && await seite.locator("#menue-hof.an").isVisible());
+await seite.keyboard.press("Escape");
+await warte(200);
+ok("Escape schließt das Menü", (await seite.locator("#menue-hof.an").count()) === 0);
+await seite.keyboard.press("Escape");
+await warte(200);
+ok("Escape öffnet das Menü, wenn nichts anderes offen ist", await seite.locator("#menue-hof.an").isVisible());
+await seite.locator("#menue-weiter").click();
+await warte(200);
+ok("„Fortsetzen“ schließt das Menü, die Bühne ist wieder bedienbar",
+   (await seite.locator("#menue-hof.an").count()) === 0 && await seite.evaluate(() => !document.getElementById("flaeche").hasAttribute("inert")));
+
 /* Antwort im laufenden Dialog wählen (Text muss enthalten sein) */
 async function antworte(teil) {
   await seite.locator(".dialog-text").click();
@@ -120,7 +269,7 @@ async function antworte(teil) {
 const feld = (id) => seite.locator(`.feld[data-feld="${id}"]`);
 
 /* -------------------------------------------- 1b Stand ganz am Anfang */
-await seite.locator("#kopf-stand").click();
+await seite.locator("#hud-stand").click();
 await warte(400);
 ok("Stand öffnet sich", await seite.locator("#stand-hof.an").isVisible());
 const offen0 = await seite.locator("#stand-hof .offen li").allTextContents();
@@ -245,7 +394,7 @@ await warte(400);
 ok("Befund PQ in der Mappe", await seite.evaluate(() => window.Mappe.hat("b-pq")));
 
 /* ---------------------------------------------------------- 6 Mappe und Vergleich */
-await seite.locator("#kopf-mappe").click();
+await seite.locator("#hud-mappe").click();
 await warte(600);
 ok("Mappe offen mit drei Karten", (await seite.locator(".mappe .karte").count()) === 3);
 ok("EKG auf den Karten", (await seite.locator(".mappe .karte-ekg").count()) >= 2);
@@ -258,8 +407,11 @@ await seite.locator(".mappe .vergleich").click();
 await warte(700);
 ok("Zwei Karten nebeneinander", (await seite.locator(".mappe-vergleich.an canvas").count()) === 2);
 await schuss("vergleich");
-await seite.locator(".mappe .zu").click();
+await seite.keyboard.press("Escape");                      /* Escape schließt die Mappe — und öffnet nicht das Menü */
 await warte(300);
+ok("Escape schließt die Befundmappe, kein Menü",
+   (await seite.locator(".mappe.an").count()) === 0 && (await seite.locator("#menue-hof.an").count()) === 0);
+ok("HUD: Mappe zählt drei Befunde", ((await seite.locator("#hud-mappe .hud-zahl").textContent()) || "") === "3");
 
 /* ---------------------------------------------------------- 7 Dialog mit Bedingung */
 /* Ohne Marlenes Bericht bleibt der Flur zu — auch mit drei Befunden in der Mappe. */
@@ -287,7 +439,7 @@ await dialogDurch();
 ok("Monitorzimmer freigegeben", await seite.evaluate(() => window.Spiel.hat("monitor_frei")));
 
 /* -------------------------------------------- 7b Stand mit drei Befunden */
-await seite.locator("#kopf-stand").click();
+await seite.locator("#hud-stand").click();
 await warte(400);
 const habe = await seite.locator("#stand-hof .hat li").allTextContents();
 ok("Stand zählt die Befunde auf", habe.length >= 3, habe.length + " Einträge");
@@ -459,6 +611,14 @@ const gespeichert = await seite.evaluate(() => {
 });
 ok("Zustand vor dem Neuladen gespeichert (Raum/Befunde)", gespeichert === "monitor/4", gespeichert);
 await seite.reload();
+await seite.locator("#titel").waitFor({ state: "visible", timeout: 5000 });
+const titelStand = (await seite.locator("#titel .titel-stand").count())
+  ? ((await seite.locator("#titel .titel-stand").textContent()) || "") : "";
+ok("Nach dem Neuladen: Titel bietet „Weiterspielen“ mit dem gespeicherten Stand",
+   (await seite.locator("#titel-weiter").count()) === 1 && /09:\d\d/.test(titelStand) && /\b4\b/.test(titelStand), titelStand);
+ok("Vor „Weiterspielen“ läuft nichts (kein Dialog, keine Szene)",
+   (await seite.locator(".dialog.an").count()) === 0 && await seite.evaluate(() => !window.Szene.aktueller()));
+await vomTitel();
 await warte(1200);
 const nachLaden = await seite.evaluate(() => ({
   raum: window.Szene && window.Szene.aktueller(),
@@ -484,7 +644,7 @@ ok("Kein Auftakt bei Fortsetzung", nachLaden.dialogOffen === 0, nachLaden.dialog
 await schuss("nach_neuladen");
 
 /* --------------------------------------------------- 9b Hotspots zeigen */
-await seite.locator("#kopf-zeigen").click();
+await seite.locator("#hud-hinweis").click();
 await warte(300);
 ok("Hotspot-Hilfe schaltet sich ein", await seite.evaluate(
   () => document.querySelector(".felder").classList.contains("zeigen")));
@@ -566,7 +726,7 @@ const rueckText = async (sel) => ((await seite.locator(sel + " .rueck").textCont
 
 ok("K2: Falk hat den Auftrag gegeben", await seite.evaluate(() => window.Spiel.hat("k2_auftrag")));
 ok("K2: Neues Feld an der Monitorwand", (await feld("wand").count()) === 1);
-await seite.locator("#kopf-stand").click();
+await seite.locator("#hud-stand").click();
 await warte(400);
 const offenK2 = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
 ok("K2: Stand nennt den Auftrag", /drei Schirme/.test(offenK2), offenK2.slice(0, 140));
@@ -677,7 +837,7 @@ let z = await zustand();
 ok("A: Ziel erreicht (Wahl: Arzt)", z.marken.k2_fertig && z.werte.ampel === "arzt", JSON.stringify(z.werte.ampel));
 ok("A: fünf Befunde (Medikamente kamen über Dr. Falk)", z.befunde.length === 5, String(z.befunde.length));
 
-await seite.locator("#kopf-stand").click();
+await seite.locator("#hud-stand").click();
 await warte(400);
 const fussA = (await seite.locator("#stand-hof .stand-fuss").textContent()) || "";
 const hatA = (await seite.locator("#stand-hof .hat li").allTextContents()).join(" | ");
@@ -688,7 +848,7 @@ await seite.locator("#stand-hof .zu").click();
 await warte(300);
 
 /* Vergleich der neuen Karte mit dem Aufnahme-EKG */
-await seite.locator("#kopf-mappe").click();
+await seite.locator("#hud-mappe").click();
 await warte(600);
 const titel = await seite.locator(".mappe .karte h3").allTextContents();
 const iMon = titel.findIndex((t) => /^Monitor/.test(t)), iPq = titel.findIndex((t) => /^PQ-Zeit/.test(t));
@@ -730,7 +890,7 @@ ok("A: großer Monitor nennt Sinusrhythmus, langsam — nicht „Sinusbradykardi
 
 /* ------------------------------------------------------------ Weg B */
 await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), vorZentrale);
-await seite.reload();
+await neuLaden();
 await warte(2000);
 ok("B: wieder vor der Zentrale", !(await zustand()).marken.k2_bett && (await seite.locator(".dialog.an").count()) === 0);
 await feld("schirm").click();                                /* der große Monitor führt auch hin */
@@ -758,7 +918,7 @@ ok("B: Ampel öffnet sich", await seite.locator("#ampel-hof.an").isVisible());
 await seite.locator("#ampel-hof .zu").click();               /* weggeklickt: keine Sackgasse */
 await warte(400);
 ok("B: „Zurück“ schließt die Ampel", (await seite.locator("#ampel-hof.an").count()) === 0);
-await seite.locator("#kopf-stand").click();
+await seite.locator("#hud-stand").click();
 await warte(400);
 const offenB = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
 ok("B: Stand erinnert an die Klingel", /hat geklingelt/.test(offenB), offenB.slice(-90));
@@ -786,7 +946,7 @@ ok("B: Karte nennt die Frequenz als Merkmal",
 
 /* ------------------------------------------------------------ Weg C */
 await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachFund);
-await seite.reload();
+await neuLaden();
 await warte(2600);
 ok("C: beim Betreten klingelt das Bett (wieder)", await seite.locator("#ampel-hof.an").isVisible());
 await seite.locator("#ampel-hof .ampel-los").click();
@@ -801,7 +961,7 @@ ok("C: Ziel erreicht (Pacer)", z.marken.k2_fertig && z.werte.ampel === "pacer", 
 
 /* ------------------------------------------------------------ Weg D */
 await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachFund);
-await seite.reload();
+await neuLaden();
 await warte(2600);
 await seite.keyboard.press("Escape");                        /* Escape schließt auch die Ampel */
 await warte(300);
@@ -823,18 +983,60 @@ ok("Kapitel 2: vier Wege, alle am offenen Ende", true);
 for (const [kurz, probe] of [["en", "Findings"], ["ru", "Папка находок"]]) {
   await seite.evaluate((k) => { window.localStorage.setItem("nachtdienst-sprache", k); }, kurz);
   await seite.reload();
+  await seite.locator("#titel").waitFor({ state: "visible", timeout: 5000 });
+  const titelKnopf = (await seite.locator("#titel-weiter").count())
+    ? ((await seite.locator("#titel-weiter").textContent()) || "").trim() : "(kein „Weiterspielen“)";
+  ok("Sprache " + kurz + ": Titel übersetzt", titelKnopf === { en: "Continue", ru: "Продолжить" }[kurz], titelKnopf);
+  await vomTitel();
   await warte(900);
-  const kopf = (await seite.locator("#kopf-mappe").textContent()) || "";
+  const kopf = (await seite.locator("#hud-mappe").textContent()) || "";
   ok("Sprache " + kurz + " schaltet um", kopf.includes(probe), kopf.trim());
   await schuss("sprache_" + kurz);
 }
 await seite.evaluate(() => { window.localStorage.setItem("nachtdienst-sprache", "de"); });
-await seite.reload();
+await neuLaden();
 await warte(900);
+
+/* ------------------------------------------------- 9d Sprache aus dem Menü
+   Der Wechsel lädt neu; danach geht es ohne Titel weiter, mit offenem Menü in der neuen Sprache. */
+const vorWechsel = await zustand();
+await seite.locator("#hud-menue").click();
+await warte(250);
+await Promise.all([seite.waitForEvent("load"), seite.locator('#menue-hof .knopf.sprache[data-sprache="en"]').click()]);
+await warte(900);
+ok("Menü-Sprachwechsel: kein Titel, das Menü ist wieder offen",
+   !(await seite.locator("#titel").isVisible()) && await seite.locator("#menue-hof.an").isVisible());
+const menueEn = (await seite.locator("#menue-hof").textContent()) || "";
+ok("Menü-Sprachwechsel: Menü und HUD auf Englisch",
+   /Resume/.test(menueEn) && /About & sources/.test(menueEn) &&
+   ((await seite.locator("#hud-mappe").textContent()) || "").includes("Findings") &&
+   await seite.evaluate(() => document.documentElement.lang === "en" && window.localStorage.getItem("nachtdienst-sprache") === "en"),
+   menueEn.slice(0, 120));
+ok("Menü-Sprachwechsel: English ist markiert",
+   (await seite.locator('#menue-hof .knopf.sprache[aria-pressed="true"]').textContent()) === "English");
+const nachWechsel = await zustand();
+ok("Menü-Sprachwechsel: Spielstand bleibt (Raum, Zeit, Befunde)",
+   nachWechsel.raum === vorWechsel.raum && nachWechsel.zeit === vorWechsel.zeit && nachWechsel.befunde.length === vorWechsel.befunde.length,
+   vorWechsel.raum + "/" + vorWechsel.befunde.length + " → " + nachWechsel.raum + "/" + nachWechsel.befunde.length);
+await schuss("menue_englisch");
+await seite.locator("#menue-info").click();
+await warte(250);
+const infoEn = (await seite.locator("#info-hof").textContent()) || "";
+ok("Info auf Englisch, Quellen unverändert", /Not a medical device/.test(infoEn) && /ODC-By 1\.0/.test(infoEn) && /CC BY 4\.0/.test(infoEn));
+await seite.locator("#info-hof .zu").click();
+await warte(200);
+await Promise.all([seite.waitForEvent("load"), seite.locator('#menue-hof .knopf.sprache[data-sprache="de"]').click()]);
+await warte(900);
+ok("Menü-Sprachwechsel zurück auf Deutsch", /Fortsetzen/.test((await seite.locator("#menue-hof").textContent()) || "") &&
+   ((await seite.locator("#hud-mappe").textContent()) || "").includes("Befundmappe"));
+await seite.locator("#menue-weiter").click();
+await warte(300);
+ok("Nach dem Sprachwechsel geht das Spiel weiter", (await seite.locator("#menue-hof.an").count()) === 0 &&
+   await seite.evaluate(() => window.Szene.aktueller()) === vorWechsel.raum);
 
 /* ---------------------------------------------------------- 10 Zurück, Sperre */
 await seite.evaluate(() => { window.localStorage.clear(); });
-await seite.reload();
+await neuLaden();
 await warte(1200);
 await dialogDurch();
 const gesperrt = seite.locator("#buehne .felder polygon.ausgang").first();
@@ -885,7 +1087,7 @@ await schuss("rueckweg_falk");
 await feld("wand").click(); await warte(300);
 ok("R: die Monitorwand verweist vor dem Auftrag auf Falk",
    (await seite.locator("#schirme-hof.an").count()) === 0 && /Falk/.test(await letzteMeldung()), await letzteMeldung());
-await seite.locator("#kopf-stand").click(); await warte(400);
+await seite.locator("#hud-stand").click(); await warte(400);
 const offenR = (await seite.locator("#stand-hof .offen li").allTextContents()).join(" | ");
 ok("R: Stand nennt beide Zahlen und den Wagen", /zwei Zahlen/.test(offenR) && /Wagen/.test(offenR), offenR.slice(0, 160));
 ok("R: Stand ohne tote Fäden aus der Aufnahme", !/Mit Herrn Baum selbst|Marlene weiß|Frag ihn/.test(offenR), offenR.slice(0, 160));
@@ -922,7 +1124,7 @@ ok("R: Auftrag mit beiden Zahlen", await seite.evaluate(() => window.Spiel.hat("
 
 /* Nur die PQ-Zeit: Falk fragt nach der Frequenz. */
 await seite.evaluate((s) => window.localStorage.setItem("nachtdienst-1", s), nachRhythmus);
-await seite.reload(); await warte(1200);
+await neuLaden(); await warte(1200);
 await zirkel("PQ-Zeit", wahrheit.p0, wahrheit.q0);
 await feld("marlene").click(); await warte(450);
 await antworte("Ich hab gemessen");
@@ -936,6 +1138,79 @@ ok("R2: Falk fragt nach der Frequenz", /wie langsam/.test(await dialogLesen()));
 await antworte("Hol ich nach");
 await dialogDurch();
 ok("R2: zurück zum Wagen, kein Auftrag", !(await seite.evaluate(() => window.Spiel.hat("k2_auftrag"))));
+
+/* ------------------------------------------------- 12 Vollbild-Bühne: mehrere Größen, Hochformat
+   Je Größe ein frischer Browserkontext (eigener Speicher): Titel, „Neues Spiel“, dann messen. Die Bühne ist das
+   größte 16:9-Rechteck im Fenster, mittig; der Rest ist Tinte. Abweichung höchstens 1 px. */
+async function frischeSeite(b, h) {
+  const ctx = await browser.newContext({ viewport: { width: b, height: h }, deviceScaleFactor: 1 });
+  const p = await ctx.newPage();
+  const tag = b + "×" + h;
+  p.on("console", (m) => { if (m.type() === "error") fehler.push("Konsole (" + tag + "): " + m.text().slice(0, 160)); });
+  p.on("pageerror", (e) => fehler.push("Seitenfehler (" + tag + "): " + String(e).slice(0, 200)));
+  await p.addInitScript(() => { try { window.localStorage.setItem("nachtdienst-sprache", "de"); } catch (e) {} });
+  await p.goto("file://" + DATEI);
+  await p.waitForTimeout(600);
+  return { ctx, p, tag };
+}
+for (const [b, h] of [[1340, 900], [1024, 768], [1366, 1024], [1920, 1080]]) {
+  const { ctx, p, tag } = await frischeSeite(b, h);
+  ok(tag + ": Titelbildschirm, kein Hochformat-Hinweis",
+     await p.locator("#titel").isVisible() && !(await p.locator("#quer-hinweis").isVisible()));
+  const bildT = await p.evaluate(() => { const r = document.querySelector("#titel .titel-bild").getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; });
+  await p.locator("#titel-neu").click();
+  await p.waitForTimeout(900);
+  const m = await p.evaluate(() => {
+    const r = document.getElementById("buehne").getBoundingClientRect();
+    const e = document.scrollingElement;
+    const knoepfe = [...document.querySelectorAll("#hud button")].map((k) => { const q = k.getBoundingClientRect();
+      return Math.min(q.width, q.height) >= 44 && q.left >= r.left && q.right <= r.right && q.top >= r.top && q.bottom <= r.bottom; });
+    return { l: r.left, t: r.top, w: r.width, h: r.height, sw: e.scrollWidth, sh: e.scrollHeight,
+             grund: getComputedStyle(document.body).backgroundColor, html: getComputedStyle(document.documentElement).backgroundColor,
+             rand: getComputedStyle(document.getElementById("buehne")).borderTopWidth, knoepfe };
+  });
+  const sollB = Math.min(b, h * 16 / 9), sollH = Math.min(h, b * 9 / 16);
+  const nah = (x, y) => Math.abs(x - y) <= 1;
+  ok(tag + ": Bühne füllt das Fenster in 16:9, Letterbox mittig (≤ 1 px)",
+     nah(m.w, sollB) && nah(m.h, sollH) && nah(m.l, (b - sollB) / 2) && nah(m.t, (h - sollH) / 2) && (nah(m.w, b) || nah(m.h, h)),
+     [m.l, m.t, m.w, m.h].map((x) => Math.round(x * 10) / 10).join(", ") + " soll " + [sollB, sollH].map(Math.round).join("×"));
+  ok(tag + ": Titelbild liegt genau auf der Bühne",
+     nah(bildT[0], m.l) && nah(bildT[1], m.t) && nah(bildT[2], m.w) && nah(bildT[3], m.h), bildT.map(Math.round).join(","));
+  ok(tag + ": kein Scrollen", m.sw <= b && m.sh <= h, m.sw + "×" + m.sh);
+  ok(tag + ": Letterbox in Tinte #1E2A30, kein Bühnenrahmen",
+     m.grund === "rgb(30, 42, 48)" && m.html === "rgb(30, 42, 48)" && m.rand === "0px", m.grund + " / " + m.rand);
+  ok(tag + ": HUD-Knöpfe ≥ 44 px, über der Bühne", m.knoepfe.length === 4 && m.knoepfe.every(Boolean), JSON.stringify(m.knoepfe));
+  const resteP = await p.evaluate(() => [...document.body.children].filter((e) => e.tagName !== "SCRIPT" && e.id !== "flaeche" &&
+    getComputedStyle(e).display !== "none" && e.getBoundingClientRect().height > 0 &&
+    !e.classList.contains("dialog") && !e.classList.contains("meldungen")).map((e) => e.id || e.className));
+  ok(tag + ": außer der Bühne nichts sichtbar (keine Fuß- oder Seitenleiste)", !resteP.length, resteP.join(", "));
+  if (b === 1366) {
+    for (let i = 0; i < 8 && (await p.locator(".dialog.an").count()); i++) {
+      await p.locator(".dialog-text").click(); await p.waitForTimeout(150);
+      const w = p.locator(".dialog-antwort.weiter");
+      if (await w.count()) { await w.first().click(); await p.waitForTimeout(300); }
+    }
+    await p.waitForTimeout(2600);
+    await p.screenshot({ path: `${BILDER}/ipad_quer.png` });
+  }
+  await ctx.close();
+}
+{
+  const { ctx, p, tag } = await frischeSeite(768, 1024);
+  const quer = p.locator("#quer-hinweis");
+  ok(tag + " (Hochformat): ruhiger Hinweis „Bitte quer halten“ mit Symbol",
+     await quer.isVisible() && /Bitte quer halten/.test((await quer.textContent()) || "") &&
+     (await p.locator("#quer-hinweis svg").count()) === 1 && !(await ohneBlinkenAuf(p, "#quer-hinweis")).length);
+  await p.screenshot({ path: `${BILDER}/hochformat.png` });
+  await p.setViewportSize({ width: 1024, height: 768 });
+  await p.waitForTimeout(300);
+  ok("Gedreht auf 1024×768: Hinweis weg, Titel da", !(await quer.isVisible()) && await p.locator("#titel").isVisible());
+  await ctx.close();
+}
+async function ohneBlinkenAuf(p, sel) {
+  return p.evaluate((s) => [...document.querySelectorAll(s + ", " + s + " *")]
+    .map((e) => getComputedStyle(e).animationName).filter((n) => n && n !== "none"), sel);
+}
 
 await browser.close();
 

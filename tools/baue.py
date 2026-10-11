@@ -16,7 +16,8 @@ BAU = os.path.join(WURZEL, "bau")
 DATEN = os.path.join(WURZEL, "data") if os.path.isdir(os.path.join(WURZEL, "data")) else BAU
 
 SKRIPTE = ["sprache.js", "ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js",
-           "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js", "raetsel_ampel.js", "spiel.js"]
+           "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js", "raetsel_ampel.js", "spiel.js",
+           "huelle.js"]
 
 
 def lies(pfad):

@@ -18,7 +18,7 @@ WURZEL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(WURZEL, "web")
 TEXT = os.path.join(WURZEL, "text")
 DATEIEN = ["spiel.js", "dialog.js", "mappe.js", "stand.js", "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js",
-           "raetsel_ampel.js", "szene.js"]
+           "raetsel_ampel.js", "szene.js", "huelle.js"]
 
 # Felder, deren Inhalt der Spieler zu sehen bekommt
 FELDER = ["text", "warum", "titel", "auftrag", "name", "wie", "anfang", "ende",
