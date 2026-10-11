@@ -273,10 +273,17 @@ def schirme():
     Uhrzeigersinn ab oben links, dazu das umschließende Rechteck und die Ebene — art/szenen/<raum>/schirme.json.
     Das Spiel legt dort seine Leinwand mit der laufenden Kurve hin (docs/ART_BIBLE.md §6: nie gemalt)."""
     aus = {}
+    cam = kamera.matrix_world.translation
     for name, (objname, ebene) in wz.SCHIRME.items():
         o = bpy.data.objects[objname]
-        ecken = [Vector(v) for v in o.bound_box]; ymin = min(v.y for v in ecken)
-        vorn = [o.matrix_world @ v for v in ecken if abs(v.y - ymin) < 1e-6]
+        ecken = [Vector(v) for v in o.bound_box]
+        # Bildfläche = die große Seite der dünnen Kiste, die der Kamera näher liegt (an der Rückwand die −y-Seite;
+        # an einer Seitenwand — Whiteboard im Lehrsaal — die Seite zum Raum). Die Drehung einer Kiste steckt nach
+        # dem Bauen im Netz, der Kasten ist weltachsenparallel.
+        duenn = min(range(3), key=lambda i: max(v[i] for v in ecken) - min(v[i] for v in ecken))
+        seiten = [[o.matrix_world @ v for v in ecken if abs(v[duenn] - w) < 1e-6]
+                  for w in (min(v[duenn] for v in ecken), max(v[duenn] for v in ecken))]
+        vorn = min(seiten, key=lambda s: (sum(s, Vector()) / len(s) - cam).length)
         pts = [(p.x * B, (1 - p.y) * H) for p in (world_to_camera_view(sc, kamera, v) for v in vorn)]
         mx, my = sum(p[0] for p in pts) / 4, sum(p[1] for p in pts) / 4
         pts.sort(key=lambda p: math.atan2(p[1] - my, p[0] - mx))          # im Uhrzeigersinn (y nach unten)

@@ -29,6 +29,8 @@ EINSTELLUNG = {
     # 09:15, kühl, weicher. AO bleibt aus: der helle, offene Raum erreicht nirgends tiefe Verdeckung
     # (Minimum ~0,6), die Schwelle schnitt nur Flecken an Wandecken aus — dafür Schatten von oben.
     "monitor": dict(licht="#FBFDF8", anteil=0.42, schwelle=0.30, weich=1.2, ao=0.0, kontakt=True),
+    # 08:10, neutrales Vormittagslicht von rechts, harte Fensterflecken auf Boden, Wagen und Liege; Schatten von oben
+    "lehrsaal": dict(licht="#FFFBEF", anteil=0.42, schwelle=0.32, weich=0.8, ao=0.0, kontakt=True),
 }
 
 
