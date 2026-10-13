@@ -82,7 +82,9 @@ def multipart(felder, dateien):
 
 
 def openai_prompt(a, style, n_portraits, n_referenz):
-    """Erklärt dem Modell die Reihenfolge der Eingaben, dann die Stilphrase."""
+    """Erklärt dem Modell die Reihenfolge der Eingaben, dann die Stilphrase. Mit --roh nur der eigene Prompt
+    (z. B. ein fertiges Bild nur neu ausleuchten)."""
+    if a.roh: return a.prompt
     k = 1; teile = [f"Image {k} is the scene template: a flat rendered layout of the scene with the correct light and shadow, computed by a renderer."]
     if n_portraits:
         if n_portraits == 1: teile.append(f"Image {k + 1} is the portrait of the person in the scene: draw exactly this person (same face, hair, glasses, skin and clothing colours).")
@@ -247,6 +249,7 @@ def main():
     ap.add_argument("--image", required=True, help="unser Render (PNG/JPG): die Vorlage mit Aufbau und Licht")
     ap.add_argument("--depth", help="Tiefenkarte aus Blender (general, ControlNet depth)")
     ap.add_argument("--prompt", default="", help="zusätzliche Beschreibung der Szene")
+    ap.add_argument("--roh", action="store_true", help="openai: nur --prompt senden, ohne Erklärung der Eingaben und ohne Stilphrase")
     ap.add_argument("--style", default=None, help="Voreinstellung oder Datei mit der Stilphrase (openai: stil/szenenbild.txt, fal: print_night)")
     ap.add_argument("--negative", default="text, letters, numbers, signage, watermark, ECG trace, people, photo-realistic, blurry")
     ap.add_argument("--seed", type=int, default=7)

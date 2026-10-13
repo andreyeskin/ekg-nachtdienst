@@ -1,0 +1,47 @@
+{
+ "modus": "openai",
+ "endpunkt": "https://api.openai.com/v1/images/edits",
+ "modell": "gpt-image-2.5-sunburst",
+ "prompt": "Edit this illustration. Keep everything exactly as it is: composition, camera, people, faces, hair, clothing, hands, props, colours and drawing style. Change ONLY the lighting so that it is physically consistent. The only sunlight comes from the low rising sun visible in the window on the back wall behind the nurse, so sunlight travels from that window toward the viewer. Remove every light stripe and bright patch from the right-hand wall and from the counter top that could not come from that window. The venetian blind casts long, warm, soft-edged light stripes on the floor that run from the window toward the viewer. The nurse is backlit: a warm rim light on her hair bun, ear and shoulders; her face is in soft shade, gently lit by the desk lamp on the left, which casts a warm pool of light on the counter. The man on the bench on the right gets warm light only on the side facing the window. Shadows of the thermos, the folder and the pen fall toward the viewer. No text anywhere, the clock has no hands, all screens stay dark.",
+ "parameter": {
+  "n": "1",
+  "size": "1536x864",
+  "quality": "high",
+  "output_format": "png",
+  "stream": "true",
+  "partial_images": "2"
+ },
+ "eingaben": [
+  {
+   "feld": "image[]",
+   "datei": "art/referenz/chatgpt_aufnahme_marlene.png",
+   "bytes": 1826164
+  }
+ ],
+ "stil": "gen/blender/stil/szenenbild.txt",
+ "datum": "2026-10-13T19:20",
+ "ausgaben": [
+  "art/szenenbilder/aufnahme_tresen_neu_beleuchtet/openai_gpt-image-2.5-sunburst_20261013-1920.png"
+ ],
+ "verbrauch": {
+  "input_tokens": 1747,
+  "input_tokens_details": {
+   "image_tokens": 1508,
+   "text_tokens": 239
+  },
+  "output_tokens": 1245,
+  "output_tokens_details": {
+   "image_tokens": 1245,
+   "text_tokens": 0
+  },
+  "total_tokens": 2992
+ },
+ "antwort": {
+  "size": "1536x864",
+  "quality": "high",
+  "output_format": "png",
+  "background": "opaque",
+  "created": null
+ },
+ "dauer_s": 34
+}

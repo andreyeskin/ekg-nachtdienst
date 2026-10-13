@@ -252,3 +252,17 @@ vermerkt); der Kuli steckt wie im Porträt in der Brusttasche, nicht hinterm Ohr
 Offen: GPT malt die Streifen blass und nie auf Wagen oder Herrn K.; der Versatz bleibt bei 7 %, weil die gemalten Streifen auf
 der Ablage weiter links liegen als Blenders. Marlenes Gesicht bleibt frontal hell statt im Halbschatten, der Gegenlicht-Saum
 ist nur angedeutet (Blenders Sonne erreicht sie nicht, siehe oben).
+
+### Szenenbild neu ausleuchten (bewährt, 13.10.2026)
+
+Für Szenenbilder ohne Klickzonen ist ein zweiter Weg oft besser als die Blender-Vorlage: ein gut komponiertes
+Bild (z. B. aus ChatGPT, `art/referenz/`) mit GPT Image **nur neu ausleuchten** — `--roh` schickt ausschließlich den
+eigenen Prompt; darin Komposition, Personen, Hände und Stil ausdrücklich festhalten und die Lichtführung genau
+beschreiben (Quelle, Richtung, Streifen, Gegenlicht, Lampeninsel, Schattenrichtung). Beispiel und Prompt:
+`art/szenenbilder/aufnahme_tresen_neu_beleuchtet/` (JSON neben dem Bild).
+
+```bash
+python3 gen/blender/malen.py openai --roh --image art/referenz/chatgpt_aufnahme_marlene.png \
+        --name aufnahme_tresen_neu_beleuchtet --prompt "Edit this illustration. Keep everything exactly … Change ONLY the lighting …"
+```
+
