@@ -95,6 +95,29 @@ def openai_prompt(a, style, n_portraits, n_referenz):
     return " ".join(teile)
 
 
+def lies_stream(r):
+    """Server-Sent Events der Bild-API lesen. Jedes Ereignis mit b64_json ist ein Bild; das letzte (bzw. das mit
+    „completed" im Typ) ist das fertige. Gibt eine Antwort in der Form der Nicht-Stream-Antwort zurück."""
+    letztes, fertig, usage, typen = None, None, None, []
+    for zeile in r:
+        zeile = zeile.decode("utf-8", "replace").strip()
+        if not zeile.startswith("data:"): continue
+        daten = zeile[5:].strip()
+        if not daten or daten == "[DONE]": continue
+        try: ev = json.loads(daten)
+        except ValueError: continue
+        typ = ev.get("type", ""); typen.append(typ)
+        if ev.get("error"): return {"error": ev["error"]}
+        if ev.get("usage"): usage = ev["usage"]
+        if ev.get("b64_json"):
+            letztes = ev
+            if "completed" in typ: fertig = ev
+        print("  Ereignis", typ, "Zwischenbild" if "partial" in typ else "", flush=True)
+    bild = fertig or letztes
+    return {"data": [{"b64_json": bild["b64_json"]}] if bild else [], "usage": usage,
+            "ereignisse": typen, **({k: bild.get(k) for k in ("size", "quality", "output_format", "background", "created")} if bild else {})}
+
+
 def openai(a):
     key = os.environ.get("OPENAI_API_KEY")
     if not key and os.environ.get("OPENAI_PROXY_AUTH", "1") == "1" and not a.dry_run:
@@ -110,6 +133,10 @@ def openai(a):
     felder = [("model", a.model), ("prompt", prompt), ("n", str(a.n)), ("size", a.size), ("quality", a.quality), ("output_format", "png")]
     if a.model in OPENAI_TREUE and a.input_fidelity: felder.append(("input_fidelity", a.input_fidelity))
     if a.background: felder.append(("background", a.background))
+    if a.stream:
+        # Der Proxy der Cloud-Umgebung bricht stille Verbindungen nach etwa 30 s ab; im Stream-Modus schickt
+        # OpenAI Zwischenbilder (Server-Sent Events), die Verbindung bleibt aktiv.
+        felder += [("stream", "true"), ("partial_images", str(a.partial_images))]
     dateien = [("image[]", p) for p in [a.image] + portraits + referenz]
     name = a.name or os.path.basename(os.path.dirname(os.path.abspath(a.image))) or "szenenbild"
     ziel_dir = os.path.join(WURZEL, "art", "szenenbilder", name); kennung = f"openai_{a.model}_{datetime.datetime.now().strftime('%Y%m%d-%H%M')}"
@@ -127,7 +154,8 @@ def openai(a):
                                  headers={"Authorization": f"Bearer {key}", "Content-Type": typ, "Content-Length": str(len(body))})
     t = time.time()
     try:
-        with urllib.request.urlopen(req, timeout=a.timeout) as r: antwort = json.loads(r.read().decode("utf-8"))
+        with urllib.request.urlopen(req, timeout=a.timeout) as r:
+            antwort = lies_stream(r) if a.stream else json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         print("OpenAI antwortete", e.code, e.read().decode("utf-8", "replace")[:1500]); sys.exit(1)
     bilder = antwort.get("data") or []
@@ -239,6 +267,8 @@ def main():
     ap.add_argument("--n", type=int, default=1, help="openai: Anzahl Bilder")
     ap.add_argument("--name", help="openai: Zielordner art/szenenbilder/<name>/ (Standard: Ordnername der Vorlage)")
     ap.add_argument("--timeout", type=int, default=600, help="openai: Sekunden")
+    ap.add_argument("--kein-stream", dest="stream", action="store_false", help="openai: ohne Stream (der Proxy der Cloud-Umgebung bricht dann Bilder > ~30 s mit 502 ab)")
+    ap.add_argument("--partial-images", type=int, default=2, help="openai: Zahl der Zwischenbilder im Stream (0–3)")
     ap.add_argument("--out", help="fal: Zieldatei (PNG)")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
