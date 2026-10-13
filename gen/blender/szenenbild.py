@@ -35,24 +35,34 @@ LINIE = 1.8                # Strichstärke in Pixeln des fertigen Bildes
 # `drehung` ein fester Winkel). Figuren ohne Eintrag stehen wie in figuren.PLATZ.
 EINSTELLUNG = {
     "aufnahme": {
-        # Die Spielerin steht vor dem rechten Ende des Tresens; Marlene ist an dieses Ende gekommen (rechts von Lampe
-        # und PC — von weiter links verdeckten die beiden sie) und reicht die Mappe über die Arbeitsfläche. Das Fenster
-        # liegt rechts hinter ihr, die Sonne tief darin; Wartebank mit Herrn K. und EKG-Wagen rechts. Der Raum ist breit
-        # (Bank 5 m rechts vom Tresen), daher 19 mm — enger ginge nur, wenn Herr K. aus dem Bild fiele.
+        # Ich-Perspektive über den Tresen, nach dem Vorbild art/referenz/chatgpt_aufnahme_marlene.png: Marlene groß links,
+        # reicht die Mappe zur Kamera, hinter ihr das Fenster mit der tiefen Sonne, rechts klein Herr K. auf der Bank, der
+        # EKG-Wagen daneben. Geometrie des Raums: der Tresen (x −4,1…−1,7) liegt ganz links vom Fenster (x −1,25…1,45),
+        # und die Gelenklampe steht am rechten Tresenende (x −2,15). Von einer Kamera rechts der Lampe liegt das Fenster
+        # immer rechts neben Marlene; von einer Kamera links der Lampe hängt der Lampenarm vor ihrem Gesicht. Der
+        # Kompromiss: die Spielerin steht links vor dem Tresen (zwischen PC und Lampe), schaut schräg nach rechts an der
+        # Lampe vorbei; Marlene steht am äußersten rechten Tresenende, die linke Schulter schon über der Wange. So beginnt
+        # das Fenster an ihrer linken Schulter, die Sonnenscheibe steht dicht neben ihr, Herr K. passt auf dem ersten Sitz
+        # (der Bank nächstes Ende zum Fenster) mit 32 mm gerade noch ganz ins Bild. Was Blender für diese Kamera ergibt:
+        # die Sonne (szene.sonne_stellen, nach links-vorn) erreicht hinter dem Tresen nur Marlenes linke Schulter und den
+        # ausgestreckten Arm; Streifen liegen auf dem Wagen, der Fensterbank und dem rechten Ende der Ablage.
         "tresen": dict(
-            kamera=(-1.45, -2.45, 1.62), gier=23.0, neigung=-6.0, brennweite=16.0,
+            kamera=(-2.5, -2.5, 1.58), gier=40.0, neigung=-9.0, brennweite=30.0,
             figuren={
-                "marlene": dict(ort=(-1.95, -0.42, 0.0), haltung="reicht_mappe", blick="kamera", tresen=1.09,
-                                kanne=(-0.16, -0.87, 1.09 + 0.125)),  # Kanne abgestellt auf der Ablage der Sichtblende (1,09 m), vorn links neben der Mappe
+                "marlene": dict(ort=(-1.66, -0.45, 0.0), haltung="reicht_mappe", blick="kamera", tresen=1.09,
+                                kanne_welt=(-2.18, -1.40, 1.09 + 0.125)),  # Kanne (Raumkoordinaten) abgestellt auf der Ablage der Sichtblende (1,09 m), vor der Lampenklemme — links neben der Mappe wie im Vorbild
                 # (nicht auf die Arbeitsfläche dahinter: dort liefe der Blick knapp durch den Spalt zwischen Fase der
                 # Sichtblende und Plattenunterseite, und Freestyle zeichnete die verdeckte Kanne durch die Platte)
-                "herrk": dict(),                                       # wie in PLATZ: dritter Sitz, Tüte daneben
+                "herrk": dict(ort=(1.1, -0.75, 0.0), drehung=-14),   # erster Sitz der Wartereihe (im Spiel: dritter), Tüte daneben
             },
+            # Raumobjekte nur für dieses Szenenbild verschieben (Klickzonen-Gruppen aus szene_aufnahme.HIT, Versatz in
+            # Metern): der EKG-Wagen von vor der Bank unter das rechte Fensterende, die Tüte neben Herrn K.s ersten Sitz.
+            objekte={"wagen": (-0.45, 0.85, 0.0), "tuete": (-1.27, 0.17, 0.0)},
             # Die Sonnenscheibe draußen ist Kulisse (40 m hinter dem Fenster): sie wird so gerückt, dass sie aus dieser
-            # Kamera an dieser Stelle der Fensterebene (x, z in Metern) steht — tief, im rechten Flügel. Das Licht
-            # selbst kommt unverändert aus szene.sonne_stellen().
-            sonne_im_fenster=(0.55, 1.78),
-            lampe_ziel=(-1.9, -1.4, 1.09),        # wohin die Tischlampe leuchtet: Ablage der Sichtblende bei Kanne und Mappe
+            # Kamera an dieser Stelle der Fensterebene (x, z in Metern) steht — tief, dicht neben Marlenes Schulter. Das
+            # Licht selbst kommt unverändert aus szene.sonne_stellen().
+            sonne_im_fenster=(-0.7, 1.52),
+            lampe_ziel=(-1.95, -1.4, 1.09),       # wohin die Tischlampe leuchtet: Ablage der Sichtblende bei Kanne und Mappe
             # Licht im Komposit: Sonne wie komposit.EINSTELLUNG["aufnahme"], dazu die Lampe als warme Insel
             licht=dict(sonne="#FFF0C6", anteil=0.5, schwelle=0.35, weich=0.6, lampe="#FFE3B0", lampe_anteil=0.38,
                        lampe_schwelle=0.18, lampe_weich=6.0, kontakt=True),
@@ -127,13 +137,27 @@ def aufbau(raum, e):
         ort = Vector(p["ort"])
         if p.get("blick") == "kamera":                      # Gesicht (lokal −y) zur Kamera
             d = kam - ort; p["drehung"] = math.degrees(math.atan2(d.x, -d.y)) + p.get("drehung_dazu", 0.0)
+        if name == "marlene" and "kanne_welt" in p:            # Kanne in Raumkoordinaten -> Figurkoordinaten
+            kw = Vector(p["kanne_welt"]) - ort; r = -math.radians(p["drehung"])
+            p["kanne"] = (kw.x * math.cos(r) - kw.y * math.sin(r), kw.x * math.sin(r) + kw.y * math.cos(r), kw.z)
         extra = {k: p[k] for k in ("tresen", "kanne") if k in p and name == "marlene"}
         figs[name] = bau(tuple(ort), drehung=p["drehung"], haltung=p["haltung"], tag=tag, fein=0.0055, **extra)
         print(f"FIGUR {name} ort={tuple(round(v, 2) for v in ort)} drehung={p['drehung']:.1f} haltung={p['haltung']}")
     tuete = [bpy.data.objects[n] for n in ns["HIT"].get("tuete", [])]
     for o in tuete: ef.ZUORDNUNG[o.name] = "tuete"
+    for gruppe, (dx, dy, dz) in e.get("objekte", {}).items():      # Raumobjekte nur für dieses Bild umstellen
+        for n in ns["HIT"].get(gruppe, []):
+            o = bpy.data.objects[n]; o.location = (o.location.x + dx, o.location.y + dy, o.location.z + dz)
+        print(f"OBJEKTE {gruppe} um ({dx:+.2f}, {dy:+.2f}, {dz:+.2f}) verschoben")
     nie = set(wz.PLATZHALTER) - set(ef.ZUORDNUNG)
     aus = set(ns.get("SONNE_AUS", set()))
+    # Tresenplatte fein unterteilen (Subdivision „simple", nur im Szenenbild): aus der Nahkamera ließ Freestyle in einem
+    # schmalen Band Kanten hinter der Platte durch (Hinterkante der Arbeitsfläche, Marlenes Beine, Striche auf der
+    # Ablage); mit der unterteilten Platte (viele kleine statt zwei großer Flächen) hält die Sichtbarkeitsprüfung
+    # dicht. Geometrie und Linienbild der Platte ändern sich nicht (ebene Flächen bleiben eben, keine Falten).
+    platte = bpy.data.objects.get("desk_top")
+    if platte is not None:
+        md = platte.modifiers.new("unterteilen", 'SUBSURF'); md.subdivision_type = 'SIMPLE'; md.levels = md.render_levels = 4
     # Lampe: der Spot sitzt im Lampenkopf und leuchtet auf die Arbeitsfläche vor Marlene (Lampeninsel um Kanne und Mappe).
     # Die Szene stellt ihn für ihre eigene Vorschau anders; hier zählt, was man im Bild sieht.
     kopf = bpy.data.objects.get("lamp_head")
@@ -284,13 +308,17 @@ def rendern(raum, einstellung, e, out, probe=False):
     sichtbar_linie = lambda o: o.name not in nie and not any(m and m.name in ohne_linie for m in o.data.materials)
     sichtbar_sonne = lambda o: o.name not in nie and o.name not in aus
     fein = bpy.data.collections.get("figuren_fein")
-    if probe:   # klein, nur Fläche und Linie: Kamera und Haltung prüfen
+    if probe:   # klein, nur Fläche und Linie: Kamera und Haltung prüfen; mit --licht auch die Sonne (gelb getönt)
         global B, H, UEBER, LINIE; B, H, UEBER, LINIE = B // 4, H // 4, 1, 1.0
         ef.render_grund(B, H)
         ef.material_flach(); stufen(A["ohne_schattierung"]); ef.pass_flach(out + "probe_flat.png", sichtbar); stufen_weg()
         pass_linien(out + "probe_lines.png", sichtbar_linie, fein)
         flach = lade(out + "probe_flat.png", True); linien = lade(out + "probe_lines.png")
         col = hexc(A["himmel"]) * (1 - flach[..., 3:4]) + flach[..., :3] * flach[..., 3:4]
+        if "--licht" in sys.argv:
+            ef.pass_sonne(out + "probe_sun.png", sichtbar_sonne, stellen=A["sonne_stellen"])
+            L = e["licht"]; s = (luma(lade(out + "probe_sun.png")) > L["schwelle"]).astype(np.float32)[..., None]
+            col = col * (1 - s * 0.7) + np.array([1.0, 0.85, 0.1], np.float32) * s * 0.7
         t = np.clip((1 - luma(linien)) * 1.3, 0, 1)[..., None]
         bild(col * (1 - t) + TINTE * t).save(out + "probe.png"); print("saved", out + "probe.png"); return
     nur = sys.argv[sys.argv.index("--durchgang") + 1].split(",") if "--durchgang" in sys.argv else None   # einzelne Durchgänge

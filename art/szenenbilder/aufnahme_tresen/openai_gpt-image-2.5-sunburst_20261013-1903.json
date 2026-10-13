@@ -1,0 +1,62 @@
+{
+ "modus": "openai",
+ "endpunkt": "https://api.openai.com/v1/images/edits",
+ "modell": "gpt-image-2.5-sunburst",
+ "prompt": "Image 1 is the scene template: a flat rendered layout of the scene with the correct light and shadow, computed by a renderer. Images 2 to 3 are portraits of the people in the scene, in the order they appear from left to right: draw exactly these people (same faces, hair, glasses, skin and clothing colours). Image 4 is a style reference: match its drawing style, line and colour treatment, but not its layout and not its light. Scene: the receptionist stands at the right end of the reception counter and holds a cream clipboard folder out across the counter towards the viewer with her outstretched arm, looking at the viewer with a small warm smile; her rust-orange thermos stands on the counter in front of the desk lamp at the left edge. The window with the half-raised venetian blind is behind her left shoulder, the low sun just beside her. In the background on the right an elderly man in a flat cap and cardigan sits on the waiting bench, slippers on his feet, his plastic bag with medicine boxes on the floor beside him; the ECG trolley with its dark screen stands left of him under the window. Reading glasses sit in her bun, a pen behind her ear, her name badge is a blank white rectangle. Where the window is directly behind her, only a thin warm rim of light traces the edge of her hair and left shoulder; her face stays in soft shade. Paint this exact scene as a finished illustration in the style of the reference: a warm ligne claire illustration in the manner of European graphic novels, flat local colours with a confident uniform thin dark ink outline on every shape, softened by gentle light — a mild warm glow where light falls, no hatching, no halftone, no texture. Palette of sand walls, mint wainscot, petrol blue-green furniture and scrubs, ochre wood, cream paper, one rust-orange thermos. The people are drawn like our character portraits: real faces with warm living expressions, adult proportions, hands with five fingers.\n\nKeep the layout exactly as in the input: every object, person and piece of furniture stays where it is, same camera, same proportions, same crop.\n\nLight — keep all light and shadow exactly as in the input; it was computed by a renderer and is correct. The sun is low behind the window in the back wall and shines into the room towards the camera, so the window is the brightest surface in the picture and everything in front of it is seen against the light: silhouettes darker than the window, faces lit only by the soft even room light and by the desk lamp, never by direct sun from the front. The blind breaks the sun into hard bright stripes; they land only where the input shows them (on the floor, on furniture or on a window sill), running away from the window towards the viewer, and nowhere else: no stripes on the walls, no stripes from the side. The desk lamp makes one warm island of light on the counter work surface around the thermos and the folder; the rest of the room stays in soft morning shade. Do not add a light source, do not move or add stripes, do not brighten a face from the front. The sun disc in the window is pale and soft.\n\nNo text, no letters, no numbers, no logos, no signage, no name on the badge, nothing written on paper or screens. No drawn ECG curve: every screen stays a calm dark glass surface, the paper strips stay blank. The clock face has no hands. No extra people, no extra objects.",
+ "parameter": {
+  "n": "1",
+  "size": "1536x864",
+  "quality": "high",
+  "output_format": "png",
+  "stream": "true",
+  "partial_images": "2"
+ },
+ "eingaben": [
+  {
+   "feld": "image[]",
+   "datei": "art/szenenbilder/aufnahme_tresen/vorlage.png",
+   "bytes": 1049904
+  },
+  {
+   "feld": "image[]",
+   "datei": "art/portraits/marlene.png",
+   "bytes": 28467
+  },
+  {
+   "feld": "image[]",
+   "datei": "art/portraits/herr_k.png",
+   "bytes": 94328
+  },
+  {
+   "feld": "image[]",
+   "datei": "art/referenz/chatgpt_aufnahme_marlene.png",
+   "bytes": 1826164
+  }
+ ],
+ "stil": "gen/blender/stil/szenenbild.txt",
+ "datum": "2026-10-13T19:03",
+ "ausgaben": [
+  "art/szenenbilder/aufnahme_tresen/openai_gpt-image-2.5-sunburst_20261013-1903.png"
+ ],
+ "verbrauch": {
+  "input_tokens": 5186,
+  "input_tokens_details": {
+   "image_tokens": 4416,
+   "text_tokens": 770
+  },
+  "output_tokens": 1245,
+  "output_tokens_details": {
+   "image_tokens": 1245,
+   "text_tokens": 0
+  },
+  "total_tokens": 6431
+ },
+ "antwort": {
+  "size": "1536x864",
+  "quality": "high",
+  "output_format": "png",
+  "background": "opaque",
+  "created": null
+ },
+ "dauer_s": 36
+}
