@@ -218,7 +218,8 @@ body {
   padding-left: 11px; border-left: 3px solid var(--bernstein);
 }
 .raetsel-papier { background: #FFF8F4; border: 2px solid var(--tinte); overflow: hidden; }
-.raetsel-papier canvas { width: 100%; display: block; touch-action: none; cursor: crosshair; }
+/* Die Höhe ist das Attribut der Leinwand (196 px); ohne feste CSS-Höhe skalierte der Browser sie mit der Breite hoch. */
+.raetsel-papier canvas { width: 100%; height: 196px; display: block; touch-action: none; cursor: crosshair; }
 .raetsel-anzeige { display: flex; align-items: baseline; gap: 7px; margin: 13px 0 6px; }
 .raetsel-anzeige .wert { font: 700 32px var(--mono); color: var(--magenta); }
 .raetsel-anzeige .einheit { font: 600 15px var(--mono); }
@@ -228,6 +229,7 @@ body {
 }
 .raetsel-knoepfe { display: flex; gap: 9px; margin-top: 14px; flex-wrap: wrap; }
 .frage-bild { background: #FFF8F4; border: 2px solid var(--tinte); overflow: hidden; margin-bottom: 14px; }
+.frage-bild canvas { height: 172px; display: block; }
 .frage-bild:empty { display: none; }
 .frage-wahl { display: flex; flex-direction: column; gap: 8px; }
 .knopf.wahl { text-align: left; padding: 13px 15px; font: 500 16px var(--text); letter-spacing: 0; text-transform: none; }
@@ -344,6 +346,7 @@ body {
 .karte-zeit { font: 700 11px var(--mono); background: var(--tinte); color: var(--papier); padding: 3px 6px; }
 .karte h3 { font: 700 17px var(--anzeige); margin: 7px 0 9px; }
 .karte-ekg, .karte-symbol { width: 100%; background: #FFF8F4; border: 1px solid var(--tinte); display: block; }
+.karte-ekg { height: 110px; }
 .karte-symbol:empty { display: none; }
 .karte p { font-size: 14px; line-height: 1.5; margin: 10px 0 0; }
 .leer { font-size: 15px; }
@@ -355,7 +358,7 @@ body {
   font: 700 15px var(--anzeige); letter-spacing: .08em; text-transform: uppercase;
   margin: 0 0 8px; background: var(--tinte); color: var(--papier); padding: 5px 9px;
 }
-.verg-eins canvas { width: 100%; background: #FFF8F4; border: 2px solid var(--tinte); display: block; }
+.verg-eins canvas { width: 100%; height: 150px; background: #FFF8F4; border: 2px solid var(--tinte); display: block; }
 .verg-eins p { font-size: 14px; line-height: 1.5; }
 .verg-frage { margin-top: 12px; font-size: 15px; padding-left: 12px; border-left: 4px solid var(--phosphor); }
 

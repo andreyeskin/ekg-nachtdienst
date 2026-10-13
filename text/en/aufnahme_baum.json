@@ -8,14 +8,12 @@
  "baum.knopf.schoen": "Lovely.",
  "baum.knopf.gleich_zurueck": "Back in a minute.",
  "baum.knopf.verstanden": "Understood.",
-
  "baum.auftakt.start": "06:40. Your first early shift in admissions, and nobody has time to show you around. Behind the desk, Nurse Marlene; on the bench, an old man in a flat cap with a plastic bag.",
  "baum.auftakt.falk_kommt": "Ten minutes later Dr Falk is at the desk, the admission sheet in his hand. He reads before he says hello.",
  "baum.auftakt.ende": "{zeit}. Mr Baum goes upstairs with you, the bag in one hand, the cap in the other. Marlene tops up her coffee without looking up.",
  "baum.epilog.1": "Shift 3, 13:20. Marlene catches you in the corridor, thermos in hand. She has seen the memory of Mr Baum's monitor.",
  "baum.epilog.2": "On the second night the monitor recorded a pause, longer than three seconds. Mr Baum was awake and rang the bell.",
  "baum.epilog.3": "He is on the cardiology ward now. What happens there is for the doctor at the bedside to decide. Lena's photo stands on the bedside table.",
-
  "baum.marlene.erst": "You're the student. Good. The gentleman over there apologises every five minutes for being here. Collapsed twice, no warning.",
  "baum.marlene.werte": "Pulse {puls}, regular. Blood pressure lying {rr_l_sys} over {rr_l_dia}, after three minutes standing {rr_s3_sys} over {rr_s3_dia}, no dizziness. Sugar {zucker}, a graze on the elbow.",
  "baum.marlene.fragen_erst": "Whatever you'd ask as a doctor. I'm not telling you anything in advance. Otherwise you'll only go looking for what I put in your head.",
@@ -57,7 +55,6 @@
  "baum.marlene.f.zucker": "Low blood sugar?",
  "baum.marlene.f.orthostase": "Pressure too low when standing?",
  "baum.marlene.f.fertig": "That's all.",
-
  "baum.herrk.start.erst": "I'm sorry. I didn't really want to come at all. My daughter said I should. So I did as I was told.",
  "baum.herrk.start.wieder": "Yes, doctor?",
  "baum.herrk.ereignis": "I was standing at the bus stop. And then I wasn't standing any more. In between, nothing. No dizziness, no palpitations. As if someone had switched the light off and straight back on.",
@@ -107,7 +104,6 @@
  "baum.herrk.f.untersuchen": "May I examine you briefly?",
  "baum.herrk.f.foto": "Who is in the photo?",
  "baum.herrk.f.spaeter": "I'll be right back.",
-
  "baum.falk.start.erst": "Falk. Before you say anything: I don't want to hear what you suspect. I want to hear what you measured.",
  "baum.falk.start.wieder": "Well? Do you have what was missing?",
  "baum.falk.anamnese": "Nurse Marlene already told me that, and she tells it better. From you I wanted numbers.",
@@ -138,7 +134,6 @@
  "baum.falk.a.seitengleich": "Yes. All symmetrical, speech clear.",
  "baum.falk.a.nicht_gemessen": "I didn't measure that.",
  "baum.falk.a.hol_nach": "I'll do it now.",
-
  "baum.pflicht.ereignis": "the event itself",
  "baum.pflicht.prodrom": "the warning",
  "baum.pflicht.situation": "the situation",
@@ -149,18 +144,16 @@
  "baum.pflicht.medis": "the medication",
  "baum.pflicht.vorerkrankungen": "the medical history",
  "baum.pflicht.familie": "the family",
-
  "baum.meld.marlene": "You should tell Marlene.",
  "baum.meld.falk": "Dr Falk is waiting at the desk.",
  "baum.meld.ekg": "ECG recorded · {zeit}",
- "baum.meld.erst_anamnese": "History first: what happened, the medication, the examination. Then the ECG.",
+ "baum.meld.erst_anamnese": "History first: what happened, and the examination. Then the ECG.",
  "baum.meld.uhr_frueh": "{zeit}. The night isn't quite gone, the day not quite here.",
  "baum.meld.uhr": "{zeit}. The clock is right. Unfortunately.",
  "baum.meld.pinnwand": "Duty roster, a note about the coffee fund, a child's drawing with no name.",
  "baum.meld.flur_streifen": "Not yet. The strip first: the rhythm and at least one number.",
  "baum.meld.flur_marlene": "Tell Marlene what you measured. She'll call Dr Falk.",
  "baum.meld.flur_falk": "Dr Falk decides first. He's at the desk.",
-
  "baum.karte.bogen.titel": "Admission sheet",
  "baum.karte.bogen.text": "Pulse {puls}/min, regular. Blood pressure lying {rr_l_sys}/{rr_l_dia}, after 1 min standing {rr_s1_sys}/{rr_s1_dia}, after 3 min {rr_s3_sys}/{rr_s3_dia}, no dizziness. SpO₂ {spo2} %, {temp} °C, blood glucose {zucker} mg/dl. Graze on the left elbow. High blood pressure for about ten years, knee surgery, non-smoker.",
  "baum.karte.bogen.vs_frequenz": "Pulse {puls} felt, {hf} measured on paper: the same slow number, once at the wrist, once on the strip.",
@@ -187,7 +180,6 @@
  "baum.karte.qrs.schmal": "Normal 60–100 ms: narrow. The ventricles are activated through the normal conduction system. The brake sits higher up, in the AV conduction, not in the bundle branches.",
  "baum.karte.qrs.breit": "Over 100 ms: widened. Ventricular activation is disturbed.",
  "baum.karte.qrs.vs_pq": "Long conduction, narrow ventricle: the delay lies above the bundle branches, in the AV node.",
-
  "baum.ekg.titel": "The strip is in front of you",
  "baum.ekg.text": "Rhythm first, then the numbers. Look at the P waves and at the intervals: what is this?",
  "baum.ekg.a.vhf": "Atrial fibrillation.",
@@ -196,14 +188,12 @@
  "baum.ekg.w.vhf": "Atrial fibrillation has no P waves, only a restless flicker of the baseline, and the RR intervals are absolutely irregular. Here there is a P wave before every QRS, and the intervals are equal.",
  "baum.ekg.w.sinus": "A P wave before every QRS, normally shaped and positive in II, and the intervals stay the same: those are the criteria of sinus rhythm. Whether it is fast or slow, only the rate tells you, the next question, with the calipers.",
  "baum.ekg.w.vt": "Ventricular tachycardia has wide, deformed ventricular complexes, from 120 ms, and a rate above 100 per minute. Here the complexes are narrow (normal 60–100 ms), and the rate is low.",
-
  "baum.wahl.titel": "What do you want to measure?",
  "baum.wahl.text": "The strip is on the trolley. Take the calipers.",
  "baum.wahl.text_spaeter": "This morning's strip is still on the trolley. Take the calipers.",
  "baum.wahl.rr": "The RR interval, the rate",
  "baum.wahl.pq": "The PQ interval, the conduction",
  "baum.wahl.qrs": "The QRS width, the ventricle",
-
  "baum.zirkel.rr.titel": "How slow is slow?",
  "baum.zirkel.rr.auftrag": "Measure one RR interval. The rate comes from it: 60,000 divided by the RR interval in milliseconds.",
  "baum.zirkel.rr.brady": "60,000 ÷ {ms} = {hf} per minute. Under 50: sinus bradycardia.",
@@ -218,21 +208,18 @@
  "baum.zirkel.qrs.auftrag": "Measure the QRS width. At 50 mm/s one small square is 20 milliseconds wide.",
  "baum.zirkel.qrs.schmal": "Normal 60–100 ms. {ms} ms: narrow, the ventricles are activated through the normal conduction system.",
  "baum.zirkel.qrs.breit": "Over 100 ms: widened.",
-
  "baum.unters.titel": "Brief examination",
  "baum.unters.text": "Heart, lungs, a look at the nerves. What you find goes into the folder as a card.",
  "baum.unters.herz": "Heart sounds regular, slow, no murmur.",
  "baum.unters.lunge": "Lungs clear, no leg oedema.",
  "baum.unters.neuro1": "Speech clear, face symmetrical, arms and legs equally strong.",
  "baum.unters.neuro2": "No double vision, no dizziness looking up, finger-nose steady.",
-
  "baum.feld.marlene": "Nurse Marlene",
  "baum.feld.herrk": "Mr Baum",
  "baum.feld.wagen": "ECG trolley",
  "baum.feld.uhr": "Wall clock",
  "baum.feld.pinnwand": "Notice board",
  "baum.feld.flur": "Corridor to the monitor room",
-
  "baum.stand.titel": "Chapter 1 · Admissions",
  "baum.stand.hat.fall": "The story of the case, from Marlene",
  "baum.stand.hat.schilderung": "Mr Baum's own account",

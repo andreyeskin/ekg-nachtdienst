@@ -1,21 +1,23 @@
 # Umbau — Änderungsliste und Umsetzungsplan
 
-Stand: 11.10.2026. Folgt aus `docs/KONZEPT.md` und den Akten unter `docs/faelle/`. Nur Dokumentation;
-kein Code wurde geändert. Zeilennummern beziehen sich auf `web/spiel.js` im Stand des Branches
-`arbeit/konzept` (1367 Zeilen) und sind Fundstellen, keine Vorgabe.
+Stand: 11.10.2026, nachgezogen 13.10.2026. Folgt aus `docs/KONZEPT.md` und den Akten unter `docs/faelle/`.
+Zeilennummern in §2 beziehen sich auf `web/spiel.js` im Stand des Branches `arbeit/konzept` (1367 Zeilen)
+und sind Fundstellen; seit 13.10.2026 liegt Kapitel 1 in `web/faelle/aufnahme_baum.js`.
+
+**Erledigt am 13.10.2026 (Branch `arbeit/episode`):** Schritt 3 (Fallschema, Motor, Texte über IDs) und der
+Kapitel-1-Teil von Schritt 2 (§2a vollständig, §2b vollständig). Wie der nächste Fall nach dem Muster
+angelegt wird: `docs/STAND.md`.
 
 ---
 
 ## 1. Reihenfolge
 
-1. **Lehrsaal bauen** (Raum + Figuren in Blender, dann Fall nach `docs/faelle/lehrsaal.md`). Er ist
-   unabhängig von Kapitel 1/2 und braucht nur die neuen Mechaniken aus §3. Parallel: Datenauftrag
-   12-Kanal-Export (§5), damit der Lagetyp nicht als Lücke bleibt.
-2. **Kapitel 1 und 2 auf das neue Konzept** (`docs/faelle/aufnahme_baum.md`, `docs/faelle/monitor.md`):
-   Tüten-Station raus, Anamnese vollständig, Untersuchung und Aufnahmebogen als Befundzeilen, Monitor
-   mit Frau Lindner, Ampel neu belegt.
-3. **Architektur-Umbau** (KONZEPT §6): Herr Baum als Referenzfall in das Fallschema migrieren, Texte
-   auf IDs, Motor trennen. Erst danach weitere Abteilungen.
+1. ~~**Architektur-Umbau** (KONZEPT §6): Herr Baum als Referenzfall in das Fallschema migrieren, Texte auf
+   IDs, Motor trennen.~~ Erledigt 13.10.2026 (`web/motor/`, `web/faelle/aufnahme_baum.js`, `text/<sprache>/`).
+2. **Kapitel 2 als Fall `monitor`** (`docs/faelle/monitor.md`): Frau Lindner, Ampel neu belegt, Herrn Baums
+   Präsynkope und „Speicher" raus, Epilog von Herrn Baum an den Anfang von Dienst 3.
+3. **Lehrsaal** (Raum + Figuren liegen vor; Fall nach `docs/faelle/lehrsaal.md`) mit den neuen Mechaniken
+   aus §3; Reizleitung zieht dorthin um. Parallel: Datenauftrag 12-Kanal-Export (§5).
 
 Nach jedem Schritt: `python3 gen/kunst.py`, `python3 tools/baue.py`, `node tools/durchlauf.mjs` ohne
 Fehler; Durchlauf um Prüfungen für neue Wege erweitern (§7).
@@ -25,6 +27,11 @@ Fehler; Durchlauf um Prüfungen für neue Wege erweitern (§7).
 ## 2. Was in `web/` und `text/` konkret umgeschrieben wird
 
 ### 2a. Stellen, die dem Grundsatz „Klinikalltag statt Detektivspiel" widersprechen (KONZEPT §1.3)
+
+**Stand 13.10.2026: alle Zeilen dieser Tabelle, die Kapitel 1 betreffen, sind umgesetzt** (Tüte ohne
+Klickzone, Medikationsplan im Gespräch, kein Verweis auf Verpasstes, Wagen-Meldung konkret, Karte
+„Medikamente (Medikationsplan)", Export `__tuete` und Durchlauf-Schritt entfernt, verwaiste Übersetzungen
+gelöscht). Offen bleibt nur die Ampel-Zeile (Kapitel 2, Frau Lindner).
 
 | Fundstelle | heute | neu |
 |---|---|---|
@@ -44,7 +51,11 @@ Weitere Stellen desselben Musters, geprüft und **unverändert** gelassen, weil 
 Atmosphäre sind und keinen Fortschritt tragen: Katzensticker (378–383), Pinnwand (1147–1153), Wanduhr
 (1138–1146), Falks Zigarette (nur GAME_DESIGN).
 
-### 2b. Kapitel 1 — Aufnahme (Akte §5–§8)
+### 2b. Kapitel 1 — Aufnahme (Akte §5–§8) — umgesetzt 13.10.2026, siehe Akte §8a
+
+Abweichungen von der Liste unten: Die Übergabe an Dr. Falk findet am Tresen statt (Porträt-Dialog ohne
+Raumfigur, Entscheidung des Nutzers); der Wagen ist frei, sobald Ereignis und Untersuchung erledigt sind,
+die Medikamente mahnen Stand und Falk; der Epilog hängt vorerst am Ende von Kapitel 2 (siehe §2c).
 
 - Anamnese-Baum `herr_k` um die Pflichtfragen erweitern (Prodrom, Situation, Dauer, Erholung, Zeugin:
   Zuckungen/Zungenbiss/Einnässen, Verletzung, Herzrasen, Brustschmerz/Atemnot, neurologische Ausfälle,
@@ -124,7 +135,9 @@ Atmosphäre sind und keinen Fortschritt tragen: Katzensticker (378–383), Pinnw
 | Elektroden kleben | neu | — | Lehrsaal L2 |
 | Cabrera-Wahl (Lagetyp) | neu, nach Export | — | Lehrsaal L5/6 |
 | Sechs Sekunden zählen | neu (klein) | — | Monitor L7/25 |
-| Untersuchen / Aufnahmebogen (Befundzeilen) | neu (Menü, keine Prüfung) | — | Aufnahme, Monitor |
+| Untersuchen / Aufnahmebogen (Befundzeilen) | `motor/fenster.js` (`befundzeilen`) | fertig | Aufnahme, Monitor |
+| Szenenbild (Nahaufnahme ohne Klickzonen) | `motor/szenenbild.js` | fertig | Gesprächsanfänge, Schlüsselmomente |
+| Fallmotor (Dialoge, Felder, Aufgaben, Karten, Stand aus Daten) | `motor/fall.js` | fertig | jeder Fall |
 
 ---
 
@@ -180,9 +193,12 @@ Atmosphäre sind und keinen Fortschritt tragen: Katzensticker (378–383), Pinnw
 
 - Lehrsaal: jede Pflichtaufgabe lösbar; Zacken-Treffer gegen Annotation; Elektroden-Zuordnung; drei
   Kursstreifen; Tür erst danach frei.
-- Aufnahme: Medikamentenkarte entsteht im Dialog; kein Weg führt über die Tüte; Falk ohne Karte schickt
-  zum Patienten; alle DD-Optionen haben eine `warum`-Rückmeldung mit Text in de/en/ru; Untersuchung und
-  Aufnahmebogen als Karten.
+- Aufnahme (**umgesetzt 13.10.2026**): Medikamentenkarte entsteht im Dialog; kein Weg führt über die Tüte;
+  Falk ohne Karte schickt zum Patienten; Pflichtfragen → Mahnung im Stand; TIA bei Marlene und Falk
+  beantwortet; Übergabe nur mit beiden Zahlen (drei Rückwege); Ende und Epilog; Szenenbild beim ersten
+  Gespräch; Untersuchung und Aufnahmebogen als Karten; alle IDs in de/en/ru, keine Gedankenstriche,
+  Repliken ≤ 230 Zeichen; Textüberlauf de/en/ru bei 1024×768 und 1366×1024; Zirkel maßstabstreu bei drei
+  Bildschirmgrößen (±2 ms, gleiche Bewertung).
 - Monitor: Bett von Frau Lindner trägt 96 (oder Ersatz); Alarm jede Wahl → Falk-Szene; 6-s-Zählung
   gegen Komplexe im Fenster; Vergleich Baum ↔ Lindner; keine Therapie-Wörter („Pacer", „Dosis") im Text
   (Wortliste im Durchlauf).

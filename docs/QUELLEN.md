@@ -69,7 +69,13 @@ werden. Im Datensatz steht dafür `"messbar": false`.
 | AV-Block I. Grades mit deutlich verlängerter PQ-Zeit passt zu arrhythmischer Synkope | ESC-Synkope-2018, Tabelle 5 (Merkmale, die eine Diagnose *nahelegen*, nicht beweisen) | Deshalb sagt Dr. Falk ausdrücklich, dass das noch nicht die Ursache ist |
 | Betablocker bremsen Sinusknoten und AV-Überleitung | Pharmakologie, Standardwissen | |
 | Eine langsame Frequenz ist nur dann verdächtig, wenn kein bremsendes Medikament im Spiel ist | ESC-Synkope-2018, Tabelle 5: Das Kriterium nennt ausdrücklich „with no negatively chronotropic drugs" | Deshalb ist Bisoprolol in der Tüte kein Beiwerk, sondern ein Argument |
-| Beweisend für arrhythmische Synkope wären: Sinusbradykardie dauerhaft unter 40/min, Pausen über 3 s im Wachzustand, Mobitz II, AV-Block III° | ESC-Synkope-2018, Abschnitt 4.1.1, Klasse I, Evidenzgrad C | **Nichts davon liegt bei Herrn Baum vor.** Genau deshalb endet Kapitel 1 mit Beobachtung und nicht mit einer Diagnose |
+| Beweisend für arrhythmische Synkope wären: Sinusbradykardie dauerhaft unter 40/min, Pausen über 3 s im Wachzustand, Mobitz II, AV-Block III° | ESC-Synkope-2018, Abschnitt 4.1.1, Klasse I, Evidenzgrad C | **Nichts davon liegt bei Herrn Baum vor.** Genau deshalb endet Kapitel 1 mit Beobachtung und nicht mit einer Diagnose. Der Epilog (Erzählung, Dienst 3) sagt, der Monitor habe in der zweiten Nacht eine Pause über drei Sekunden aufgezeichnet, er sei wach gewesen — genau dieses Kriterium; keine Kurve, keine Diagnose, keine Therapie |
+| TIA = fokaler Ausfall (Sprache, Kraft, Gesichtsfeld) ohne Bewusstseinsverlust; vertebrobasiläre TIA nie ohne Herdzeichen (Doppelbilder, Ataxie); Synkope ist das Gegenteil | ESC-Synkope-2018 Tabelle 4, §8.1.3; ESC-Practical-2018 Web Table 5.4 | Marlenes und Falks Antwort auf „Ist das nicht eine TIA?"; die Kurzuntersuchung (Sprache, Gesicht, Kraft seitengleich, Doppeltsehen, Finger-Nase) ist die orientierende Neurologie dazu |
+| Krampfanfall gegen Synkope: Zuckungen, seitlicher Zungenbiss, langsames Wiederklarwerden sprechen für einen Anfall | ESC-Synkope-2018 §8.1.2, Tabelle 10 | Marlene: „kein Zucken, Zunge heil, nachher gleich klar" |
+| Hypoglykämie: kein Diabetes, Blutzucker-Stix normal, Verlauf zu kurz | ESC-Synkope-2018 Tabelle 4; ESC-Practical-2018 Web Table 5.6 | Marlene: Stix-Wert aus den Falldaten (104 mg/dl), „er hat keinen Zucker" |
+| Orthostatische Synkope: beim oder nach dem Aufstehen, Beginn oder Wechsel blutdrucksenkender Mittel; Stehblutdruck bei allen Patienten | ESC-Synkope-2018 Tabelle 5, Schlüsselbotschaft 3 | Marlene und Falk: Stehversuch ohne Abfall (142/84 → 134/80 nach 3 min), Sturz nach zehn Minuten Stehen, Medikation seit Jahren unverändert. Das Zahlenkriterium (≥ 20/10 mmHg) wird im Spiel nicht genannt (offen, §5) |
+| QRS schmal (60–100 ms): die Kammern werden über das normale Leitungssystem erregt; die Verzögerung des AV-Blocks I° liegt im AV-Knoten, oberhalb der Schenkel | Lehrbuch Lektion 4, 10 (FACHREGELN) | Karte „QRS-Breite" und Vergleich QRS ↔ PQ; Falk: „langsam und lang, und schmal" |
+| Getasteter Puls (52) und am Papier gemessene Frequenz sind bei 1:1-Überleitung dieselbe Größe | Lehrbuch Lektion 7 (FACHREGELN) | Vergleich Aufnahmebogen ↔ Frequenz |
 
 ---
 
@@ -80,7 +86,8 @@ werden. Im Datensatz steht dafür `"messbar": false`.
   Leitung, mehr nicht.
 - **Nicht**, dass am Monitor bereits ein höhergradiger Block zu sehen ist. Dafür
   gibt es in unseren Daten keine Aufnahme mit Annotation, und eine gemalte Kurve
-  kommt nicht in Frage.
+  kommt nicht in Frage. Der Epilog (seit 13.10.2026) **erzählt** eine Pause über
+  drei Sekunden im Wachen, zeigt aber keine Kurve und stellt keine Diagnose.
 - **Nicht**, dass die Bradykardie allein gefährlich ist. Unter Betablocker ist
   sie erwartbar.
 - Keine Dosierungen, keine Therapieempfehlungen, keine Anweisungen zur

@@ -404,10 +404,11 @@
           ] },
         { id: "herrk", name: "baum.feld.herrk", rueckfall: [1279, 399, 1424, 737], sichtbar: "!hat:fall_ende",
           bei: [{ tu: ["dialog:herr_k.start"] }] },
-        /* Klinische Reihenfolge: Anamnese (Ereignis, Medikamente), Untersuchung, dann das EKG (UMBAU §2a). */
+        /* Klinische Reihenfolge: Anamnese (das Ereignis), Untersuchung, dann das EKG (UMBAU §2a). Die Medikamente sind
+           Pflichtfrage; fehlen sie, mahnt der Stand, und Dr. Falk schickt bei der Übergabe zum Patienten zurück. */
         { id: "wagen", name: "baum.feld.wagen", rueckfall: [822, 422, 960, 738], erledigt: "karte:b-rhythmus",
           bei: [
-            { wenn: "!hat:a_ereignis | !karte:b-medis | !hat:untersucht", tu: ["melde:baum.meld.erst_anamnese:warnung"] },
+            { wenn: "!hat:a_ereignis | !hat:untersucht", tu: ["melde:baum.meld.erst_anamnese:warnung"] },
             { wenn: "!karte:b-rhythmus", tu: ["aufgabe:ekg"] },
             { tu: ["aufgabe:wahl"] }
           ] },

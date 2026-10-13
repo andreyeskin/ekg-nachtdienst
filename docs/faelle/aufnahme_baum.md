@@ -203,8 +203,36 @@ Dr. Falk kommt herunter, hört ab, lässt ihn aufstehen und ein paar Schritte ge
 Bogen. Klare Auflösung dessen, was zu wissen ist: Die Zahlen erklären die Zahlen (Betablocker, Alter),
 nicht die Ohnmacht. Fehlendes Prodrom plus auffälliges EKG: Risikomerkmal. Entscheidung des Arztes:
 Monitorüberwachung. Herr Baum geht nach oben — mit Tüte, Foto und Mütze. **Was der Monitor zeigt, ist
-nicht mehr dieser Fall.** Ob er später einen Epilog bekommt (Marlene erzählt), entscheidet der Nutzer
-(KONZEPT §7). Keine Therapie, keine Dosis, kein „Pacer".
+nicht mehr dieser Fall.** Keine Therapie, keine Dosis, kein „Pacer".
+
+### Epilog (Entscheidung des Nutzers, 13.10.2026: ja, als Erzählung)
+
+Erzähler, ohne Porträt, ohne Standbild, in einem späteren Dienst (Dienst 3, 13:20): Marlene hat den
+Speicher gesehen. In der zweiten Nacht hat der Monitor eine Pause aufgezeichnet, länger als drei
+Sekunden; Herr Baum war wach und hat geklingelt. Er liegt jetzt auf der Kardiologie; was dort geschieht,
+entscheidet der Arzt am Bett. Das ist die einzige fachliche Aussage des Epilogs, und sie ist belegt: Eine
+Pause über drei Sekunden im Wachen ist nach ESC-Synkope-2018 §4.1.1 eines der Kriterien, die eine
+arrhythmische Synkope beweisen (QUELLEN §3). Der Epilog zeigt keine Kurve (QUELLEN §4: keine gemalte
+Pause) und nennt keine Diagnose, keine Therapie. Im Spiel hängt er, solange Kapitel 2 noch Herrn Baums
+Präsynkope erzählt, an dessen Ende (`Fall.epilog` nach `auftakt.schluss`); mit dem Umbau von Kapitel 2
+(Frau Lindner) rückt er an den Anfang von Dienst 3.
+
+## 8a. Umsetzung (13.10.2026, Referenzfall des Fallschemas)
+
+- Daten: `web/faelle/aufnahme_baum.js`; Texte: `text/de/aufnahme_baum.json` (en, ru mit denselben IDs);
+  Motor: `web/motor/fall.js`. Wie man den nächsten Fall anlegt: `docs/STAND.md`.
+- Ablauf: Erzähler → erstes Gespräch mit Marlene im **Szenenbild** (sie reicht den Aufnahmebogen, Karte
+  `b-bogen`) → Anamnese bei Herrn Baum (zehn Pflichtfragen, optionale Vertiefung; der Medikationsplan wird
+  im Gespräch gereicht, Karte `b-medis`; alle Pflichtfragen → Karte `b-anamnese`) → Kurzuntersuchung als
+  Befundzeilen (Karte `b-untersuchung`) → Marlenes Expertenfragen (Vorwarnung, TIA, Krampf, Unterzucker,
+  Orthostase) → EKG (Rhythmus, RR, PQ, optional QRS) → Bericht an Marlene (mindestens Rhythmus und eine
+  Zahl) → sie ruft Dr. Falk → **Übergabe am Tresen** (Porträt-Dialog): nur mit beiden Zahlen; fehlt eine,
+  schickt er zum Wagen, fehlt der Medikationsplan, zum Patienten → Expertenfragen an Falk (TIA, Orthostase)
+  → Entscheidung Monitor → Erzähler: Herr Baum geht nach oben. Der Flur ist erst dann offen.
+- Der Wagen ist frei, sobald das Ereignis erfragt und untersucht wurde (klinische Reihenfolge); die
+  übrigen Pflichtfragen mahnt der Stand der Schicht an.
+- Entfallen: Tüten-Station, Falks Verweis auf die Tüte, Marlenes Satz „Die Tüte ist mit ihm hoch", das
+  Reizleitungs-Rätsel bei Marlene (wandert in den Lehrsaal; Modul bleibt gebaut und geprüft).
 
 ## 9. Belege
 
@@ -227,6 +255,9 @@ nicht mehr dieser Fall.** Ob er später einen Epilog bekommt (Marlene erzählt),
 | Sinusrhythmus-Kriterien; Norm 50–100/min; Sinusbradykardie < 50 | Lehrbuch Lektion 7, 8 (FACHREGELN) |
 | PQ 120–200 ms; > 200 ms AV-Block I°, Verzögerung im AV-Knoten; QRS 60–100 ms | Lehrbuch Lektion 3, 4, 10 (FACHREGELN) |
 | Betablocker bremsen Sinusknoten und AV-Überleitung; ACE-Hemmer nicht; ASS hemmt Blutplättchen | Pharmakologie-Standardwissen (QUELLEN §3) |
+| QRS schmal (Norm 60–100 ms): Kammern über das normale Leitungssystem erregt; die Verzögerung liegt oberhalb der Schenkel (AV-Block I° = Verzögerung im AV-Knoten) | Lehrbuch Lektion 4, 10 (FACHREGELN); QUELLEN §3 („spricht gegen eine Blockierung unterhalb des AV-Knotens") |
+| Getasteter Puls und am Papier gemessene Frequenz sind bei 1:1-Überleitung dieselbe Zahl | Lehrbuch Lektion 7 (bei Sinusrhythmus mit 1:1-Überleitung genügt eine Frequenz) |
+| Epilog: Pause über drei Sekunden im Wachen gehört zu den Kriterien, die eine arrhythmische Synkope beweisen | ESC-Synkope-2018 §4.1.1 (QUELLEN §3) |
 | Zahlen der Aufnahme 39 | eigene Nachrechnung aus `data/ekg_daten.json`, 11.10.2026 |
 
 ## 10. Beispieldialoge (geprüft gegen D1–D6)
