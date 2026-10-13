@@ -54,9 +54,10 @@ Ich-Perspektive, Herr K. im Hintergrund; Figuren stimmen mit unseren überein, k
 Zeiger, Schirme dunkel). Weicher als strenge ligne claire (Verläufe, Lichtschimmer).
 Vorschlag: (1) **Szenenbilder** für Gesprächsanfänge und Schlüsselmomente (keine Klickzonen nötig),
 (2) Raumbilder nur als Überarbeitung des Blender-Renders mit erhaltenem Grundriss. Dafür braucht die
-Umgebung einen OpenAI-API-Schlüssel als Netzwerk-Secret bzw. Umgebungsvariable `OPENAI_API_KEY`
-(api.openai.com ist erreichbar); dann `malen.py openai` (Bildbearbeitung mit Blender-Render + Porträts
-als Vorlage). Offen: Soll ART_BIBLE §1 für Szenenbilder weiches Licht erlauben?
+Umgebung einen OpenAI-API-Schlüssel als Netzwerk-Secret (Typ Bearer, Website `api.openai.com`, Pfad
+`/v1/images/`, Header `Authorization: Bearer …`); der Proxy setzt ihn ein, `malen.py openai` braucht dann keine
+Umgebungsvariable. Pipeline steht (`gen/blender/szenenbild.py`, `malen.py openai`, `licht_pruefen.py`,
+Vorlage `art/szenenbilder/aufnahme_tresen/`); erster echter Lauf steht aus. Offen: Soll ART_BIBLE §1 für Szenenbilder weiches Licht erlauben?
 
 ## Bekannte offene Punkte
 

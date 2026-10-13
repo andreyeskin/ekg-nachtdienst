@@ -184,7 +184,7 @@ python3 gen/blender/malen.py kontext --image art/szenenbilder/aufnahme_tresen/vo
         --style gen/blender/stil/szenenbild.txt --aspect 16:9 --seed 7 --out bau/blender/szenenbilder/aufnahme_tresen/kontext_s7.png
 python3 gen/blender/malen.py openai --image art/szenenbilder/aufnahme_tresen/vorlage.png \
         --portrait art/portraits/marlene.png --portrait art/portraits/herr_k.png \
-        --referenz art/referenz/chatgpt_aufnahme_marlene.png [--dry-run]       # OPENAI_API_KEY; Ergebnis + JSON nach art/szenenbilder/aufnahme_tresen/
+        --referenz art/referenz/chatgpt_aufnahme_marlene.png [--dry-run]       # Schlüssel vom Proxy (Secret api.openai.com, /v1/images/) oder OPENAI_API_KEY; Ergebnis + JSON nach art/szenenbilder/aufnahme_tresen/
 python3 gen/blender/licht_pruefen.py <ergebnis.png> art/szenenbilder/aufnahme_tresen/sonne.png --lampe art/szenenbilder/aufnahme_tresen/lampe.png
 ```
 

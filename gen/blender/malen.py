@@ -18,8 +18,9 @@ Modi:
            und 1.5; die Modelle ab 2 lesen jede Eingabe in hoher Treue, der Parameter bleibt dort weg.
            Ergebnis: art/szenenbilder/<name>/openai_<modell>_<zeit>.png + .json (Modell, Prompt, Eingaben, Datum, Verbrauch).
 
-Schlüssel: fal aus FAL_KEY oder vom Proxy der Cloud-Umgebung (*.fal.run); OpenAI aus OPENAI_API_KEY. Ohne Schlüssel oder mit
---dry-run wird nichts gesendet, die Anfrage wird nur gezeigt.
+Schlüssel: fal aus FAL_KEY oder vom Proxy der Cloud-Umgebung (*.fal.run); OpenAI aus OPENAI_API_KEY oder vom Proxy
+(Netzwerk-Secret für api.openai.com, Pfad /v1/images/; abschalten mit OPENAI_PROXY_AUTH=0). Mit --dry-run wird nichts
+gesendet, die Anfrage wird nur gezeigt.
 
 Beispiele:
   python3 gen/blender/malen.py kontext --image art/szenenbilder/aufnahme_tresen/vorlage.png --style gen/blender/stil/szenenbild.txt --seed 7 --out bau/blender/szenenbilder/aufnahme_tresen/kontext_s7.png
@@ -96,6 +97,10 @@ def openai_prompt(a, style, n_portraits, n_referenz):
 
 def openai(a):
     key = os.environ.get("OPENAI_API_KEY")
+    if not key and os.environ.get("OPENAI_PROXY_AUTH", "1") == "1" and not a.dry_run:
+        # Wie bei fal: Den Schlüssel setzt der Proxy der Cloud-Umgebung (Secret für api.openai.com,
+        # Pfad /v1/images/). Der Client braucht nur irgendeinen Authorization-Kopf.
+        key = "proxy-injected"
     dry = a.dry_run or not key
     style = load_style(a.style or STIL_SZENENBILD)
     portraits = [p for p in (a.portrait or [])]; referenz = [p for p in (a.referenz or [])]
