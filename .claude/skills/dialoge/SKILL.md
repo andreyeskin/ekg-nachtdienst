@@ -79,7 +79,25 @@ Handlung, nicht ein Adverb.
 5. Übersetzungen (text/en.json, text/ru.json) im selben Schritt nachziehen; tools/durchlauf.mjs um
    Prüfungen für neue Wege ergänzen.
 
-## 6. Was dieser Skill nicht tut
+## 6. Letzter Durchgang: Humanizer (Pflicht vor jedem Commit von Spieltext)
+
+Wenn verfügbar, den Skill `anthropic-skills:humanizer` auf die geänderten Texte anwenden; sonst diese
+Liste von Hand durchgehen (Erkennungszeichen maschinell geschriebener Texte, auf Deutsch übertragen):
+
+- **Gedankenstriche (—)**: höchstens einer pro Replik, besser keiner. Ersetzen durch Punkt, Komma,
+  Doppelpunkt oder einen neuen Satz. Pausen in Falks Sprechweise lieber durch kurze Sätze zeigen.
+- **Dreierreihen** („ruhig, klar und präzise"): eine oder zwei Angaben reichen.
+- **„Nicht nur …, sondern auch …"**, „Es geht nicht um X, es geht um Y": umschreiben.
+- **Füll- und Gewichtswörter**: „durchaus", „zudem", „darüber hinaus", „letztlich", „im Grunde",
+  „spannend", „entscheidend", „wichtig zu beachten": streichen.
+- **Aphorismen zum Schluss einer Replik** („Und genau darum geht es."): weg; Figuren ziehen keine Moral.
+- **Gleich gebaute Sätze hintereinander** (gleiche Länge, gleiche Struktur): Rhythmus brechen.
+- **Übertriebene Höflichkeit oder Bestätigung** („Gute Frage!", „Genau!"): nur, wenn es zur Figur passt.
+- **Vage Zuschreibungen** („Studien zeigen", „man sagt"): konkret werden oder weglassen.
+
+Zählprobe vor dem Commit: `grep -c "—"` über die geänderten Texte. Steigt die Zahl, nachbessern.
+
+## 7. Was dieser Skill nicht tut
 
 Er entscheidet keine medizinischen Inhalte — dafür gibt es `fallakte` und docs/FACHREGELN.md. Er
 ersetzt nicht die Durchsicht durch eine Ärztin oder einen Arzt vor einer Veröffentlichung.
