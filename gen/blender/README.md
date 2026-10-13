@@ -178,8 +178,8 @@ Arbeit: **Blender rechnet das Licht, der Bildgenerator malt nur.**
 ```bash
 BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen            # ≈ 2,5 min -> art/szenenbilder/aufnahme_tresen/
 python3 gen/blender/szenenbild.py aufnahme tresen --komposit                   # nur neu zusammensetzen
-BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen --probe --kamera -1.45,-2.45,1.62 --gier 23 --brennweite 16
-                                                                               # Kamera ausprobieren (klein, 10 s)
+BLENDER_THREADS=2 python3 gen/blender/szenenbild.py aufnahme tresen --probe --kamera -2.5,-2.5,1.58 --gier 40 --brennweite 30
+                                                                               # Kamera ausprobieren (klein, 10 s); --licht tönt dazu die Sonne gelb (+5 s)
 python3 gen/blender/malen.py kontext --image art/szenenbilder/aufnahme_tresen/vorlage.png \
         --style gen/blender/stil/szenenbild.txt --aspect 16:9 --seed 7 --out bau/blender/szenenbilder/aufnahme_tresen/kontext_s7.png
 python3 gen/blender/malen.py openai --image art/szenenbilder/aufnahme_tresen/vorlage.png \
@@ -188,19 +188,27 @@ python3 gen/blender/malen.py openai --image art/szenenbilder/aufnahme_tresen/vor
 python3 gen/blender/licht_pruefen.py <ergebnis.png> art/szenenbilder/aufnahme_tresen/sonne.png --lampe art/szenenbilder/aufnahme_tresen/lampe.png
 ```
 
-Einstellung `aufnahme/tresen`: die Spielerin steht vor dem rechten Ende des Tresens (Augenhöhe 1,62 m), Marlene ist an dieses
-Ende gekommen (Haltung `reicht_mappe` in `figuren.py`: linker Arm mit der Mappe nach vorn, Kanne abgestellt auf der Ablage) und
-schaut zur Kamera; das Fenster liegt rechts hinter ihr, die Sonnenscheibe (Kulisse 40 m draußen) wird je Einstellung so
-gerückt, dass sie tief im rechten Flügel steht (`sonne_im_fenster`), das Licht selbst bleibt `sonne_stellen()`. Herr K. sitzt
-wie im Raum auf dem dritten Sitz, der EKG-Wagen davor. Der Raum ist breit (Bank 5 m rechts vom Tresen), daher 16 mm — mit
-einer engeren Brennweite fiele Herr K. aus dem Bild; Marlene ist deshalb kleiner als im Referenzbild. Was Blender für diese
-Kamera ergibt: die Sonne fällt rechts an Marlene vorbei (das Fenster liegt rechts vom Tresen); die Jalousiestreifen auf dem
-Boden liegen 1,75–3,5 m vor der Rückwand, also unter den Füßen der Spielerin und außerhalb des Bildes; im Bild trifft die Sonne
-die Oberseite des EKG-Wagens (Streifen), Fensterbank und Laibung und die rechte Ecke der Tresenablage. Marlene steht in
-Raumlicht und Lampeninsel, Herr K. im Schatten. Ein Gegenlicht-Saum entsteht nur dort, wo der Sonnen-Durchgang eine Figur
-wirklich trifft — die Stilphrase verlangt Streifen und Säume nur, wo die Vorlage sie zeigt. Die Kanne steht auf der Ablage der
-Sichtblende: auf der Arbeitsfläche dahinter liefe der Blick knapp durch den Spalt zwischen Fase der Sichtblende und
-Plattenunterseite, und Freestyle zeichnete die verdeckte Kanne durch die Platte.
+Einstellung `aufnahme/tresen` (zweite Fassung, nach dem Vorbild `art/referenz/chatgpt_aufnahme_marlene.png`): Ich-Perspektive über
+den Tresen mit 30 mm, Marlene groß links, hinter ihr das Fenster mit der tiefen Sonne, rechts klein Herr K. auf der Bank, der
+EKG-Wagen daneben. Die Raumgeometrie setzt Grenzen: der Tresen (x −4,1…−1,7) liegt ganz links vom Fenster (x −1,25…1,45), und die
+Gelenklampe steht am rechten Tresenende. Von einer Kamera rechts der Lampe liegt das Fenster immer rechts neben Marlene; von einer
+Kamera links der Lampe hängt der Lampenarm vor ihrem Gesicht — das Fenster lässt sich also nicht vollständig hinter sie bringen.
+Kompromiss: die Spielerin steht links vor dem Tresen (−2,5/−2,5, Augenhöhe 1,58 m), schaut mit 40° Gier schräg nach rechts an der
+Lampe vorbei (Lampenkopf am linken Bildrand); Marlene steht am äußersten rechten Tresenende (−1,66/−0,45, linke Schulter über der
+Wange), so beginnt das Fenster an ihrer linken Schulter, die Sonnenscheibe (`sonne_im_fenster` −0,7/1,52) steht dicht neben ihr.
+Herr K. sitzt für dieses Bild auf dem ersten Sitz (1,1/−0,75, dem Fenster nächstes Bankende), nur so passt er mit 30 mm ganz ins
+Bild; Tüte und EKG-Wagen werden über `objekte` (Klickzonen-Gruppen aus `szene_aufnahme.HIT`, Versatz in Metern) mitverschoben —
+der Wagen unter das rechte Fensterende, die Tüte neben seinen Sitz. Haltung `reicht_mappe`: der linke Arm gestreckt zur Kamera,
+Hand 0,6 m vor dem Körper in Schulterhöhe, die Mappe an der hinteren Kante gehalten und um 40° zur Kamera geneigt, ihre Vorderkante
+knapp über der Ablage; die Kanne steht (`kanne_welt`, Raumkoordinaten) auf der Ablage vor der Lampenklemme. Was Blender für diese
+Kamera ergibt: die Sonne (`sonne_stellen`, nach links-vorn) erreicht hinter dem Tresen weder Marlenes Haar noch ihre Schultern (die
+beleuchtete Zone beginnt bei x ≈ −1,45, ihre linke Schulter endet bei −1,42); Streifen liegen auf dem rechten Ende der Ablage, auf
+Fensterbank, Wagen und auf Herrn K. (Mütze, Schulter); die Streifen auf dem Boden liegen 2,5–3,3 m vor der Rückwand, also hinter
+der Kamera. Ein Gegenlicht-Saum an Marlene steht daher nicht in `sonne.png`; die Stilphrase verlangt Säume nur, wo die Vorlage sie
+zeigt. Freestyle ließ aus dieser Nahkamera in einem schmalen Band Kanten hinter der Tresenplatte durch (Hinterkante der
+Arbeitsfläche, Marlenes Beine — Striche auf der Ablage; in der ersten Fassung dasselbe mit der Kanne auf der Arbeitsfläche):
+Fase, Dicke und Lage der Platte änderten daran nichts, erst die fein unterteilte Platte (Subdivision „simple", Stufe 4, in
+`aufbau`) hält die Sichtbarkeitsprüfung dicht. Die Kanne steht trotzdem auf der Ablage der Sichtblende, wie im Vorbild.
 
 Nicht im Bild: Klickzonen, Uhrzeiger (bleiben SVG), Kurven auf Schirmen, Text. Die Szenenbilder werden später eingebunden; die
 Spiellogik kennt sie noch nicht.
@@ -223,3 +231,24 @@ den GPT-Lauf mit Schlüssel heißt das: Vorlage + Porträts + Stilreferenz in ei
 den Kontrast der Vorlage (0,57) annähernd hält; wenn nicht, zweistufig — Szene einbildig fürs Licht, Figuren wie im Spiel
 getrennt gezeichnet und über `maske.png` eingesetzt. Bilder und Prüfungen der Probe liegen nicht im Repository
 (`bau/blender/szenenbilder/aufnahme_tresen/kontext_*.png` + `.json`).
+
+### GPT Image zur zweiten Einstellung am 13.10.2026 (drei Aufrufe, Vorlage `aufnahme_tresen`, 30 mm)
+
+Aufruf wie oben (`malen.py openai`, Vorlage + Porträts Marlene, Herr K. + Referenzbild), dazu `--prompt` mit einer kurzen
+Szenenbeschreibung (Marlene am Tresenende reicht die Mappe, Kanne vor der Lampe, Fenster hinter ihrer linken Schulter, Herr K.
+auf der Bank mit Tüte, Wagen unter dem Fenster; Schild leer; dünner warmer Saum an Haar und Schulter). Die Lichtprüfung ist für
+diese Einstellung streng: die Sonnenmaske ist dünn (Fensterbank, Wagen, drei Streifen am rechten Ende der Ablage, Herrn K.s
+Mütze und Schulter), und schon die Vorlage selbst kommt nur auf 1/4 (Kontrast 0,13, Versatz 7 %: die cremefarbene Ablage zeigt
+die Tönung kaum). Figuren treffen in allen drei Läufen die Porträts (Dutt mit Lesebrille, Kanne rost, Mütze, Schnurrbart,
+Strickjacke, Hausschuhe, Tüte mit Schachteln, Uhr ohne Zeiger, Schirme dunkel, Hände mit Fingern, keine Schrift außer wo
+vermerkt); der Kuli steckt wie im Porträt in der Brusttasche, nicht hinterm Ohr.
+
+| Aufruf | Prompt-Zusatz | Licht (`licht_pruefen.py`) | Befund |
+|---|---|---|---|
+| 1 (19:03) | Szenenbeschreibung | FALSCH 2/4: Kontrast −0,34, Versatz 5,9 %, Richtung 17°, Fremdlicht 5 ‰ | Komposition wie die Vorlage, Lampeninsel da, aber **keine** Sonnenstreifen (Ablage, Fensterbank, Wagen, Herr K. alle flach); Schild leer |
+| 2 (19:05) | + Streifen einzeln benannt (Ablage, Fensterbank, Wagen, Mütze/Schulter), Gesicht im Halbschatten, Saum | TEILWEISE 3/4: Kontrast 0,60, Richtung 6°, Fremdlicht 3,9 ‰; Versatz 7,2 % | Streifen auf Ablage (aber unter der Mappe statt am rechten Ende) und Fensterbank, Wagen und Herr K. weiter flach, zarter Saum am Dutt; **Schild mit Schriftlinien** (§6) |
+| 3 (19:06) | + Schild „absolut leer", Streifen rechts neben der Mappe | FALSCH 2/4: Kontrast 0,10, Richtung 10°, Fremdlicht 5,1 ‰; Versatz 7,6 % | Schild leer, Streifen am rechten Ablagenende und auf der Fensterbank, aber blass; Wagen und Herr K. flach; Saum zart — **bestes Ergebnis** (kein Ausschlusskriterium) |
+
+Offen: GPT malt die Streifen blass und nie auf Wagen oder Herrn K.; der Versatz bleibt bei 7 %, weil die gemalten Streifen auf
+der Ablage weiter links liegen als Blenders. Marlenes Gesicht bleibt frontal hell statt im Halbschatten, der Gegenlicht-Saum
+ist nur angedeutet (Blenders Sonne erreicht sie nicht, siehe oben).

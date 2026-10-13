@@ -308,9 +308,9 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
         ER, HR = Vector((-0.31, -0.13, tresen - 0.04)), Vector((-0.2, -0.46, tresen + 0.02))
         EL, HL = Vector((0.3, -0.18, tresen - 0.08)), Vector((0.31, -0.44, tresen + 0.07))
     elif haltung == "reicht_mappe":
-        # linker Arm (+x, von vorn gesehen rechts) fast gestreckt nach vorn, Hand in Brusthöhe mit der Mappe;
-        # rechter Arm hängt locker an der Seite, Hand an der Hüfte
-        EL, HL = Vector((0.27, -0.30, 1.14)), Vector((0.14, -0.58, 1.22))
+        # linker Arm (+x, von vorn gesehen rechts) gestreckt nach vorn zur Kamera, Hand in Schulterhöhe 0,6 m vor dem
+        # Körper (Schulter–Hand 0,61 m, Arm 0,64 m), vor der Körpermitte; rechter Arm hängt locker, Hand an der Hüfte
+        EL, HL = Vector((0.22, -0.30, 1.20)), Vector((0.12, -0.60, 1.32))
         ER, HR = Vector((-0.30, -0.06, 0.98)), Vector((-0.27, -0.16, 0.84))
     else:
         ER, HR = Vector((-0.3, -0.03, 1.02)), Vector((-0.2, -0.1, 0.9))      # Hand in der Hüfte
@@ -322,9 +322,11 @@ def marlene(ort=(0, 0, 0), drehung=0.0, haltung="tresen", tag=None, hit="marlene
     F.hand(HR, skala=(1.1, 1.25, 0.55) if haltung == "tresen" else (1, 1.1, 0.8))
     F.hand(HL, skala=(1.05, 1.05, 0.9) if haltung != "reicht_mappe" else (1.0, 1.15, 0.8))
     if haltung == "reicht_mappe":
-        # Mappe (Papier, Klammer dunkel): an der Oberkante gehalten, hängt um 55° nach vorn-unten zur Kamera —
-        # ihre Fläche zeigt zur Kamera, die etwas höher steht als Marlenes Augen
-        a = math.radians(55); runter = Vector((0.0, -math.cos(a), -math.sin(a)))
+        # Mappe (Papier, Klammer dunkel): an der hinteren Kante gehalten, liegt um 40° nach vorn-unten zur Kamera
+        # geneigt — ihre Fläche zeigt zur Kamera, die etwas höher steht als Marlenes Augen; die vordere Kante kommt
+        # knapp über der Ablage des Tresens an (1,11 m), als würde die Mappe dort abgelegt — so bleibt die ganze Mappe
+        # samt Unterkante über der Platte sichtbar
+        a = math.radians(40); runter = Vector((0.0, -math.cos(a), -math.sin(a)))
         F.quader((0.24, 0.32, 0.012), HL + runter * 0.15 + Vector((-0.01, -0.02, 0.0)), "fig_schild", rot=(a, 0, 0), fase=0.003, name="mappe")
         F.quader((0.05, 0.035, 0.018), HL + runter * 0.02 + Vector((0.05, -0.02, 0.0)), "fig_dunkel", rot=(a, 0, 0), fase=0.003, name="mappenclip")
     # Thermoskanne (Rost) — der eine Akzent; Deckel dunkel
