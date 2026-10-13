@@ -29,11 +29,15 @@
 <script src="raetsel_reizleitung.js"></script>
 <script src="raetsel_schirme.js"></script>
 <script src="raetsel_ampel.js"></script>
+<script src="motor/fenster.js"></script>
+<script src="motor/szenenbild.js"></script>
+<script src="motor/fall.js"></script>
+<script src="faelle/aufnahme_baum.js"></script>
 <script src="spiel.js"></script>
 <script src="huelle.js"></script>
 <script>
   window.addEventListener("DOMContentLoaded", function () {
-    window.Sprache.starte(window.WOERTER || {});
+    window.Sprache.starte(window.WOERTER || {}, window.TEXTE || {});
     window.Huelle.start(window.KUNST, window.EKG_DATEN);
   });
 </script>

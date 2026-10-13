@@ -11,7 +11,9 @@
   "use strict";
 
   var SCHLUESSEL = "nachtdienst-sprache";
-  var WOERTER = {};                 /* { en: {de-Satz: Übersetzung}, ru: {…} } */
+  var WOERTER = {};                 /* { en: {de-Satz: Übersetzung}, ru: {…} } — alter Weg: der deutsche Satz ist der Schlüssel */
+  var TEXTE = {};                   /* { de: {id: Satz}, en: {…}, ru: {…} } — neuer Weg (KONZEPT §6.2): feste IDs je Fall,
+                                       text/<sprache>/<fall>.json. T() nimmt beides, bis die alten Sätze migriert sind. */
   var jetzt = "de";
   var SPRACHEN = [
     { kurz: "de", name: "Deutsch" },
@@ -20,7 +22,8 @@
   ];
   var fehlend = {};                 /* für das Prüfwerkzeug */
 
-  function lade(woerter) { WOERTER = woerter || {}; }
+  function lade(woerter, texte) { WOERTER = woerter || {}; TEXTE = texte || {}; }
+  function istId(text) { return !!(TEXTE.de && TEXTE.de.hasOwnProperty(text)); }
 
   function erkenne() {
     try {
@@ -71,6 +74,11 @@
   function T(text, werte) {
     if (text === null || text === undefined) return "";
     text = String(text);
+    if (istId(text)) {                                   /* ID-Weg: erst die Sprache, dann Englisch, dann Deutsch */
+      var t = TEXTE[jetzt] && TEXTE[jetzt][text];
+      if (!t && jetzt !== "de") { fehlend[text] = true; t = (TEXTE.en && TEXTE.en[text]) || TEXTE.de[text]; }
+      return fuelle(t || TEXTE.de[text], werte);
+    }
     if (jetzt === "de") return fuelle(text, werte);
     var tisch = WOERTER[jetzt] || {};
     var uebersetzt = tisch[text];
@@ -118,8 +126,9 @@
     lade: lade, setze: setze, T: T, zahl: zahl, waehler: waehler,
     uebersetzeHtml: uebersetzeHtml,
     jetzt: function () { return jetzt; },
-    starte: function (woerter) { lade(woerter); setze(erkenne(), true); },
+    starte: function (woerter, texte) { lade(woerter, texte); setze(erkenne(), true); },
     fehlende: function () { return Object.keys(fehlend); },
+    istId: istId, texte: function () { return TEXTE; },
     SPRACHEN: SPRACHEN
   };
   global.T = T;

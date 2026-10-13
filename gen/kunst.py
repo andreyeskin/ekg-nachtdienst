@@ -1007,6 +1007,34 @@ SZENEN = {
 }
 PORTRAITS = ("marlene", "herr_k", "falk", "wieser", "jonas")   # art/portraits/<wer>.png; ohne Datei der gezeichnete Rückfall
 
+# Szenenbilder (gen/blender/README.md „Szenenbilder"): illustrierte Nahaufnahmen ohne Klickzonen, eingebettet als
+# JPEG (etwa 85 %, Ziel unter 300 kB) — web/motor/szenenbild.js blendet sie über die Bühne. Schlüssel = Name im Fall.
+SZENENBILDER = {
+    "aufnahme_tresen": os.path.join("art", "szenenbilder", "aufnahme_tresen_neu_beleuchtet",
+                                    "openai_gpt-image-2.5-sunburst_20261013-1920.png"),
+}
+SZENENBILD_MAX_KB = 300
+
+
+def szenenbild_jpeg(pfad):
+    """PNG → JPEG als data-URI, Qualität 85, bei Bedarf niedriger, bis die Grenze eingehalten ist."""
+    import base64
+    import io
+    try:
+        from PIL import Image
+    except ImportError:
+        print("Szenenbild übersprungen (Pillow fehlt):", pfad)
+        return None
+    bild = Image.open(pfad).convert("RGB")
+    for q in (85, 80, 75, 70):
+        puffer = io.BytesIO()
+        bild.save(puffer, "JPEG", quality=q, optimize=True, progressive=True)
+        roh = puffer.getvalue()
+        if len(roh) <= SZENENBILD_MAX_KB * 1024:
+            break
+    print("Szenenbild %s: %dx%d, JPEG q%d, %d kB" % (os.path.basename(pfad), bild.width, bild.height, q, len(roh) // 1024))
+    return "data:image/jpeg;base64," + base64.b64encode(roh).decode("ascii")
+
 
 def png_ebene(pfad, extra=""):
     """Gerenderte Ebene (PNG) als SVG mit eingebettetem Bild — für Szenen aus der Blender-Pipeline.
@@ -1098,6 +1126,13 @@ def baue():
             aus["portraits"][wer] = png_portrait(pfad)
         elif wer in ("marlene", "herr_k", "falk"):
             aus["portraits"][wer] = portrait(wer)
+    aus["szenenbilder"] = {}
+    for name, rel in SZENENBILDER.items():
+        pfad = os.path.join(os.path.dirname(hier), rel)
+        if os.path.exists(pfad):
+            uri = szenenbild_jpeg(pfad)
+            if uri:
+                aus["szenenbilder"][name] = uri
     return aus
 
 

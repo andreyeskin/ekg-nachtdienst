@@ -169,6 +169,29 @@ body {
 }
 .dialog-antwort.weiter:hover { background: var(--tinte); color: var(--papier); padding-left: 14px; }
 
+/* ------------------------------------------------------------- Szenenbild
+   web/motor/szenenbild.js: illustrierte Nahaufnahme über der Bühne (dieselbe Lage, 16:9), ruhige Einblendung;
+   der Dialog (z-index 40) liegt darüber, das Bild bleibt sichtbar. Keine Klickzonen. */
+.szenenbild {
+  position: fixed; left: var(--b-links); top: var(--b-oben); width: var(--bw); height: var(--bh);
+  z-index: 35; display: none; overflow: hidden; background: var(--nacht);
+  opacity: 0; transition: opacity .9s ease;
+}
+.szenenbild.da { display: block; }
+.szenenbild.an { opacity: 1; }
+.szenenbild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (prefers-reduced-motion: reduce) { .szenenbild { transition: none; } }
+
+/* Befundzeilen (Untersuchung, Bogen): lesen, dann in die Mappe — kein Rätsel. */
+.befund-zeilen { list-style: none; margin: 0 0 6px; padding: 0; }
+.befund-zeilen li {
+  padding: 9px 0 9px 26px; font-size: 16px; line-height: 1.5; position: relative;
+  border-bottom: 1px solid rgba(16, 33, 43, .18);
+}
+.befund-zeilen li::before { content: "\2713"; position: absolute; left: 2px; color: var(--phosphor); font-weight: 700; }
+.befund-zeilen li:last-child { border-bottom: 0; }
+#befund-hof .knopf { min-height: 44px; }
+
 /* -------------------------------------------------------- Rätsel / Fragen */
 .raetsel {
   position: fixed; inset: 0; display: none; z-index: 50;
