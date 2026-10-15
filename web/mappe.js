@@ -22,12 +22,13 @@
     hof.querySelector(".vergleich").addEventListener("click", vergleiche);
   }
 
+  /* Karten aus dem Fallmotor tragen Text-IDs und ihre Platzhalterwerte (k.vars); ältere Karten den fertigen Satz. */
   function karteHtml(k, i) {
     return '<article class="karte" data-i="' + i + '" tabindex="0">' +
       '<div class="karte-kopf"><span class="karte-zeit">' + (k.zeit || "") + '</span>' +
-      '<h3>' + T(k.titel) + '</h3></div>' +
+      '<h3>' + T(k.titel, k.vars) + '</h3></div>' +
       (k.ekg ? '<canvas class="karte-ekg" height="110"></canvas>' : '<div class="karte-symbol">' + (k.symbol || "") + '</div>') +
-      '<p>' + T(k.text) + '</p></article>';
+      '<p>' + T(k.text, k.vars) + '</p></article>';
   }
 
   function maleKarten() {
@@ -78,13 +79,14 @@
     if (gewaehlt.length !== 2) return;
     var a = Z.befunde[gewaehlt[0]], b = Z.befunde[gewaehlt[1]];
     var feld = hof.querySelector(".mappe-vergleich");
+    var f = frage(a, b);
     feld.innerHTML =
-      '<div class="verg-kopf"><h3>' + T(a.titel) + '</h3><h3>' + T(b.titel) + '</h3></div>' +
+      '<div class="verg-kopf"><h3>' + T(a.titel, a.vars) + '</h3><h3>' + T(b.titel, b.vars) + '</h3></div>' +
       '<div class="verg-paar">' +
-      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(a.text) + '</p></div>' +
-      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(b.text) + '</p></div>' +
+      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(a.text, a.vars) + '</p></div>' +
+      '  <div class="verg-eins"><canvas height="150"></canvas><p>' + T(b.text, b.vars) + '</p></div>' +
       '</div>' +
-      '<p class="verg-frage">' + T(frage(a, b) || "Was ist anders? Sieh zuerst auf den Rhythmus, dann auf die Zeiten.") + '</p>';
+      '<p class="verg-frage">' + (f ? T(f.text, f.vars) : T("Was ist anders? Sieh zuerst auf den Rhythmus, dann auf die Zeiten.")) + '</p>';
     var lw = feld.getElementsByTagName("canvas");
     [a, b].forEach(function (k, i) {
       if (k.ekg) maleEkg(lw[i], k.ekg);
@@ -94,10 +96,21 @@
     feld.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  /* Die Vergleichsfrage gehört der Karte, die sie stellt — samt ihren Platzhalterwerten; gemessene Zahlen der
+     anderen Karte (hf, pq …) liegen in deren vars und werden dazugelegt. */
   function frage(a, b) {
-    if (a.vergleich && a.vergleich[b.id]) return a.vergleich[b.id];
-    if (b.vergleich && b.vergleich[a.id]) return b.vergleich[a.id];
-    return null;
+    var von = null, text = null;
+    if (a.vergleich && a.vergleich[b.id]) { von = a; text = a.vergleich[b.id]; }
+    else if (b.vergleich && b.vergleich[a.id]) { von = b; text = b.vergleich[a.id]; }
+    if (!von) return null;
+    var vars = {}, k, quelle = von === a ? b : a;
+    for (k in (quelle.vars || {})) if (quelle.vars.hasOwnProperty(k)) vars[k] = quelle.vars[k];
+    for (k in (von.vars || {})) if (von.vars.hasOwnProperty(k)) vars[k] = von.vars[k];
+    if (global.Spiel && global.Spiel.zustand) {
+      var w = global.Spiel.zustand.werte;
+      for (k in w) if (w.hasOwnProperty(k) && typeof w[k] !== "object") vars[k] = w[k];
+    }
+    return { text: text, vars: vars };
   }
 
   function oeffne() {
@@ -119,7 +132,7 @@
     if (hat(k.id)) return false;
     Z.befunde.push(k);
     if (global.Spiel && global.Spiel.melde) {
-      global.Spiel.melde(T("Befund in der Mappe: {was}", { was: T(k.titel) }));
+      global.Spiel.melde(T("Befund in der Mappe: {was}", { was: T(k.titel, k.vars) }));
     }
     if (global.Spiel && global.Spiel.sichere) global.Spiel.sichere();
     if (global.Spiel && global.Spiel.zaehlerAuffrischen) global.Spiel.zaehlerAuffrischen();

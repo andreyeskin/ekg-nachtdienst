@@ -36,7 +36,7 @@
     hof.querySelector(".stand-zeile").innerHTML =
       '<span class="stand-uhr">' + k.zeit + "</span> · " + T(k.ort) +
       ' · <span class="stand-kap">' + T(k.titel) + "</span>";
-    liste(hof.querySelector(".hat"), k.hat, "Noch nichts. Sieh dich um — oben „Was geht hier?" + "“ zeigt, was anklickbar ist.");
+    liste(hof.querySelector(".hat"), k.hat, "Noch nichts. Sieh dich um: oben „Was geht hier?" + "“ zeigt, was anklickbar ist.");
     liste(hof.querySelector(".offen"), k.offen, "Für dieses Kapitel nichts mehr.");
     hof.querySelector(".stand-fuss").textContent = T(k.fuss || "");
     hof.classList.add("an");

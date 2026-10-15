@@ -16,8 +16,11 @@ BAU = os.path.join(WURZEL, "bau")
 DATEN = os.path.join(WURZEL, "data") if os.path.isdir(os.path.join(WURZEL, "data")) else BAU
 
 SKRIPTE = ["sprache.js", "ekg.js", "szene.js", "dialog.js", "mappe.js", "stand.js",
-           "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js", "raetsel_ampel.js", "spiel.js",
-           "huelle.js"]
+           "raetsel_zirkel.js", "raetsel_reizleitung.js", "raetsel_schirme.js", "raetsel_ampel.js",
+           "motor/fenster.js", "motor/szenenbild.js", "motor/fall.js",
+           "faelle/aufnahme_baum.js",
+           "spiel.js", "huelle.js"]
+SPRACHEN = ("de", "en", "ru")
 
 
 def lies(pfad):
@@ -48,8 +51,8 @@ def baue(ziel=None):
     # nennt eine Aufnahme, die das Spiel zeigt.
     gebraucht = set()
     for js in SKRIPTE:
-        # Konstanten *_EKG = N (Kapitel) und aufnahme: N (Fall-Tabellen der Rätsel)
-        for m in re.finditer(r"(?:\b[A-Z][A-Z0-9_]*_EKG\s*=|\baufnahme:)\s*(\d+)", lies(os.path.join(WEB, js))):
+        # Konstanten *_EKG = N (Kapitel), aufnahme: N (Fall-Tabellen der Rätsel) und haupt: N (Fälle, KONZEPT §6)
+        for m in re.finditer(r"(?:\b[A-Z][A-Z0-9_]*_EKG\s*=|\baufnahme:|\bhaupt:)\s*(\d+)", lies(os.path.join(WEB, js))):
             gebraucht.add(int(m.group(1)))
     fehlt = gebraucht - {r["id"] for r in ekg}
     if fehlt:
@@ -71,9 +74,29 @@ def baue(ziel=None):
             if os.path.exists(pfad):
                 tisch = json.load(open(pfad, encoding="utf-8"))
                 woerter[sprache] = {k: v for k, v in tisch.items() if v}
+    # Texte über IDs (KONZEPT §6.2): text/<sprache>/<fall>.json — alle Fälle einer Sprache in einen Tisch.
+    texte = {}
+    for sprache in SPRACHEN:
+        ordner = os.path.join(textordner, sprache)
+        texte[sprache] = {}
+        if os.path.isdir(ordner):
+            for datei in sorted(os.listdir(ordner)):
+                if datei.endswith(".json"):
+                    tisch = json.load(open(os.path.join(ordner, datei), encoding="utf-8"))
+                    doppelt = set(tisch) & set(texte[sprache])
+                    if doppelt:
+                        print("Text-ID doppelt in", sprache, ":", sorted(doppelt)[:5])
+                        sys.exit(1)
+                    texte[sprache].update({k: v for k, v in tisch.items() if v})
+    for sprache in ("en", "ru"):
+        fehlt = sorted(set(texte["de"]) - set(texte[sprache]))
+        if fehlt:
+            print("Übersetzung fehlt (%s): %d IDs, z. B. %s" % (sprache, len(fehlt), fehlt[:5]))
+            sys.exit(1)
 
     daten = ("window.KUNST=" + json.dumps(kunst, ensure_ascii=False, separators=(",", ":")) + ";\n"
              "window.WOERTER=" + json.dumps(woerter, ensure_ascii=False, separators=(",", ":")) + ";\n"
+             "window.TEXTE=" + json.dumps(texte, ensure_ascii=False, separators=(",", ":")) + ";\n"
              "window.EKG_DATEN=" + json.dumps(auswahl, ensure_ascii=False, separators=(",", ":")) + ";")
 
     html = html.replace('<link rel="stylesheet" href="stil.css">',

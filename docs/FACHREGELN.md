@@ -63,6 +63,9 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
 - Folge für das Spiel: Die falsche Antwort „Kammertachykardie" wird mit schmalen Komplexen
   (Norm 60–100 ms) und niedriger Frequenz zurückgewiesen. Im Rätsel gilt der Fall „ohne
   Purkinje-Netz" als Myokardproblem: QRS über 100 ms, plump, nicht M-förmig (Lektion 13).
+  Die optionale Zirkel-Aufgabe „QRS" bei Herrn Baum (86 ms) deutet „schmal: Kammern über das normale
+  Leitungssystem erregt; die Bremse sitzt oben, in der Überleitung" — die Zuordnung PQ > 200 ms →
+  AV-Knoten steht in Lektion 3 und 10, die Normbreite hier.
 
 ## Frequenz (Lektion 7)
 - Erster Schritt der Befundung: Rhythmus und Frequenz. Fünf Fragen für den Sinusrhythmus:
@@ -330,6 +333,11 @@ Nicht aus dem EKG-Kurs; hier nur die Regeln, die der Fall Herr Baum braucht, in 
   Mittel beim älteren Patienten; medikamentös induzierte Orthostase ist die häufigste Orthostaseform.
 - Folge für das Spiel: DD-Tabelle, Anamnese-Optionen und Risikomerkmale in `docs/faelle/aufnahme_baum.md`;
   die Rückmeldungen nennen die Merkmale, nie die Leitlinie.
+- Umgesetzt 13.10.2026 (`web/faelle/aufnahme_baum.js`): Marlene und Dr. Falk beantworten „Ist das nicht
+  eine TIA?" (fokaler Ausfall fehlt, Bewusstsein war weg; Hirnstamm nie ohne Herdzeichen), „Hat er
+  gekrampft?" (kein Zucken, Zunge heil, sofort klar), „Unterzucker?" (kein Diabetes, Stix normal) und die
+  Orthostase (Stehversuch ohne Abfall, Sturz nicht beim Aufstehen) in ihren Stimmen; der Epilog nennt eine
+  Pause über drei Sekunden im Wachen als das, was der Monitor später aufgezeichnet hat — ohne Kurve.
 
 ## Vorhofflimmern am Monitor (Lektion 25, 31, 7; ESC-AF-2020 — QUELLEN §8)
 - Erkennen: keine P-Wellen, absolut unregelmäßige RR, schmale Komplexe; Frequenz als Mittel aus sechs

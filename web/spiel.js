@@ -1,12 +1,15 @@
-/* „Nachtdienst" — Kapitel 1: Aufnahme, 06:40 · Kapitel 2: Monitorzimmer, 09:15.
-   Fall: Herr Konrad Baum, 68, zwei Synkopen ohne Vorwarnung.
-   Alle Kurven stammen aus echten Aufnahmen (LUDB), alle Zeiten aus deren
-   Experten-Annotation. Erfunden sind nur die Menschen.                        */
+/* „Nachtdienst" — Start, Kopfleiste, Kapitelfolge.
+   Kapitel 1 (Aufnahme, 06:40) ist der Fall web/faelle/aufnahme_baum.js, gespielt vom Motor web/motor/fall.js.
+   Kapitel 2 (Monitorzimmer, 09:15) liegt vorerst noch hier im alten Code (UMBAU §2c) und baut auf den
+   Messungen aus Kapitel 1 auf (Z.werte, Z.befunde).
+   Alle Kurven stammen aus echten Aufnahmen (LUDB), alle Zeiten aus deren Experten-Annotation.
+   Erfunden sind nur die Menschen.                                                                   */
 (function (global) {
   "use strict";
 
   var SCHLUESSEL = "nachtdienst-1";
-  var AUFNAHME_EKG = 39;          /* Sinusrhythmus 53/min (Datenbank: „Sinus bradycardia“; Lehrbuch Lektion 8: Bradykardie erst < 50), PQ 228 ms — AV-Block I° */
+  var FALL = "aufnahme_baum";
+  var AUFNAHME_EKG = 39;          /* Herrn Baums Aufnahme — dieselbe wie im Fall (aufnahme.haupt); Kapitel 2 braucht sie an der Monitorwand */
   /* Kapitel 2: die beiden anderen Betten an der Monitorwand. Gewählt nach den
      Feldern rhythmus und mess in data/ekg_daten.json. Von den drei Merkmalen,
      an denen man Herrn Baum erkennen kann (P vor jedem QRS · Frequenz · PQ),
@@ -21,12 +24,13 @@
   var SATZ = {};
 
   var Z = {
-    raum: "aufnahme", zeit: 6 * 60 + 40, befunde: [], marken: {}, werte: {}, kapitel: 1
+    raum: "aufnahme", zeit: 6 * 60 + 40, befunde: [], marken: {}, werte: {}, faelle: {}, kapitel: 1
   };
 
   function satz(id) { return SATZ[id]; }
   function hat(m) { return !!Z.marken[m]; }
   function setze(m) { Z.marken[m] = true; sichere(); }
+  function fall(m) { return global.Fall.hat(FALL, m); }
   function zeitText(min) {
     var t = ((min === undefined ? Z.zeit : min) + 1440) % 1440;
     return ("0" + Math.floor(t / 60)).slice(-2) + ":" + ("0" + (t % 60)).slice(-2);
@@ -44,13 +48,13 @@
       var g = JSON.parse(r);
       if (!g || !g.raum) return false;
       Z.raum = g.raum; Z.zeit = g.zeit; Z.befunde = g.befunde || [];
-      Z.marken = g.marken || {}; Z.werte = g.werte || {}; Z.kapitel = g.kapitel || 1;
+      Z.marken = g.marken || {}; Z.werte = g.werte || {}; Z.faelle = g.faelle || {}; Z.kapitel = g.kapitel || 1;
       return true;
     } catch (e) { return false; }
   }
   function vonVorn() {
     try { global.localStorage.removeItem(SCHLUESSEL); } catch (e) {}
-    Z.raum = "aufnahme"; Z.zeit = 6 * 60 + 40; Z.befunde = []; Z.marken = {}; Z.werte = {}; Z.kapitel = 1;
+    Z.raum = "aufnahme"; Z.zeit = 6 * 60 + 40; Z.befunde = []; Z.marken = {}; Z.werte = {}; Z.faelle = {}; Z.kapitel = 1;
     kopfAuffrischen(); global.Szene.zeige("aufnahme"); global.setTimeout(uhrStellen, 500);
     auftakt();
   }
@@ -94,84 +98,6 @@
     global.setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 3900);
   }
 
-  /* ------------------------------------------------------------ Kleine Frage */
-  function frage(opt) {
-    var hof = document.getElementById("frage-hof");
-    if (!hof) {
-      hof = document.createElement("div");
-      hof.id = "frage-hof"; hof.className = "raetsel frage";
-      hof.innerHTML = '<div class="raetsel-innen"><div class="raetsel-kopf"><h2></h2>' +
-        '<button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
-        '<p class="raetsel-auftrag"></p><div class="frage-bild"></div>' +
-        '<div class="frage-wahl"></div><div class="rueck"></div>' +
-        '<div class="raetsel-knoepfe"><button class="knopf haupt weiter" type="button" hidden>' + T("Weiter") + '</button></div></div>';
-      document.body.appendChild(hof);
-      hof.querySelector(".zu").addEventListener("click", function () {
-        hof.classList.remove("an"); global.Szene.sperre(false); global.Szene.aktualisiere();
-      });
-      /* Nichts schließt sich von allein (LEHRPLAN §5.7): Nach der richtigen Antwort
-         bleibt die Begründung stehen, bis „Weiter" getippt ist. */
-      hof.querySelector(".weiter").addEventListener("click", function () {
-        hof.querySelector(".weiter").hidden = true;
-        hof.classList.remove("an"); global.Szene.sperre(false);
-        var f = hof.__fertig; hof.__fertig = null;
-        if (f) f();
-      });
-      document.addEventListener("keydown", function (e) {
-        if (!hof.classList.contains("an")) return;
-        var w = hof.querySelector(".weiter");
-        if ((e.key === "Enter" || e.key === " ") && !w.hidden) { e.preventDefault(); w.click(); }
-        else if (/^[1-9]$/.test(e.key)) {
-          var k = hof.querySelectorAll(".frage-wahl .knopf")[+e.key - 1];
-          if (k && !k.disabled) { e.preventDefault(); k.click(); }
-        } else if (e.key === "Escape") { e.preventDefault(); hof.querySelector(".zu").click(); }
-      });
-    }
-    hof.__fertig = opt.fertig || null;
-    hof.querySelector(".weiter").hidden = true;
-    hof.querySelector("h2").textContent = T(opt.titel);
-    hof.querySelector(".raetsel-auftrag").textContent = T(opt.text);
-    var bild = hof.querySelector(".frage-bild");
-    bild.innerHTML = opt.ekg ? '<canvas height="172" style="width:100%"></canvas>' : "";
-    var rueck = hof.querySelector(".rueck");
-    rueck.className = "rueck"; rueck.innerHTML = "";
-    var wahl = hof.querySelector(".frage-wahl");
-    wahl.innerHTML = "";
-    opt.antworten.forEach(function (a, i) {
-      var b = document.createElement("button");
-      b.className = "knopf wahl"; b.type = "button"; b.textContent = T(a.text);
-      b.addEventListener("click", function () {
-        Array.prototype.forEach.call(wahl.children, function (c) { c.disabled = true; });
-        b.classList.add(a.richtig ? "richtig" : "falsch");
-        rueck.className = "rueck " + (a.richtig ? "gut" : "fast");
-        rueck.innerHTML = "<strong>" + T(a.richtig ? "Richtig." : "Nicht ganz.") + "</strong> " + T(a.warum);
-        if (a.richtig) {
-          var w = hof.querySelector(".weiter");
-          w.hidden = false;
-          try { w.focus({ preventScroll: true }); } catch (x) { w.focus(); }
-        } else {
-          global.setTimeout(function () {
-            Array.prototype.forEach.call(wahl.children, function (c) {
-              c.disabled = false; c.classList.remove("falsch");
-            });
-          }, 2200);
-        }
-      });
-      wahl.appendChild(b);
-    });
-    hof.classList.add("an");
-    global.Szene.sperre(true);
-    if (opt.ekg) {
-      var lw = bild.querySelector("canvas");
-      var s = global.EKG.Streifen(lw, {
-        werte: satz(opt.ekg.satz).sig.werte, fs: satz(opt.ekg.satz).sig.fs,
-        mmProS: opt.ekg.mmProS || 25, von: opt.ekg.von || 0, dauer: opt.ekg.dauer || 6
-      });
-      global.requestAnimationFrame(s.zeichne);
-      global.setTimeout(s.zeichne, 80);
-    }
-  }
-
   /* ------------------------------------------------------------ Befunde */
   function befund(k) {
     if (global.Mappe.fuegeHinzu(k)) {
@@ -180,331 +106,40 @@
     }
   }
 
-  function anzahlKernbefunde() {
-    var n = 0;
-    ["b-rhythmus", "b-frequenz", "b-pq"].forEach(function (id) { if (global.Mappe.hat(id)) n++; });
-    return n;
-  }
-  /* Dr. Falk will beide Zahlen: Frequenz und PQ-Zeit. */
-  function beideZahlen() { return global.Mappe.hat("b-frequenz") && global.Mappe.hat("b-pq"); }
-
-  /* Nach jeder Messung: Wem sollte man das sagen? Marlene meldet an, Falk wartet oben. */
-  function nachMessung() {
-    if (!hat("ankunft_monitor")) {
-      if (anzahlKernbefunde() >= 2 && !hat("bericht" + anzahlKernbefunde())) melde("Das solltest du Marlene sagen.");
-    } else if (!hat("k2_auftrag") && beideZahlen()) {
-      melde("Beide Zahlen. Dr. Falk wartet oben.");
-    }
+  /* Was der Raum beim Betreten immer tut — der Fallmotor ruft es für seine Räume (Fall.start → api.betreten). */
+  function betreten(raum) {
+    Z.raum = raum; starteSchirme(raum); kopfAuffrischen(); uhrStellen(); sichere();
   }
 
-  /* Die Medikamentenkarte — aus der Tüte oder, wer sie übersprungen hat, aus dem Aufnahmebogen bei Dr. Falk. */
-  function medisKarte(karte) {
-    return {
-      id: "b-medis", titel: karte.titel, zeit: zeitText(),
-      text: "Bisoprolol 5 mg, Ramipril 5 mg, ASS 100 mg. Der Betablocker bremst Sinusknoten und AV-Knoten — "
-          + "er erklärt die langsame Frequenz mit, aber keine Bewusstlosigkeit ohne Vorwarnung. "
-          + "Eine niedrige Frequenz unter bremsender Medikation ist erwartbar, nicht verdächtig.",
-      symbol: tablettenBild()
-    };
-  }
-
-  /* Falks Frage nach Zahlen — dieselben Antworten bei der Begrüßung und nach dem Anamnese-Umweg. */
-  var FALK_ZAHLEN = [
-    {
-      text: function () {
-        return T("Sinusrhythmus, {hf} pro Minute, PQ {pq} Millisekunden.", { hf: Z.werte.hf, pq: Z.werte.pq });
-      },
-      wenn: beideZahlen, zu: "gut"
-    },
-    {
-      text: function () { return T("Der Puls ist langsam, etwa {hf} pro Minute.", { hf: Z.werte.hf }); },
-      wenn: function () { return global.Mappe.hat("b-frequenz") && !global.Mappe.hat("b-pq"); },
-      zu: "halb"
-    },
-    {
-      text: function () { return T("Sinusrhythmus, PQ {pq} Millisekunden.", { pq: Z.werte.pq }); },
-      wenn: function () { return global.Mappe.hat("b-pq") && !global.Mappe.hat("b-frequenz"); },
-      zu: "halb_pq"
-    }
-  ];
-
-  /* ------------------------------------------------------------ Dialoge */
+  /* ------------------------------------------------------------ Dialoge, Kapitel 2 */
   var DIALOGE = {
-    /* Der Erzähler spricht ohne Porträt und nur an drei Stellen: Anfang, Kapitelwechsel, Schluss (TON.md). */
+    /* Der Erzähler spricht ohne Porträt und nur an wenigen Stellen: Anfang, Kapitelwechsel, Schluss (TON.md). */
     auftakt: {
-      start: {
-        wer: "erzaehler",
-        text: "06:40. Dein erster Frühdienst auf der Aufnahme, und niemand hat Zeit, dich einzuarbeiten. Draußen "
-            + "wird es hell, drinnen riecht es nach Kaffee und Desinfektion. Hinter dem Tresen sitzt Schwester "
-            + "Marlene. Auf dem Stuhl ein alter Herr mit Schiebermütze und einer Plastiktüte.",
-        weiter: "zwei"
-      },
-      zwei: {
-        wer: "marlene",
-        text: "Tipp an, was dich interessiert. Die Mappe oben rechts ist deine: Da kommt rein, was du selbst "
-            + "gemessen hast. Nicht, was du glaubst.",
-        endeText: "Los."
-      },
       monitor: {
         wer: "erzaehler",
         text: "09:15. Zweieinhalb Stunden später. Du hast Herrn Baum nach oben gebracht: ein Bett, ein Monitor, "
             + "drei Elektroden. Die Tochter war da und ist wieder gegangen. Jetzt hat der Oberarzt Zeit.",
-        weiterBaum: "falk", weiter: "start"
+        weiterBaum: "falk", weiter: "ende"
       },
       schluss: {
         wer: "erzaehler",
         text: function () {
           return T("{zeit}. Herr Baum sitzt im Bett und entschuldigt sich bei der Schwester, dass er geklingelt hat. "
-                 + "Der Monitor zählt {hf}. Was vorhin war, als ihm komisch wurde, liegt irgendwo im Speicher. — "
-                 + "Hier endet, was bisher gebaut ist. Der Rest der Schicht kommt noch.",
+                 + "Der Monitor zählt {hf}. Was vorhin war, als ihm komisch wurde, liegt irgendwo im Speicher.",
                    { zeit: zeitText(), hf: satz(AUFNAHME_EKG).mess.frequenz });
         },
-        endeText: "Ende des spielbaren Teils"
-      }
-    },
-
-    marlene: {
-      start: {
-        text: function () {
-          if (hat("ankunft_monitor")) {
-            /* Die Tüte (Figur #fig-tuete) ist mit ihm oben und im Raum ausgeblendet (stil.css);
-               Marlene sagt es einmal — das Foto steht später auf dem Nachtkästchen. */
-            var tuete = hat("tuete_erklaert") ? "" : " " + T("Die Tüte mit seinen Tabletten ist mit ihm hoch. Das Foto steht jetzt am Bett.");
-            return (hat("falk_schickt_zurueck") && !beideZahlen()
-              ? T("Hat er dich zurückgeschickt? Macht er mit allen. Der Streifen liegt noch auf dem Wagen, ich hab "
-                + "ihn nicht weggeräumt.")
-              : T("Er liegt oben, Bett und Monitor. Was treibt dich wieder runter?")) + tuete;
-          }
-          return hat("vorgestellt")
-            ? T("Na, schon schlauer?")
-            : T("Du bist die Famulantin. Gut. Dann fang gleich an — der Herr dort sitzt seit zwanzig Minuten und "
-              + "entschuldigt sich alle fünf Minuten dafür, dass er da ist.");
-        },
-        tu: function () { setze("vorgestellt"); if (hat("ankunft_monitor")) setze("tuete_erklaert"); },
-        antworten: [
-          { text: "Was ist passiert?", zu: "fall" },
-          { text: "Was soll ich tun?", zu: "auftrag", wenn: function () { return !hat("ankunft_monitor"); } },
-          { text: "Was hältst du davon?", zu: "meinung", wenn: function () { return hat("fall_gehoert"); } },
-          {
-            /* Der Bericht wächst mit der Mappe; Marlene antwortet auf jede Stufe anders. */
-            text: function () {
-              var t = [T("Sinus")];
-              if (global.Mappe.hat("b-frequenz")) t.push(T("{hf} pro Minute", { hf: Z.werte.hf }));
-              if (global.Mappe.hat("b-pq")) t.push(T("PQ {pq} ms", { pq: Z.werte.pq }));
-              return T("Ich hab gemessen: {was}.", { was: t.join(", ") });
-            },
-            zu: "bericht",
-            wenn: function () { return anzahlKernbefunde() >= 1 && !hat("bericht" + anzahlKernbefunde()); }
-          },
-          {
-            text: "Der Sticker auf deinem Schild — eine Katze?", zu: "sticker",
-            wenn: function () { return hat("fall_gehoert") && !hat("sticker"); }
-          },
-          { text: "Später.", zu: null }
-        ]
-      },
-      fall: {
-        text: "Konrad Baum, 68. Zweimal umgekippt. Einmal vorgestern an der Bushaltestelle, einmal heute früh in "
-            + "der Küche. Beide Male im Stehen, beide Male ohne Vorwarnung.",
-        tu: function () { setze("fall_gehoert"); },
-        antworten: [
-          { text: "Ohne Vorwarnung — ist das wichtig?", zu: "vorwarnung" },
-          { text: "Hat er sich verletzt?", zu: "verletzt" },
-          { text: "Zurück.", zu: "start" }
-        ]
-      },
-      vorwarnung: {
-        text: "Das ist das Einzige, was mich an der Sache stört. Wem erst schwarz vor Augen wird, wer schwitzt und "
-            + "sich noch hinsetzen kann — das ist der gewöhnliche Weg, und der spricht für eine Kreislaufsache. "
-            + "Hier fehlt genau das. Es steht in jeder Liste der Warnzeichen. Ein Beweis ist es nicht, aber es "
-            + "heißt: nicht nach Hause schicken, bevor man nachgesehen hat.",
-        antworten: [
-          { text: "Also nachsehen.", zu: "auftrag" },
-          { text: "Beweist das etwas?", zu: "beweis" },
-          { text: "Zurück.", zu: "start" }
-        ]
-      },
-      beweis: {
-        text: "Nichts beweist es. Beweisen würde: ein Puls dauerhaft unter vierzig, eine Pause über drei Sekunden "
-            + "im Wachen, oder ein Block, bei dem plötzlich Schläge ausfallen. Das steht alles noch nicht auf dem Papier. "
-            + "Deswegen schreibst du jetzt eines.",
-        antworten: [{ text: "Verstanden.", zu: "auftrag" }]
-      },
-      verletzt: {
-        text: "Eine Schramme am Ellbogen, sonst nichts. Er sagt, er hat sich am Regal festgehalten. Beim zweiten Mal "
-            + "war er allein. Das ist der Teil, der mir nicht gefällt.",
-        antworten: [{ text: "Zurück.", zu: "start" }]
-      },
-      auftrag: {
-        text: "Schreib ihm ein EKG. Der Wagen steht da drüben, die Elektroden kleben schon. Den Puls hab ich "
-            + "gefühlt — langsam. Aber „langsam“ ist keine Zahl, und von einem Gefühl schreibt man keinen Befund.",
-        tu: function () { setze("auftrag_ekg"); global.Szene.aktualisiere(); },
-        antworten: [{ text: "Mach ich.", zu: null }]
-      },
-      meinung: {
-        text: function () {
-          return hat("ekg_geschrieben")
-            ? T("Jetzt liegt ein Streifen da. Was er sagt, sag nicht mir — miss es.")
-            : T("Ich bin seit zwanzig Jahren hier und sag trotzdem nichts, bevor ich einen Streifen gesehen habe. "
-              + "Sonst suchst du nachher nur noch das, was ich dir in den Kopf gesetzt hab.");
-        },
-        antworten: [{ text: "Fair.", zu: "start" }]
-      },
-      /* Marlene meldet an — aber erst, wenn sie gehört hat, was gemessen wurde. Mit der PQ-Zeit
-         erklärt sie, warum er an den Monitor kommt und wer das entscheidet; mit der Frequenz allein
-         lässt sie einen gehen, warnt aber. In Kapitel 2 (er liegt schon oben) nur noch der Rückweg. */
-      bericht: {
-        text: function () {
-          var M = global.Mappe, pq = Z.werte.pq, hf = Z.werte.hf;
-          if (M.hat("b-pq")) {
-            var kern = T("Über zweihundert. Dann leitet er über — aber er lässt sich Zeit dabei. Das allein lässt keinen "
-                       + "umfallen. Aber eine Leitung, die heute {pq} Millisekunden braucht, kann morgen stehenbleiben.",
-                         { pq: pq });
-            if (hat("ankunft_monitor")) return kern + " " + T("Darum liegt er oben. Geh wieder rauf, der Falk wartet nicht gern.");
-            return kern + " " + T("Und genau dafür gibt es den Monitor. Ich ruf den Falk an — bei der Geschichte will er "
-                                + "ihn sowieso oben haben. Du bringst ihn rauf. Das dauert; gegen neun bist du beim Falk, "
-                                + "und der will Zahlen, keine Geschichten.")
-                   + (M.hat("b-frequenz") ? "" : " " + T("Und miss die Frequenz, bevor du rübergehst. Er fragt danach."));
-          }
-          if (M.hat("b-frequenz")) {
-            return T("{hf}. Langsam, hab ich gesagt — jetzt ist es eine Zahl. Das allein lässt keinen umfallen. Ich meld "
-                   + "dich oben an. Aber ich sag's dir gleich: Der Falk fragt als Erstes nach der Überleitung.", { hf: hf });
-          }
-          return T("Sinus. Gut, das ist der Anfang. Und wie langsam ist langsam? Nimm den Zirkel.");
-        },
-        tu: function () {
-          setze("bericht" + anzahlKernbefunde());
-          if (anzahlKernbefunde() >= 2 && !hat("monitor_frei")) { setze("monitor_frei"); global.Szene.aktualisiere(); }
-        },
-        antworten: [{ text: "Danke, Marlene.", zu: null }]
-      },
-      sticker: {
-        text: "Von einer Patientin, 2009. Sie hat gesagt, beim Blutdruckmessen schau ich wie ihre Katze. Ich hab nie "
-            + "gefragt, wie die Katze schaut.",
-        tu: function () { setze("sticker"); },
-        antworten: [{ text: "Zurück.", zu: "start" }]
-      }
-    },
-
-    herr_k: {
-      start: {
-        text: function () {
-          return hat("k_begruesst")
-            ? T("Ja, Frau Doktor?")
-            : T("Entschuldigen Sie. Ich wollte eigentlich gar nicht herkommen. Meine Tochter hat gesagt, ich soll. "
-              + "Da war ich dann halt brav.");
-        },
-        tu: function () { setze("k_begruesst"); },
-        antworten: [
-          { text: "Erzählen Sie mir, was passiert ist.", zu: "was" },
-          { text: "Hatten Sie Schmerzen in der Brust?", zu: "schmerz" },
-          { text: "Nehmen Sie Medikamente?", zu: "medis" },
-          { text: "Wer ist auf dem Foto?", zu: "foto", wenn: function () { return hat("tuete_gesehen"); } },
-          { text: "Ich komme gleich wieder.", zu: null }
-        ]
-      },
-      was: {
-        text: "Ich stand an der Haltestelle. Und dann stand ich nicht mehr. Dazwischen — nichts. Kein Schwindel, "
-            + "kein Herzklopfen, gar nichts. Als hätte jemand das Licht ausgemacht und gleich wieder an.",
-        tu: function () { setze("k_anamnese"); },
-        antworten: [
-          { text: "Wie lange waren Sie weg?", zu: "dauer" },
-          { text: "Und heute früh?", zu: "heute" },
-          { text: "Zurück.", zu: "start" }
-        ]
-      },
-      dauer: {
-        text: "Die Frau neben mir sagt, eine halbe Minute vielleicht. Sie hat sich mehr erschreckt als ich. "
-            + "Ich bin aufgestanden und hab mich entschuldigt.",
-        antworten: [{ text: "Zurück.", zu: "start" }]
-      },
-      heute: {
-        text: "In der Küche. Beim Wasserkocher. Aufgewacht bin ich auf den Fliesen, der Kocher lief noch. "
-            + "Das Komische ist: hinterher war mir sofort wieder gut. Ich hätte frühstücken können.",
-        antworten: [{ text: "Zurück.", zu: "start" }]
-      },
-      schmerz: {
-        text: "Nein. Nie. Ich geh jeden Tag mit dem Hund, zweimal um den Block, das geht alles. "
-            + "Nur langsamer als früher, aber das ist das Alter.",
-        antworten: [{ text: "Zurück.", zu: "start" }]
-      },
-      medis: {
-        text: "Die Tochter hat alles eingepackt. Die Tüte da. Ich kann Ihnen die Namen nicht sagen, "
-            + "ich kenn sie nach der Farbe.",
-        tu: function () { setze("k_zeigt_tuete"); global.Szene.aktualisiere(); },
-        antworten: [{ text: "Darf ich reinschauen?", zu: null, tu: function () { setze("darf_tuete"); } }]
-      },
-      foto: {
-        text: "Das ist die Lena. Die hat mir das Bändchen da geknüpft, als sie sechs war. Jetzt ist sie elf und "
-            + "findet es peinlich. Ich trag's trotzdem.",
-        tu: function () { setze("foto_gefragt"); },          /* kehrt am Bett wieder (GAME_DESIGN §5b) */
-        antworten: [{ text: "Schön.", zu: "start" }]
+        /* Danach der Epilog des Falls (Erzählung in einem späteren Dienst, KONZEPT §7) — er gehört dem Fall, nicht diesem Kapitel. */
+        antworten: [{ text: "Weiter", zu: null, tu: function () {
+          global.setTimeout(function () { global.Fall.epilog(FALL); }, 80);
+        } }]
       }
     },
 
     falk: {
-      /* Falk nimmt nur Zahlen an — beide. Fehlt eine, nennt er sie und schickt zum Wagen zurück;
-         der Dialog endet dort, und den Auftrag mit den drei Betten gibt es erst mit beiden Zahlen. */
+      /* Die Zahlen hat Dr. Falk schon unten am Tresen bekommen (Fall aufnahme_baum). Oben gibt es nur noch den Auftrag. */
       start: {
-        umleiten: function () { return hat("k2_auftrag") ? "wieder" : null; },
-        text: function () {
-          return hat("falk_gesprochen")
-            ? T("Und? Haben Sie, was fehlt?")
-            : T("Sie sind die Neue. Falk. — Bevor Sie etwas sagen: Ich will nicht hören, was Sie vermuten. "
-              + "Ich will hören, was Sie gemessen haben.");
-        },
-        tu: function () { setze("falk_gesprochen"); },
-        antworten: FALK_ZAHLEN.concat([{ text: "Er ist zweimal ohne Vorwarnung umgekippt.", zu: "anamnese" }])
-      },
-      gut: {
-        text: "Gut. Zwei Zahlen, kein Roman. — Der Knoten ist langsam, die Überleitung ist lang. Nimmt er etwas, "
-            + "das beides macht?",
-        antworten: [
-          { text: "Bisoprolol. Einen Betablocker.", zu: "gut_weiter", wenn: function () { return global.Mappe.hat("b-medis"); } },
-          { text: "Das weiß ich nicht.", zu: "gut_medis", wenn: function () { return !global.Mappe.hat("b-medis"); } }
-        ]
-      },
-      /* Wer die Tüte übersprungen hat, bekommt das Medikament aus dem Aufnahmebogen — als Karte,
-         denn ein Satz aus der Anamnese ist ein Befund (GAME_DESIGN §3). */
-      gut_medis: {
-        text: "Dann wissen Sie die Hälfte. Steht im Aufnahmebogen, Marlene schreibt die Schachteln immer ab: "
-            + "Bisoprolol. Ein Betablocker bremst den Sinusknoten und die AV-Überleitung — beides, was Sie gemessen "
-            + "haben. Nächstes Mal schauen Sie in die Tüte, bevor Sie zu mir kommen.",
-        tu: function () { befund(medisKarte({ titel: "Medikamente (Aufnahmebogen)" })); },
-        weiter: "gut_weiter"
-      },
-      gut_weiter: {
-        text: "Das erklärt die Zahlen. Es erklärt nicht, warum er umfällt.",
-        antworten: [{ text: "Und was dann?", zu: "gut_ende" }]
-      },
-      gut_ende: {
-        text: "Was die Zahlen sagen: Die Leitung ist angeschlagen. Und eine angeschlagene Leitung fällt nicht "
-            + "gleichmäßig aus, sie fällt plötzlich aus. Beweisen würde das erst eine Pause oder ein Block, "
-            + "bei dem plötzlich Schläge ausfallen — und den sieht man nur, wenn jemand hinschaut, wenn es passiert. "
-            + "Deshalb hängt er am Monitor und sitzt nicht zu Hause am Wasserkocher.",
-        weiter: "ende"
-      },
-      halb: {
-        text: "Langsam. Und weiter? Langsam allein lässt niemanden umfallen, sonst läge die halbe Sportmannschaft "
-            + "auf dem Boden. Schauen Sie sich die Überleitung an — wie lang braucht der Vorhof bis zur Kammer?",
-        antworten: [{ text: "Die hab ich nicht gemessen.", zu: "zurueck" }]
-      },
-      halb_pq: {
-        text: function () {
-          return T("{pq}. Das ist eine Zahl. — Und wie langsam ist er? Sie hatten zwei R-Zacken nebeneinander auf "
-                 + "dem Papier und haben den Abstand nicht gemessen?", { pq: Z.werte.pq });
-        },
-        antworten: [{ text: "Hol ich nach.", zu: "zurueck" }]
-      },
-      anamnese: {
-        text: "Das hat mir Schwester Marlene schon erzählt, und sie erzählt es besser. Von Ihnen wollte ich Zahlen.",
-        antworten: FALK_ZAHLEN
-      },
-      zurueck: {
-        text: "Der Streifen von heute früh liegt noch unten auf dem Wagen. Messen Sie, was fehlt, und kommen Sie "
-            + "wieder. Ich laufe nicht weg.",
-        tu: function () { setze("falk_schickt_zurueck"); zeitVor(5); },
-        endeText: "Bin gleich zurück."
+        umleiten: function () { return hat("k2_auftrag") ? "wieder" : "ende"; },
+        text: ""
       },
       ende: {
         text: function () {
@@ -609,204 +244,10 @@
     }
   };
 
-  /* --- Reizleitung: Einstieg --- */
-  /* Marlene zeigt ihr Schema, sobald das EKG geschrieben ist. Alles, was Kapitel 1
-     dafür braucht, steht in diesem Block; das Rätsel liegt in web/raetsel_reizleitung.js. */
-  DIALOGE.marlene.start.antworten.splice(DIALOGE.marlene.start.antworten.length - 1, 0, {
-    /* Vor der PQ-Messung eine Neugierfrage, danach die Frage, die die Messung aufwirft. */
-    text: function () {
-      return global.Mappe.hat("b-pq")
-        ? T("Wo bleiben die {pq} Millisekunden zwischen P und QRS?", { pq: Z.werte.pq })
-        : T("Wie kommt der Takt eigentlich von oben nach unten?");
-    },
-    wenn: function () { return hat("ekg_geschrieben") && !!global.Reizleitung && !hat("reizleitung_gebaut"); },
-    zu: "reizleitung"
-  }, {
-    text: "Ich hab dein Herz gebaut.",
-    wenn: function () { return hat("reizleitung_gebaut") && !hat("reizleitung_besprochen"); },
-    zu: "reizleitung_danach"
-  });
-  DIALOGE.marlene.reizleitung = {
-    text: function () {
-      return global.Mappe.hat("b-pq")
-        ? T("{pq} Millisekunden, und du weißt nicht, wo sie bleiben. Hier, mein altes Schema: ein Herz ohne Leitung. "
-          + "Bau sie ein — und dann setz den AV-Knoten einmal falsch und schau, was der Streifen macht.", { pq: Z.werte.pq })
-        : T("Bevor du misst, solltest du wissen, was du da misst. Hier, mein altes Schema: ein Herz ohne Leitung. "
-          + "Bau sie ein. Sitzt ein Teil falsch, sagt es dir der Streifen — echte Streifen, von echten Patienten.");
-    },
-    antworten: [
-      {
-        text: "Zeig her.", zu: null,
-        tu: function () {
-          /* Erst schließt der Dialog und gibt die Bühne frei, dann öffnet das Rätsel. */
-          global.setTimeout(function () {
-            global.Reizleitung.starte({
-              satz: satz,
-              anmerkungen: {
-                39: "Den kennst du: Das ist der Streifen von Herrn Baum. Sein AV-Knoten sitzt am richtigen Platz — er leitet nur langsamer."
-              },
-              fertig: function () {
-                setze("reizleitung_gebaut");
-                melde("Reizleitung gebaut: richtige Anatomie, normales EKG.");
-              }
-            });
-          }, 60);
-        }
-      },
-      { text: "Später.", zu: "start" }
-    ]
-  };
-  /* Nachhall: Marlene spricht die Belohnung aus, statt sie nur als Meldung zu zeigen. */
-  DIALOGE.marlene.reizleitung_danach = {
-    text: "Fünf Teile, und fast jeder Fehler gibt einen anderen Streifen. Merk dir den mit dem Knoten am falschen Platz: "
-        + "Das ist Herr Baum — nur dass bei ihm der Knoten richtig sitzt und trotzdem langsam leitet.",
-    tu: function () { setze("reizleitung_besprochen"); },
-    antworten: [{ text: "Zurück.", zu: "start" }]
-  };
-  /* --- Ende Reizleitung --- */
-
-  /* ------------------------------------------------------------ Handlungen */
-  function ekgSchreiben() {
-    if (!hat("ekg_geschrieben")) {
-      setze("ekg_geschrieben");
-      zeitVor(8);
-      melde(T("EKG geschrieben · {zeit}", { zeit: zeitText() }));
-    }
-    var s = satz(AUFNAHME_EKG);
-    frage({
-      titel: "Der Streifen liegt vor dir",
-      /* Die Antworten sind bloße Diagnosen; die Kriterien tragen die Rückmeldungen (FACHREGELN, Lektion 8, 25, 26). */
-      text: "Erst der Rhythmus, dann die Zahlen. Schau auf die P-Wellen und auf die Abstände: Was ist das?",
-      ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.8, dauer: 7 },
-      antworten: [
-        {
-          text: "Vorhofflimmern.",
-          warum: "Vorhofflimmern hat keine P-Wellen — nur ein unruhiges Flimmern der Grundlinie — und die RR-Abstände "
-               + "sind absolut unregelmäßig. Hier steht vor jedem QRS eine P-Welle, und die Abstände sind gleich lang."
-        },
-        {
-          text: "Sinusrhythmus.",
-          richtig: true,
-          warum: "Vor jedem QRS eine P-Welle, normal geformt und in II positiv, und die Abstände bleiben gleich: Das "
-               + "sind die Kriterien des Sinusrhythmus. Ob er schnell oder langsam ist, sagt erst die Frequenz — die "
-               + "nächste Frage, mit dem Zirkel."
-        },
-        {
-          text: "Kammertachykardie.",
-          warum: "Eine Kammertachykardie hat breite, deformierte Kammerkomplexe — ab 120 ms — und eine Frequenz über "
-               + "100 pro Minute. Hier sind die Komplexe schmal (Norm 60–100 ms), und die Frequenz ist niedrig."
-        }
-      ],
-      fertig: function () {
-        befund({
-          id: "b-rhythmus", titel: "Rhythmus: Sinus", zeit: zeitText(),
-          text: "Vor jedem QRS eine P-Welle, RR-Abstände gleich. Der Sinusknoten führt.",
-          ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.8, dauer: 6 }
-        });
-        zeitVor(3);
-      }
-    });
-  }
-
-  /* Lehrbuch, Lektion 8: normale Frequenz 50–100/min, Sinusbradykardie < 50/min, Sinustachykardie > 100/min. */
-  function frequenzSatz(hf) {
-    if (hf < 50) return T("Unter 50 — Sinusbradykardie.");
-    if (hf > 100) return T("Über 100 — Sinustachykardie.");
-    if (hf <= 60) return T("Norm 50–100: noch im Rahmen, aber am unteren Rand. Sinusbradykardie beginnt erst unter 50.");
-    return T("Norm 50–100: im Rahmen.");
-  }
-
-  function messeFrequenz() {
-    global.Zirkel.starte({
-      satz: satz(AUFNAHME_EKG), was: "rr", toleranz: 25, mmProS: 25, von: 1.9, dauer: 7,
-      titel: "Wie langsam ist langsam?",
-      auftrag: "Miss einen RR-Abstand. Aus ihm kommt die Frequenz: 60 000 geteilt durch den RR-Abstand in Millisekunden.",
-      deutung: function (ms) {
-        return T("60 000 : {ms} = {hf} pro Minute.", { ms: ms, hf: Math.round(60000 / ms) }) + " " + frequenzSatz(Math.round(60000 / ms));
-      },
-      fertig: function (erg) {
-        var hf = Math.round(60000 / erg.wahrheit);
-        Z.werte.hf = hf; Z.werte.rr = erg.wahrheit;
-        befund({
-          id: "b-frequenz", titel: T("Frequenz: {hf}/min", { hf: hf }), zeit: zeitText(),
-          text: T("RR {rr} ms. 60 000 : {rr} = {hf} pro Minute.", { rr: erg.wahrheit, hf: hf }) + " " + frequenzSatz(hf),
-          ekg: { satz: AUFNAHME_EKG, mmProS: 25, von: 1.9, dauer: 6 }
-        });
-        zeitVor(6);
-        nachMessung();
-      }
-    });
-  }
-
-  function messePq() {
-    global.Zirkel.starte({
-      satz: satz(AUFNAHME_EKG), was: "pq", toleranz: 20, mmProS: 50, von: 2.9, dauer: 2.6,
-      titel: "Wie lange braucht der Impuls nach unten?",
-      auftrag: "Miss die PQ-Zeit. Bei 50 mm/s ist ein kleines Kästchen 20 Millisekunden breit.",
-      deutung: function (ms) {
-        return ms > 200
-          ? T("Norm 120–200 ms. {ms} ms ist zu lang: AV-Block I. Grades.", { ms: ms })
-          : T("Norm 120–200 ms — das liegt im Rahmen.");
-      },
-      fertig: function (erg) {
-        Z.werte.pq = erg.wahrheit;
-        befund({
-          id: "b-pq", titel: T("PQ-Zeit: {ms} ms", { ms: erg.wahrheit }), zeit: zeitText(),
-          text: T("Norm 120–200 ms. {ms} ms — AV-Block I. Grades. Die Überleitung ist verzögert, aber jeder "
-                + "Vorhofimpuls kommt noch an. (Der P-Beginn liegt nie ganz scharf; von Schlag zu Schlag schwanken "
-                + "die Werte um einige Millisekunden. Im Zweifel mehrere Schläge messen.)", { ms: erg.wahrheit }),
-          ekg: { satz: AUFNAHME_EKG, mmProS: 50, von: 2.9, dauer: 2.4 },
-          vergleich: {
-            "b-frequenz": "Beides zusammen: Der Taktgeber ist langsam UND die Leitung dorthin ist lang. "
-                        + "Zwei Etagen, die beide zäh sind."
-          }
-        });
-        zeitVor(6);
-        nachMessung();
-      }
-    });
-  }
-
-  function tueteAnsehen() {
-    setze("tuete_gesehen");
-    frage({
-      titel: "Die Tüte",
-      text: "Drei Schachteln und ein Foto. Bisoprolol 5 mg · Ramipril 5 mg · ASS 100 mg. "
-          + "Welche davon geht dich beim langsamen Puls etwas an?",
-      antworten: [
-        { text: "ASS 100 — der Blutverdünner.", warum: "ASS hemmt die Blutplättchen, nicht die Frequenz." },
-        { text: "Ramipril — der Blutdrucksenker.", warum: "ACE-Hemmer senken den Druck, bremsen aber weder Sinusknoten noch AV-Knoten." },
-        {
-          text: "Bisoprolol — der Betablocker.", richtig: true,
-          warum: "Betablocker bremsen den Sinusknoten und verlangsamen die AV-Überleitung. Das zählt doppelt: "
-               + "Eine langsame Frequenz gilt nur dann als verdächtig, wenn kein bremsendes Medikament im Spiel "
-               + "ist — und hier ist eins im Spiel. Erklärt aber immer noch nicht die Bewusstlosigkeit: "
-               + "Ein Betablocker macht langsam, nicht ohnmächtig."
-        }
-      ],
-      fertig: function () {
-        befund(medisKarte({ titel: "Medikamente" }));
-        zeitVor(4);
-      }
-    });
-  }
-
-  function tablettenBild() {
-    return '<svg viewBox="0 0 220 80" style="width:100%;height:auto">' +
-      '<rect x="8" y="14" width="56" height="52" rx="4" fill="#F4E6D2" stroke="#10212B" stroke-width="2"/>' +
-      '<rect x="16" y="24" width="40" height="5" fill="#C2185B"/>' +
-      '<rect x="16" y="36" width="30" height="4" fill="#10212B" opacity=".45"/>' +
-      '<rect x="78" y="20" width="52" height="46" rx="4" fill="#F4E6D2" stroke="#10212B" stroke-width="2"/>' +
-      '<rect x="86" y="30" width="36" height="4" fill="#10212B" opacity=".45"/>' +
-      '<rect x="144" y="26" width="48" height="40" rx="4" fill="#F4E6D2" stroke="#10212B" stroke-width="2"/>' +
-      '<rect x="152" y="36" width="32" height="4" fill="#10212B" opacity=".45"/></svg>';
-  }
-
   /* ============================================================ Kapitel 2: Monitorzimmer, 09:15
      Drei Schirme, drei echte Aufnahmen; welcher ist Herr Baum, und woran sieht
      man es? Danach klingelt sein Bett: die Ampel. Zwei Begründungen tragen
-     (PQ-Zeit oder Frequenz), jede Ampel-Wahl führt weiter. Das Kapitel endet
-     offen — was der Speicher zeigt, ist noch nicht gebaut.                    */
+     (PQ-Zeit oder Frequenz), jede Ampel-Wahl führt weiter. Danach der Epilog des Falls. */
 
   /* Bettenfolge: einmal je Schicht gemischt und gespeichert, damit Herr Baum
      nicht immer auf demselben Platz liegt. */
@@ -966,7 +407,7 @@
             + "Bettkante, er wollte aufstehen. Er ist blass. „Mir war gerade ganz komisch. Jetzt geht's schon wieder. "
             + "Entschuldigung.“ Er ist wach, antwortet in ganzen Sätzen, seine Hände sind warm. Der Monitor über dem "
             + "Bett zählt {hf} pro Minute.", { n: n, hf: s.mess.frequenz })
-          + (hat("foto_gefragt") ? " " + T("Auf dem Nachtkästchen steht das Foto von Lena.") : ""),
+          + (fall("foto_gefragt") ? " " + T("Auf dem Nachtkästchen steht das Foto von Lena.") : ""),
       frage: "Was tust du?",
       ekg: { satz: s, name: T("Bett {n} · Herr Baum", { n: n }), von: KAP2_FENSTER.von, dauer: 5 },
       sekunden: 10,
@@ -1018,52 +459,15 @@
 
   /* ------------------------------------------------------------ Stand der Schicht */
   function kapitelStand() {
-    var hat = [], offen = [], M = global.Mappe;
-    Z.befunde.forEach(function (b) { hat.push(T(b.titel) + " <em>" + b.zeit + "</em>"); });
-    if (Z.marken.fall_gehoert) hat.push("Die Geschichte des Falls von Marlene");
-    if (Z.marken.k_anamnese) hat.push("Herrn Baums eigene Schilderung");
+    /* Kapitel 1 kommt aus den Daten des Falls (web/faelle/aufnahme_baum.js, stand); hier nur Kapitel 2. */
+    var k = global.Fall.stand(FALL), hatL = k.hat, offen = k.offen;
 
-    /* Die Fäden der Aufnahme reißen, sobald Herr Baum oben liegt: Was dort nicht mehr zu holen ist, steht nicht mehr an. */
-    var unten = !Z.marken.ankunft_monitor;
-    if (unten && !Z.marken.fall_gehoert) offen.push("Marlene weiß, warum der Mann hier sitzt. Du noch nicht.");
-    if (unten && !Z.marken.k_anamnese) offen.push("Mit Herrn Baum selbst hast du noch nicht gesprochen.");
-    if (!Z.marken.auftrag_ekg) offen.push("Es ist noch kein EKG geschrieben.");
-    else {
-      if (!M.hat("b-rhythmus")) offen.push("Der Rhythmus ist noch nicht bestimmt.");
-      if (!M.hat("b-frequenz")) offen.push("Die Frequenz ist noch nicht gemessen — RR-Abstand, Zirkel.");
-      if (!M.hat("b-pq")) offen.push("Die PQ-Zeit ist noch nicht gemessen.");
-    }
-    if (unten && !M.hat("b-medis")) {
-      offen.push(Z.marken.darf_tuete
-        ? "In die Plastiktüte hast du noch nicht geschaut."
-        : "Was Herr Baum einnimmt, weißt du nicht. Frag ihn.");
-    }
-    if (Z.marken.ekg_geschrieben && !Z.marken.reizleitung_gebaut) {
-      offen.push("Marlene hat ein Schema in der Lade: die Reizleitung zum Bauen. Keine Pflicht.");
-    }
-    if (anzahlKernbefunde() < 2) {
-      if (Z.marken.auftrag_ekg) {
-        offen.push(T("Zwei Befunde aus dem EKG brauchst du, bevor dich jemand weiterschickt. Du hast {n}.",
-                     { n: anzahlKernbefunde() }));
-      }
-    } else if (!Z.marken.monitor_frei) {
-      offen.push("Sag Marlene, was du gemessen hast — sie meldet dich im Monitorzimmer an.");
-    } else if (unten) {
-      offen.push("Der Flur rechts steht offen. Dr. Falk erwartet dich gegen neun.");
-    }
-    if (Z.marken.ankunft_monitor && !Z.marken.k2_auftrag) {
-      if (Z.marken.falk_schickt_zurueck && !beideZahlen()) {
-        offen.push("Dr. Falk will zwei Zahlen: Frequenz und PQ-Zeit. Der Streifen von heute früh liegt noch auf dem Wagen in der Aufnahme.");
-      } else {
-        offen.push("Dr. Falk steht im Monitorzimmer und wartet auf Zahlen.");
-      }
-    }
-
+    if (Z.marken.ankunft_monitor && !Z.marken.k2_auftrag) offen.push("Dr. Falk steht im Monitorzimmer.");
     /* Kapitel 2 — nennt das Ziel, nie die Lösung: kein Bett, kein Merkmal, bevor
        der Spieler es selbst gefunden hat. */
     if (Z.marken.k2_fertig) {
-      hat.push(T("Bett {n} hat geklingelt: Herr Baum war blass. Dr. Falk sieht sich den Speicher an.",
-                 { n: bettVon(AUFNAHME_EKG) }));
+      hatL.push(T("Bett {n} hat geklingelt: Herr Baum war blass. Dr. Falk sieht sich den Speicher an.",
+                  { n: bettVon(AUFNAHME_EKG) }));
     }
     if (Z.marken.k2_auftrag && !Z.marken.k2_bett) {
       offen.push("Dr. Falk will wissen, welcher der drei Schirme an der Wand Herrn Baum gehört — und woran du es siehst.");
@@ -1072,16 +476,14 @@
       offen.push(T("Bett {n} hat geklingelt. Herr Baum wartet.", { n: bettVon(AUFNAHME_EKG) }));
     }
 
-    var fuss = "";
+    var fuss = k.fuss || "";
     if (Z.marken.k2_fertig) {
-      fuss = T("Was der Speicher zeigt, erfährst du im nächsten Kapitel. Damit endet, was bisher gebaut ist.");
-    } else if (!Z.befunde.length) {
-      fuss = "Alles, was du selbst misst, landet in der Befundmappe. Vermutungen nicht.";
+      fuss = T("Der Epilog erzählt, was aus Herrn Baum wurde. Damit endet, was bisher gebaut ist.");
     }
     return {
-      zeit: zeitText(), titel: Z.kapitel === 1 ? "Kapitel 1 · Aufnahme" : "Kapitel 2 · Monitorzimmer",
+      zeit: zeitText(), titel: Z.kapitel === 1 ? k.titel : "Kapitel 2 · Monitorzimmer",
       ort: (global.Szene.raum(global.Szene.aktueller()) || {}).titel || "",
-      hat: hat, offen: offen, fuss: fuss
+      hat: hatL, offen: offen, fuss: fuss
     };
   }
 
@@ -1098,90 +500,18 @@
 
   function baueRaeume(kunst) {
     KUNST = kunst;
-    global.Szene.registriere("aufnahme", {
-      titel: "Aufnahme", ebenen: kunst.szenen.aufnahme, ersatzfarbe: "#2A3A42",
-      beiBetreten: function () {
-        Z.raum = "aufnahme"; starteSchirme("aufnahme"); kopfAuffrischen(); uhrStellen(); sichere();
-        /* Sobald er oben liegt, sitzt er hier nicht mehr — er und seine Tüte (#fig-herrk, #fig-tuete, stil.css).
-           Der EKG-Wagen samt laufender Kurve bleibt im Raum: Der Streifen von heute früh liegt noch dort. */
-        document.getElementById("buehne").classList.toggle("baum-oben", hat("ankunft_monitor"));
-      },
-      felder: [
-        {
-          id: "marlene", name: "Schwester Marlene",
-          punkte: zone("aufnahme", "marlene", [16, 365, 548, 707]),
-          bei: function () { global.Dialog.starte("marlene", "start"); }
-        },
-        {
-          id: "herrk", name: "Herr Baum",
-          punkte: zone("aufnahme", "herrk", [1279, 399, 1424, 737]),
-          sichtbar: function () { return !hat("ankunft_monitor"); },
-          bei: function () { global.Dialog.starte("herr_k", "start"); }
-        },
-        {
-          id: "tuete", name: "Plastiktüte",
-          punkte: zone("aufnahme", "tuete", [1241, 628, 1307, 728]),
-          sichtbar: function () { return hat("darf_tuete") && !hat("ankunft_monitor"); },
-          erledigt: function () { return global.Mappe.hat("b-medis"); },
-          bei: tueteAnsehen
-        },
-        {
-          id: "wagen", name: "EKG-Wagen",
-          punkte: zone("aufnahme", "wagen", [822, 422, 960, 738]),
-          erledigt: function () { return global.Mappe.hat("b-rhythmus"); },
-          bei: function () {
-            if (!hat("auftrag_ekg")) {
-              melde("Erst fragen, dann schreiben. Marlene weiß, worum es geht.");
-              return;
-            }
-            if (!global.Mappe.hat("b-rhythmus")) { ekgSchreiben(); return; }
-            wahlMessung();
-          }
-        },
-        {
-          id: "uhr", name: "Wanduhr",
-          punkte: zone("aufnahme", "uhr", [1332, 167, 1466, 295]),
-          bei: function () {
-            melde(Z.zeit < 7 * 60
-              ? T("{zeit}. Die Nacht ist noch nicht ganz weg, der Tag noch nicht ganz da.", { zeit: zeitText() })
-              : T("{zeit}. Die Uhr geht richtig. Leider.", { zeit: zeitText() }));
-          }
-        },
-        {
-          id: "pinnwand", name: "Pinnwand",
-          punkte: zone("aufnahme", "pinnwand", [284, 197, 486, 358]),
-          bei: function () {
-            melde("Dienstplan, ein Zettel über die Kaffeekasse, ein Kinderbild ohne Namen.");
-          }
-        }
-      ],
-      ausgaenge: [
-        {
-          name: "Flur zum Monitorzimmer", nach: "monitor",
-          punkte: zone("aufnahme", "ausgang", [1533, 228, 1600, 701]),
-          /* Offen, sobald Marlene angemeldet hat — und das tut sie erst, wenn sie den Bericht gehört hat. */
-          wenn: function () { return hat("monitor_frei"); },
-          gesperrt: function () {
-            if (anzahlKernbefunde() < 2) melde(T("Noch nicht. Erst der Streifen: der Rhythmus und mindestens eine Zahl."), "warnung");
-            else melde(T("Sag Marlene, was du gemessen hast. Sie meldet dich oben an."), "warnung");
-          }
-        }
-      ]
-    });
-
+    /* Die Aufnahme registriert der Fall (Fall.lade). Hier nur das Monitorzimmer (Kapitel 2, alter Code). */
     global.Szene.registriere("monitor", {
       titel: "Monitorzimmer", ebenen: kunst.szenen.monitor, ersatzfarbe: "#1C2A31",
       beiBetreten: function () {
-        Z.raum = "monitor"; Z.kapitel = 2;
+        Z.kapitel = 2;
         if (!hat("ankunft_monitor")) { Z.zeit = Math.max(Z.zeit, 9 * 60 + 15); setze("ankunft_monitor"); }
-        kopfAuffrischen(); uhrStellen(); sichere();
-        starteSchirme("monitor");
+        betreten("monitor");
         global.setTimeout(function () {
           if (global.Szene.aktueller() !== "monitor") return;
           if (!hat("k2_auftrag")) {
-            /* Beim ersten Mal der Erzähler, dann Dr. Falk; danach Falk allein, bis er seine zwei Zahlen hat. */
-            if (!hat("falk_gesprochen")) global.Dialog.starte("auftakt", "monitor");
-            else global.Dialog.starte("falk", "start");
+            /* Beim ersten Mal der Erzähler, dann Dr. Falk mit dem Auftrag; die Zahlen hat er schon unten bekommen. */
+            global.Dialog.starte("auftakt", "monitor");
           } else if (hat("k2_bett") && !hat("k2_fertig")) {
             ampelAusloesen();                       /* Kapitel 2: Bett klingelt (wieder) */
           }
@@ -1216,47 +546,6 @@
         }
       ]
     });
-  }
-
-  function wahlMessung() {
-    waehle({
-      titel: "Was willst du messen?",
-      text: hat("ankunft_monitor")
-        ? T("Der Streifen von heute früh liegt noch auf dem Wagen. Nimm den Zirkel.")
-        : T("Der Streifen liegt auf dem Wagen. Nimm den Zirkel."),
-      wahl: [
-        { text: "Den RR-Abstand — die Frequenz", fertig: global.Mappe.hat("b-frequenz"), tu: messeFrequenz },
-        { text: "Die PQ-Zeit — die Überleitung", fertig: global.Mappe.hat("b-pq"), tu: messePq }
-      ]
-    });
-  }
-
-  function waehle(opt) {
-    var hof = document.getElementById("wahl-hof");
-    if (!hof) {
-      hof = document.createElement("div");
-      hof.id = "wahl-hof"; hof.className = "raetsel wahl-hof";
-      hof.innerHTML = '<div class="raetsel-innen schmal"><div class="raetsel-kopf"><h2></h2>' +
-        '<button class="knopf zu" type="button">' + T("Zurück") + '</button></div>' +
-        '<p class="raetsel-auftrag"></p><div class="frage-wahl"></div></div>';
-      document.body.appendChild(hof);
-      hof.querySelector(".zu").addEventListener("click", function () {
-        hof.classList.remove("an"); global.Szene.sperre(false); global.Szene.aktualisiere();
-      });
-    }
-    hof.querySelector("h2").textContent = T(opt.titel);
-    hof.querySelector(".raetsel-auftrag").textContent = T(opt.text);
-    var feld = hof.querySelector(".frage-wahl");
-    feld.innerHTML = "";
-    opt.wahl.forEach(function (w) {
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "knopf wahl" + (w.fertig ? " erledigt" : "");
-      b.textContent = T(w.text) + (w.fertig ? "  ✓" : "");
-      b.addEventListener("click", function () { hof.classList.remove("an"); w.tu(); });
-      feld.appendChild(b);
-    });
-    hof.classList.add("an");
-    global.Szene.sperre(true);
   }
 
   /* Bildschirme im Raum: jede Fläche aus art/szenen/<raum>/schirme.json (kunst.szenen.<raum>.schirme) bekommt
@@ -1321,8 +610,20 @@
     global.Szene.start(document.getElementById("buehne"));
     global.Mappe.start(Z, satz);
     global.Stand.start(Z, kapitelStand);
+    global.Fenster.start({ satz: satz });
+    global.Szenenbild.lade(kunst.szenenbilder);
+    KUNST = kunst;
+    /* Der Fallmotor bekommt, was jeder Fall braucht — und kennt keinen Patienten. */
+    global.Fall.start({
+      Z: Z, satz: satz, befund: befund, melde: melde, zeitVor: zeitVor, zeitText: zeitText,
+      zone: zone, kunst: kunst, betreten: betreten, sichere: sichere, kopf: kopfAuffrischen
+    });
+    global.Fall.lade(global.FAELLE[FALL]);
+    var baeume = {}, k;
+    for (k in global.Fall.baeume()) baeume[k] = global.Fall.baeume()[k];
+    for (k in DIALOGE) baeume[k] = DIALOGE[k];
     global.Dialog.lade({
-      baeume: DIALOGE, portraits: kunst.portraits,
+      baeume: baeume, portraits: kunst.portraits,
       namen: { marlene: "Schwester Marlene", herr_k: "Herr Baum", falk: "Oberarzt Dr. Falk", erzaehler: "" }
     });
     baueRaeume(kunst);
@@ -1341,11 +642,9 @@
     if (!fortsetzung) auftakt();
   }
 
-  /* Nach dem Auftakt leuchten die Felder einmal auf — man muss „Was geht hier?" nicht erst finden. */
+  /* Der Auftakt gehört dem Fall (Erzähler); danach leuchten die Felder einmal auf. */
   function auftakt() {
-    global.setTimeout(function () {
-      global.Dialog.starte("auftakt", "start", function () { global.Szene.zeigeFelder(2400); });
-    }, 700);
+    global.setTimeout(function () { global.Fall.wirke(FALL, "dialog:auftakt.start"); }, 700);
   }
 
   /* Sprachwechsel: der Zustand liegt im Speicher, also ist Neuladen der
@@ -1358,8 +657,8 @@
   global.Spiel = {
     start: start, melde: melde, neuZeichnen: neuZeichnen, sichere: sichere, zaehlerAuffrischen: kopfAuffrischen,
     zustand: Z, satz: satz, hat: hat, vonVorn: vonVorn, hatStand: hatStand,
-    __dialoge: DIALOGE, __ekgSchreiben: ekgSchreiben, __messePq: messePq, __messeFrequenz: messeFrequenz,
-    __tuete: tueteAnsehen,
+    FALL: FALL, fall: fall,
+    __dialoge: DIALOGE,
     __betten: betten, __zentrale: zentrale, __ampel: ampelAusloesen, __schirme: schirmeStand,
     KAPITEL2_EKG: { baum: AUFNAHME_EKG, flimmern: SCHIRM_FLIMMERN_EKG, schnell: SCHIRM_SCHNELL_EKG }
   };
