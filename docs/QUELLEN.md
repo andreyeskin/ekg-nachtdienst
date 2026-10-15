@@ -90,8 +90,11 @@ werden. Im Datensatz steht dafür `"messbar": false`.
   drei Sekunden im Wachen, zeigt aber keine Kurve und stellt keine Diagnose.
 - **Nicht**, dass die Bradykardie allein gefährlich ist. Unter Betablocker ist
   sie erwartbar.
-- Keine Dosierungen, keine Therapieempfehlungen, keine Anweisungen zur
-  Behandlung. Das Spiel übt Befunden, nicht Behandeln.
+- Keine Dosierungen und keine Anweisungen an die Spielerin, wie sie behandeln soll.
+  **Behandlung kommt vor (Entscheidung des Nutzers, 15.10.2026), aber nur als das, was das Team
+  nach Leitlinie entscheidet**, mit Beleg in der Belegtabelle (Leitlinie mit Abschnitt), ohne Dosis.
+  Beispiel: Herr Baum, Epilog — erst Betablocker abgesetzt (reversible Ursache), dann bei erneuter
+  symptomatischer Pause Zweikammer-Schrittmacher (ESC-Pacing-2021, siehe §8).
 
 ## 5. Offen
 
@@ -207,3 +210,13 @@ Alle Aussagen stammen aus dem Lehrbuch (Lektionen 1–8, 17, 34–38) und stehen
 Offene Quellen für die Veröffentlichung: Elektrodenpositionen und Ableitungsgruppen nach
 AHA-EKG-2007-I (Kligfield 2007, bibliografisch nachgewiesen in §2; Stelle noch zu lesen); Ampel-Regel
 der Kabelfarben entspricht IEC 60601-2-25 (Farbcode Europa) — noch nicht am Original geprüft.
+
+## 9. Behandlung im Epilog von Herrn Baum (15.10.2026)
+
+| Aussage im Spiel | Beleg | Anmerkung |
+|---|---|---|
+| Zuerst wird das Bisoprolol abgesetzt; machen die Tabletten die Pausen, braucht es keinen Schrittmacher | ESC-Pacing-2021 (Glikson M et al., Eur Heart J 2021;42:3427–3520, doi:10.1093/eurheartj/ehab364) §5.1.1.1: bei reversiblen Ursachen ist deren Korrektur nötig, ein permanenter Schrittmacher nicht indiziert; §5.1.1.2: Bradyarrhythmien unter Medikamenten lassen sich durch Dosisreduktion oder Absetzen statt Schrittmacher behandeln; §3.3/Tab. 6: Betablocker als Ursache von Sinusbradykardie und AV-Block | Volltext am 15.10.2026 gelesen (academic.oup.com), Klassen/Evidenzgrade stehen in Bildtabellen und wurden nicht übernommen |
+| Erneute Pause im Wachen ohne Betablocker → Schrittmacher | ESC-Pacing-2021 §5.1.1.1: Schrittmacher bei Sinusknotenerkrankung nur, wenn die Bradykardie symptomatisch ist; §5.4 / Abb. 7: symptomatische Asystolie > 3 s (Sinusarrest, AV-Block oder beides) | Mechanismus der Pause wird im Spiel nicht genannt (keine annotierte Aufnahme) |
+| Zweikammer-Schrittmacher | ESC-Pacing-2021 §5.1.2: DDD(R) ist bei Sinusknotenerkrankung der Modus erster Wahl; beim AV-Block ebenfalls ein Zweikammersystem üblich | Keine Programmierangaben im Spiel |
+| Drei Tage ohne Betablocker | Erzählte Zeitspanne; Bisoprolol hat eine Halbwertszeit von etwa 10–12 h, nach drei Tagen ist die Wirkung abgeklungen | Pharmakologie, Standardwissen |
+

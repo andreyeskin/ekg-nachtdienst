@@ -13,7 +13,7 @@
  "baum.auftakt.ende": "{zeit}. Herr Baum geht mit dir nach oben, die Tüte in der einen Hand, die Mütze in der anderen. Marlene schenkt sich Kaffee nach, ohne hinzusehen.",
  "baum.epilog.1": "Dienst 3, 13:20. Marlene fängt dich auf dem Flur ab, die Thermoskanne in der Hand. Sie hat den Speicher von Herrn Baums Monitor gesehen.",
  "baum.epilog.2": "In der zweiten Nacht hat der Monitor eine Pause aufgezeichnet, länger als drei Sekunden. Herr Baum war wach und hat geklingelt.",
- "baum.epilog.3": "Er liegt jetzt auf der Kardiologie. Was dort geschieht, entscheidet der Arzt am Bett. Das Foto von Lena steht auf dem Nachtkästchen.",
+ "baum.epilog.3": "Auf der Kardiologie haben sie zuerst das Bisoprolol abgesetzt. Machen die Tabletten die Pausen, braucht er keinen Schrittmacher.",
  "baum.marlene.erst": "Du bist die Famulantin. Gut. Der Herr dort entschuldigt sich alle fünf Minuten dafür, dass er da ist. Zweimal umgekippt, ohne Vorwarnung.",
  "baum.marlene.werte": "Puls {puls}, regelmäßig. Blutdruck liegend {rr_l_sys} zu {rr_l_dia}, nach drei Minuten Stehen {rr_s3_sys} zu {rr_s3_dia}, ohne Schwindel. Zucker {zucker}, eine Schramme am Ellbogen.",
  "baum.marlene.fragen_erst": "Das, was du als Ärztin fragen würdest. Ich sag dir nichts vor. Sonst suchst du nachher nur, was ich dir in den Kopf gesetzt hab.",
@@ -238,5 +238,7 @@
  "baum.stand.offen.falk_zahlen": "Dr. Falk wartet am Tresen auf zwei Zahlen: Frequenz und PQ-Zeit.",
  "baum.stand.offen.falk_wartet": "Dr. Falk steht am Tresen. Er wartet nicht gern.",
  "baum.stand.offen.flur": "Der Flur rechts steht offen. Herr Baum kommt an den Monitor.",
- "baum.stand.fuss": "Alles, was du selbst misst, landet in der Befundmappe. Vermutungen nicht."
+ "baum.stand.fuss": "Alles, was du selbst misst, landet in der Befundmappe. Vermutungen nicht.",
+ "baum.epilog.4": "Drei Tage ohne Betablocker, dann kam nachts wieder eine Pause, und wieder war er wach. Am Freitag hat er einen Zweikammer-Schrittmacher bekommen.",
+ "baum.epilog.5": "Am Montag geht er nach Hause. Das Foto von Lena nimmt er mit."
 }

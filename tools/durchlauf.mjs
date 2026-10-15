@@ -1019,10 +1019,16 @@ ok("A: Schlussszene nennt die Frequenz aus den Daten",
 ok("A: Falk bleibt in der Rolle (Pause über drei Sekunden, wach); was das Spiel über sich sagt, sagt der Erzähler",
    /Pause über drei Sekunden/.test(textA2) && textA2.indexOf("Verstanden.]") >= 0 &&
    textA2.indexOf("Verstanden.]") < textA2.indexOf("Dienst 3"), textA2.slice(-200));
-ok("A: Ende und Epilog: Erzählung in einem späteren Dienst — Pause über drei Sekunden, wach; Kardiologie; der Arzt am Bett entscheidet",
+ok("A: Ende und Epilog: Erzählung in einem späteren Dienst — Pause über drei Sekunden, wach; Kardiologie",
    /Dienst 3/.test(textA2) && /Pause/.test(textA2) && /drei Sekunden/.test(textA2) && /wach/.test(textA2) &&
-   /Kardiologie/.test(textA2) && /Arzt am Bett/.test(textA2) && /Ende des spielbaren Teils/.test(textA2), textA2.slice(-300));
-ok("A: Epilog ohne Porträt, ohne Standbild, ohne Therapie", !/Pacer|Schrittmacher|Dosis|mg\b/.test(textA2.slice(textA2.indexOf("Dienst 3"))));
+   /Kardiologie/.test(textA2) && /Ende des spielbaren Teils/.test(textA2), textA2.slice(-300));
+{
+  const epi = textA2.slice(textA2.indexOf("Dienst 3"));
+  ok("A: Epilog nach Leitlinie: erst der Betablocker abgesetzt, dann bei erneuter Pause der Schrittmacher",
+     /Bisoprolol abgesetzt/.test(epi) && /ohne Betablocker/.test(epi) && /Zweikammer-Schrittmacher/.test(epi) &&
+     epi.indexOf("abgesetzt") < epi.indexOf("Zweikammer-Schrittmacher"), epi.slice(0, 400));
+  ok("A: Epilog ohne Dosisangaben", !/Dosis|\bmg\b|\d+\s*mg/.test(epi));
+}
 let z = await zustand();
 ok("A: Ziel erreicht (Wahl: Arzt)", z.marken.k2_fertig && z.werte.ampel === "arzt", JSON.stringify(z.werte.ampel));
 ok("A: neun Befunde (acht aus der Aufnahme, der Monitor)", z.befunde.length === 9, String(z.befunde.length));

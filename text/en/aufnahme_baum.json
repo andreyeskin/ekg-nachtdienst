@@ -13,7 +13,7 @@
  "baum.auftakt.ende": "{zeit}. Mr Baum goes upstairs with you, the bag in one hand, the cap in the other. Marlene tops up her coffee without looking up.",
  "baum.epilog.1": "Shift 3, 13:20. Marlene catches you in the corridor, thermos in hand. She has seen the memory of Mr Baum's monitor.",
  "baum.epilog.2": "On the second night the monitor recorded a pause, longer than three seconds. Mr Baum was awake and rang the bell.",
- "baum.epilog.3": "He is on the cardiology ward now. What happens there is for the doctor at the bedside to decide. Lena's photo stands on the bedside table.",
+ "baum.epilog.3": "On cardiology they stopped the bisoprolol first. If the tablets cause the pauses, he doesn't need a pacemaker.",
  "baum.marlene.erst": "You're the student. Good. The gentleman over there apologises every five minutes for being here. Collapsed twice, no warning.",
  "baum.marlene.werte": "Pulse {puls}, regular. Blood pressure lying {rr_l_sys} over {rr_l_dia}, after three minutes standing {rr_s3_sys} over {rr_s3_dia}, no dizziness. Sugar {zucker}, a graze on the elbow.",
  "baum.marlene.fragen_erst": "Whatever you'd ask as a doctor. I'm not telling you anything in advance. Otherwise you'll only go looking for what I put in your head.",
@@ -238,5 +238,7 @@
  "baum.stand.offen.falk_zahlen": "Dr Falk is waiting at the desk for two numbers: rate and PQ interval.",
  "baum.stand.offen.falk_wartet": "Dr Falk is at the desk. He doesn't like waiting.",
  "baum.stand.offen.flur": "The corridor on the right is open. Mr Baum goes on the monitor.",
- "baum.stand.fuss": "Everything you measure yourself goes into the findings folder. Guesses don't."
+ "baum.stand.fuss": "Everything you measure yourself goes into the findings folder. Guesses don't.",
+ "baum.epilog.4": "Three days without the beta-blocker, then another pause at night, and again he was awake. On Friday he got a dual-chamber pacemaker.",
+ "baum.epilog.5": "He goes home on Monday. He's taking Lena's photo with him."
 }

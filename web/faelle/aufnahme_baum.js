@@ -113,10 +113,14 @@
           falk_kommt: { text: "baum.auftakt.falk_kommt", weiter: "start", weiterBaum: "falk" },
           ende: { text: "baum.auftakt.ende", ende: "Weiter", nach: ["felder:zeigen"] },
           /* Epilog (KONZEPT §7, Entscheidung des Nutzers): Erzählung in einem späteren Dienst, ohne neues Lernziel.
-             Pause > 3 s im Wachen ist nach ESC-Synkope-2018 §4.1.1 beweisend (QUELLEN §3); keine Kurve, kein Standbild. */
+             Pause > 3 s im Wachen ist nach ESC-Synkope-2018 §4.1.1 beweisend (QUELLEN §3); keine Kurve, kein Standbild.
+             Behandlung nach ESC-Pacing-2021 (QUELLEN §8): erst die reversible Ursache (Betablocker absetzen,
+             §5.1.1.1/§5.1.1.2), Schrittmacher erst bei symptomatischer Pause ohne Medikament; DDD erste Wahl (§5.1.2). */
           epilog: { text: "baum.epilog.1", weiter: "epilog2" },
           epilog2: { text: "baum.epilog.2", weiter: "epilog3" },
-          epilog3: { text: "baum.epilog.3", ende: "baum.knopf.ende" }
+          epilog3: { text: "baum.epilog.3", weiter: "epilog4" },
+          epilog4: { text: "baum.epilog.4", weiter: "epilog5" },
+          epilog5: { text: "baum.epilog.5", ende: "baum.knopf.ende" }
         }
       },
 
