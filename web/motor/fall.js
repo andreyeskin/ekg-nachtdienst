@@ -137,7 +137,12 @@
         case "loesche": loesche(f, rest); break;
         case "karte": api.befund(karte(f, rest)); break;
         case "zeit": api.zeitVor(parseInt(rest, 10) || 0); break;
-        case "melde": api.melde(T(t[1], v), t[2]); break;
+        case "melde": {                      /* Platzhalter frisch füllen: eine Wirkung davor kann die Uhr gestellt haben */
+          var vm = vars(f);
+          if (extra) for (var km in extra) if (extra.hasOwnProperty(km)) vm[km] = extra[km];
+          api.melde(T(t[1], vm), t[2]);
+          break;
+        }
         case "felder": if (rest === "zeigen") global.Szene.zeigeFelder(2400); else global.Szene.aktualisiere(); break;
         case "aufgabe": global.setTimeout(function () { aufgabe(f, rest); }, 60); break;
         case "dialog": dialogSpaeter(f, rest); break;
