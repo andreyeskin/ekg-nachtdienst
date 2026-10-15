@@ -35,10 +35,9 @@ trägt, ist Unsinn; Informationen kommen aus dem Klinikalltag, nicht aus verstec
 6. **Echte Kurven, belegte Sätze.** Unverändert: alle Kurven aus `data/`, alle Zahlen aus der Annotation,
    jede fachliche Aussage in `FACHREGELN.md` (Lehrbuch, eigene Worte) oder `QUELLEN.md` (offene Quelle mit
    Stelle). Lektionsnummern nie im Spieltext.
-7. **Behandlung als Teamentscheidung nach Leitlinie** (geändert am 15.10.2026 auf Wunsch des Nutzers): Jeder
-   Fall endet mit dem, was mit dem Patienten geschieht, belegt mit Leitlinie und Abschnitt (QUELLEN §4).
-   Keine Dosierungen. Entscheidungen der Spielerin bleiben Beobachtungs- und Meldeentscheidungen (Ampel) und
-   Fragen an das Team; Therapie ordnet im Spiel der Arzt an, die Spielerin versteht und begründet sie.
+7. **Behandlung gehört zum Fall** (Entscheidung des Nutzers, 15.10.2026; keine Einschränkung mehr): Jeder Fall
+   endet mit dem, was mit dem Patienten geschieht. Therapie, Medikamente mit Dosierung, Eingriffe und
+   Behandlungsentscheidungen der Spielerin sind erlaubt, jede Aussage mit Beleg (QUELLEN §4).
 
 ---
 

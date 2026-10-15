@@ -233,8 +233,8 @@ Aufgaben, Antworten, Rückmeldungen, Kartentexte, Dialoge und Rätsel der Kapite
   keine Lehrbuchwerte.
 
 ## Nicht aus dem EKG-Kurs
-- Therapieentscheidungen (Pacer, Medikamente, Überwachung) stehen nicht im Lehrbuch. Das Spiel
-  behauptet dazu nichts Konkretes; Dr. Falk sagt, dass der Arzt am Bett entscheidet.
+- Therapieentscheidungen (Pacer, Medikamente, Überwachung) stehen nicht im Lehrbuch. Sie gehören ins
+  Spiel (QUELLEN §4), jeweils mit offener Quelle (Leitlinie mit Abschnitt) in QUELLEN.md.
 - Betablocker bremsen Sinusknoten und AV-Überleitung; ASS hemmt die Blutplättchen (nicht „die
   Gerinnung", korrigiert); ACE-Hemmer bremsen keinen Knoten — Pharmakologie, QUELLEN §3.
 - Synkopen-Kriterien (keine Vorwarnung; Puls dauerhaft < 40, Pause > 3 s, Mobitz II / III°):

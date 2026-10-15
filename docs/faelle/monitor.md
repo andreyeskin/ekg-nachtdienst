@@ -122,8 +122,8 @@ Sagt: Rhythmus und Frequenz. Vorhofflimmern und seine Geschwindigkeit (bradykard
 Extrasystolen, Pausen, Asystolie, plötzlich breite Komplexe — das erkennt man am Monitor ausreichend
 sicher. Sagt nicht: ST-Strecke, Q-Zacken, P-Form, Hypertrophie — die Monitorableitung ist meist keine
 Standardableitung, Feinanalyse nur mit größter Zurückhaltung. Deshalb: **Jede Auffälligkeit → 12-Kanal-
-EKG.** Und: Ob Frau Lindner einen Blutverdünner braucht, wann und wie ihr Rhythmus behandelt wird, sagt
-weder Monitor noch Spiel — das entscheidet der Arzt am Bett.
+EKG.** Ob Frau Lindner einen Blutverdünner braucht und wie ihr Rhythmus behandelt wird, gehört zum Fall
+(QUELLEN §4) und wird beim Umbau mit Beleg aus ESC-AF (am Original) eingebaut.
 
 ## 8. Ende des Falls
 
@@ -213,5 +213,4 @@ das Achterl zeigt sich im Nachsatz. D5 — Beginn, Vorgeschichte, Medikamente f�
 > Papier. Also: Rhythmus?
 
 *Prüfung:* D3 — die Grenze des Monitors ist Handlung („wir schreiben das Blatt"), nicht Vortrag; Option 3
-ist ein echter Denkweg (zu vorsichtig) und wird ernst genommen. Keine Therapie: Falk sagt nicht, was
-mit ihr geschieht.
+ist ein echter Denkweg (zu vorsichtig) und wird ernst genommen. Die Behandlung folgt beim Umbau mit Beleg.

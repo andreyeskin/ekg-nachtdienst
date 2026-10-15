@@ -203,17 +203,18 @@ Dr. Falk kommt herunter, hört ab, lässt ihn aufstehen und ein paar Schritte ge
 Bogen. Klare Auflösung dessen, was zu wissen ist: Die Zahlen erklären die Zahlen (Betablocker, Alter),
 nicht die Ohnmacht. Fehlendes Prodrom plus auffälliges EKG: Risikomerkmal. Entscheidung des Arztes:
 Monitorüberwachung. Herr Baum geht nach oben — mit Tüte, Foto und Mütze. **Was der Monitor zeigt, ist
-nicht mehr dieser Fall.** Keine Therapie, keine Dosis, kein „Pacer".
+nicht mehr dieser Fall.** Die Behandlung erzählt der Epilog.
 
 ### Epilog (Entscheidung des Nutzers, 13.10.2026: ja, als Erzählung)
 
 Erzähler, ohne Porträt, ohne Standbild, in einem späteren Dienst (Dienst 3, 13:20): Marlene hat den
 Speicher gesehen. In der zweiten Nacht hat der Monitor eine Pause aufgezeichnet, länger als drei
-Sekunden; Herr Baum war wach und hat geklingelt. Er liegt jetzt auf der Kardiologie; was dort geschieht,
-entscheidet der Arzt am Bett. Das ist die einzige fachliche Aussage des Epilogs, und sie ist belegt: Eine
-Pause über drei Sekunden im Wachen ist nach ESC-Synkope-2018 §4.1.1 eines der Kriterien, die eine
-arrhythmische Synkope beweisen (QUELLEN §3). Der Epilog zeigt keine Kurve (QUELLEN §4: keine gemalte
-Pause) und nennt keine Diagnose, keine Therapie. Im Spiel hängt er, solange Kapitel 2 noch Herrn Baums
+Sekunden; Herr Baum war wach und hat geklingelt. Eine Pause über drei Sekunden im Wachen ist nach
+ESC-Synkope-2018 §4.1.1 eines der Kriterien, die eine arrhythmische Synkope beweisen (QUELLEN §3).
+Behandlung (seit 15.10.2026, QUELLEN §9): Auf der Kardiologie wird zuerst das Bisoprolol abgesetzt
+(reversible Ursache, ESC-Pacing-2021 §5.1.1.1/§5.1.1.2); nach drei Tagen ohne Betablocker erneut eine Pause
+im Wachen, deshalb Zweikammer-Schrittmacher (§5.1.1.1, §5.4, §5.1.2); am Montag nach Hause. Der Epilog
+zeigt keine Kurve (keine gemalte Pause). Im Spiel hängt er, solange Kapitel 2 noch Herrn Baums
 Präsynkope erzählt, an dessen Ende (`Fall.epilog` nach `auftakt.schluss`); mit dem Umbau von Kapitel 2
 (Frau Lindner) rückt er an den Anfang von Dienst 3.
 
@@ -355,5 +356,4 @@ Lektionssatz im Mund der Figur; die Leitlinie steht in der Rückmeldung.
 > heimzuschicken. Er kommt an den Monitor. Nicht, weil ich weiß, was es ist. Weil ich es nicht weiß.
 
 *Prüfung:* D1 — Falk: Zahlen zuerst, Pausen, Gegenfrage, kein Lob ohne Einschränkung. D3 — der
-Risikogedanke ist Handlung („nicht heimschicken"), die Tabellenlogik steht in der Rückmeldung. Keine
-Therapie, keine Dosis.
+Risikogedanke ist Handlung („nicht heimschicken"), die Tabellenlogik steht in der Rückmeldung.

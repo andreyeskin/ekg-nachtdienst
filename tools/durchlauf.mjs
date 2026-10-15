@@ -791,7 +791,6 @@ ok("Einordnung: Beweis wäre Pause oder Block mit plötzlich ausfallenden Schlä
    /Weil ich es nicht weiß/.test(ent2) && /plötzlich Schläge ausfallen/.test(ent2) && /Monitor/.test(ent3) && /am Bett/.test(ent3), ent.slice(0, 200));
 ok("Übergabe endet mit „Verstanden.“", ((await seite.locator(".dialog-antwort.weiter").textContent()) || "").trim() === "Verstanden.");
 await seite.locator(".dialog-antwort.weiter").click();
-ok("Keine Therapie, keine Dosis, kein Pacer in der Übergabe", !/Pacer|Dosis|\bmg\b|Schrittmacher|Atropin/.test(ent + ent1 + fTia + fOrtho));
 await warte(400);
 ok("Klares Ende des Falls: Erzähler, Herr Baum geht nach oben, Marlene schenkt Kaffee nach (D4: Verhalten statt Gefühl)",
    (await seite.locator(".dialog.an.ohne-bild").count()) === 1 && /nach oben/.test(await dialogLesen()) && /Kaffee/.test(await dialogLesen()));
@@ -1027,7 +1026,6 @@ ok("A: Ende und Epilog: Erzählung in einem späteren Dienst — Pause über dre
   ok("A: Epilog nach Leitlinie: erst der Betablocker abgesetzt, dann bei erneuter Pause der Schrittmacher",
      /Bisoprolol abgesetzt/.test(epi) && /ohne Betablocker/.test(epi) && /Zweikammer-Schrittmacher/.test(epi) &&
      epi.indexOf("abgesetzt") < epi.indexOf("Zweikammer-Schrittmacher"), epi.slice(0, 400));
-  ok("A: Epilog ohne Dosisangaben", !/Dosis|\bmg\b|\d+\s*mg/.test(epi));
 }
 let z = await zustand();
 ok("A: Ziel erreicht (Wahl: Arzt)", z.marken.k2_fertig && z.werte.ampel === "arzt", JSON.stringify(z.werte.ampel));

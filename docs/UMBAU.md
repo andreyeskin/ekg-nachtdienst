@@ -200,7 +200,6 @@ die Medikamente mahnen Stand und Falk; der Epilog hängt vorerst am Ende von Kap
   Repliken ≤ 230 Zeichen; Textüberlauf de/en/ru bei 1024×768 und 1366×1024; Zirkel maßstabstreu bei drei
   Bildschirmgrößen (±2 ms, gleiche Bewertung).
 - Monitor: Bett von Frau Lindner trägt 96 (oder Ersatz); Alarm jede Wahl → Falk-Szene; 6-s-Zählung
-  gegen Komplexe im Fenster; Vergleich Baum ↔ Lindner; keine Therapie-Wörter („Pacer", „Dosis") im Text
-  (Wortliste im Durchlauf).
+  gegen Komplexe im Fenster; Vergleich Baum ↔ Lindner; Therapieaussagen nur mit Beleg (QUELLEN §4).
 - Allgemein: keine Lektionsnummern im Spieltext; jede Zahl im Text aus `mess`/Messung (Grep auf
   Literale wie `228`, `53` in Dialogen schlägt an).

@@ -90,11 +90,11 @@ werden. Im Datensatz steht dafür `"messbar": false`.
   drei Sekunden im Wachen, zeigt aber keine Kurve und stellt keine Diagnose.
 - **Nicht**, dass die Bradykardie allein gefährlich ist. Unter Betablocker ist
   sie erwartbar.
-- Keine Dosierungen und keine Anweisungen an die Spielerin, wie sie behandeln soll.
-  **Behandlung kommt vor (Entscheidung des Nutzers, 15.10.2026), aber nur als das, was das Team
-  nach Leitlinie entscheidet**, mit Beleg in der Belegtabelle (Leitlinie mit Abschnitt), ohne Dosis.
-  Beispiel: Herr Baum, Epilog — erst Betablocker abgesetzt (reversible Ursache), dann bei erneuter
-  symptomatischer Pause Zweikammer-Schrittmacher (ESC-Pacing-2021, siehe §8).
+- **Behandlung gehört dazu** (Entscheidung des Nutzers, 15.10.2026; die frühere Regel „Das Spiel übt
+  Befunden, nicht Behandeln" ist aufgehoben): Therapie, Medikamente mit Dosierung, Eingriffe und
+  Behandlungsentscheidungen der Spielerin sind erlaubt. Es gilt dieselbe Regel wie für jede fachliche
+  Aussage: nur mit Beleg (Lektion in FACHREGELN.md oder Leitlinie mit Abschnitt in der Belegtabelle).
+  Beispiel: Herr Baum, Epilog (§9).
 
 ## 5. Offen
 
@@ -162,8 +162,8 @@ bradycardia" bei 50–59/min (Nr. 39, 24, 59, 134); „Sinus tachycardia" bei Nr
 189). Das Spiel zeigt die Etiketten als Datenbankbefund und ordnet sie nach Lehrbuch ein.
 
 **Noch zu belegen (offen):** Therapie-Entscheidungen am Monitor (Beobachten · Arzt rufen · Pacer)
-stehen nicht im EKG-Kurs. Das Spiel behauptet dazu keine Kriterien mehr; falls später doch,
-Beleg aus ESC-Pacing-2021 / ERC-Leitlinie hier eintragen.
+stehen nicht im EKG-Kurs. Sie dürfen ins Spiel; vorher Beleg aus ESC-Pacing-2021 / ERC-Leitlinie
+hier eintragen.
 
 ---
 

@@ -29,8 +29,9 @@ Lehrbuch (Kapitel-PDFs im Drive des Nutzers, nie ins Repository) und docs/QUELLE
 6. **EKG-Aufgabe** — was gemessen oder erkannt wird, Toleranzen, häufigste Fehler und deren Rückmeldung.
 7. **Was das EKG sagt — und was nicht.** Grenzen ausdrücklich (z. B. ein normales Ruhe-EKG schließt
    eine rhythmogene Synkope nicht aus).
-8. **Ende des Falls** — offene oder klare Auflösung; keine Therapie-, Dosis- oder Handlungsanweisungen
-   (QUELLEN §4). Entscheidungen „trifft der Arzt am Bett".
+8. **Ende des Falls und Behandlung** — was mit dem Patienten geschieht, einschließlich Therapie (Medikamente
+   mit Dosierung, Eingriffe); Behandlungsentscheidungen dürfen Aufgaben der Spielerin sein. Jede Aussage
+   belegt (Leitlinie mit Abschnitt, QUELLEN §4).
 9. **Belege** — je Aussage: Lektion (eigene Worte) bzw. offene Quelle (Leitlinie mit Abschnitt/Tabelle).
    Was nicht belegt ist, kommt nicht ins Spiel.
 
