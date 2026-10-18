@@ -129,4 +129,10 @@ Geplanter Ablauf:
    Prototyp (z. B. Marlene trinkt aus der Kanne, 3–4 GPT-Bilder).
 3. Erst nach Freigabe durch den Nutzer wird der Fall umgebaut.
 
+**Merkzettel Farbpalette (Wunsch des Nutzers, 18.10.2026):** Mit der Palette experimentieren, sie etwas
+interessanter und lebendiger machen. Vorgehen: zwei bis drei Varianten am selben Bild (Aufnahme 06:40,
+Szenenbild, Dialogfenster, Kopfleiste) nebeneinander zeigen, Kontrast der UI-Texte mitprüfen; die
+ART_BIBLE §2 bleibt verbindlich, bis der Nutzer eine Variante freigibt (Rost „genau ein Objekt", Phosphor nur
+auf Schirmen, Magenta nur im UI, Rot-Rosa und Schwarz nur für Papier und Kurve).
+
 Arbeitskopie: direkt auf `claude/stil-ligne-claire` (der frühere lokale Branch `arbeit/redesign` war leer und ist nicht gepusht).
