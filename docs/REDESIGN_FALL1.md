@@ -1164,3 +1164,45 @@ oder anders gewichtet. „neu, zu prüfen" = am 18.10.2026 per Websuche gefunden
 | Katzensticker-Szene (warm, GAME_DESIGN §5) | **Behalten** als freiwillige Frage an Marlene vor 07:00; nach 07:00 hat sie keine Zeit, und das sagt sie. |
 | Friedhof am Sonntag (verstorbene Frau Elfriede), ein Nebensatz beim Kleben | **Behalten**, genau ein Nebensatz; mehr wäre Rührung auf Bestellung. |
 | Verletzung: Schürfung am Ellbogen und blauer Fleck an der Hüfte, bewusst keine Kopfverletzung | **So lassen.** Eine Beule am Kopf nach Bewusstlosigkeit würde die Frage nach einer Bildgebung aufwerfen, die der Fall nicht trägt und nicht belegt; die Hüfte erfüllt „Verletzung durch die Synkope" (Tab. 7) genauso. |
+
+---
+
+## 14. Handlung (Prüfung mit Skill `handlung`, 18.10.2026)
+
+Urteil: Der Bogen trägt. Eine Frage („Darf er heim?"), eine Frist, ein Gegenspieler mit guten Gründen, eine
+Wendung mit Saat (Friedhof in 5.4 vor der Enthüllung in 5.5), die Spielerin löst selbst, Schlussbild mit Echo
+(Jacke, Mütze, Kanne). H1 und H2 aus §1 sind behoben. Offen, je ein Mittel:
+
+- **H5 Scheinwahl** · §4.4, 5.3–5.5 „Reihenfolge frei", Runde endet erst, wenn alle fünf gefragt sind · Die
+  einzige Wahl ist die Reihenfolge, und sie hat keine Folge; die Runden bleiben eine Checkliste mit fünf Knöpfen.
+  · Mittel: je Runde nur der Kern als Engpass (Runde 1: Ereignis, Vorwarnung; Runde 3: „schon einmal?"), die
+  übrigen Fragen dürfen ausgelassen werden („Das reicht mir fürs Erste"); was fehlt, fragt Falk in der ISBAR ab
+  („Verletzt?") und schickt zum Patienten (bestehender Rückweg).
+- **H3 Frist ohne Zähne** · §3 Takt 1 „Frist (Falk, 07:15)", §11.4 Falk erst nach `hat:ekg_geschrieben` · Vor dem
+  EKG kostet nichts Zeit, also drückt die Frist nie. · Mittel: jede Frage und jede Handlung rückt die Uhr um eine
+  Minute vor; um 07:15 kommt Falk in jedem Fall. Ist das EKG noch nicht geschrieben, wartet er am Tresen
+  („Schreiben Sie. Ich les solang.") und die Übergabe beginnt danach mit weniger Zeit.
+- **H7 Fehlendes Sequel** · 5.6 Marlene „dreht sich um, als die Spielerin vorbeigeht" · Takt 3 (Reaktion,
+  Dokumentation, „sag's dem Falk als Erstes") hängt an einem Weg, den man nicht gehen muss. · Mittel: fester Engpass
+  nach der Untersuchung. Marlene schiebt den Wagen selbst an die Koje („Da. Ich übergeb.") und fragt dabei
+  „Und? Darf er?".
+- **H5 doppelte Entscheidung** · 6.2 R „Er bleibt. Monitor. Und das Bisoprolol heute nicht." und 6.4 Tabletten ·
+  Dieselbe Behandlungswahl fällt zweimal; die zweite ist dann keine Wahl mehr. · Mittel: R ohne Bisoprolol („Er
+  bleibt. Monitor."); die Tabletten bleiben allein in 6.4.
+- **IF5 / atemlose Szene** · §6 Takt 6: ISBAR mit 3–4 Wahlen, Gegenrede mit bis zu acht Argumenten, Tabletten,
+  Bett, in einem Stück · Zwölf Minuten Menü ohne Atempause; der Höhepunkt wird zur Abfrage. · Mittel: ein stummer
+  Handlungstakt nach der A-Zeile. Falk legt seinen Messingzirkel an den Streifen und misst selbst nach („Zweihundertzwanzig,
+  zweihundertdreißig. Ja."). Das gibt der Messung der Spielerin ihre Bestätigung von außen und setzt Falks Gegenstand
+  ein (ART_BIBLE §5).
+- **Wendung überbewertet** · §2.3 „kippt die Notiz … in nicht mehr zu halten" · Fachlich kippt die Notiz erst
+  mit dem EKG (keine Vorwarnung + nicht normal, §2.2); das zweite Ereignis stützt nur, und die Viertelstunde Stehen
+  spricht sogar für Reflex. Erzählt man die Wendung als Kipppunkt, lernt die Spielerin „zweimal = gefährlich". ·
+  Mittel: §2.3 und Falks Reaktion („Hm.") als Einsatzerhöhung formulieren (die Notiz kannte nur die halbe Geschichte);
+  der fachliche Kipppunkt bleibt die PQ-Zeit in Takt 4.
+- **E5 Pointe am Schluss** · 7.1 Spielerin: „Deshalb der Monitor, nicht die Haltestelle." · Die Spielerin spricht
+  die Lehre als Pointe aus. · Mittel: den Satz streichen; „Heute wissen wir's nicht." reicht, dann die Senta.
+- **Flag ohne Tabelle** · 5.7 `anruf_spaeter` · fehlt in der Flag-Tabelle §3. · Mittel: eintragen (Folge: Sabine
+  ruft nach dem Streifen, „Ich hab dreimal angerufen.").
+
+Kein Befund zu H1, H2, H4, H6, H8 und zu Ende/Epilog (eine Folge, belegt, Verdachtsliste schließt mit
+„Bewiesen.", kein Lebenslauf).
