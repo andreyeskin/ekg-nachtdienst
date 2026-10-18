@@ -462,6 +462,10 @@ await lauf("c ipad ruhig", { viewport: { width: 1024, height: 768 }, reducedMoti
     ok(`${name}: QRS gemessen`, z.karten.includes("qrs") && z.werte.qrs > 0, String(z.werte.qrs));
     ok(`${name}: Untersuchung mitten in Runde 2, Runde läuft weiter`, replik(texte, "u_1").length === 1 && z.flags.includes("r2_5"));
     ok(`${name}: Falk muss nichts nachfragen`, !replik(texte, "luecke").length);
+    await p.click("#noch-einmal");
+    await p.waitForSelector("#titel-los", { timeout: 5000 }).catch(() => null);
+    const neu = await p.evaluate(() => !!document.getElementById("titel-los") && window.__prototyp.zustand().zeit === "06:40");
+    ok(`${name}: „Noch einmal“ beginnt von vorn (Titel, 06:40)`, neu);
   }
 });
 
