@@ -110,6 +110,12 @@ Blockout (a) einen Flur als statisches 3D zum Selbstgehen im Browser (three.js, 
 als vorgerenderten Raum mit Leben-Ebenen bauen; der Nutzer probiert beide auf dem iPad und entscheidet dann.
 Modell so anlegen, dass es auch als glTF exportierbar ist.
 
+**Leitsatz des Nutzers (18.10.2026):** „Die Zeit geht ins Denken, nicht ins Gehen durch Flure." Damit ist das Format
+**Quest im 3D-Haus** (Variante b) die Vorgabe: Räume vorgerendert aus dem Modell, Wege als kurze Kamerafahrten statt
+selbst gelaufen, Leben als Ebenen. Die Probe mit Variante (a) entfällt, außer der Nutzer will sie ausdrücklich. Der
+Leitsatz gilt auch für alles andere: keine Laufwege, kein Hin- und Herschicken, kein Suchen; jede Minute Spielzeit
+soll eine Denk- oder Handentscheidung sein.
+
 ## Was das am Bestand ändert (zur Ausarbeitung)
 
 - **KONZEPT §3:** Jeder Dienst bekommt **einen Mentor mit Fachgebiet und Tagesthema**, der sich vorstellt und
@@ -132,7 +138,7 @@ Modell so anlegen, dass es auch als glTF exportierbar ist.
 ## Offene Fragen an den Nutzer (Ergänzung)
 
 6. ~~Welches Gebäude der Psychiatrie in Graz ist gemeint?~~ Beantwortet: Gebäude 31, LKH-Univ. Klinikum Graz.
-7. Format: Entscheidung nach der Probe (beide Varianten an einem Flur, siehe oben).
+7. ~~Format~~ Entschieden: Quest im 3D-Haus (Leitsatz „Denken statt Gehen", siehe oben).
 8. Mentoren: eine Person je Dienst (neue Figuren) oder wenige feste Mentoren, die wechseln?
 
 ## Nächster Schritt (eigener Chat)
