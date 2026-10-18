@@ -545,7 +545,7 @@
   /* ------------------------------------------------------------ Dialog
      Knoten: { wer, text, regie, tu, warum, antworten, weiter, endeText, umleiten, dann }.
      Antworten: { text, wenn, tu, zu, warum, z (Minuten, Vorgabe 1), zitat, dann }.
-     Die Rückmeldung (`warum`) steht als Streifen unter dem Text, bis die nächste Wahl fällt (§5, nie im Figurenmund). */
+     Die Rückmeldung (`warum`) steht als Streifen unter der Antwort direkt nach der Wahl (§5, nie im Figurenmund). */
   var Dlg = { hof: null, baum: null, knoten: null, tippt: null, voll: "", warum: null, zitat: null, fertig: null };
   var NAMEN = { marlene: "Marlene", herrk: "Herr Baum", falk: "Dr. Falk", tochter: "Sabine Baum · Telefon", spielerin: "Du", erzaehler: "" };
   var BILDER = {};
@@ -647,6 +647,7 @@
     if (Dlg.tippt) { fertigTippen(); return; }
     var k = Dlg.knoten;
     Dlg.zitat = null;
+    Dlg.warum = null;          /* die Rückmeldung gehört zur Antwort direkt nach der Wahl, nicht in die nächste Szene */
     var ziel = wert(k.weiter);
     if (ziel) zeigeKnoten(ziel); else dlgEnde(k.dann);
   }
