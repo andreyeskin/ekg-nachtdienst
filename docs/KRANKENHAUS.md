@@ -73,6 +73,8 @@ Sinngemäß übersetzt und geordnet; alles verbindliche Wünsche, die Ausarbeitu
    für Psychiatrie am LKH-Univ. Klinikum Graz, Auenbruggerplatz (im Lageplan Gebäude 31); (b) LKH Graz II, Standort
    Süd, Pavillonanlage im Park; (c) Erweiterung der Kinder- und Jugendpsychiatrie am LKH Graz II Süd (Holzbau,
    fünf „Häuser" um einen „Dorfplatz"). Nutzer um Bestätigung oder ein Foto bitten.
+   **Bestätigt vom Nutzer (18.10.2026): (a), Gebäude 31 (Psychiatrie) am LKH-Univ. Klinikum Graz, Auenbruggerplatz.**
+   Fotos und Ansichten im nächsten Chat suchen; Vorbild für Bauform, Fassade, Grün, nicht für Grundriss oder Namen.
 3. **Leben im Hintergrund:** man soll spüren, dass das Haus lebt. Viele Ärztinnen und Ärzte mit ihren eigenen
    Aufgaben, Patienten liegen in den Zimmern, gehen über den Flur. (Prototyp `prototyp/bewegung/` ist der Anfang.)
 4. **Format:** Der Nutzer fragt, ob das Spiel mehr 3D werden soll oder ob das heutige Format passt (Empfehlung unten).
@@ -100,6 +102,14 @@ Sinngemäß übersetzt und geordnet; alles verbindliche Wünsche, die Ausarbeitu
   geriggt und animiert werden, das Spiel würde groß, auf dem iPad langsamer, und ohne Animatoren wirken Figuren
   steif. Nur sinnvoll, wenn freies Herumgehen selbst ein Ziel ist.
 
+**Stand der Entscheidung (18.10.2026):** Der Nutzer ist unsicher („keine Erfahrung") und fragt, ob das Format als
+Quest funktioniert. Antwort: ja, es ist das klassische Point-and-Click-Adventure (gerenderte Räume, Klickfelder,
+Gespräche, Rätsel als Nahaufnahmen); Messen mit Zirkel und Pencil braucht ohnehin ein ruhiges 2D-Bild. Die Wahl ist
+umkehrbar, weil das Hausmodell in beiden Fällen dasselbe ist. Deshalb **Entscheidung durch Probe**: nach dem
+Blockout (a) einen Flur als statisches 3D zum Selbstgehen im Browser (three.js, ohne Figuren) und (b) denselben Flur
+als vorgerenderten Raum mit Leben-Ebenen bauen; der Nutzer probiert beide auf dem iPad und entscheidet dann.
+Modell so anlegen, dass es auch als glTF exportierbar ist.
+
 ## Was das am Bestand ändert (zur Ausarbeitung)
 
 - **KONZEPT §3:** Jeder Dienst bekommt **einen Mentor mit Fachgebiet und Tagesthema**, der sich vorstellt und
@@ -121,8 +131,8 @@ Sinngemäß übersetzt und geordnet; alles verbindliche Wünsche, die Ausarbeitu
 
 ## Offene Fragen an den Nutzer (Ergänzung)
 
-6. Welches Gebäude der Psychiatrie in Graz ist gemeint (Kandidaten oben), gibt es ein Foto?
-7. Format: einverstanden mit „heutiges Format plus 3D aus dem Modell", oder soll freies Herumgehen in 3D ein Ziel sein?
+6. ~~Welches Gebäude der Psychiatrie in Graz ist gemeint?~~ Beantwortet: Gebäude 31, LKH-Univ. Klinikum Graz.
+7. Format: Entscheidung nach der Probe (beide Varianten an einem Flur, siehe oben).
 8. Mentoren: eine Person je Dienst (neue Figuren) oder wenige feste Mentoren, die wechseln?
 
 ## Nächster Schritt (eigener Chat)
