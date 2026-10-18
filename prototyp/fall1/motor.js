@@ -575,7 +575,7 @@
     var text = T(wert(k.text) || "", P.vars());
     var regie = k.regie ? T(wert(k.regie) || "", P.vars()) : "";
     if (k.tu) k.tu();
-    if (k.warum) Dlg.warum = T(wert(k.warum), P.vars());
+    if (k.warum) { Dlg.warum = T(wert(k.warum), P.vars()); Z.texte.push({ art: "warum", text: Dlg.warum, knoten: id }); }
     var wer = wert(k.wer) || "erzaehler";
     var h = Dlg.hof, bild = h.querySelector(".dialog-bild");
     bild.innerHTML = "";
@@ -623,6 +623,7 @@
     if (z) P.vor(z);
     if (a.tu) a.tu();
     Dlg.warum = a.warum ? T(wert(a.warum), P.vars()) : null;
+    if (Dlg.warum) Z.texte.push({ art: "warum", text: Dlg.warum });
     Dlg.zitat = a.zitat ? (a.zitat === true ? t : T(wert(a.zitat), P.vars())) : null;
     var ziel = wert(a.zu);
     if (ziel) zeigeKnoten(ziel); else dlgEnde(a.dann);
