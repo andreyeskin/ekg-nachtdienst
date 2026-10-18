@@ -146,7 +146,10 @@ Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 Nach dem spielbaren Prototyp von Fall 1 sagt der Nutzer: „schön, aber trotzdem unverständlich". Er will zuerst das
 ganze Krankenhaus bauen (ein eigenes Gebäude, eine Abteilung, Zimmer, Flure, Lehrsaal), am Anfang erklären, was
 man lernt und wie es abläuft, mit einem Flug durch die Abteilung, und ein 3D-Modell, dessen Räume das Spiel nutzt.
-Festgehalten mit Bausteinen, Folgen und offenen Fragen in **`docs/KRANKENHAUS.md`**. Die Farbpalette (Merkzettel
+Festgehalten mit Bausteinen, Folgen und offenen Fragen in **`docs/KRANKENHAUS.md`**. Am Abend kamen weitere Wünsche dazu
+(viel Grün, Psychiatrie-Gebäude am LKH Graz als Vorbild, Leben im Hintergrund, Format, freundlicher Ton, weniger Text
+und mehr Interaktion, Mentor je Dienst, Themenliste, Unterstützung durch Kollegen); ebenfalls dort, mit Empfehlung
+zum Format. Die Farbpalette (Merkzettel
 unten) wird am Haus mit ausprobiert.
 
 ### Startnachricht für den Krankenhaus-Chat
@@ -157,7 +160,8 @@ Lies zuerst docs/STAND.md, dann docs/KRANKENHAUS.md, docs/KONZEPT.md §1–§3, 
 und die Skills unter .claude/skills/. Prüfe den Build:
 python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
 3D und Raumprogramm als Subagent auf Fable, Code auf Opus.
-Auftrag für diesen Chat: docs/KRANKENHAUS.md ausarbeiten (offene Fragen zuerst mit mir klären), dann Blender-Blockout
+Auftrag für diesen Chat: docs/KRANKENHAUS.md (Haus und Neuausrichtung) ausarbeiten, offene Fragen zuerst mit mir klären,
+Vorbild-Recherche mit Fotos, dann Blender-Blockout
 des Gebäudes und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur).
 ```
 

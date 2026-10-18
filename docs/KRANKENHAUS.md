@@ -1,4 +1,4 @@
-# Krankenhaus zuerst — Idee des Nutzers (18.10.2026)
+# Krankenhaus zuerst und Neuausrichtung — Wünsche des Nutzers (18.10.2026)
 
 Status: **Idee, festgehalten, noch nicht ausgearbeitet.** Ausarbeitung in einem eigenen Chat (unten „Nächster
 Schritt"). Nichts davon ist gebaut.
@@ -61,9 +61,74 @@ dessen Räume wir dann im Spiel verwenden."
 4. Wer führt ein: Erzähler, Dr. Wieser oder Marlene?
 5. Wie viel vom Haus ist begehbar: nur die Spielräume oder auch Flure zum Hin- und Hergehen?
 
+## Zweite Nachricht des Nutzers (18.10.2026, abends): Wünsche zur Neuausrichtung
+
+Sinngemäß übersetzt und geordnet; alles verbindliche Wünsche, die Ausarbeitung entscheidet das Wie.
+
+1. **Ort:** im Hintergrund eine hübsche europäische Stadt; im Krankenhaus und draußen **viel Grün**.
+2. **Alles stimmig:** ein Haus, ein Stil, eine Palette, passende Wege, Zeiten und Namen. Als Vorbild Bilder echter
+   Krankenhäuser. Der Nutzer mag besonders das **Gebäude der Psychiatrie am LKH Graz**: finden, als Vorbild für das
+   3D-Modell nehmen, deutlich verändert (kein Name, kein Logo, nicht wiedererkennbar als echtes Haus).
+   Welches Gebäude gemeint ist, ist noch zu bestätigen. Kandidaten aus einer ersten Suche: (a) Universitätsklinik
+   für Psychiatrie am LKH-Univ. Klinikum Graz, Auenbruggerplatz (im Lageplan Gebäude 31); (b) LKH Graz II, Standort
+   Süd, Pavillonanlage im Park; (c) Erweiterung der Kinder- und Jugendpsychiatrie am LKH Graz II Süd (Holzbau,
+   fünf „Häuser" um einen „Dorfplatz"). Nutzer um Bestätigung oder ein Foto bitten.
+3. **Leben im Hintergrund:** man soll spüren, dass das Haus lebt. Viele Ärztinnen und Ärzte mit ihren eigenen
+   Aufgaben, Patienten liegen in den Zimmern, gehen über den Flur. (Prototyp `prototyp/bewegung/` ist der Anfang.)
+4. **Format:** Der Nutzer fragt, ob das Spiel mehr 3D werden soll oder ob das heutige Format passt (Empfehlung unten).
+5. **Ton der Figuren:** Heute wirken die Figuren passiv-aggressiv, die Repliken sind unklar. Das soll weg: keine
+   Rätselsätze, keine Spitzen, nichts Unverständliches. Kolleginnen und Mentoren sind freundlich und unterstützend.
+6. **Weniger Text, mehr Interaktion:** so klar wie möglich, weniger lesen, mehr tun, z. B. **Elektroden kleben**.
+7. **Mentor statt Torwächter:** Heute muss man für jede Frage an den Patienten erst zu einer Ärztin oder zum
+   Arzt, die einen weiterschicken. Stattdessen ein echter Mentor je Tag: „Heute lernen wir Dr. X kennen, sie ist auf
+   Y spezialisiert, und das lernen wir heute."
+8. **Das Haus** möglichst detailreich, schön und verständlich zeigen.
+9. **Interesse und Dynamik** im Spiel.
+10. **Themenliste mit Fortschritt:** sichtbar, welche Themen es gibt und wie weit man ist.
+11. **Viele Entscheidungen und Fragen**, aber immer mit spürbarer **Unterstützung der Kolleginnen und Kollegen**.
+
+## Empfehlung des Koordinators zum Format
+
+**Das heutige Format behalten und um 3D aus einem echten Modell erweitern** (Web, eine Datei, iPad, offline).
+- Das Haus wird ein vollständiges 3D-Modell in Blender. Daraus kommen alle Raumbilder (vorgerendert, ligne claire),
+  der Flug am Anfang und **Kamerafahrten zwischen den Räumen** (Flur entlang, Lift, Tür auf). Das gibt das
+  3D-Gefühl, ohne dass Figuren in Echtzeit animiert werden müssen.
+- Ein **begehbarer Querschnitt** des Hauses (statisches Modell, z. B. mit three.js, ohne Figuren) für Einführung und
+  Lageplan ist machbar und klein.
+- Leben im Hintergrund als 2D-Ebenen über den Renders (Silhouetten, kurze Bildfolgen, Licht), wie im Prototyp.
+- Echtes Echtzeit-3D mit frei begehbaren Räumen und animierten Figuren wäre ein anderes Projekt: Figuren müssten
+  geriggt und animiert werden, das Spiel würde groß, auf dem iPad langsamer, und ohne Animatoren wirken Figuren
+  steif. Nur sinnvoll, wenn freies Herumgehen selbst ein Ziel ist.
+
+## Was das am Bestand ändert (zur Ausarbeitung)
+
+- **KONZEPT §3:** Jeder Dienst bekommt **einen Mentor mit Fachgebiet und Tagesthema**, der sich vorstellt und
+  begleitet. Falk, Wieser und Marlene werden darin eingeordnet; neue Mentorinnen für Infarkt, Rhythmusambulanz,
+  Intensiv.
+- **Skill `dialoge` §4 (Stimmprofile):** freundlich und klar statt schroff. „Kein Lob ohne Einschränkung" (Falk) und
+  „nie Unsicherheit zugeben" (Marlene) erzeugen das Passiv-Aggressive und werden ersetzt. Widerspruch bleibt als
+  Lehrmittel, aber offen und kollegial („Ich halt jetzt bewusst dagegen, damit du deine Gründe sortierst.").
+- **Fall 1 (`docs/REDESIGN_FALL1.md`):** Inhalt und Medizin bleiben; Text kürzen; Torwächter-Wege (zum Wagen
+  geschickt, erst Marlene fragen) durch freie Arbeit mit Mentor an der Seite ersetzen; Falk als Mentor statt
+  Gegenspieler; mehr Handgriffe.
+- **Interaktionen statt Lesen** (jede mit Beleg über `fallakte`): Elektroden kleben (Ampel-Regel), Puls tasten und
+  zählen, Blutdruck im Stehversuch ablesen, das EKG-Gerät bedienen (Papiervorschub 25/50 mm/s), Wellen antippen,
+  Zirkel, Medikationsplan durchsehen (welche Tablette bremst den AV-Knoten), Verdachtsliste selbst ordnen,
+  ISBAR-Karten in die Reihenfolge ziehen, Monitoralarm quittieren und Elektrode wieder ankleben.
+- **Themenliste:** `docs/LEHRPLAN.md` als Lernpfad im Spiel (Themen, erledigt/offen, wo im Haus).
+- **Unterstützung:** ein Knopf „Kollegin fragen" (Marlene, Jonas) gibt einen Hinweis ohne Strafe; Rückmeldungen
+  ermutigen und erklären.
+
+## Offene Fragen an den Nutzer (Ergänzung)
+
+6. Welches Gebäude der Psychiatrie in Graz ist gemeint (Kandidaten oben), gibt es ein Foto?
+7. Format: einverstanden mit „heutiges Format plus 3D aus dem Modell", oder soll freies Herumgehen in 3D ein Ziel sein?
+8. Mentoren: eine Person je Dienst (neue Figuren) oder wenige feste Mentoren, die wechseln?
+
 ## Nächster Schritt (eigener Chat)
 
-Fable (3D und Raumprogramm, CLAUDE.md „Modellwahl"): diese Datei zu einem Konzept ausarbeiten (Raumprogramm,
+Fable (3D und Raumprogramm, CLAUDE.md „Modellwahl"): diese Datei zu einem Konzept ausarbeiten (Vorbild-Recherche mit Fotos,
+Format, Mentoren je Dienst, Ton, Interaktionen, Themenliste, Raumprogramm,
 Grundriss je Stock, Wege der Kapitel, Einführungstext, Drehbuch des Flugs, Lageplan), dann ein Blender-Blockout
 des Gebäudes und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur). Erst nach
 Freigabe durch den Nutzer werden Räume ausgebaut.
