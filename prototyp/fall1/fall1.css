@@ -105,3 +105,14 @@
 .ende-flags.offen li::before { content: "\2014"; position: absolute; left: 2px; }
 .ende-flags li.leer::before { content: ""; }
 .ende-flags code { font: 700 13px var(--mono); background: rgba(16, 33, 43, .1); padding: 1px 5px; margin-right: 4px; }
+
+/* Verdacht und Mappe auch mitten im Gespräch (Falk: „Schauen Sie auf Ihre Liste.") */
+.dialog-hud { margin-left: auto; display: flex; gap: 6px; align-self: center; padding: 6px 10px 6px 0; }
+.dialog-hud-knopf {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; min-width: 44px; padding: 0 10px;
+  border: 2px solid var(--tinte); background: transparent; color: var(--tinte); cursor: pointer;
+  font: 600 11px/1 var(--anzeige); letter-spacing: .08em; text-transform: uppercase;
+}
+.dialog-hud-knopf:hover { background: var(--tinte); color: var(--papier); }
+.dialog-hud-knopf .symbol { width: 18px; height: 18px; }
+@media (max-width: 760px) { .dialog-hud-knopf span { display: none; } }

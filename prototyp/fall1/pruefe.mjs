@@ -312,6 +312,16 @@ const SCHUESSE = {
 let mappeGeprueft = false;
 await lauf("a gut", { viewport: { width: 1366, height: 1024 } }, {
   kurz: "a", schuesse: SCHUESSE, echt: "pq", messen: ["rr", "pq"],
+  beiKnoten: {
+    g0: async (p) => {
+      await p.click('.dialog.an .dialog-hud-knopf[data-panel="verdacht"]');
+      const auf = await p.$("#verdacht-hof.an");
+      ok("a gut: Verdachtsliste mitten in der Gegenrede erreichbar", !!auf);
+      await p.keyboard.press("Escape");
+      const dlg = await p.evaluate(() => !document.querySelector("#verdacht-hof.an") && !!document.querySelector(".dialog.an .dialog-antwort"));
+      ok("a gut: nach der Liste weiter im Gespräch (Escape schließt nur die Liste)", dlg);
+    }
+  },
   wahl: ["Zum Tresen.", "Was ist mit dem Herrn", "Wo ist der Arzt", "Was soll ich machen", "Danke. Ich geh zu ihm.",
     "KPJ-Studentin", "Haben Sie vorher", "Waren Sie grad", "Wie lange weg", "Woher ist die Schramme",
     "Das reicht mir fürs Erste.", "Welche Tabletten", "Haben Sie die heute", "Ist in letzter Zeit", "Haben Sie Zucker",

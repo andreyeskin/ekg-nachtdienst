@@ -341,13 +341,18 @@
   /* Verdachtsliste: stille Meldung unten links (§4.1). Liegt ein Dialog offen, steht sie über seinem Kasten. */
   function meldeVerdacht(text) {
     if (!vdFeld) { vdFeld = el("div", "vd-meldungen", d.body); vdFeld.setAttribute("aria-live", "polite"); }
-    var kasten = d.querySelector(".dialog.an .dialog-innen");
-    var unten = 16;
-    if (kasten) unten = Math.max(16, global.innerHeight - kasten.getBoundingClientRect().top + 10);
-    vdFeld.style.bottom = unten + "px";
     var m = el("div", "vd-meldung", vdFeld, text);
+    vdLage();
+    global.requestAnimationFrame(vdLage);
     global.setTimeout(function () { m.classList.add("weg"); }, schnell ? 600 : 5200);
     global.setTimeout(function () { if (m.parentNode) m.parentNode.removeChild(m); }, schnell ? 900 : 5900);
+  }
+
+  function vdLage() {
+    if (!vdFeld) return;
+    var kasten = d.querySelector(".dialog.an .dialog-innen"), unten = 16;
+    if (kasten) unten = Math.max(16, global.innerHeight - kasten.getBoundingClientRect().top + 10);
+    vdFeld.style.bottom = unten + "px";
   }
 
   /* ------------------------------------------------------------ Verdachtsliste (§4) */
@@ -372,7 +377,8 @@
     if (e.zustand === alt && !neuerGrund) return;
     Z.geaendert[id] = true;
     Z.verlauf.push({ zeit: zeitText(), id: id, zustand: e.zustand, grund: g });
-    var satz = def.kurz + ": " + ZUSTAND[e.zustand] + "." + (g ? " " + g.charAt(0).toUpperCase() + g.slice(1) + "." : "");
+    var satz = def.kurz + ": " + ZUSTAND[e.zustand] + "." +
+      (g ? " " + g.charAt(0).toUpperCase() + g.slice(1) + (/[.!?]$/.test(g) ? "" : ".") : "");
     meldeVerdacht(satz);
     Z.texte.push({ art: "verdacht", text: satz });
     auffrischen();
@@ -546,7 +552,9 @@
   function dlgBau() {
     var h = Dlg.hof = el("div", "dialog", d.body);
     h.id = "dialog";
-    h.innerHTML = '<div class="dialog-innen"><div class="dialog-kopf"><div class="dialog-bild"></div><div class="dialog-name"></div></div>' +
+    h.innerHTML = '<div class="dialog-innen"><div class="dialog-kopf"><div class="dialog-bild"></div><div class="dialog-name"></div>' +
+      '<div class="dialog-hud"><button type="button" class="dialog-hud-knopf" data-panel="verdacht" title="Verdacht (V)" aria-label="Verdacht">' + symbol("verdacht") + '<span>Verdacht</span></button>' +
+      '<button type="button" class="dialog-hud-knopf" data-panel="mappe" title="Befundmappe (M)" aria-label="Befundmappe">' + symbol("mappe") + '<span>Mappe</span></button></div></div>' +
       '<div class="dialog-zitat"></div><div class="dialog-regie"></div><div class="dialog-text"></div>' +
       '<div class="rueck dialog-warum"></div><div class="dialog-antworten"></div></div>';
     ["marlene", "herr_k", "falk"].forEach(function (n) {
@@ -557,8 +565,14 @@
     });
     var tel = d.createElement("div"); tel.className = "hoerer-rahmen"; tel.innerHTML = HOERER;
     BILDER.tochter = tel;
+    Array.prototype.forEach.call(h.querySelectorAll(".dialog-hud-knopf"), function (k) {
+      k.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        if (k.dataset.panel === "verdacht") oeffneVerdacht(); else oeffneMappe();
+      });
+    });
     h.addEventListener("click", function (e) {
-      if (e.target.closest(".dialog-antwort")) return;
+      if (e.target.closest(".dialog-antwort, .dialog-hud-knopf")) return;
       if (Dlg.tippt) fertigTippen();
     });
   }
@@ -600,6 +614,7 @@
     tippe(text);
     var feld = h.querySelector(".dialog-antworten");
     feld.innerHTML = "";
+    global.requestAnimationFrame(vdLage);
     var liste = (wert(k.antworten) || []).filter(function (a) { return !a.wenn || a.wenn(); });
     if (liste.length) {
       liste.forEach(function (a, i) {
@@ -640,6 +655,7 @@
     Dlg.hof.classList.remove("an");
     Dlg.knoten = null; Dlg.warum = null; Dlg.zitat = null;
     var f = Dlg.fertig; Dlg.fertig = null;
+    global.requestAnimationFrame(vdLage);
     sperre();
     if (dann) dann();
     if (f) f();
@@ -650,7 +666,7 @@
     var feld = Dlg.hof.querySelector(".dialog-text"), antw = Dlg.hof.querySelector(".dialog-antworten");
     global.clearInterval(Dlg.tippt); Dlg.tippt = null;
     Dlg.voll = text;
-    if (schnell || ruhig || !bewegung || !text) { feld.textContent = text; antw.classList.add("an"); return; }
+    if (schnell || ruhig || !bewegung || !text) { feld.textContent = text; antw.classList.add("an"); global.requestAnimationFrame(vdLage); return; }
     feld.textContent = "";
     antw.classList.remove("an");
     var i = 0;
@@ -664,6 +680,7 @@
     global.clearInterval(Dlg.tippt); Dlg.tippt = null;
     Dlg.hof.querySelector(".dialog-text").textContent = Dlg.voll;
     Dlg.hof.querySelector(".dialog-antworten").classList.add("an");
+    global.requestAnimationFrame(vdLage);
   }
 
   /* ------------------------------------------------------------ Fenster */
@@ -965,7 +982,11 @@
       if (k === "Escape") { e.preventDefault(); if (h === info) { info.classList.remove("an"); sperre(); } else schliesseMenue(); }
       return;
     }
-    if (Dlg.hof && Dlg.hof.classList.contains("an")) {
+    if (mHof && mHof.classList.contains("an") && k === "Escape") { e.preventDefault(); schliesseMappe(); return; }
+    if (vdHof && vdHof.classList.contains("an") && k === "Escape") { e.preventDefault(); schliesseVerdacht(); return; }
+    if (Dlg.hof && Dlg.hof.classList.contains("an") && !d.querySelector(".raetsel.an, .mappe.an")) {
+      if (k === "v" || k === "V") { oeffneVerdacht(); return; }
+      if (k === "m" || k === "M") { oeffneMappe(); return; }
       if (k === " " || k === "Enter") {
         e.preventDefault();
         if (Dlg.tippt) fertigTippen();

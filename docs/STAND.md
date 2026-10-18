@@ -19,6 +19,10 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   vorhandenen Ebenen (Uhr mit Sekundenzeiger, Lidschlag, Blicke, Lichtkeil mit Staub, Fenster, Flur, Vordergrund,
   Handy, EKG-Wagen mit echter Kurve erst beim Schreiben). Bau: `python3 prototyp/bewegung/baue.py` →
   `bau/prototyp_bewegung_{de,ru}.html`; Prüfung: `node prototyp/bewegung/schuss.mjs bau/prototyp_bewegung_de.html`.
+- **`prototyp/fall1/`** (spielbarer Prototyp der neuen Geschichte, nur Deutsch, alte Raumgrafik): `motor.js` (Dialoge,
+  Uhr, Verdachtsliste, Mappe, Stand, Telefon, ISBAR, Gegenrede), `daten.js` (Drehbuch §3–§7 wörtlich), Zirkel und
+  Streifen aus `web/`. Bau: `python3 prototyp/fall1/baue.py` → `bau/prototyp_fall1.html`; Prüfung:
+  `node prototyp/fall1/pruefe.mjs` (guter Weg, Irrwege, iPad mit reduced-motion, Zufallsläufe) → „Alle Prüfungen bestanden."
 - **Skill `.claude/skills/handlung/`**: Fehlbilder H1–H8, Szene/Sequel in 5–7 Takten, Entscheidungstest,
   Branch-and-Bottleneck, Enden und Epilog (nach jwynia/agent-skills, MIT).
 
