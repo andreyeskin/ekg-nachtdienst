@@ -1,8 +1,26 @@
-# Stand und Übergabe — 13.10.2026
+# Stand und Übergabe — 18.10.2026
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
+
+## Fertig (18.10.2026): Redesign-Entwurf Fall 1, Bewegungs-Prototyp, Skill `handlung`
+
+- **`docs/REDESIGN_FALL1.md`** (Entwurf zur Freigabe, Spiel unverändert): Diagnose des Ist-Zustands; Lernziel =
+  dramatische Frage „Darf Herr Baum heim?" (keine Vorwarnung + EKG nicht normal → nicht niedrig → Monitor,
+  ESC-Synkope-2018 Tab. 6/7 am Postprint geprüft); Bogen in sieben Takten (Szene/Sequel) mit Frist 07:15, Wendung
+  (verschwiegene Ohnmacht am Sonntag), Tochter Sabine am Telefon (Fremdanamnese), Verdachtsliste als roter Faden,
+  ISBAR-Übergabe und Falks Gegenrede, Behandlungsentscheidung (Bisoprolol pausieren), Schlussgespräch, Epilog;
+  alle Dialoge neu; Realismus-Prüfung (Koje statt Bank, Schichtwechsel, KPJ); Ersatz für „Drei Monitore"
+  („Monitor gegen Papier", Namen an der Zentrale); Bewegungskonzept; Umbauliste; Belege; offene Entscheidungen
+  (§13). Geprüft mit Skill `handlung` (§14) und durch ein Gutachten Medizin/Realismus/Dialoge (§15), beides
+  eingearbeitet.
+- **`prototyp/bewegung/`** (`leben.js`, `aufnahme.html`, `baue.py`, `schuss.mjs`): Leben in der Aufnahme über den
+  vorhandenen Ebenen (Uhr mit Sekundenzeiger, Lidschlag, Blicke, Lichtkeil mit Staub, Fenster, Flur, Vordergrund,
+  Handy, EKG-Wagen mit echter Kurve erst beim Schreiben). Bau: `python3 prototyp/bewegung/baue.py` →
+  `bau/prototyp_bewegung_{de,ru}.html`; Prüfung: `node prototyp/bewegung/schuss.mjs bau/prototyp_bewegung_de.html`.
+- **Skill `.claude/skills/handlung/`**: Fehlbilder H1–H8, Szene/Sequel in 5–7 Takten, Entscheidungstest,
+  Branch-and-Bottleneck, Enden und Epilog (nach jwynia/agent-skills, MIT).
 
 ## Fertig (13.10.2026): Referenzfall Herr Baum im neuen Fallschema
 
@@ -68,6 +86,9 @@ die übrigen nach diesem Muster.
 
 ## Nächste Schritte (Reihenfolge aus `docs/UMBAU.md` §1)
 
+Vorrang seit 18.10.2026: Design-Prüfung (unten „Nächster Auftrag"), dann nach Freigabe der Umbau von Fall 1
+nach `docs/REDESIGN_FALL1.md` §11; Kapitel 2 folgt mit dem Ersatz für „Drei Monitore" (dort §9).
+
 1. Kapitel 2 als Fall `monitor` nach dem Muster (Frau Lindner, `docs/faelle/monitor.md`): dann wandert der
    Epilog von Herrn Baum an den Anfang von Dienst 3, Herrn Baums Präsynkope und der „Speicher" entfallen,
    `web/spiel.js` schrumpft auf Start und Kapitelfolge.
@@ -85,8 +106,12 @@ die übrigen nach diesem Muster.
 - Neulade-Prüfung im Durchlauf scheitert selten sporadisch (Chromium über `file://`); Abhilfe: Durchlauf über
   `http://127.0.0.1`.
 - Falks Kaffeefleck und Zirkel in der Brusttasche fehlen.
-- QUELLEN §5: Tabelle 6 der ESC-Synkope-Leitlinie und das Stehversuch-Kriterium am Original nachprüfen.
+- QUELLEN §5: Tabelle 6 der ESC-Synkope-Leitlinie und das Stehversuch-Kriterium sind am 18.10.2026 am Postprint
+  geprüft (Fundstellen in REDESIGN_FALL1 §12); QUELLEN §5 beim Umbau schließen.
 - LUDB-Alter/Geschlecht der Aufnahme 39 mit „68, männlich" abgleichen (UMBAU §5).
+- Der Schirm des EKG-Wagens zeigt Herrn Baums Kurve schon, bevor Elektroden kleben (`web/spiel.js`
+  `starteSchirme`, `wagen_schirm`); Abhilfe im Redesign §8.2, im Prototyp schon gelöst.
+- Spielfigur heißt im Spieltext „Famulantin", in ART_BIBLE §5 „KPJ-Student"; Redesign empfiehlt KPJ (§13).
 
 ## Arbeitsweise (vom Nutzer festgelegt)
 
@@ -110,29 +135,46 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag (vom Nutzer am 18.10.2026 angehalten, noch nicht begonnen)
+## Nächster Auftrag: Design-Prüfung und Farbpalette (neuer Chat mit den Plugins „Design" und „audit-suite")
 
-Rückmeldung des Nutzers zu Fall 1 (Herr Baum): „unverständlich, zerrissen — was lehrt er? Einerseits
-klasse, andererseits fehlt etwas." Gewünscht:
-- Geschichte realistischer, Dialoge lebendiger und realistischer;
-- das Rätsel „aus drei Monitoren auswählen" (Kapitel 2) fällt weg — „sehr seltsam";
-- iterativ denken, alles nachprüfen, spannend machen;
-- Umgebung realistisch und lebendig, mit **Bewegung** (keine Grafiken): Leerlauf-Animationen der Figuren,
-  Menschen im Flur, wanderndes Licht usw.;
-- Denken und Entwurf mit Fable.
+Die Plugins waren am 18.10.2026 in der laufenden Sitzung nicht verfügbar (nach dem Start installiert). Der neue
+Chat prüft **zuerst**, ob die Skills `design:*` und `audit-suite:*` in seiner Skill-Liste stehen; fehlen sie, sagt
+er es dem Nutzer sofort, statt ohne sie weiterzuarbeiten. Auftrag des Nutzers (18.10.2026), wörtlich in der Sache:
 
-Geplanter Ablauf:
-1. Fable spielt Fall 1 und Kapitel 2 durch und diagnostiziert.
-2. Daraus ein Entwurf `docs/REDESIGN_FALL1.md`: ein klares Lernziel, Bogen in 5–7 Takten, sichtbare
-   Verdachtsliste als roter Faden, Anamnese als Gespräch, SBAR-Übergabe, Behandlung belegt, alle Dialoge
-   neu, Ersatz für das Drei-Monitore-Rätsel, Realismus-Prüfung der Räume, Bewegungskonzept plus ein
-   Prototyp (z. B. Marlene trinkt aus der Kanne, 3–4 GPT-Bilder).
-3. Erst nach Freigabe durch den Nutzer wird der Fall umgebaut.
+1. **Plan prüfen:** `docs/REDESIGN_FALL1.md` mit `audit-suite:audit-as-ux-eng` lesen (Ablauf, Rückmeldungen, wo die
+   Spielerin hängen bleibt).
+2. **Bildschirme:** Titelbildschirm, Dialogfenster, Szenenbild, Kopfleiste und Mappe mit `design:design-critique` und
+   `design:accessibility-review` prüfen; Grundlage Screenshots aus dem Durchlauf bei 1024×768 und 1366×1024,
+   verkleinert. Wichtig: Kontrast der Palette, Schriftgröße, Tippflächen ≥ 44 px auf dem iPad, prefers-reduced-motion.
+3. **Bewegung:** Leerlauf-Animationen, Übergänge und Licht (`prototyp/bewegung/`) nach `audit-suite:web-animation-design`
+   und `audit-suite:make-interfaces-feel-better` (Easing, Dauer, nur transform/opacity, ruhig, nichts lenkt vom EKG
+   ab); Touch und iOS Safari zusätzlich nach `audit-suite:emil-design-engineering`.
+4. **Knopf- und Hinweistexte** mit `design:ux-copy`. Figurendialoge bleiben beim Skill `dialoge` mit Humanizer,
+   Medizin bei `fallakte`, Bogen und Entscheidungen bei `handlung`.
+5. **Farbpalette (Merkzettel des Nutzers):** mit der Palette experimentieren, sie etwas interessanter und lebendiger
+   machen. Zwei bis drei Varianten am selben Bild (Aufnahme 06:40, Szenenbild, Dialogfenster, Kopfleiste)
+   nebeneinander zeigen, Kontrast der UI-Texte mitprüfen. ART_BIBLE §2 bleibt verbindlich, bis der Nutzer eine
+   Variante freigibt (Rost „genau ein Objekt", Phosphor nur auf Schirmen, Magenta nur im UI, Rot-Rosa und Schwarz
+   nur für Papier und Kurve).
 
-**Merkzettel Farbpalette (Wunsch des Nutzers, 18.10.2026):** Mit der Palette experimentieren, sie etwas
-interessanter und lebendiger machen. Vorgehen: zwei bis drei Varianten am selben Bild (Aufnahme 06:40,
-Szenenbild, Dialogfenster, Kopfleiste) nebeneinander zeigen, Kontrast der UI-Texte mitprüfen; die
-ART_BIBLE §2 bleibt verbindlich, bis der Nutzer eine Variante freigibt (Rost „genau ein Objekt", Phosphor nur
-auf Schirmen, Magenta nur im UI, Rot-Rosa und Schwarz nur für Papier und Kurve).
+Regeln des Nutzers dazu: audit-suite ist für React/Tauri geschrieben, nur Prinzipien übernehmen, die zum
+Vanilla-JS-Einzeldatei-Bau passen (React, Tailwind, Next ignorieren). Widerspricht ein Befund der ART_BIBLE oder
+KONZEPT, nichts ändern, sondern dem Nutzer die Frage vorlegen. Kein `audit-suite:full-audit` (zu teuer). Befunde als
+kurze Liste in `docs/REDESIGN_FALL1.md`, Abschnitt „Design-Prüfung", nicht als langer Bericht im Chat. Danach
+committen und pushen.
 
-Arbeitskopie: direkt auf `claude/stil-ligne-claire` (der frühere lokale Branch `arbeit/redesign` war leer und ist nicht gepusht).
+**Danach (nach Freigabe des Entwurfs durch den Nutzer):** Umbau nach `docs/REDESIGN_FALL1.md` §11 in eigenen
+Sitzungen: (a) Akte + Texte, (b) Motor (Verdachtsliste, ISBAR, Argument, `leben.js`), (c) Falldaten + Prüfungen,
+(d) Kunst + Leben (Bildaufträge B1–B7), (e) Kapitel 2 ohne „Drei Monitore". Vorher die offenen Entscheidungen in
+§13 beim Nutzer abholen.
+
+### Startnachricht für den Design-Chat
+
+```
+Arbeite im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire.
+Lies zuerst docs/STAND.md (Abschnitt „Nächster Auftrag"), dann docs/REDESIGN_FALL1.md, docs/ART_BIBLE.md, docs/KONZEPT.md §1
+und die Skills unter .claude/skills/. Prüfe den Build:
+python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
+Prüfe als Erstes, ob die Skills design:* und audit-suite:* verfügbar sind; wenn nicht, sag es mir sofort.
+Auftrag für diesen Chat: Design-Prüfung (Punkte 1–4) und Farbpaletten-Varianten (Punkt 5) aus „Nächster Auftrag".
+```
