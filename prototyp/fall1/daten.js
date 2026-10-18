@@ -1061,6 +1061,7 @@
       return t;
     },
     /* für pruefe.mjs */
-    __luecke: luecke
+    __luecke: luecke,
+    __rw: function () { var rw = X().rueckweg; return rw ? { art: rw.art, erfuellt: rueckwegErfuellt(rw), satz: rw.satz } : null; }
   };
 })(window);

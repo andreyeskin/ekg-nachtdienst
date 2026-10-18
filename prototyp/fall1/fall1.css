@@ -1,0 +1,107 @@
+/* Prototyp Fall 1: nur, was web/stil.css nicht hat. Gleiche Welt: Papier, Tinte, harte Kanten, nichts blinkt. */
+
+.buehne svg#szene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.feld:focus-visible { outline: none; stroke: var(--magenta); stroke-width: 4; }
+@media (prefers-reduced-motion: reduce) { .felder.zeigen .feld { animation: none; } }
+
+/* Handy im Sackerl: kleine Lichtfläche (ruhig: ohne Pulsieren) */
+.handy-licht { opacity: 0; pointer-events: none; transition: opacity .3s; filter: blur(6px); }
+.handy-licht.an { opacity: .55; animation: handy 0.7s ease-in-out infinite alternate; }
+@keyframes handy { from { opacity: .25; } to { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { .handy-licht.an { animation: none; opacity: .5; } }
+
+/* Tippflächen ≥ 44 px (LEHRPLAN §5) */
+.dialog-antwort { min-height: 44px; }
+.dialog-antwort.weiter { min-height: 44px; }
+.raetsel .knopf, .seite .knopf, .stand .knopf { min-height: 44px; min-width: 44px; }
+.knopf.wahl { white-space: normal; }
+.knopf.wahl .nr { display: inline-block; width: 1.7em; font: 700 12px var(--mono); color: var(--magenta); }
+
+/* Dialog: Regie (Handlung in Worten, solange die Raumgrafik sie nicht zeigt), Zitat der Spielerin, Rückmeldung */
+.dialog-innen { max-height: calc(var(--hoehe, 100vh) - 24px); overflow-y: auto; }
+.dialog-regie { padding: 0 18px; margin: -4px 0 6px; font: italic 14px/1.45 var(--text); color: rgba(16, 33, 43, .72); }
+.dialog-regie:empty, .dialog-zitat:empty { display: none; }
+.dialog-zitat {
+  margin: -2px 18px 8px; padding: 4px 10px; font: 15px/1.45 var(--text);
+  border-left: 3px solid var(--magenta); background: rgba(194, 24, 91, .05);
+}
+.dialog-zitat::before { content: "Du: "; font-weight: 700; }
+.dialog-warum { margin: 10px 18px 0; display: none; }
+.dialog-warum.an { display: block; }
+.dialog.spielerin .dialog-name { background: var(--magenta); }
+.dialog.erzaehler .dialog-text { font-style: italic; }
+.hoerer-rahmen { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--papier); }
+.hoerer { width: 46px; height: 46px; fill: none; stroke: var(--tinte); stroke-width: 1.8; stroke-linejoin: round; }
+.dialog-bild img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Verdachtsliste */
+.vd-liste { list-style: none; margin: 0; padding: 0; counter-reset: vd; }
+.vd-eintrag { padding: 9px 0 9px 0; border-bottom: 1px solid rgba(16, 33, 43, .18); transition: background .3s; }
+@media (prefers-reduced-motion: reduce) { .vd-eintrag { transition: none; } }
+.vd-eintrag.neu { background: rgba(199, 127, 24, .1); }
+.vd-kopf { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.vd-name { font: 600 16px var(--anzeige); flex: 1; min-width: 12em; }
+.vd-zustand { font: 700 11px/1.4 var(--mono); letter-spacing: .04em; padding: 3px 7px; background: rgba(16, 33, 43, .1); white-space: nowrap; }
+.vd-gruende { list-style: none; margin: 4px 0 0; padding: 0 0 0 12px; border-left: 2px solid rgba(16, 33, 43, .2); font-size: 14px; line-height: 1.45; }
+.z-offen .vd-zustand { color: rgba(16, 33, 43, .6); }
+.z-dafuer .vd-zustand { background: var(--tinte); color: var(--papier); }
+.z-dagegen .vd-zustand { background: rgba(47, 158, 107, .2); }
+.z-unwahrscheinlich .vd-name { text-decoration: line-through; text-decoration-thickness: 2px; opacity: .7; }
+.z-unwahrscheinlich .vd-zustand { opacity: .7; }
+.z-beides .vd-zustand { background: var(--bernstein); color: #fff; }
+.z-beides .vd-name { color: #8a520c; }
+.z-bewiesen .vd-zustand { background: var(--magenta); color: #fff; }
+.vd-verlauf { list-style: none; margin: 0; padding: 0; font-size: 13px; line-height: 1.5; max-height: 220px; overflow-y: auto; }
+.vd-verlauf li { padding: 3px 0; border-bottom: 1px solid rgba(16, 33, 43, .1); }
+.vd-verlauf em { font: 700 11px var(--mono); font-style: normal; background: var(--tinte); color: var(--papier); padding: 1px 5px; }
+
+/* Stille Meldung unten links (§4.1) */
+.vd-meldungen {
+  position: fixed; z-index: 95; left: calc(var(--b-links) + 14px); bottom: 16px;
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-start; pointer-events: none; max-width: min(420px, 70vw);
+}
+.vd-meldung {
+  background: var(--papier-hell); border: 2px solid var(--tinte); border-left: 6px solid var(--bernstein);
+  padding: 7px 11px; font-size: 14px; line-height: 1.4; box-shadow: 3px 3px 0 rgba(16, 33, 43, .25);
+  transition: opacity .6s;
+}
+.vd-meldung.weg { opacity: 0; }
+.meldungen { z-index: 95; }
+
+/* Stand der Schicht */
+.stand-frage { font: 700 24px/1.2 var(--anzeige); margin: 2px 0 4px; }
+.stand-frist { font: 700 14px var(--mono); margin: 0 0 12px; color: var(--magenta); }
+.stand-saetze { font-size: 16px; line-height: 1.55; margin: 0; }
+
+/* Titel: Hinweis oben */
+.titel-hinweis {
+  position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+  margin: 0; padding: 6px 12px; z-index: 2; white-space: nowrap; max-width: 94vw; overflow: hidden; text-overflow: ellipsis;
+  background: var(--papier-hell); color: var(--tinte); border: 2px solid var(--tinte);
+  font: 600 13px var(--anzeige); letter-spacing: .04em;
+}
+.titel-fall { margin: 14px 0 28px; font: 600 18px var(--anzeige); letter-spacing: .08em; }
+@media (max-height: 560px) { .titel-fall { margin: 0 0 12px; font-size: 15px; } }
+
+/* Seiten: Epilog (Erzähler) und Ende */
+.seite {
+  position: fixed; inset: 0; z-index: 85; display: none; overflow-y: auto;
+  background: var(--nacht); padding: 24px 16px;
+}
+.seite.an { display: flex; align-items: flex-start; justify-content: center; }
+.seite-karte {
+  width: min(760px, 100%); margin: auto 0; background: var(--papier-hell); background-image: var(--raster); background-size: 5px 5px;
+  border: 3px solid var(--tinte); box-shadow: 8px 8px 0 rgba(0, 0, 0, .35); padding: 18px 24px 22px;
+}
+.seite-ober { margin: 0; font: 700 12px var(--anzeige); letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
+.seite-titel { margin: 4px 0 12px; font: 700 26px var(--anzeige); letter-spacing: .03em; border-bottom: 3px solid var(--tinte); padding-bottom: 8px; }
+.seite-absatz { font: italic 18px/1.62 var(--text); margin: 0 0 12px; transition: opacity .6s; }
+.seite-absatz.kommt { opacity: 0; }
+.seite-klein { font-size: 15px; line-height: 1.55; }
+.ende-flags { list-style: none; margin: 0 0 6px; padding: 0; }
+.ende-flags li { padding: 6px 0 6px 26px; position: relative; font-size: 15px; line-height: 1.45; border-bottom: 1px solid rgba(16, 33, 43, .15); }
+.ende-flags.hat li::before { content: "\2713"; position: absolute; left: 2px; color: var(--phosphor); font-weight: 700; }
+.ende-flags.offen li { opacity: .6; }
+.ende-flags.offen li::before { content: "\2014"; position: absolute; left: 2px; }
+.ende-flags li.leer::before { content: ""; }
+.ende-flags code { font: 700 13px var(--mono); background: rgba(16, 33, 43, .1); padding: 1px 5px; margin-right: 4px; }

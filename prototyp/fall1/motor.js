@@ -117,6 +117,8 @@
       if (name === "herrk" && tuete) tuete.style.display = "none";
     },
     handyLicht: function () { handyLicht(); },
+    szenenbild: function (an) { szenenbild(an); },
+    zeigeFelder: function () { global.setTimeout(zeigeFelder, 60); },
     offen: function () { return offen(); },
     leerlauf: function () { planeLeerlauf(); }
   };
@@ -224,6 +226,23 @@
     if (!Z || !Z.laeuft || offen()) return;
     zeigeFeldname(null);
     global.FALL1.feld(name === "tuete" ? "herrk" : name);
+  }
+  /* Szenenbild am Tresen (wie web/motor/szenenbild.js): ruhige Einblendung über der Bühne, Dialog darüber. */
+  var szb = null;
+  function szenenbild(an) {
+    if (!A.tresen) return;
+    if (!szb) {
+      szb = el("div", "szenenbild", d.body);
+      szb.setAttribute("aria-hidden", "true");
+      var img = el("img", null, szb); img.src = A.tresen; img.alt = ""; img.draggable = false;
+    }
+    if (an) {
+      szb.classList.add("da");
+      global.requestAnimationFrame(function () { global.requestAnimationFrame(function () { szb.classList.add("an"); }); });
+    } else {
+      szb.classList.remove("an");
+      global.setTimeout(function () { if (!szb.classList.contains("an")) szb.classList.remove("da"); }, schnell ? 0 : 700);
+    }
   }
   function handyLicht() {
     if (!licht) return;
