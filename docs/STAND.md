@@ -106,3 +106,24 @@ und die Skills unter .claude/skills/. Der Referenzfall ist web/faelle/aufnahme_b
 python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
 Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine auf Opus/Sonnet.
 ```
+
+## Nächster Auftrag (vom Nutzer am 18.10.2026 angehalten, noch nicht begonnen)
+
+Rückmeldung des Nutzers zu Fall 1 (Herr Baum): „unverständlich, zerrissen — was lehrt er? Einerseits
+klasse, andererseits fehlt etwas." Gewünscht:
+- Geschichte realistischer, Dialoge lebendiger und realistischer;
+- das Rätsel „aus drei Monitoren auswählen" (Kapitel 2) fällt weg — „sehr seltsam";
+- iterativ denken, alles nachprüfen, spannend machen;
+- Umgebung realistisch und lebendig, mit **Bewegung** (keine Grafiken): Leerlauf-Animationen der Figuren,
+  Menschen im Flur, wanderndes Licht usw.;
+- Denken und Entwurf mit Fable.
+
+Geplanter Ablauf:
+1. Fable spielt Fall 1 und Kapitel 2 durch und diagnostiziert.
+2. Daraus ein Entwurf `docs/REDESIGN_FALL1.md`: ein klares Lernziel, Bogen in 5–7 Takten, sichtbare
+   Verdachtsliste als roter Faden, Anamnese als Gespräch, SBAR-Übergabe, Behandlung belegt, alle Dialoge
+   neu, Ersatz für das Drei-Monitore-Rätsel, Realismus-Prüfung der Räume, Bewegungskonzept plus ein
+   Prototyp (z. B. Marlene trinkt aus der Kanne, 3–4 GPT-Bilder).
+3. Erst nach Freigabe durch den Nutzer wird der Fall umgebaut.
+
+Arbeitskopie dafür: Branch `arbeit/redesign` (nur lokal, unverändert auf 47dfcf7).
