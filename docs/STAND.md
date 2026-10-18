@@ -90,8 +90,10 @@ die übrigen nach diesem Muster.
 
 ## Nächste Schritte (Reihenfolge aus `docs/UMBAU.md` §1)
 
-Vorrang seit 18.10.2026: Design-Prüfung (unten „Nächster Auftrag"), dann nach Freigabe der Umbau von Fall 1
-nach `docs/REDESIGN_FALL1.md` §11; Kapitel 2 folgt mit dem Ersatz für „Drei Monitore" (dort §9).
+Vorrang seit 18.10.2026 (Entscheidung des Nutzers, abends): **zuerst das Krankenhaus** (`docs/KRANKENHAUS.md`:
+Gebäude, Abteilung, Grundriss, 3D-Modell, Einführung mit Flug). Danach die Design-Prüfung, dann nach Freigabe der
+Umbau von Fall 1 nach `docs/REDESIGN_FALL1.md` §11 (seine Räume kommen dann aus dem Hausmodell); Kapitel 2 folgt
+mit dem Ersatz für „Drei Monitore" (dort §9).
 
 1. Kapitel 2 als Fall `monitor` nach dem Muster (Frau Lindner, `docs/faelle/monitor.md`): dann wandert der
    Epilog von Herrn Baum an den Anfang von Dienst 3, Herrn Baums Präsynkope und der „Speicher" entfallen,
@@ -139,7 +141,27 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag: Design-Prüfung und Farbpalette (neuer Chat mit den Plugins „Design" und „audit-suite")
+## Nächster Auftrag: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)
+
+Nach dem spielbaren Prototyp von Fall 1 sagt der Nutzer: „schön, aber trotzdem unverständlich". Er will zuerst das
+ganze Krankenhaus bauen (ein eigenes Gebäude, eine Abteilung, Zimmer, Flure, Lehrsaal), am Anfang erklären, was
+man lernt und wie es abläuft, mit einem Flug durch die Abteilung, und ein 3D-Modell, dessen Räume das Spiel nutzt.
+Festgehalten mit Bausteinen, Folgen und offenen Fragen in **`docs/KRANKENHAUS.md`**. Die Farbpalette (Merkzettel
+unten) wird am Haus mit ausprobiert.
+
+### Startnachricht für den Krankenhaus-Chat
+
+```
+Arbeite im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire.
+Lies zuerst docs/STAND.md, dann docs/KRANKENHAUS.md, docs/KONZEPT.md §1–§3, docs/ART_BIBLE.md, gen/blender/README.md
+und die Skills unter .claude/skills/. Prüfe den Build:
+python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
+3D und Raumprogramm als Subagent auf Fable, Code auf Opus.
+Auftrag für diesen Chat: docs/KRANKENHAUS.md ausarbeiten (offene Fragen zuerst mit mir klären), dann Blender-Blockout
+des Gebäudes und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur).
+```
+
+## Danach: Design-Prüfung und Farbpalette (neuer Chat mit den Plugins „Design" und „audit-suite")
 
 Die Plugins waren am 18.10.2026 in der laufenden Sitzung nicht verfügbar (nach dem Start installiert). Der neue
 Chat prüft **zuerst**, ob die Skills `design:*` und `audit-suite:*` in seiner Skill-Liste stehen; fehlen sie, sagt
