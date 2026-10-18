@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="{{SPRACHE}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{T_TITEL}}</title>
+<style>
+  :root { --papier: #F4E6D2; --tinte: #10212B; --linie: #1E2A30; --bernstein: #E8A33D; --grund: #0E1A20; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--grund); color: var(--papier);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .rahmen { max-width: 1340px; margin: 0 auto; padding: 12px 16px 24px; }
+  h1 { font-size: 16px; font-weight: 650; letter-spacing: .02em; margin: 4px 0 10px; }
+  .buehne { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px;
+    background: #D8CBAD; box-shadow: 0 6px 30px rgba(0,0,0,.35); }
+  .buehne svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .leiste { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  .knopf { min-height: 44px; padding: 0 14px; border-radius: 6px; border: 1px solid #3A4E57; cursor: pointer;
+    background: #1B2C34; color: var(--papier); font: 600 14px system-ui, sans-serif; }
+  .knopf:active { transform: scale(.97); }
+  .knopf[aria-pressed="true"] { background: var(--bernstein); color: var(--tinte); border-color: var(--bernstein); }
+  .zeit { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 6px;
+    background: #1B2C34; border: 1px solid #3A4E57; flex: 1 1 280px; }
+  .zeit input { flex: 1; accent-color: var(--bernstein); min-height: 32px; }
+  .zeit output { font: 700 15px ui-monospace, Menlo, monospace; min-width: 3.2em; }
+  .legende { margin-top: 14px; font-size: 13.5px; color: #C9BFAE; columns: 2 300px; column-gap: 28px; }
+  .legende p { margin: 0 0 6px; break-inside: avoid; }
+  .legende b { color: var(--papier); }
+  .hinweis { font-size: 13px; color: #A99F8F; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="rahmen">
+  <h1>{{T_TITEL}}</h1>
+  <div class="buehne">
+    <svg id="szene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{T_BILD}}">
+      <defs></defs>
+      <g data-ebene="hintergrund"><image href="{{BILD_HINTERGRUND}}" x="0" y="0" width="1600" height="900"/></g>
+      <g data-ebene="mittelgrund"><image href="{{BILD_MITTELGRUND}}" x="0" y="0" width="1600" height="900"/></g>
+      <g data-ebene="figuren"><image href="{{BILD_TUETE}}" x="1189" y="615" width="76" height="112"/></g>
+      <g data-ebene="licht"></g>
+      <g data-ebene="vordergrund"></g>
+      <g data-ebene="stimmung"></g>
+    </svg>
+  </div>
+
+  <div class="leiste">
+    <label class="zeit"><span>{{T_UHRZEIT}}</span>
+      <input id="zeit" type="range" min="400" max="470" step="1" value="400">
+      <output id="zeit-text">06:40</output></label>
+    <button class="knopf" id="laeuft" aria-pressed="false">{{T_ZEIT_LAEUFT}}</button>
+    <button class="knopf" data-ereignis="handy">{{T_HANDY}}</button>
+    <button class="knopf" data-ereignis="ekg" id="ekg">{{T_EKG}}</button>
+    <button class="knopf" data-ereignis="vorbei">{{T_VORBEI}}</button>
+    <button class="knopf" data-ereignis="uhr_blick">{{T_UHRBLICK}}</button>
+    <button class="knopf" id="ruhe" aria-pressed="false">{{T_RUHE}}</button>
+  </div>
+  <div class="legende">{{T_LEGENDE}}</div>
+  <p class="hinweis">{{T_HINWEIS}}</p>
+</div>
+
+<script>{{LEBEN_JS}}</script>
+<script>
+(function () {
+  "use strict";
+  var EKG39 = {{EKG_39}};
+  var AUFNAHME = {
+    uhr: { cx: 1399, cy: 231, r: 55 },
+    fenster: { scheiben: [[694, 296, 184, 100], [914, 296, 202, 100]], boden: 395 },
+    flur: { x: 1561, y: 255, b: 39, h: 438 },
+    wagen: { schirm: [899, 436, 74, 49], led: [988, 497], papier: [922, 506, 27, 71], papierMax: 150, ekg: EKG39 },
+    licht: { keil: [[694, 300], [1116, 300], [933, 800], [173, 752]] },
+    handy: { figur: "herrk", pose: "tasche", x: 16, y: 178 },
+    uhrBlick: { figur: "herrk", pose: "uhr" },
+    figuren: {
+      marlene: {
+        x: 312, y: 368, b: 99, h: 109, haut: "#F4C58E", atem: { periode: 4.6, hub: 1.1 },
+        kopf: { loch: [[16, 0], [82, 0], [82, 48], [64, 58], [34, 58], [16, 48]],
+                kopf: [[13, -6], [85, -6], [85, 51], [67, 64], [31, 64], [13, 51]], dreh: [49, 60] },
+        augen: [[36, 30, 4, 2.6], [50, 30, 4, 2.6]],
+        ruhe: "auf",
+        blicke: { schirm: { r: -2.5, y: 1.4, tippt: true }, auf: { r: 0, y: 0 }, baum: { r: 2.6, y: -0.2 } },
+        /* Sie schreibt am PC, schaut auf, manchmal hinüber zu ihm. */
+        plan: function (pose) {
+          var z = function (a, b) { return a + Math.random() * (b - a); };
+          if (pose === "schirm") return Math.random() < 0.7 ? ["auf", z(1.5, 3)] : ["baum", z(1.6, 2.6)];
+          return ["schirm", z(4, 9)];
+        }
+      },
+      herrk: {
+        x: 1276, y: 400, b: 154, h: 336, haut: "#E9BA8E", atem: { periode: 7.2, hub: 1.6 },
+        kopf: { loch: [[30, 0], [120, 0], [120, 58], [100, 72], [50, 72], [30, 58]],
+                kopf: [[27, -6], [123, -6], [123, 61], [103, 80], [47, 80], [27, 61]], dreh: [75, 76] },
+        augen: [[61.5, 35, 4.6, 2.7], [86, 34.5, 4.6, 2.7]],
+        ruhe: "vor",
+        blicke: { vor: { r: 0, y: 0 }, uhr: { r: 4.5, y: -1.4 }, tresen: { r: -3.2, y: 0.2 },
+                  boden: { r: -1.2, y: 2 }, tasche: { r: -2.4, y: 2.8, schnell: true } },
+        /* Er will heim: je später es wird, desto öfter der Blick zur Uhr. */
+        plan: function (pose, zeit) {
+          var z = function (a, b) { return a + Math.random() * (b - a); };
+          var ungeduld = Math.max(0, Math.min(1, (zeit - 400) / 50));
+          if (pose !== "vor") return ["vor", z(5, 10) * (1 - 0.45 * ungeduld)];
+          var w = Math.random();
+          if (w < 0.3 + 0.4 * ungeduld) return ["uhr", z(1.4, 2.2)];
+          if (w < 0.75) return ["tresen", z(1.8, 2.8)];
+          return ["boden", z(2.5, 4)];
+        }
+      }
+    }
+  };
+  var bilder = { marlene: "{{BILD_MARLENE}}", herrk: "{{BILD_HERRK}}" };
+  Leben.starte(document.getElementById("szene"), AUFNAHME, bilder);
+
+  var regler = document.getElementById("zeit"), anzeige = document.getElementById("zeit-text");
+  function stelle(min) {
+    regler.value = min; Leben.zeit(+min);
+    var h = Math.floor(min / 60), m = min % 60;
+    anzeige.textContent = (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+  }
+  regler.addEventListener("input", function () { stelle(+regler.value); });
+  stelle(400);
+
+  var laeuft = null, knopfLaeuft = document.getElementById("laeuft");
+  knopfLaeuft.addEventListener("click", function () {
+    var ja = !laeuft;
+    knopfLaeuft.setAttribute("aria-pressed", String(ja));
+    if (ja) laeuft = setInterval(function () { stelle(+regler.value >= 470 ? 400 : +regler.value + 1); }, 4000);
+    else { clearInterval(laeuft); laeuft = null; }
+  });
+
+  var ekgAn = false, knopfEkg = document.getElementById("ekg");
+  document.querySelectorAll("[data-ereignis]").forEach(function (k) {
+    k.addEventListener("click", function () {
+      var e = k.getAttribute("data-ereignis");
+      if (e === "ekg") { ekgAn = !ekgAn; Leben.ereignis(ekgAn ? "ekg" : "ekg_aus"); knopfEkg.setAttribute("aria-pressed", String(ekgAn)); }
+      else Leben.ereignis(e);
+    });
+  });
+  var knopfRuhe = document.getElementById("ruhe");
+  knopfRuhe.addEventListener("click", function () {
+    var ruhe = knopfRuhe.getAttribute("aria-pressed") !== "true";
+    knopfRuhe.setAttribute("aria-pressed", String(ruhe)); Leben.bewegung(!ruhe);
+  });
+})();
+</script>
+</body>
+</html>
