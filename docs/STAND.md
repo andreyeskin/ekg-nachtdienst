@@ -1,7 +1,7 @@
 # Stand und Übergabe — 13.10.2026
 
-Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch `arbeit/episode`
-(Worktree, nicht gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
+Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
+`claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
 ## Fertig (13.10.2026): Referenzfall Herr Baum im neuen Fallschema
@@ -96,15 +96,18 @@ die übrigen nach diesem Muster.
   Inhaltsverzeichnis `00_INHALT.txt`; nie ins Repository, nur eigene Worte mit Lektionsnummer.
 - Bildgenerator fal.ai und GPT Image sind über den Proxy der Cloud-Umgebung angebunden
   (`gen/blender/malen.py`; Szenenbilder siehe `gen/blender/README.md`).
+- Tokensparen und wann ein neuer Chat beginnt: siehe `CLAUDE.md` (ein Chat = ein Arbeitsblock; vor dem
+  Wechsel committen, pushen, diese Datei nachziehen; alter Chat danach schließen oder archivieren).
 
 ## Startnachricht für eine neue Sitzung
 
 ```
-Arbeite im Repository andreyeskin/ekg-nachtdienst auf dem Branch arbeit/episode.
+Arbeite im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire.
 Lies zuerst docs/STAND.md, dann docs/KONZEPT.md, docs/UMBAU.md, docs/ART_BIBLE.md, docs/FACHREGELN.md
 und die Skills unter .claude/skills/. Der Referenzfall ist web/faelle/aufnahme_baum.js. Prüfe den Build:
 python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
 Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine auf Opus/Sonnet.
+Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
 ## Nächster Auftrag (vom Nutzer am 18.10.2026 angehalten, noch nicht begonnen)
@@ -126,4 +129,4 @@ Geplanter Ablauf:
    Prototyp (z. B. Marlene trinkt aus der Kanne, 3–4 GPT-Bilder).
 3. Erst nach Freigabe durch den Nutzer wird der Fall umgebaut.
 
-Arbeitskopie dafür: Branch `arbeit/redesign` (nur lokal, unverändert auf 47dfcf7).
+Arbeitskopie: direkt auf `claude/stil-ligne-claire` (der frühere lokale Branch `arbeit/redesign` war leer und ist nicht gepusht).
