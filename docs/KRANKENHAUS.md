@@ -220,9 +220,9 @@ Innenwände 0,15 m liegen innerhalb der Rechtecke. Medizinische Inhalte stehen h
 
 | | Vorschlag | Prüfung (Suche 19.10.2026) |
 |---|---|---|
-| **Haus, empfohlen** | **Klinikum Hollerberg** (Holler = Holunder; der Hang heißt im Spiel Hollerberg) | kein Krankenhaus dieses Namens gefunden |
+| Haus, erster Vorschlag | Klinikum Hollerberg (Holler = Holunder; der Hang heißt im Spiel Hollerberg) | kein Krankenhaus dieses Namens gefunden |
 | Haus, Alternative | Landeskrankenhaus Annabrunn | kein Treffer |
-| Haus, Alternative | Haus Föhrenhang | kein Treffer |
+| **Haus, gewählt (19.10.2026)** | **Haus Föhrenhang** | kein Treffer |
 | **Stadt, empfohlen** | **Annabrunn** (Hügel, Fluss, Dächer, nach dem Vorbild Graz, ohne Wahrzeichen) | nur ein Weiler in Bayern und eine Kapelle bei Leibnitz, keine Stadt |
 | Stadt, Alternativen | Gradenfeld, Leonsbach | keine Treffer |
 
@@ -544,6 +544,14 @@ Notaufnahme, nur Silhouette).
 5. **Raumfunktionen prüfen (Arztblick):** Monitorzimmer als Vier-Bett-Überwachung der Station, Aufwachraum als
    Überwachungszimmer der Inneren im 2. OG, Chest Pain Unit neben dem Herzkatheterlabor, Intensiv direkt darüber
    am Bettenlift. Außerdem die drei Mentorennamen (§10).
+
+**Antworten des Nutzers (19.10.2026, nach der Ausarbeitung):**
+1. Foto: keines; gebaut wird nach §2 (drei Geschosse, Walmdach, heller Putz).
+2. Name: **Haus Föhrenhang** (statt Klinikum Hollerberg; der Hang heißt im Spiel Föhrenhang); Stadt bleibt
+   vorerst Annabrunn.
+3. Dach: **Ziegel `#C9795A`**, in ART_BIBLE §2 eingetragen (nur außen).
+4. **Altbau plus Neubau** (Flachbau mit Holzlamellen und Dachgarten) wie in §2.
+5. Mentorennamen und Raumfunktionen: **später** (bei der Arbeit an den Figuren); der Blockout folgt der Lage aus §3/§4.
 
 ## Nächster Schritt (eigener Chat)
 

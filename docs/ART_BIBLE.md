@@ -44,6 +44,7 @@ Bildschirm-Inhalt, nie als Raum.
 | Linoleum | `#C9BDA2` warm · `#B6BFB6` kühl | Böden: eine Stufe dunkler als die Wand, erdet den Raum (§3.1) |
 | Mint hell | `#D6E4DD` | Wände des kühlen Raums (Monitorzimmer) — Mint als Fläche, nicht als Sockel |
 | Glas | `#1E2A30` | Geräteschirme (EKG-Wagen, Bettmonitore): Tinte als Fläche, die Kurve kommt aus dem Code |
+| Ziegel | `#C9795A` | nur außen: Dachziegel des Hauses (Entscheid des Nutzers 19.10.2026); gedeckter als Rost, zählt nicht als „das eine Objekt" |
 
 Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
 in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
