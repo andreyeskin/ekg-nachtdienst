@@ -141,6 +141,23 @@ für den Bildgenerator selbst setzen (`FAL_KEY`, `OPENAI_API_KEY`, in der Cloud 
 das Gerät auf Metal stellen (in `gen/blender/` bisher fest CPU, beim ersten Lauf anpassen). Dann `claude` im Ordner
 starten (oder `claude remote-control`, um vom Handy aus weiterzuarbeiten) und die Startnachricht unten senden.
 
+### Startnachricht für den ersten lokalen Chat (Mac, Claude Desktop → Code, Ordner `~/ekg-nachtdienst`)
+
+```
+Du arbeitest lokal auf meinem Mac (Apple M4, 24 GB) im Repository andreyeskin/ekg-nachtdienst,
+Branch claude/stil-ligne-claire. Lies zuerst docs/STAND.md (auch „Lokal auf dem Mac arbeiten"),
+dann docs/KRANKENHAUS.md, docs/KONZEPT.md §1–§3, docs/ART_BIBLE.md, gen/blender/README.md und die Skills
+unter .claude/skills/.
+Schritt 1, Einrichtung: prüfe, was fehlt (Python-Version für bpy, bpy, Pillow, numpy, Node, npm install,
+Playwright-Chromium), erkläre mir jeden Installationsschritt kurz auf Russisch und frag vor jeder Installation.
+Stelle Cycles in gen/blender/ auf die GPU (Metal) um, wo es fest auf CPU steht. Dann prüfe den Build:
+python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
+Schritt 2, Auftrag: docs/KRANKENHAUS.md (Haus und Neuausrichtung) ausarbeiten, offene Fragen zuerst mit mir
+klären, Vorbild-Recherche mit Fotos (Gebäude 31, LKH-Univ. Klinikum Graz), dann Blender-Blockout des Gebäudes
+und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur).
+3D und Raumprogramm als Subagent auf Fable, Code auf Opus. Antworte mir auf Russisch.
+```
+
 ## Startnachricht für eine neue Sitzung
 
 ```
