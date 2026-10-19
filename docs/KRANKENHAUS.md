@@ -1,7 +1,9 @@
 # Krankenhaus zuerst und Neuausrichtung — Wünsche des Nutzers (18.10.2026)
 
-Status: **Idee, festgehalten, noch nicht ausgearbeitet.** Ausarbeitung in einem eigenen Chat (unten „Nächster
-Schritt"). Nichts davon ist gebaut.
+Status: **Konzept ausgearbeitet (19.10.2026), Blockout offen.** Die Entscheidungen des Nutzers (Abschnitt
+„Antworten des Nutzers" und Leitsatz „Denken statt Gehen") gelten; das Konzept steht in den Abschnitten ab
+„Vorbild Gebäude 31" (Maße, Grundrisse, Flug, Mentoren). Nichts davon ist gebaut; der Blender-Blockout ist der
+nächste Schritt (Abschnitt „Nächster Schritt" am Ende).
 
 ## Anlass (Wortlaut des Nutzers, sinngemäß übersetzt)
 
@@ -155,6 +157,59 @@ frei begehbares 3D oder viel Figurenanimation gewünscht wird; das Hausmodell (g
 4. und 8. Mentoren **gemischt**: feste Figuren (Wieser, Falk, Marlene) und neue für Infarkt, Rhythmusambulanz,
    Intensiv; **Dr. Wieser führt ein** (Stimme zum Flug).
 5. Begehbar: nur die Spielräume; Wege als kurze Kamerafahrten (folgt aus dem Leitsatz „Denken statt Gehen").
+
+## Vorbild Gebäude 31 (Recherche 19.10.2026)
+
+**Identifikation: sicher.** Drei unabhängige Quellen zeigen dasselbe Haus: der amtliche Lageplan des Klinikums
+führt „31 Psychiatrie" (Planquadrat N 17, Eingang 31/1 „Stationen, Seminarraum"; 31/3 „Ambulanz" in M 16);
+OpenStreetMap hat den Grundriss als Gebäude „Psychiatrie", Auenbruggerplatz 31, offizieller Name
+„Universitätsklinik für Psychiatrie"; Wikipedia nennt die frühere Klinik für Lungenkrankheiten, heute Psychiatrie,
+„im Stil eines Lungensanatoriums" auf der Anhöhe im Leechwald hinter dem Hauptgelände.
+
+**Unsicher: die Fassade.** Ein frei zugängliches Foto der Fassade von Gebäude 31 habe ich nicht gefunden (Commons,
+KAGes-Seiten, Architekturdatenbanken, Pressefotos zeigen andere Häuser des Klinikums oder das LKH Graz II). Was unten
+über Geschosse, Fenster und Putz steht, ist aus Luftbild, Grundriss und Bautyp (Sanatoriumspavillon um 1912)
+abgeleitet, nicht aus einem Foto. Ein Handyfoto des Nutzers von der Talseite würde das bestätigen (offene Frage 1).
+
+### Links (keine Bilder im Repository, nur eigene Beschreibung)
+
+| Nr. | Link | Was darauf zu sehen ist |
+|---|---|---|
+| 1 | https://uniklinikumgraz.at/fileadmin/media/lkh-univ-klinikum-graz/Lageplan.pdf | Amtlicher Lageplan: „31 Psychiatrie" am Nordostrand des Geländes neben 36 Ausbildungszentrum, 32 Strahlentherapie, 34 Kinderklinik; Eingänge 31/1 (Stationen, Seminarraum, N 17) und 31/3 (Ambulanz, M 16) |
+| 2 | https://www.openstreetmap.org/way/361495611 | Grundriss als Polygon (75 Punkte): langgestreckter Riegel von Südwest nach Nordost, Längsachse etwa 36° (Nord über Ost), rund 105 m lang, 50 m breit samt Kopfbau, 2 130 m² Grundfläche; viele kleine Vor- und Rücksprünge (Erker, Risalite) an der Südostseite |
+| 3 | https://nominatim.openstreetmap.org/search?q=Auenbruggerplatz+31+Graz&format=json&polygon_geojson=1 | Dieselbe Fläche mit Koordinaten (47,0858 N, 15,4661 O), Katastralgemeinde Geidorf |
+| 4 | https://www.bing.com/maps?cp=47.0858~15.4661&lvl=19.3&style=a | Luftbild: zwei Altbaukörper hintereinander mit roten Ziegel-Walmdächern und Quergiebeln (kreuzförmige Dachfiguren), dazwischen ein niedriger Verbindungsteil; am Südwestende ein weiß verputzter Flachdach-Anbau mit Lüftungsaufbauten; Ringstraße mit Parkplätzen auf der Talseite (Ost), geschlossener Wald im Westen und Norden |
+| 5 | https://de.wikipedia.org/wiki/LKH-Universitätsklinikum_Graz | Geschichte: 29 Gebäude im Secessionsstil (1904–1912), Pavillons ost-west-orientiert; die Lungenklinik (heute Psychiatrie) mit größerem Abstand auf der Anhöhe im Leechwald, im Stil eines Lungensanatoriums |
+| 6 | https://de.wikipedia.org/wiki/Liste_der_denkmalgeschützten_Objekte_in_Graz/Geidorf | Denkmaleintrag des Ensembles: Jugendstil 1904–1912 nach Plänen des Landesbauamts unter Karl Hupfer, Ornament August Herz, Pavillonsystem mit Flachdächern (Haupttrakte) |
+| 7 | https://commons.wikimedia.org/wiki/File:LKH_Graz_Hauptgebäude.jpg | Hauptgebäude des Ensembles: heller Putz, vier Geschosse, strenges Fensterraster, Attika statt Dachüberstand, Lisenen. Stilreferenz für Putz und Fensterrhythmus, nicht für das Dach |
+| 8 | https://commons.wikimedia.org/wiki/File:Leechwald_05.jpg | Tor im Zaun zwischen Leechwald und Klinikgelände, 47 m von Gebäude 31: zwei Steinpfeiler mit Reliefmedaillons, kleines Ziegeldach über dem Tor, Holzlattenzaun, Schnee. Vorbild für unser „Waldtor" |
+| 9 | https://commons.wikimedia.org/wiki/File:Übersicht_Med_Uni_Graz.jpg | Luftbild des Campus: weiße Pavillons, dichte Neubauten, am oberen Bildrand der Wald, in dem Gebäude 31 liegt |
+| 10 | https://www.mapillary.com/app/?lat=47.0856&lng=15.4664&z=17.5 | Straßenfotos (Oktober 2015) entlang des Auenbruggerplatzes östlich des Hauses: Allee, Wiesenhang, der zum Haus ansteigt, Haus selbst hinter Bäumen verdeckt; gegenüber ein Neubau mit auskragendem Glasgeschoss (Ausbildungszentrum) |
+| 11 | https://www.uniklinikumgraz.at/psychiatrie | Klinikseite: Auenbruggerplatz 31, 131 Mitarbeitende, 769 stationäre Aufnahmen im Jahr. Ein kleines Haus, keine Großklinik; das passt zu unserem Maßstab |
+
+### Was wir übernehmen
+
+| Merkmal | Vorbild | Im Spiel |
+|---|---|---|
+| Lage | Anhöhe am Waldrand, abseits des Hauptgeländes, Wald im Rücken, Wiese zur Talseite | Hangterrasse über der Stadt, Wald (Buchen, Föhren) hinter dem Haus, Park und Wiese davor |
+| Bauform | langer Riegel mit Kopfbau, Längsachse schräg zum Hang | Riegel 61,2 m plus Kopfbau 24 m, Längsachse Südwest–Nordost |
+| Dach | Ziegel-Walmdächer mit Quergiebeln | ein Walmdach mit einem Quergiebel über dem Mittelrisalit |
+| Fassade | heller Putz, regelmäßiges Fensterraster (Campus-Stil) | Putz in Sand, Fensterachsen alle 3,6 m, Rahmen Petrol |
+| Anbau | Flachdachbau an einem Ende | Flachdachbau am Nordostende: Notaufnahme mit Rettungsvorfahrt |
+| Erschließung | Ringstraße mit Vorfahrt auf der Talseite | Klinikstraße im Osten, Vorfahrt am Kopfbau, Parkweg zum Eingang |
+| Grün | Wald, Wiese, Zaun mit Tor zum Wald | Park, Garten im Gebäudewinkel, Dachgarten auf dem Kopfbau, „Waldtor" |
+| Maßstab | kleines Haus mit Stationen, Ambulanz, Seminarraum | ein Haus für alle Kapitel 0–8 |
+
+### Was wir bewusst ändern (damit es nicht wiedererkennbar ist)
+
+1. **Spiegelung:** Kopfbau und Anbau liegen am Nordost- statt am Südwestende.
+2. **Ein Körper statt zwei:** ein durchgehender Riegel mit Mittelrisalit und Portal, kein zweiter Pavillon.
+3. **Drei Vollgeschosse** mit Sockel, Treppenhausrisalit an der Rückseite, Dachgarten auf dem Anbau.
+4. **Kleiner:** 61 m statt 105 m; Grundrisse frei nach österreichischen Richtwerten, nicht nach dem Original.
+5. **Anderer Anbau:** Flachbau mit Holzlamellen und Vordach für die Rettung, keine Lüftungsaufbauten.
+6. **Kein Jugendstil-Ornament**, keine Lisenen, keine Reliefs; Farben nach ART_BIBLE §2; keine Schrift und kein
+   Logo am Haus (ART_BIBLE §6; der Name steht nur in der Oberfläche).
+7. **Andere Umgebung:** kein Großcampus, dafür Park, Stadt-Kulisse im Tal und ein eigener Garten.
 
 ## Nächster Schritt (eigener Chat)
 
