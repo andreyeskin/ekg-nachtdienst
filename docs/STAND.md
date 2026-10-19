@@ -1,8 +1,19 @@
-# Stand und Übergabe — 18.10.2026
+# Stand und Übergabe — 19.10.2026
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
+
+## Fertig (19.10.2026): Haus-Konzept und Blockout „Haus Föhrenhang"
+
+- **Lokal auf dem Mac eingerichtet** (siehe unten „Lokal auf dem Mac arbeiten"), Cycles auf Metal.
+- **`docs/KRANKENHAUS.md` ausgearbeitet:** Vorbild Gebäude 31 (Links, kein Fassadenfoto frei verfügbar), Antworten des
+  Nutzers (Innere mit Kardiologie und Notaufnahme, fiktive Stadt Annabrunn, Haus Föhrenhang, Flug als Bildfolge 40 s,
+  Dr. Wieser führt ein, Altbau plus Neubau, Dach Ziegel `#C9795A` in ART_BIBLE §2), Raumprogramm, Grundrisse je
+  Geschoss mit Maßen, Wege der Kapitel, Drehbuch des Flugs, Lageplan, Mentorenvorschlag (Namen noch offen).
+- **Blockout `gen/blender/haus_blockout.py`** (`bauen` → `bau/blender/haus/haus_blockout.{blend,glb}`; `render aussen|flur`;
+  `grundriss eg|1og|2og|alle`; Aufrufe in `gen/blender/README.md`). Probe-Renders und Grundrisse in `docs/haus/`.
+  Bekannte Mängel und fünf Fragen an den Nutzer im Abschnitt „Blockout (19.10.2026)" von KRANKENHAUS.md.
 
 ## Fertig (18.10.2026): Redesign-Entwurf Fall 1, Bewegungs-Prototyp, Skill `handlung`
 
@@ -175,7 +186,21 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)
+## Nächster Auftrag (ab 19.10.2026): Blockout nach Rückmeldung des Nutzers verbessern, dann Räume ausbauen
+
+Fragen aus KRANKENHAUS „Blockout (19.10.2026)" beim Nutzer abholen (Außengrün, Sonne im Flur, Fassadenrhythmus,
+Linden, Lamellen); Mängel beheben (Stadt-Kulisse im Tal fehlt im Außenbild, leerer Vordergrund, lose Freestyle-Striche
+an der Flurdecke, Bäume als Lutscher, Tresen am rechten Rand). Nach Freigabe: Aufnahme (B1, REDESIGN_FALL1 §8.3) als
+erster Raum im Haus, dann Lehrsaal und Monitorzimmer übernehmen; Flug-Renders.
+
+```
+Arbeite lokal im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire (Mac, .venv mit bpy).
+Lies docs/STAND.md, dann docs/KRANKENHAUS.md ab „Konzept (19.10.2026)", docs/ART_BIBLE.md §1–§4, gen/blender/README.md
+„Haus-Blockout". Sieh docs/haus/*.jpg verkleinert an. 3D als Subagent auf Fable, Code auf Opus. Antworte auf Russisch.
+Auftrag: Blockout nach meinen Antworten auf die Blockout-Fragen verbessern, Probe-Renders neu.
+```
+
+## Erledigt: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)
 
 Nach dem spielbaren Prototyp von Fall 1 sagt der Nutzer: „schön, aber trotzdem unverständlich". Er will zuerst das
 ganze Krankenhaus bauen (ein eigenes Gebäude, eine Abteilung, Zimmer, Flure, Lehrsaal), am Anfang erklären, was
