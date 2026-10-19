@@ -101,6 +101,31 @@ wie das Zifferblatt, sonst wandern sie in der Parallaxe); das Spiel dreht sie na
 `schirme.json` (→ `.schirme`, Leinwände mit laufenden Kurven in der Ebene des Schirms) mit ein — Zahlen werden
 nirgends abgeschrieben.
 
+## Haus-Blockout (Haus Föhrenhang, docs/KRANKENHAUS.md §2–§5, §9)
+
+`haus_blockout.py` baut das ganze Haus aus Datentabellen am Skriptanfang (Trakte, Geschosse, Achsen, Räume je Geschoss
+mit Türen, Sonderfenster, Umgebung, Kameras): Gelände mit Hang und Sockel, Trakt A (drei Geschosse, Außenwände mit
+Fensterlöchern nach Achsraster, Innenwände aus den Raumrechtecken mit Türöffnungen, Risalite, Walmdach mit Quergiebel,
+Kamine), Trakt N (Flachbau, Holzlamellen, Vordach, Dachgarten), Treppen und Lifte als Kerne, Wege, Bäume als Platzhalter,
+Stadt im Tal als Klötze. Jeder Raum ist eine benannte Bodenplatte (`"EG Lehrsaal"`, Eigenschaften `raum`, `geschoss`) in
+der Sammlung seines Trakts und Geschosses (`Trakt A 1OG` usw.), damit Kameras und Klickzonen später darauf zeigen können.
+Nur Kubatur, Proportion, Licht und Palette — kein Ausbau, Möbel nur als Klötze im Probe-Flur.
+
+```bash
+python3 gen/blender/haus_blockout.py bauen              # ≈ 50 s -> bau/blender/haus/haus_blockout.blend + .glb
+python3 gen/blender/haus_blockout.py render aussen      # §9 (a), 06:40 -> docs/haus/probe_aussen.jpg (≈ 10–30 s)
+python3 gen/blender/haus_blockout.py render flur        # §9 (b), 09:15 -> docs/haus/probe_flur.jpg   (≈ 10–30 s)
+python3 gen/blender/haus_blockout.py grundriss alle     # eg|1og|2og: Schnitt 1,6 m über dem Boden -> docs/haus/grundriss_<g>.png (≈ 5 s je Geschoss)
+```
+
+Die Durchgänge sind die der Räume (Fläche mit Stufen nach Flächenrichtung, Sonne grau, Freestyle-Linie doppelt
+aufgelöst), aber ohne Ebenen-Trennung und Klickzonen: je Durchgang ein Unterprozess, der die .blend lädt, Kamera
+(Verschiebung statt Neigung), Himmelsbänder quer zur Blickrichtung und Sonne (Azimut/Höhe aus `KAMERAS`) stellt. Das
+Komposit nimmt `komposit.tinte()` und die Farben aus `komposit.py`, dazu eine flache Schattenstufe für alles ohne direkte
+Sonne. Renderzeiten (M-Serie, Metal, 1600 × 900, 4/16/4 Proben): erster Durchgang je Prozess mit Kernel-Cache ≈ 1–5 s,
+ohne Cache bis ≈ 2 min; ein Probe-Render gesamt 10–30 s. Grundrisse: Kamera orthografisch von oben, `clip_start`
+schneidet 1,6 m über dem Boden (Tür- und Fensteröffnungen sichtbar), Geschosse darüber per Sammlung ausgeblendet.
+
 ## Lehrsaal (Einschulungstag, 08:10)
 
 `szene_lehrsaal.py` nach `docs/raeume/lehrsaal.md`; Rückwand y = 0, Raum nach −y (die Beschreibung misst y von der

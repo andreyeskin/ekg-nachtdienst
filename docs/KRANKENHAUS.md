@@ -553,6 +553,68 @@ Notaufnahme, nur Silhouette).
 4. **Altbau plus Neubau** (Flachbau mit Holzlamellen und Dachgarten) wie in §2.
 5. Mentorennamen und Raumfunktionen: **später** (bei der Arbeit an den Figuren); der Blockout folgt der Lage aus §3/§4.
 
+## Blockout (19.10.2026)
+
+Skript `gen/blender/haus_blockout.py` (Aufrufe in `gen/blender/README.md`), Ausgaben `bau/blender/haus/haus_blockout.blend`
+und `.glb` (nicht im Repository), Bilder zur Prüfung in `docs/haus/`: `probe_aussen.jpg` (§9 a, 06:40), `probe_flur.jpg`
+(§9 b, 09:15), `grundriss_eg.png`, `grundriss_1og.png`, `grundriss_2og.png` (Schnitt 1,6 m über dem Boden, ohne Namen).
+
+**Gebaut:** Gelände (Terrasse z −0,6 südostseitig, Hang 6 % ab y −40, Waldhang 10 % ab y 35, Talboden ab y −200), Sockel,
+Trakt A mit drei Geschossen (Außenwände 0,45 mit Fensterlöchern an allen 17 Achsen, Portal, hohe Risalitfenster,
+Treppenhausfenster, Stirnfenster; Innenwände 0,15 aus den Raumrechtecken von §4 mit Türöffnungen, Tür „offen" = keine
+Wand; Decken 0,6 bzw. 1,0 stark), Mittelrisalit mit Giebelwand und Quergiebel, Treppenhausrisalit mit kleinem Walm,
+Walmdach 30° (Traufe 12, First 16,6 bei y 8) mit drei Kaminen, Trakt N (zwei Geschosse, Flachdach mit Attika 1,1,
+Hochbeete, Bänke, zwei Felsenbirnen in Kübeln, Holzlamellen SE im 1. OG und NE vor der Glasfront, Vordach auf zwei
+Petrol-Stützen, Rettungstor, Fensterbänder), Kerne S1–S3 (Läufe und Podeste als Klötze) und L1/L2 (Schächte), Vorplatz,
+Parkweg mit zwei Kehren, Laternen, Hecken, Klinikstraße mit sechs Platanen, Rettungszufahrt und Abstellfläche, Parkplatz
+hinter Hecke, Cafeteria-Terrasse, Waldtor mit Zaun, zwei Linden, Kastanie, Wald in drei Tiefenbändern (Petrol, Mischton,
+Papier; Bäume 18–28 m), Stadt im Tal als 40 Klötze mit zwei Kirchtürmen und zwei Hügeln. Im Probe-Flur (1. OG): Tresen des
+Stützpunkts, Pflegewagen, Sitzbank, zwei Silhouetten (Kapseln 1,7 m), Mint-Sockel 1,1 m an beiden Flurwänden.
+
+**Abweichungen von §2–§4 und wie gelöst:**
+- Kamera (b) steht in §9 bei z 1,55; gemeint ist Augenhöhe über dem Boden des 1. OG, das Skript nimmt z 5,55.
+- Flurwand-Türen der Zimmer 108–112 stehen offen (Blatt in den Raum geschwenkt), alle anderen Türen sind zu (Blatt Petrol)
+  oder Glas (Tinte-Fläche); Lifttüren als Blätter 1,4 und 1,1 breit.
+- Fenster N: Bänder frei gesetzt (EG NW z 1,0 … 2,6; 1. OG z 5,0 … 6,6), Schockraum-Oberlichter z 2,2 … 3,0, Flurende
+  1. OG wie ein Altbaufenster. Achsen 9–10 auf der NW-Seite blind (L1), Achse 8 liegt im Treppenhausrisalit.
+- Quergiebel: Giebelfuß z 13,5 (Risalitwand läuft 1,5 m über die Traufe), First 16,6 wie der Hauptfirst; der
+  Treppenhaus-Walm hat seinen First bei z ≈ 12,7 und schneidet in die Hauptdachfläche (Blockout, keine Kehle).
+- Brandwand x 61,2 ist im EG und 1. OG eine Innenwand (Trakt N umschließt das Altbau-Ende), im 2. OG Außenwand.
+- Rasen in Mint `#BFD9CF`, Pflaster und Wege Papier, Asphalt Linoleum kühl: ART_BIBLE §2 hat kein Grün, deshalb Mint als
+  Fläche (Frage 1 unten). Wald: vorn Petrol, Mitte `#91A3A2` (Petrol/Papier gemischt, nicht in der Palette), hinten Papier.
+- Stadt und Hügel nur als Klötze/Kugeln; in Render (a) nicht im Bild (Blick nach Nordost).
+
+**Renderzeiten** (M-Serie, Metal, 1600 × 900): bauen ≈ 50 s (1 440 Objekte, Fenster-Booleans), Probe-Render je 10–30 s
+(Fläche 1–5 s, Sonne 3–13 s, Linie 2–12 s; der erste Metal-Start ohne Kernel-Cache dauert bis 2 min), Grundriss ≈ 5 s.
+
+**Bekannte Mängel:**
+- Flur (b): kein Sonnenstreifen auf dem Flurboden. Bei 35° Sonnenhöhe und 7 m tiefen Zimmern endet das Licht durch die
+  SE-Fenster (Brüstung 0,9) nach 4,3 m auf dem Zimmerboden, erreicht also weder Tür noch Flur; der Flur bekommt nur
+  diffuses Licht (hier: eine flache Schattenstufe). §9 (b) „Streifen auf dem Boden" braucht entweder eine tiefere Sonne
+  (≈ 15°, also früher am Tag oder Herbst) oder Oberlichter/Glas in den Zimmertüren.
+- Freestyle: einige lose Striche an der Flurdecke (Wände, die hinter die Kamera reichen; README-Regel). Der Flur ist
+  eine durchgehende Wand, Kürzen hilft erst im Ausbau.
+- Bäume sind Kugeln/Kegel auf Stämmen, die Linden lesen als „Lutscher"; Wald als Kugelreihe, keine Silhouettenbänder.
+- Linden werfen bei 7° Sonnenhöhe lange Schatten auf die Fassade (richtig, aber im Bild als große helle/dunkle Flecken).
+- Tresen des Stützpunkts beginnt 1,4 m hinter der Öffnungskante und füllt trotzdem den rechten Bildrand (24 mm, Kamera
+  nur 2,6 m davor); kein dunkler Anschnitt, aber groß.
+- Treppen als Klötze ohne Stufen; Lifte ohne Kabinen; Grundrisse ohne Raumnamen (Schrift wäre ohnehin §6).
+
+**Fragen an den Nutzer zu den Bildern:**
+1. Rasen und Wald: Mint `#BFD9CF` als Rasen und Petrol-Kugeln als Bäume — passt die Grünlösung ohne eigenes Grün in
+   der Palette, oder soll ART_BIBLE §2 einen Außen-Grünton bekommen (wie beim Ziegel)?
+2. Flur (b): Sonne bei 09:15 tiefer stellen (Streifen auf dem Flurboden, wie in §9 beschrieben) oder das Bild so lassen
+   (Flur im Schatten, Licht nur in den Zimmern und am Flurende)?
+3. Kubatur (a): Haus 61 + 24 m bei drei Geschossen plus Walm — wirkt es im Bild groß genug für „ein Haus für alle
+   Kapitel" oder zu kasernenhaft (17 gleiche Achsen)? Wenn zu streng: Fensterpaare oder Erker an den Enden?
+4. Vorplatz: die beiden Linden stehen in der Außenansicht genau vor dem Risalit und verdecken Portal und Giebel halb.
+   Linden nach außen rücken (x 18 und x 43) oder Kamera (a) höher/weiter links?
+5. Trakt N: Lamellen im 1. OG als dunkles Band — soll die SE-Front des Neubaus heller (Papier mit wenigen Lamellen) oder
+   so bleiben (Holz dicht, wie beim Vorbild „Holzlamellen")?
+
+**Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
+(`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.
+
 ## Nächster Schritt (eigener Chat)
 
 Blender-Blockout nach §2 bis §5 (Skript in `gen/blender/`, z. B. `haus_blockout.py`: Hülle, Geschosse, Flure, Räume
