@@ -186,18 +186,32 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag (ab 19.10.2026): Blockout nach Rückmeldung des Nutzers verbessern, dann Räume ausbauen
+## Nächster Auftrag (ab 19.10.2026): Blockout nach Rückmeldung verbessern
 
-Fragen aus KRANKENHAUS „Blockout (19.10.2026)" beim Nutzer abholen (Außengrün, Sonne im Flur, Fassadenrhythmus,
-Linden, Lamellen); Mängel beheben (Stadt-Kulisse im Tal fehlt im Außenbild, leerer Vordergrund, lose Freestyle-Striche
-an der Flurdecke, Bäume als Lutscher, Tresen am rechten Rand). Nach Freigabe: Aufnahme (B1, REDESIGN_FALL1 §8.3) als
-erster Raum im Haus, dann Lehrsaal und Monitorzimmer übernehmen; Flug-Renders.
+Antworten des Nutzers stehen in KRANKENHAUS „Antworten des Nutzers zum Blockout (19.10.2026)": eigener Außen-Grünton,
+Flur bleibt im Schatten, Fassade auflockern, Linden nach außen, Lamellen bleiben. Dazu Mängel beheben: Stadt-Kulisse im
+Tal fehlt, leerer Vordergrund (Wiese, Weg, Büsche), lose Freestyle-Striche an der Flurdecke, Bäume als Lutscher
+(Kronen aus mehreren Kugeln oder Föhren mit Etagen), Tresen am rechten Bildrand im Flur. Danach (nach Freigabe):
+Aufnahme (B1, REDESIGN_FALL1 §8.3) als erster Raum im Haus, dann Lehrsaal und Monitorzimmer übernehmen, Flug-Renders.
+
+### Startnachricht
 
 ```
-Arbeite lokal im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire (Mac, .venv mit bpy).
-Lies docs/STAND.md, dann docs/KRANKENHAUS.md ab „Konzept (19.10.2026)", docs/ART_BIBLE.md §1–§4, gen/blender/README.md
-„Haus-Blockout". Sieh docs/haus/*.jpg verkleinert an. 3D als Subagent auf Fable, Code auf Opus. Antworte auf Russisch.
-Auftrag: Blockout nach meinen Antworten auf die Blockout-Fragen verbessern, Probe-Renders neu.
+Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
+(.venv mit bpy 5.2.2 und Python 3.13, Cycles auf Metal). Lies docs/STAND.md (Abschnitt „Nächster Auftrag"),
+dann docs/KRANKENHAUS.md ab „Konzept (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
+gen/blender/README.md Abschnitt „Haus-Blockout". Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
+Auftrag: den Blockout (gen/blender/haus_blockout.py) nach meinen Antworten zum Blockout verbessern:
+1. eigener Außen-Grünton für Rasen und Bäume in ART_BIBLE §2 (nur außen, wie der Ziegel), Bäume schöner
+   (keine Lutscher: Laubkronen aus mehreren Kugeln, Föhren in Etagen);
+2. Fassade auflockern: Fensterpaare und/oder Erker an den Enden statt 17 gleicher Achsen;
+3. Linden nach außen rücken (etwa x 18 und x 43), Kamera der Außenansicht bleibt;
+4. Flur bleibt im Schatten, Lamellen am Neubau bleiben;
+5. Mängel: Stadt-Kulisse im Tal ergänzen, Vordergrund beleben (Wiese, Weg, Büsche), lose Tuschestriche an der
+   Flurdecke weg, Tresen nicht mehr am rechten Bildrand.
+Dann beide Probe-Renders neu (niedrige Qualität), selbst prüfen, Grundrisse nur neu, wenn sich etwas ändert.
+3D als Subagent auf Fable in eigenem Worktree, Code und Koordination auf Opus. Commit nach jedem Teilschritt,
+pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
 ## Erledigt: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)

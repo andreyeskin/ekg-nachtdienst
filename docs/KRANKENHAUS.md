@@ -615,6 +615,13 @@ Stützpunkts, Pflegewagen, Sitzbank, zwei Silhouetten (Kapseln 1,7 m), Mint-Sock
 **Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.
 
+**Antworten des Nutzers zum Blockout (19.10.2026):**
+1. Außengrün: **eigener Grünton** für Rasen und Bäume in ART_BIBLE §2 (nur außen, wie der Ziegel).
+2. Flur: **bleibt im Schatten** wie gerendert (keine tiefere Sonne).
+3. Fassade: **auflockern** (Fensterpaare und/oder Erker an den Enden, nicht 17 gleiche Achsen).
+4. Linden: **nach außen rücken** (etwa x 18 und x 43), Kamera (a) bleibt.
+5. Lamellen Trakt N: **bleiben** wie gerendert.
+
 ## Nächster Schritt (eigener Chat)
 
 Blender-Blockout nach §2 bis §5 (Skript in `gen/blender/`, z. B. `haus_blockout.py`: Hülle, Geschosse, Flure, Räume
