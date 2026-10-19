@@ -226,7 +226,7 @@ Innenwände 0,15 m liegen innerhalb der Rechtecke. Medizinische Inhalte stehen h
 | **Stadt, empfohlen** | **Annabrunn** (Hügel, Fluss, Dächer, nach dem Vorbild Graz, ohne Wahrzeichen) | nur ein Weiler in Bayern und eine Kapelle bei Leibnitz, keine Stadt |
 | Stadt, Alternativen | Gradenfeld, Leonsbach | keine Treffer |
 
-Im Spieltext: „Klinikum Hollerberg, Innere Medizin mit Kardiologie und Notaufnahme, Annabrunn". Am Haus selbst
+Im Spieltext: „Haus Föhrenhang, Innere Medizin mit Kardiologie und Notaufnahme, Annabrunn". Am Haus selbst
 keine Schrift (ART_BIBLE §6).
 
 ### 2. Das Haus in Zahlen
@@ -462,7 +462,7 @@ Platzhalter für den Skill `dialoge`, Inhalt verbindlich: was, wie, wo.
 
 | Nr. | Zeit | Kamera (lokal, Blick) | Bewegung | Dr. Wieser |
 |---|---|---|---|---|
-| 1 | 0–5 s | hoch über dem Tal, (120, −260, 60), Blick auf Stadt und Hang, das Haus rechts oben am Waldrand | langsames Heranfahren | „Guten Morgen. Das ist Annabrunn, und das Haus am Waldrand ist unseres: das Klinikum Hollerberg." |
+| 1 | 0–5 s | hoch über dem Tal, (120, −260, 60), Blick auf Stadt und Hang, das Haus rechts oben am Waldrand | langsames Heranfahren | „Guten Morgen. Das ist Annabrunn, und das Haus am Waldrand ist unseres: das Haus Föhrenhang." |
 | 2 | 5–10 s | Außenansicht wie Probe-Render (a), §9 | Drift nach rechts, Linden im Vordergrund wandern | „Innere Medizin mit Kardiologie. Hier lernst du in den nächsten Wochen, EKGs zu lesen, an echten Aufnahmen." |
 | 3 | 10–14 s | Vorplatz vor dem Portal (30,6, −12, 1,6), Blick +y durch das Portal in die Halle | Fahrt durch das Portal | „Eine Rotation: mehrere Dienste, jeder Dienst ein Patient und eine Frage, die du beantwortest." |
 | 4 | 14–18 s | Aufnahme, Spielkamera (§9, Raumkamera 1) | Überblendung, Jalousienlicht wandert | „Unten die Notaufnahme. Dein erster Dienst beginnt hier, morgen vor sieben." |
