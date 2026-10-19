@@ -116,6 +116,12 @@ selbst gelaufen, Leben als Ebenen. Die Probe mit Variante (a) entfällt, außer 
 Leitsatz gilt auch für alles andere: keine Laufwege, kein Hin- und Herschicken, kein Suchen; jede Minute Spielzeit
 soll eine Denk- oder Handentscheidung sein.
 
+**Godot erwogen (19.10.2026, Frage des Nutzers nach einem Beitrag „Claude Code + Godot über MCP"):** jetzt nicht.
+Godot lohnt sich für Echtzeit-3D, Animation und native Apps; das Format „Quest im 3D-Haus" braucht das nicht. Ein
+Wechsel hieße alles neu bauen (Dialogmotor, EKG-Papier mit Zirkel und Pencil, Prüfungen, Texte über IDs), und der
+Web-Export ist für eine Offline-Einzeldatei auf dem iPad schwer. Wieder prüfen, wenn eine App im App Store,
+frei begehbares 3D oder viel Figurenanimation gewünscht wird; das Hausmodell (glTF) ließe sich dann übernehmen.
+
 ## Was das am Bestand ändert (zur Ausarbeitung)
 
 - **KONZEPT §3:** Jeder Dienst bekommt **einen Mentor mit Fachgebiet und Tagesthema**, der sich vorstellt und
