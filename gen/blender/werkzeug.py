@@ -11,6 +11,7 @@ und legt folgende Namen auf Modulebene ab — mehr braucht ebenen.py nicht:
   sonne_stellen(sonne)  richtet die Sonne für den Licht-Durchgang aus (optional)
 """
 import math
+import os
 
 import bpy
 
@@ -19,6 +20,29 @@ ZONE = {}    # Klickzone -> [Objektnamen]
 MAT = {}     # Materialname -> Material
 PLATZHALTER = set()   # Objekte nur für Klickzonen, nie gerendert
 SCHIRME = {}  # Schirmname -> (Objektname, Ebene): Bildflächen, auf die das Spiel laufende Kurven legt
+
+
+def cycles_geraet(sc):
+    """Cycles auf die GPU: Metal (Mac), sonst CUDA/OptiX/HIP; ohne GPU oder mit BLENDER_GERAET=CPU auf die CPU.
+    Gibt das gewählte Gerät zurück und meldet es einmal im Log."""
+    sc.render.engine = 'CYCLES'
+    wahl = "CPU"
+    if os.environ.get("BLENDER_GERAET", "").upper() != "CPU":
+        pref = bpy.context.preferences.addons["cycles"].preferences
+        for typ in ("METAL", "OPTIX", "CUDA", "HIP", "ONEAPI"):
+            try:
+                pref.compute_device_type = typ
+            except TypeError:
+                continue
+            pref.get_devices()
+            gpus = [d for d in pref.devices if d.type == typ]
+            if gpus:
+                for d in pref.devices: d.use = d.type == typ
+                wahl = typ; break
+        if wahl == "CPU": pref.compute_device_type = 'NONE'
+    sc.cycles.device = 'CPU' if wahl == "CPU" else 'GPU'
+    print("CYCLES-GERAET", wahl, flush=True)
+    return wahl
 
 
 def leeren():

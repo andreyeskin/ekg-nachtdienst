@@ -297,7 +297,7 @@ def schirme():
     if aus: print("SCHIRME", json.dumps(aus), flush=True)
 
 
-sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'
+wz.cycles_geraet(sc)
 if os.environ.get("BLENDER_THREADS"):     # z. B. BLENDER_THREADS=2, wenn nebenher anderes rendert
     sc.render.threads_mode = 'FIXED'; sc.render.threads = max(1, int(os.environ["BLENDER_THREADS"]))
 sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = B, H, 100

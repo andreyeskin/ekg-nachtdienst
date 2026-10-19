@@ -114,7 +114,7 @@ def freestyle(an, sammlung=None):
 
 def render_grund(bx, by):
     sc = bpy.context.scene
-    sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'
+    import werkzeug; werkzeug.cycles_geraet(sc)
     if os.environ.get("BLENDER_THREADS"):      # z. B. BLENDER_THREADS=2, wenn nebenan ein zweiter Render läuft
         sc.render.threads_mode = 'FIXED'; sc.render.threads = max(1, int(os.environ["BLENDER_THREADS"]))
     sc.render.resolution_x, sc.render.resolution_y = bx, by; sc.render.resolution_percentage = 100

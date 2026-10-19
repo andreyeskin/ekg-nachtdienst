@@ -3,7 +3,7 @@
 Stil: **ligne claire** — flache Lokalfarben, eine gleichmäßige Tuschelinie, keine Schraffur,
 Licht nur als harte Formen (Sonnenfleck durchs Fenster). Palette: docs/ART_BIBLE.md.
 
-Ablauf je Raum (CPU, kein GPU nötig; `pip install bpy Pillow numpy`), aus der Wurzel des Repositorys:
+Ablauf je Raum (Cycles nimmt die GPU, auf dem Mac Metal, sonst die CPU; `BLENDER_GERAET=CPU` erzwingt die CPU; `pip install bpy Pillow numpy`, Python 3.13), aus der Wurzel des Repositorys:
 
 ```bash
 python3 gen/blender/ebenen.py monitor alle         # alle Durchgänge nach bau/blender/monitor/, Klickzonen
