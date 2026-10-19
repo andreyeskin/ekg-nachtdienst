@@ -147,6 +147,15 @@ frei begehbares 3D oder viel Figurenanimation gewünscht wird; das Hausmodell (g
 7. ~~Format~~ Entschieden: Quest im 3D-Haus (Leitsatz „Denken statt Gehen", siehe oben).
 8. Mentoren: eine Person je Dienst (neue Figuren) oder wenige feste Mentoren, die wechseln?
 
+**Antworten des Nutzers (19.10.2026):**
+1. Abteilung: **Innere Medizin mit Kardiologie und eigener Notaufnahme** (alle Kapitel 0–8 in einem Haus).
+2. Ort: **fiktive Stadt** nach dem Vorbild Graz (österreichisch, Hügel, Dächer, viel Grün), ohne erkennbare
+   Wahrzeichen; Name des Hauses und der Stadt erfunden (Vorschlag in der Ausarbeitung).
+3. Flug: **Bildfolge in der Einzeldatei, etwa 40 Sekunden** (8–10 Renders, Überblendung, Parallaxe, überspringbar).
+4. und 8. Mentoren **gemischt**: feste Figuren (Wieser, Falk, Marlene) und neue für Infarkt, Rhythmusambulanz,
+   Intensiv; **Dr. Wieser führt ein** (Stimme zum Flug).
+5. Begehbar: nur die Spielräume; Wege als kurze Kamerafahrten (folgt aus dem Leitsatz „Denken statt Gehen").
+
 ## Nächster Schritt (eigener Chat)
 
 Fable (3D und Raumprogramm, CLAUDE.md „Modellwahl"): diese Datei zu einem Konzept ausarbeiten (Vorbild-Recherche mit Fotos,
