@@ -11,7 +11,9 @@ python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/
 - Lehrbuch (Trappe, EKG-Kurs) nur aus dem Drive-Ordner „EKG-Kurs Texte (privat, nur für Claude-Sitzungen)";
   nie ins Repository, nur eigene Worte mit Lektionsnummer.
 - Neue Fälle und Dialoge nur mit den Skills `fallakte` und `dialoge` (`.claude/skills/`).
-- Commit nach jedem Teilschritt, dann pushen.
+- Commit nach jedem Teilschritt, dann pushen. Chatwechsel mit dem Skill `uebergabe`.
+- Agenten (`.claude/agents/`): `spieltester` nach Änderungen am Spiel, `medizin-gutachter` vor jeder Freigabe
+  eines Falls, `uebersetzer` für en/ru. Hooks in `.claude/settings.json` prüfen Texte nach jeder Bearbeitung.
 
 ## Tokensparen (der Nutzer will dazu immer beraten werden)
 

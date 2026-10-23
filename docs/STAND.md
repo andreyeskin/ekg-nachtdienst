@@ -4,6 +4,17 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (23.10.2026): Werkzeuge für Claude-Sitzungen
+
+- **Hooks** (`.claude/settings.json`): nach jeder Bearbeitung unter `text/` oder `web/` prüft
+  `tools/haken/texte_pruefen.py` JSON, Gedankenstrich, Replikenlänge und IDs in de/en/ru; am Ende einer Antwort
+  erinnert `tools/haken/stand_pruefen.sh` einmal an offene Commits und Pushes.
+- **Skill `uebergabe`**: Block abschließen, STAND.md nachziehen, Startnachricht schreiben.
+- **Agenten** (`.claude/agents/`): `spieltester` (Sonnet, spielt als PJ-Studentin im eingebauten Browser),
+  `medizin-gutachter` (Fable, gegen FACHREGELN, QUELLEN, ESC, Lehrbuch), `uebersetzer` (Sonnet, de → en/ru).
+  Berichte landen in `bau/berichte/` (nicht in Git).
+- Offen: Berechtigungen für die Bau- und Prüfbefehle in `.claude/settings.json` (Freigabe durch den Nutzer).
+
 ## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
 
 - Außengrün in ART_BIBLE §2 (Wiese `#ACB98B`, Laub `#6F8A62`, nur außen); Bäume aus mehreren Kugeln, Föhren als Schirm,
