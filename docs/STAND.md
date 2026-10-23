@@ -13,7 +13,7 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 - **Agenten** (`.claude/agents/`): `spieltester` (Sonnet, spielt als PJ-Studentin im eingebauten Browser),
   `medizin-gutachter` (Fable, gegen FACHREGELN, QUELLEN, ESC, Lehrbuch), `uebersetzer` (Sonnet, de → en/ru).
   Berichte landen in `bau/berichte/` (nicht in Git).
-- Offen: Berechtigungen für die Bau- und Prüfbefehle in `.claude/settings.json` (Freigabe durch den Nutzer).
+- **Berechtigungen** (`.claude/settings.json`): feste Bau- und Prüfbefehle laufen ohne Rückfrage.
 
 ## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
 
