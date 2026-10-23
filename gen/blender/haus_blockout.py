@@ -8,7 +8,8 @@
 Alle Maße stehen in den Tabellen oben (Meter, lokale Koordinaten nach KRANKENHAUS §2: Ursprung Südwestecke des
 Altbaus am EG-Boden, +x entlang des Riegels nach Nordost, +y nach Nordwest, +z nach oben). Eine Maßänderung ist eine
 Zeile in einer Tabelle. Räume sind Quader (Bodenplatte mit Raumnamen + Wände mit Tür- und Fensteröffnungen), Möbel nur
-grobe Klötze im Probe-Flur, Bäume Platzhalter (Kegel/Kugel auf Stamm), Stadt im Tal eine ferne Kulisse.
+grobe Klötze im Probe-Flur, Bäume aus Stamm und Kugel-Kronen bzw. Kegel-Etagen (Wald hinten als Silhouettenbänder),
+Stadt im Tal eine ferne Kulisse (Südost unsichtbar, Nordost-Talbiegung im Bild von Kamera (a)).
 
 Render: Fläche (Lokalfarbe, Stufen nach Flächenrichtung), Sonne (nur direktes Licht, grau) und Freestyle-Linie wie in
 ebenen.py, zusammengesetzt mit komposit.py — ohne die Ebenen-Trennung (kein Mittelgrund, keine Klickzonen); die
@@ -182,8 +183,15 @@ SONDERFENSTER = [
 ]
 BLIND_NW = {9, 10}                      # Achsen ohne NW-Fenster (Lifte L1, Blindfeld); Achse 8 liegt im Risalit
 
+# Fassade SE (Antwort 3 des Nutzers, 23.10.2026): nicht 17 gleiche Achsen, sondern Rhythmus [PP] s s P s s [Risalit] s s P s s [PP].
+# Eckrisalit nur am Westende (Achsen 1–2): das Ostende steckt im Winkel des Neubaus, dort tragen nur die Fensterpaare.
+ECKRISALIT = (0.0, -0.5, 7.2, 0.0)         # x0, y0, x1, y1 — 0,5 m vor der SE-Flucht, eigener Sockel, Decken und Dachstreifen
+FENSTERPAARE = {1, 2, 5, 13, 16, 17}       # Achsen mit gekoppelten Fenstern (SE und NW): zwei Flügel PAAR.b breit, Pfosten dazwischen
+PAAR = dict(b=1.0, pfosten=0.3)            # Paar deckt xm ± 1,15 — bleibt 0,65 m von den Achsgrenzen (Innenwände bei x = 3,6·k) weg
+
 # Umgebung (§5)
-LINDEN = [(23.0, -12.0, 4.5), (38.0, -12.0, 4.5)]                 # (x, y, Kronenradius)
+LINDEN = [(15.0, -10.0, 4.5), (46.0, -10.0, 4.5)]                 # (x, y, Kronenradius); nach außen gerückt (Antwort 4): bei x 18 deckte die Krone aus
+                                                                  # Kamera (a) per Parallaxe noch das Portal (Blick diagonal), ab x 15 / y −10 ist der Risalit frei
 KASTANIE = (50.0, 27.0, 6.0)
 VORPLATZ = (20.0, -20.0, 41.0, -3.0)
 PARKWEG = [(30.0, -20.0), (14.0, -34.0), (44.0, -52.0), (60.0, -70.0)]           # zwei Kehren
@@ -194,15 +202,35 @@ PARKPLATZ = (70.0, 20.0, 100.0, 40.0)
 WALDTOR = (48.0, 34.0)
 TERRASSE_Y = -40.0           # bis hier eben (z −0,6), dann 6 % Gefälle nach Südost
 TAL_Y = -200.0               # ab hier Talboden
-WALD_Y = 35.0                # dahinter steigt der Waldhang mit 10 %
+WALD_Y = 35.0                # dahinter steigt der Waldhang mit 10 % …
+WALD_STEIL = (60.0, 0.25)    # … und ab y 60 mit 25 % (Hügelrücken): sonst verschwinden die Waldbänder aus Kamera (a) hinter dem First
+OSTHANG_X = 115.0            # östlich der Klinikstraße fällt das Gelände mit 8 % in die Talbiegung nach Nordost (bis −25 m)
 HIMMEL_BAENDER = ["#F8E7BF", "#F6DCA4", "#F3CD8C"]            # oben → Horizont (§9 a)
+
+# Vordergrund von Render (a): Büsche (x, y, Radius) auf Terrasse und Hang, Wiesenflecken zufällig im Bildausschnitt
+BUESCHE = [(-8.0, -44.0, 1.6), (-4.5, -45.5, 1.2), (6.0, -41.0, 1.4), (9.0, -42.5, 1.0), (22.0, -36.0, 1.3),
+           (0.0, -56.0, 1.8), (3.5, -57.5, 1.3), (-14.0, -50.0, 1.5), (30.0, -27.0, 1.2), (34.0, -45.0, 1.4)]
+WIESENFLECKEN = dict(bereich=(-40.0, -70.0, 90.0, -5.0), anzahl=18, radius=(4.0, 11.0))
+
+# Wald (§5): nahes Band als dichte Baumgruppen (zwei Reihen), Mitte und Ferne als Silhouettenbänder (ein Netz je Band).
+# Tiefenstaffelung: vorn Laub (grün, besonnt), Mitte Petrol (Kamm im Schatten, die dunkle Form), hinten Papier (Dunst).
+WALD_NAH = dict(x0=-10.0, x1=150.0, reihen=((38.0, 44.0), (45.0, 52.0)), abstand=6.0, hoehe=(17.0, 26.0))
+WALD_WEST = dict(x0=-62.0, x1=-24.0, y0=-40.0, y1=38.0, abstand=(8.0, 9.0), hoehe=(16.0, 24.0))
+WALDBAENDER = [(76.0, -150.0, 185.0, "wald_mitte", (20.0, 28.0)), (106.0, -160.0, 205.0, "wald_fern", (22.0, 30.0))]   # (y, x0, x1, Material, Höhen)
+
+# Stadt (§5): im Tal südöstlich (y < −200, von Kamera (a) nicht sichtbar) UND in der Talbiegung nordöstlich der Klinikstraße,
+# die Kamera (a) rechts neben Trakt N über den Osthang sieht (Unterstadt mit dem zweiten Kirchturm). Nur Bänder, keine Linie.
+STADT = [dict(x0=-120.0, x1=200.0, y0=-290.0, y1=-210.0, haeuser=40, tuerme=((20.0, -250.0, "helm"), (110.0, -250.0, "zwiebel"))),
+         dict(x0=185.0, x1=345.0, y0=0.0, y1=140.0, haeuser=150, tuerme=((230.0, 40.0, "zwiebel"), (300.0, 55.0, "helm")))]   # Kamera (a) sieht 18–25° rechts von +x: y ≈ 0,32·(x+30)−62 … 0,51·(x+30)−62
+HUEGEL = [(-110.0, -260.0, 70.0, 40.0), (190.0, -270.0, 80.0, 50.0), (380.0, 60.0, 190.0, 55.0), (470.0, -80.0, 200.0, 70.0)]   # (x, y, r, sichtbare Höhe); zwei lange Kämme schließen das Tal nach Osten
 
 # Kameras (§9): Ort, Ziel, Brennweite; Sonne (Azimut °, Höhe °); Licht- und Himmelsfarben
 KAMERAS = {
     "aussen": dict(ort=(-30.0, -62.0, 3.0), ziel=(34.0, 2.0, 7.0), brennweite=35, sonne=(80.0, 7.0),
                    licht="#FFF0C6", anteil=0.45, himmel=HIMMEL_BAENDER, schatten=0.14),
-    "flur": dict(ort=(24.0, 8.5, GESCHOSSE_Z1OG + 1.55), ziel=(61.0, 8.5, GESCHOSSE_Z1OG + 1.55), brennweite=24, sonne=(120.0, 35.0),   # §9: Augenhöhe 1,55 über dem Boden des 1. OG
-                 licht="#FBFDF8", anteil=0.42, himmel=["#DCE9EA", "#E6EFEE", "#EAF1F0"], schatten=0.10),
+    "flur": dict(ort=(23.3, 8.5, GESCHOSSE_Z1OG + 1.55), ziel=(61.0, 8.5, GESCHOSSE_Z1OG + 1.55), brennweite=24, sonne=(120.0, 35.0),   # §9: Augenhöhe 1,55 über dem Boden des 1. OG; x 23,3 statt 24 (23.10.): Tür 107 ganz hinter dem Bildrand, Tresen im rechten Drittel
+                 licht="#FBFDF8", anteil=0.42, himmel=["#DCE9EA", "#E6EFEE", "#EAF1F0"], schatten=0.10,
+                 linien_nur=("Trakt A 1OG", "Trakt N 1OG", "Moebel Flur 1OG", "Kerne")),   # Linien-Durchgang: nur diese Sammlungen (Freestyle verliert in der 600-m-Szene die Verdeckung)
 }
 B, H = 1600, 900
 UEBER = 2                    # Überabtastung der Linie (wie ebenen.py)
@@ -215,13 +243,16 @@ PALETTE = {
     "wand": "#EFE6D3", "wand_n": "#F7F1E4", "paneel": "#BFD9CF", "paneel_n": "#2C5560", "decke": "#F7F1E4",
     "lino_warm": "#C9BDA2", "lino_kuehl": "#B6BFB6", "tuer": "#2C5560", "zarge": "#C99A5B", "holz": "#C99A5B",
     "lift": "#2C5560", "petrol": "#2C5560", "figur": "#2C5560",
-    "rasen": "#BFD9CF", "weg": "#F7F1E4", "asphalt": "#B6BFB6", "pflaster": "#F7F1E4", "hecke": "#2C5560",
-    "stamm": "#2C3E46", "krone": "#2C5560", "wald_nah": "#2C5560", "wald_mitte": "#91A3A2", "wald_fern": "#F7F1E4",
-    "stadt": "#F7F1E4", "stadt_sand": "#EFE6D3", "himmel_0": HIMMEL_BAENDER[0], "himmel_1": HIMMEL_BAENDER[1],
+    # Außengrün (ART_BIBLE §2 „Wiese"/„Laub", Entscheid des Nutzers 23.10.2026): Rasen Wiese, Kronen/Hecken/Büsche Laub
+    "wiese": "#ACB98B", "wiese_hell": "#B9C59A", "weg": "#F7F1E4", "asphalt": "#B6BFB6", "pflaster": "#F7F1E4", "hecke": "#6F8A62",
+    "stamm": "#2C3E46", "laub": "#6F8A62", "wald_nah": "#6F8A62", "wald_mitte": "#2C5560", "wald_fern": "#F7F1E4",
+    "stadt": "#F7F1E4", "stadt_sand": "#EFE6D3", "stadt_dach": "#C9BDA2", "himmel_0": HIMMEL_BAENDER[0], "himmel_1": HIMMEL_BAENDER[1],
     "himmel_2": HIMMEL_BAENDER[2], "beet": "#C99A5B",
 }
-OHNE_LINIE = {"himmel_0", "himmel_1", "himmel_2", "wald_fern", "stadt", "stadt_sand"}
-OHNE_SCHATTIERUNG = {"himmel_0", "himmel_1", "himmel_2", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand"}
+OHNE_LINIE = {"himmel_0", "himmel_1", "himmel_2", "wald_fern", "stadt", "stadt_sand", "stadt_dach", "wiese_hell"}
+OHNE_SCHATTIERUNG = {"himmel_0", "himmel_1", "himmel_2", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand", "stadt_dach", "wiese_hell"}
+OHNE_SCHATTEN = {"Baeume"}               # Sammlungen, deren Objekte keinen Schatten werfen (Ligne claire: Licht nur als harte, geometrische Form;
+                                         # Baumkronen zerlegten die Fassade sonst in Flecken). Büsche (Umgebung) werfen Schatten.
 SONNE_AUS_MATERIAL = {"glas"}            # Glas lässt die Sonne durch (Sonnen-Durchgang ohne Scheiben)
 
 
@@ -234,13 +265,17 @@ def hex_lin(s):
 
 
 def gelaende_z(x, y):
-    """Höhe des Geländes (§5): Terrasse eben, Hang 6 % nach Südost ab y −40, Waldhang 10 % ab y 35."""
-    if y >= WALD_Y: return 0.1 * (y - WALD_Y)
-    if y >= A["y1"]: return 0.0
-    if y >= 0: return -SOCKEL * (1 - y / A["y1"])          # Übergang unter dem Haus (unsichtbar)
-    if y >= TERRASSE_Y: return -SOCKEL
-    if y >= TAL_Y: return -SOCKEL - 0.06 * (TERRASSE_Y - y)
-    return -SOCKEL - 0.06 * (TERRASSE_Y - TAL_Y)
+    """Höhe des Geländes (§5): Terrasse eben, Hang 6 % nach Südost ab y −40, Waldhang 10 % ab y 35; östlich der
+    Klinikstraße (x > 115) fällt alles mit 8 % in die Talbiegung nach Nordost (dort liegt die Unterstadt)."""
+    if y >= WALD_STEIL[0]: z = 0.1 * (WALD_STEIL[0] - WALD_Y) + WALD_STEIL[1] * (y - WALD_STEIL[0])
+    elif y >= WALD_Y: z = 0.1 * (y - WALD_Y)
+    elif y >= A["y1"]: z = 0.0
+    elif y >= 0: z = -SOCKEL * (1 - y / A["y1"])          # Übergang unter dem Haus (unsichtbar)
+    elif y >= TERRASSE_Y: z = -SOCKEL
+    elif y >= TAL_Y: z = -SOCKEL - 0.06 * (TERRASSE_Y - y)
+    else: z = -SOCKEL - 0.06 * (TERRASSE_Y - TAL_Y)
+    if x > OSTHANG_X: z -= min(0.08 * (x - OSTHANG_X), 25.0)
+    return z
 
 
 # ======================================================================================================
@@ -282,15 +317,63 @@ def bauen():
         wz.markiere(o, "hinten")
         return einordnen(o, samm)
 
-    def loch(o, x0, y0, x1, y1, z0, z1):
-        wz.loch(o, (x1 - x0, y1 - y0, z1 - z0), ((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
+    def wandnetz(name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m, samm):
+        """Wand mit Öffnungen als EIN sauberes Netz ohne Boolesche Operation: Vorder- und Rückseite sind ein Raster aus
+        Zellen (Spalten an den Öffnungsrändern, Zeilen an Sturz und Brüstung), dazu Laibungen, Stirn-, Ober- und
+        Unterseiten — alles ohne T-Stöße. Boolesch gelochte n-Ecke ließen Freestyle die Verdeckung verlieren (Kanten
+        dahinter schimmerten als lose Striche durch). `achse` 'y': Wand läuft in x (a0…a1), Dicke in y (w0…w1); 'x' umgekehrt.
+        Öffnungen: (a0, a1, z_unten, z_oben) in Wandkoordinaten, werden auf die Wand beschnitten."""
+        oeff = [(max(a0, o[0]), min(a1, o[1]), max(z0, o[2]), min(z1, o[3])) for o in oeffnungen]
+        oeff = [o for o in oeff if o[1] - o[0] > 1e-6 and o[3] - o[2] > 1e-6]
+        us = sorted({a0, a1, *[c for o in oeff for c in o[:2]]}); vs = sorted({z0, z1, *[c for o in oeff for c in o[2:]]})
+        ecken = {}; verts = []; faces = []
+
+        def P(u, w, v):
+            key = (round(u, 5), w, round(v, 5))
+            if key not in ecken:
+                ecken[key] = len(verts); ww = w0 if w == 0 else w1
+                verts.append((u, ww, v) if achse == "y" else (ww, u, v))
+            return ecken[key]
+
+        def offen(u0, u1, v0, v1):
+            return any(u0 >= o[0] - 1e-6 and u1 <= o[1] + 1e-6 and v0 >= o[2] - 1e-6 and v1 <= o[3] + 1e-6 for o in oeff)
+
+        for i in range(len(us) - 1):
+            u0, u1 = us[i], us[i + 1]
+            for j in range(len(vs) - 1):
+                v0, v1 = vs[j], vs[j + 1]
+                if offen(u0, u1, v0, v1): continue
+                faces.append((P(u0, 0, v0), P(u1, 0, v0), P(u1, 0, v1), P(u0, 0, v1)))
+                faces.append((P(u0, 1, v0), P(u0, 1, v1), P(u1, 1, v1), P(u1, 1, v0)))
+            if not offen(u0, u1, z1 - 1e-6, z1): faces.append((P(u0, 0, z1), P(u1, 0, z1), P(u1, 1, z1), P(u0, 1, z1)))   # Oberseite
+            if not offen(u0, u1, z0, z0 + 1e-6): faces.append((P(u0, 0, z0), P(u0, 1, z0), P(u1, 1, z0), P(u1, 0, z0)))   # Unterseite
+        for j in range(len(vs) - 1):                                                                                 # Stirnseiten
+            v0, v1 = vs[j], vs[j + 1]
+            if not offen(a0, a0 + 1e-6, v0, v1): faces.append((P(a0, 0, v0), P(a0, 0, v1), P(a0, 1, v1), P(a0, 1, v0)))
+            if not offen(a1 - 1e-6, a1, v0, v1): faces.append((P(a1, 0, v0), P(a1, 1, v0), P(a1, 1, v1), P(a1, 0, v1)))
+        for (f0, f1, zb, zt) in oeff:                                                                                # Laibungen
+            spalten = [u for u in us if f0 - 1e-6 <= u <= f1 + 1e-6]; zeilen = [v for v in vs if zb - 1e-6 <= v <= zt + 1e-6]
+            for k in range(len(spalten) - 1):
+                u0, u1 = spalten[k], spalten[k + 1]
+                if zb > z0 + 1e-6: faces.append((P(u0, 0, zb), P(u0, 1, zb), P(u1, 1, zb), P(u1, 0, zb)))               # Brüstung
+                if zt < z1 - 1e-6: faces.append((P(u0, 0, zt), P(u1, 0, zt), P(u1, 1, zt), P(u0, 1, zt)))               # Sturz
+            for k in range(len(zeilen) - 1):
+                v0, v1 = zeilen[k], zeilen[k + 1]
+                if f0 > a0 + 1e-6: faces.append((P(f0, 0, v0), P(f0, 1, v0), P(f0, 1, v1), P(f0, 0, v1)))               # Laibung links
+                if f1 < a1 - 1e-6: faces.append((P(f1, 0, v0), P(f1, 0, v1), P(f1, 1, v1), P(f1, 1, v0)))               # Laibung rechts
+        import bmesh
+        me = bpy.data.meshes.new(name); me.from_pydata(verts, [], faces)
+        bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:]); bm.to_mesh(me); bm.free(); me.update()
+        o = bpy.data.objects.new(name, me); o.data.materials.append(M[m]); sc.collection.objects.link(o)
+        wz.markiere(o, "hinten")
+        return einordnen(o, samm)
 
     # ---------------- Gelände ----------------
-    schritt, xa, xb, ya, yb = 5.0, -140.0, 220.0, -300.0, 140.0
+    schritt, xa, xb, ya, yb = 5.0, -140.0, 480.0, -300.0, 160.0
     nx, ny = int((xb - xa) / schritt) + 1, int((yb - ya) / schritt) + 1
     verts = [(xa + i * schritt, ya + j * schritt, gelaende_z(xa + i * schritt, ya + j * schritt)) for j in range(ny) for i in range(nx)]
     faces = [(j * nx + i, j * nx + i + 1, (j + 1) * nx + i + 1, (j + 1) * nx + i) for j in range(ny - 1) for i in range(nx - 1)]
-    netz("Gelaende", verts, faces, "rasen", "Gelaende")
+    netz("Gelaende", verts, faces, "wiese", "Gelaende")
 
     def band(name, punkte, breite, m, samm="Gelaende", hoch=0.03):
         """Weg/Straße als Streifen, der dem Gelände folgt (Höhe aus gelaende_z + hoch)."""
@@ -334,64 +417,162 @@ def bauen():
         x = 36 + i * 4
         if abs(x + 1.5 - tx) > 2.5: kiste(f"Zaun {i + 1}", x, ty - 0.03, x + 3.0, ty + 0.03, tz + 0.2, tz + 1.3, "holz", "Umgebung")
 
-    # ---------------- Bäume: Platzhalter (Kegel/Kugel auf Stamm) ----------------
-    def baum(name, x, y, r, art="laub", m="krone", samm="Baeume", hoehe=None):
-        z = gelaende_z(x, y)
-        h = hoehe or (r * 2.8 if art == "laub" else r * 3.2)       # Linde Ø 9 m ≈ 12,6 m hoch
-        einordnen(wz.zylinder(max(0.12, r * 0.06), h * 0.45, (x, y, z + h * 0.225), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
+    # ---------------- Bäume: Stamm mit Astansatz, Kronen aus überlappenden Kugeln, Nadelbäume in Etagen ----------------
+    def vereinen(teile, name):
+        """Mehrere Netze zu einem Objekt (eine Krone = ein Objekt; Freestyle zeichnet nur die sichtbare Silhouette)."""
+        bpy.ops.object.select_all(action='DESELECT')
+        for o in teile: o.select_set(True)
+        bpy.context.view_layer.objects.active = teile[0]; bpy.ops.object.join()
+        o = bpy.context.object; o.name = name
+        return o
+
+    def krone_kugeln(name, x, y, zc, r, dz_spanne, zr, n, m, flach=(0.78, 0.95)):
+        """n überlappende, verschieden große Kugeln um (x, y, zc), leicht gedrückt, plus eine Kugel als Wipfel."""
+        teile = []
+        for i in range(n):
+            rr = r * zr.uniform(0.45, 0.72); ang = zr.uniform(0, 2 * math.pi); d = (r - rr) * zr.uniform(0.35, 1.0)
+            k = wz.kugel(rr, (x + math.cos(ang) * d, y + math.sin(ang) * d, zc + zr.uniform(-dz_spanne, dz_spanne)), M[m], "hinten", name=name)
+            k.scale = (1, 1, zr.uniform(*flach)); bpy.ops.object.transform_apply(scale=True); teile.append(k)
+        rw = r * 0.55
+        k = wz.kugel(rw, (x + zr.uniform(-0.2, 0.2) * r, y + zr.uniform(-0.2, 0.2) * r, zc + dz_spanne + rw * 0.35), M[m], "hinten", name=name)
+        k.scale = (1, 1, 0.85); bpy.ops.object.transform_apply(scale=True); teile.append(k)
+        return vereinen(teile, name)
+
+    def baum(name, x, y, r, art="laub", m="laub", samm="Baeume", hoehe=None, z=None):
+        """laub: Stamm sichtbar, zwei Astansätze, Krone aus 5–7 Kugeln. foehre: hoher Stamm, lichter Schirm aus drei
+        flachen Kugeln. fichte: vier gestapelte Kegel mit Lücken. Zufall je Baum aus dem Namen (reproduzierbar)."""
+        zr = random.Random(name); z = gelaende_z(x, y) if z is None else z
         if art == "laub":
-            kr = (h - h * 0.45) / 2                               # Krone füllt die obere Hälfte
-            k = wz.kugel(r, (x, y, z + h * 0.45 + kr), M[m], "hinten", name=name)
-            k.scale = (1, 1, kr / r)
-        else:
-            k = wz.kegel(r, 0.0, h * 0.75, (x, y, z + h * 0.25 + h * 0.375), M[m], "hinten", v=10, name=name)
-        einordnen(k, samm)
+            h = hoehe or r * 2.6; hs = h * 0.36; rs = max(0.12, r * 0.07)
+            stamm = wz.zylinder(rs, hs + 0.4, (x, y, z + (hs + 0.4) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm")
+            aeste = [stamm]
+            for j in range(2):                                     # zwei Äste schräg in die Krone
+                ang = zr.uniform(0, 2 * math.pi); neig = math.radians(zr.uniform(28, 42)); la = r * 0.55
+                dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
+                mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z + hs + math.cos(neig) * la / 2)
+                aeste.append(wz.zylinder(rs * 0.5, la, mitte, M["stamm"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
+            einordnen(vereinen(aeste, name + " Stamm"), samm)
+            zc = z + hs + (h - hs) * 0.5
+            einordnen(krone_kugeln(name, x, y, zc, r, (h - hs) * 0.22, zr, 5 + zr.randint(0, 2), m), samm)
+        elif art == "foehre":
+            h = hoehe or r * 3.4; hs = h * 0.62; rs = max(0.14, r * 0.08)
+            einordnen(wz.zylinder(rs, hs + 0.3, (x + zr.uniform(-0.3, 0.3), y, z + (hs + 0.3) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
+            einordnen(krone_kugeln(name, x, y, z + hs + (h - hs) * 0.45, r * 0.95, (h - hs) * 0.18, zr, 3, m, flach=(0.45, 0.6)), samm)
+        else:                                                      # fichte: Etagen
+            h = hoehe or r * 3.2; hs = h * 0.18; rs = max(0.12, r * 0.07)
+            einordnen(wz.zylinder(rs, h * 0.6, (x, y, z + h * 0.3), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
+            teile = []; etagen = 4; z0 = z + hs
+            for j in range(etagen):
+                rj = r * (1.0 - 0.2 * j) * zr.uniform(0.9, 1.1); hj = (h - hs) / etagen * 1.45
+                zj = z0 + (h - hs) / etagen * j
+                teile.append(wz.kegel(rj, rj * 0.1 if j < etagen - 1 else 0.0, hj, (x, y, zj + hj / 2), M[m], "hinten", v=9, name=name))
+            einordnen(vereinen(teile, name), samm)
+
+    def busch(name, x, y, r, m="laub", samm="Umgebung"):
+        zr = random.Random(name); z = gelaende_z(x, y)
+        einordnen(krone_kugeln(name, x, y, z + r * 0.55, r, r * 0.2, zr, 3 + zr.randint(0, 2), m, flach=(0.6, 0.8)), samm)
 
     for i, (x, y, r) in enumerate(LINDEN): baum(f"Linde {i + 1}", x, y, r)
     baum("Kastanie", *KASTANIE)
     for i, (x, y, r) in enumerate(PLATANEN): baum(f"Platane {i + 1}", x, y, r)
+    for i, (x, y, r) in enumerate(BUESCHE): busch(f"Busch {i + 1}", x, y, r)
     for i, (x, y) in enumerate(((38, 24), (54, 20))):
         kiste(f"Holzbank Garten {i + 1}", x - 0.9, y - 0.25, x + 0.9, y + 0.25, 0.0, 0.45, "holz", "Umgebung")
     for i, x in enumerate((26, 34)):                              # Bänke und Fahrradständer am Vorplatz
         kiste(f"Bank Vorplatz {i + 1}", x - 0.9, -8.0, x + 0.9, -7.5, -SOCKEL, -SOCKEL + 0.45, "holz", "Umgebung")
     kiste("Fahrradstaender", 21.0, -5.5, 24.0, -4.5, -SOCKEL, -SOCKEL + 0.8, "petrol", "Umgebung")
     zufall = random.Random(7)
-    # Wald (§5): ausgewachsene Buchen und Föhren 18–28 m hoch, drei Tiefenbänder den Hang hinauf (10 %), so dass sie
-    # hinter dem Haus (First 16,6) als Silhouette stehen; Petrol vorn, Mischton in der Mitte, Papier hinten
-    for band_i, (y0, y1, m, dichte) in enumerate(((38, 50, "wald_nah", 8.0), (55, 75, "wald_mitte", 10.0), (80, 110, "wald_fern", 12.0))):
-        for x in range(-140, 220, int(dichte)):
-            xx = x + zufall.uniform(-3, 3); yy = zufall.uniform(y0, y1)
-            nadel = zufall.random() < 0.45
-            baum(f"Wald {band_i + 1} {x}", xx, yy, zufall.uniform(4.0, 6.5), "nadel" if nadel else "laub", m, hoehe=zufall.uniform(18, 28))
-    for x in range(-60, -20, 8):                                  # Wald auch westlich (x < −20)
-        for y in range(-40, 38, 9):
-            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(4.0, 6.0), "nadel" if zufall.random() < 0.5 else "laub", "wald_nah", hoehe=zufall.uniform(16, 24))
+    # Wiesenflecken: hellere Ellipsen auf der Wiese (ohne Linie, ohne Schattierung), folgen dem Gelände
+    wf = WIESENFLECKEN; fx0, fy0, fx1, fy1 = wf["bereich"]
+    for i in range(wf["anzahl"]):
+        cx, cy = zufall.uniform(fx0, fx1), zufall.uniform(fy0, fy1); ra = zufall.uniform(*wf["radius"]); rb = ra * zufall.uniform(0.35, 0.7)
+        dreh = zufall.uniform(0, math.pi); n = 12
+        v = [(cx, cy, gelaende_z(cx, cy) + 0.015)]
+        for j in range(n):
+            t = 2 * math.pi * j / n; ex, ey = ra * math.cos(t), rb * math.sin(t)
+            px, py = cx + ex * math.cos(dreh) - ey * math.sin(dreh), cy + ex * math.sin(dreh) + ey * math.cos(dreh)
+            v.append((px, py, gelaende_z(px, py) + 0.015))
+        netz(f"Wiesenfleck {i + 1}", v, [(0, 1 + j, 1 + (j + 1) % n) for j in range(n)], "wiese_hell", "Gelaende")
+    # Wald (§5): nahes Band als dichte Gruppe in zwei Reihen (Laub, Föhren, Fichten gemischt), dahinter Silhouettenbänder
+    wn = WALD_NAH
+    for reihe, (y0, y1) in enumerate(wn["reihen"]):
+        x = wn["x0"] + reihe * wn["abstand"] / 2
+        while x < wn["x1"]:
+            xx = x + zufall.uniform(-1.5, 1.5); yy = zufall.uniform(y0, y1); w = zufall.random()
+            art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
+            baum(f"Wald {reihe + 1} {x:g}", xx, yy, zufall.uniform(3.5, 5.5), art, "wald_nah", hoehe=zufall.uniform(*wn["hoehe"]))
+            x += wn["abstand"]
+    ww = WALD_WEST
+    for x in range(int(ww["x0"]), int(ww["x1"]), int(ww["abstand"][0])):     # Wald westlich (x < −20), rahmt Render (a) links
+        for y in range(int(ww["y0"]), int(ww["y1"]), int(ww["abstand"][1])):
+            w = zufall.random(); art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
+            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(3.5, 5.5), art, "wald_nah", hoehe=zufall.uniform(*ww["hoehe"]))
 
-    # ---------------- Stadt im Tal: ferne Kulisse ----------------
-    zt = gelaende_z(0, TAL_Y - 10)
-    for i in range(40):
-        x = zufall.uniform(-120, 200); y = zufall.uniform(TAL_Y - 10, -290); b = zufall.uniform(10, 30); t = zufall.uniform(8, 20)
-        kiste(f"Stadt Block {i + 1}", x, y, x + b, y + t, zt, zt + zufall.uniform(6, 14), "stadt" if i % 3 else "stadt_sand", "Stadt")
-    for i, x in enumerate((20, 110)):                             # zwei Kirchtürme, einer mit Zwiebelhaube
-        kiste(f"Kirchturm {i + 1}", x, -250, x + 6, -244, zt, zt + 32, "stadt", "Stadt")
-        if i == 0: einordnen(wz.kegel(4.5, 0.0, 10, (x + 3, -247, zt + 37), M["ziegel"], "hinten", v=8, name="Kirchturm 1 Helm"), "Stadt")
-        else: einordnen(wz.kugel(4.0, (x + 3, -247, zt + 35), M["ziegel"], "hinten", name="Kirchturm 2 Zwiebel"), "Stadt")
-    for i, (x, y, r, h) in enumerate(((-110, -260, 70, 40), (190, -270, 80, 50))):  # Hügel links und rechts
-        o = einordnen(wz.kugel(r, (x, y, zt - r + h), M["wald_fern"], "hinten", name=f"Huegel {i + 1}"), "Stadt")
+    def waldband(name, y, x0, x1, m, hoehen):
+        """Silhouettenband: ein senkrechtes Netz bei y, Oberkante = Umriss überlappender Kronen und Wipfel."""
+        baeume = []; x = x0
+        while x < x1:
+            r = zufall.uniform(4.0, 7.0); baeume.append((x + zufall.uniform(-1, 1), r, zufall.uniform(*hoehen), zufall.random() < 0.4)); x += zufall.uniform(4.0, 7.0)
+        v, f = [], []; xs = [x0 + i for i in range(int(x1 - x0) + 1)]
+        for i, x in enumerate(xs):
+            basis = gelaende_z(x, y); top = 12.0
+            for (bx, r, h, nadel) in baeume:
+                d = abs(x - bx)
+                if nadel: top = max(top, h - d * (h * 0.5 / r)) if d < 2 * r else top
+                elif d < r: top = max(top, h - r * 0.9 + math.sqrt(r * r - d * d) * 0.9)
+            v.append((x, y, basis - 3.0)); v.append((x, y, basis + top))
+            if i: f.append((2 * i - 2, 2 * i, 2 * i + 1, 2 * i - 1))
+        return netz(name, v, f, m, "Baeume")
+
+    for i, (y, x0, x1, m, hoehen) in enumerate(WALDBAENDER): waldband(f"Waldband {i + 1}", y, x0, x1, m, hoehen)
+
+    # ---------------- Stadt im Tal: ferne Kulisse (Papier/Sand, ohne Linie), Hügel ----------------
+    def stadt(nr, st):
+        zr = random.Random(100 + nr)
+        for i in range(st["haeuser"]):
+            x = zr.uniform(st["x0"], st["x1"]); y = zr.uniform(st["y0"], st["y1"]); b = zr.uniform(8, 22); t = zr.uniform(7, 14)
+            if zr.random() < 0.5: b, t = t, b
+            zg = gelaende_z(x + b / 2, y + t / 2); h = zr.uniform(6, 11); m = "stadt" if i % 3 else "stadt_sand"
+            kiste(f"Stadt {nr} Haus {i + 1}", x, y, x + b, y + t, zg - 1.0, zg + h, m, "Stadt")
+            md = "stadt_dach"
+            if b >= t:                                             # Satteldach längs x
+                netz(f"Stadt {nr} Dach {i + 1}", [(x, y, zg + h), (x + b, y, zg + h), (x + b, y + t, zg + h), (x, y + t, zg + h), (x, y + t / 2, zg + h + t * 0.45), (x + b, y + t / 2, zg + h + t * 0.45)],
+                     [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4)], md, "Stadt")
+            else:
+                netz(f"Stadt {nr} Dach {i + 1}", [(x, y, zg + h), (x + b, y, zg + h), (x + b, y + t, zg + h), (x, y + t, zg + h), (x + b / 2, y, zg + h + b * 0.45), (x + b / 2, y + t, zg + h + b * 0.45)],
+                     [(3, 2, 5, 4), (1, 0, 4, 5), (0, 3, 4), (2, 1, 5)], md, "Stadt")
+        for j, (x, y, art) in enumerate(st["tuerme"]):            # Kirchtürme: einer mit Helm, einer mit Zwiebelhaube
+            zg = gelaende_z(x + 3, y + 3)
+            kiste(f"Stadt {nr} Kirchturm {j + 1}", x, y, x + 5, y + 5, zg - 1.0, zg + 24, "stadt_sand", "Stadt")
+            if art == "helm": einordnen(wz.kegel(3.8, 0.0, 11, (x + 2.5, y + 2.5, zg + 29.5), M["stadt_dach"], "hinten", v=8, name=f"Stadt {nr} Helm"), "Stadt")
+            else:
+                einordnen(wz.kugel(3.4, (x + 2.5, y + 2.5, zg + 26.5), M["stadt_dach"], "hinten", name=f"Stadt {nr} Zwiebel"), "Stadt")
+                einordnen(wz.kegel(1.3, 0.0, 5, (x + 2.5, y + 2.5, zg + 31.5), M["stadt_dach"], "hinten", v=8, name=f"Stadt {nr} Zwiebel Spitze"), "Stadt")
+
+    for nr, st in enumerate(STADT): stadt(nr + 1, st)
+    for i, (x, y, r, h) in enumerate(HUEGEL):                      # Hügel: Kugeln, nur die oberen h Meter ragen heraus
+        zg = gelaende_z(x, y)
+        einordnen(wz.kugel(r, (x, y, zg - r + h), M["wald_fern"], "hinten", name=f"Huegel {i + 1}"), "Stadt")
 
     # ---------------- Sockel und Decken ----------------
     kiste("Sockel A", A["x0"], A["y0"], A["x1"], A["y1"], -SOCKEL, 0.0, "sockel", "Trakt A EG")
     kiste("Sockel Risalit SE", *RISALIT_SE, -SOCKEL, 0.0, "sockel", "Trakt A EG")
+    kiste("Sockel Eckrisalit", *ECKRISALIT, -SOCKEL, 0.0, "sockel", "Trakt A EG")
     kiste("Sockel Risalit NW", *RISALIT_NW, -SOCKEL, 0.0, "sockel", "Trakt A EG")
     kiste("Sockel N", N["x0"], N["y0"], N["x1"], N["y1"], -SOCKEL, 0.0, "sockel", "Trakt N EG")
 
-    def decke(name, x0, y0, x1, y1, z_unten, samm):
-        kiste(name, x0, y0, x1, y1, z_unten, z_unten + (GESCHOSS - RAUMHOEHE["A" if "A" in samm else "N"]), "decke", samm)
+    E = ECKRISALIT; tan_d = math.tan(math.radians(DACH["neigung"]))
+    eck_oben = DACH["traufe"] + E[1] * tan_d - 0.1                 # Oberkante von Wand und Decke des Eckrisalits im 2. OG: unter der verlängerten Dachfläche
+
+    def decke(name, x0, y0, x1, y1, z_unten, samm, oben=None):
+        z_oben = z_unten + (GESCHOSS - RAUMHOEHE["A" if "A" in samm else "N"])
+        kiste(name, x0, y0, x1, y1, z_unten, min(z_oben, oben) if oben else z_oben, "decke", samm)
 
     for g, z in GESCHOSSE.items():
         samm = f"Trakt A {g}"
         decke(f"Decke A {g}", A["x0"], A["y0"], A["x1"], A["y1"], z + RAUMHOEHE["A"], samm)
         decke(f"Decke Risalit SE {g}", *RISALIT_SE, z + RAUMHOEHE["A"], samm)
+        decke(f"Decke Eckrisalit {g}", *ECKRISALIT, z + RAUMHOEHE["A"], samm, oben=eck_oben)
         decke(f"Decke Risalit NW {g}", *RISALIT_NW, z + RAUMHOEHE["A"], samm)
         if g != "2OG":
             decke(f"Decke N {g}", N["x0"], N["y0"], N["x1"], N["y1"], z + RAUMHOEHE["N"], f"Trakt N {g}")
@@ -402,32 +583,38 @@ def bauen():
         aus = []
         for g, z in GESCHOSSE.items():
             for k in range(1, ACHSEN + 1):
-                xm = ACHSE * k - 1.8; x0, x1 = xm - FENSTER["b"] / 2, xm + FENSTER["b"] / 2
+                xm = ACHSE * k - 1.8
                 z0, z1 = z + FENSTER["bruestung"], z + FENSTER["bruestung"] + FENSTER["h"]
+                if k in FENSTERPAARE:                                  # gekoppeltes Fenster: zwei Flügel um einen Pfosten
+                    oeffnungen = [(xm - PAAR["pfosten"] / 2 - PAAR["b"], xm - PAAR["pfosten"] / 2), (xm + PAAR["pfosten"] / 2, xm + PAAR["pfosten"] / 2 + PAAR["b"])]
+                else: oeffnungen = [(xm - FENSTER["b"] / 2, xm + FENSTER["b"] / 2)]
                 im_risalit = RISALIT_SE[0] <= xm <= RISALIT_SE[2]
-                if g == "EG" and im_risalit: pass                       # Portal und hohe Fenster (SONDERFENSTER)
-                else: aus.append((g, "y", RISALIT_SE[1] if im_risalit else A["y0"], x0, x1, z0, z1))
-                if k not in BLIND_NW and not (RISALIT_NW[0] <= xm <= RISALIT_NW[2]):
-                    aus.append((g, "y", A["y1"], x0, x1, z0, z1))
+                im_eck = ECKRISALIT[0] <= xm <= ECKRISALIT[2]
+                lage_se = RISALIT_SE[1] if im_risalit else (ECKRISALIT[1] if im_eck else A["y0"])
+                for (x0, x1) in oeffnungen:
+                    if g == "EG" and im_risalit: pass                   # Portal und hohe Fenster (SONDERFENSTER)
+                    else: aus.append((g, "y", lage_se, x0, x1, z0, z1))
+                    if k not in BLIND_NW and not (RISALIT_NW[0] <= xm <= RISALIT_NW[2]):
+                        aus.append((g, "y", A["y1"], x0, x1, z0, z1))
         return aus
 
     FENSTER_ALLE = [("A", *f, "glas") for f in achsfenster()] + SONDERFENSTER + \
         [("A", "EG", "y", -3, PORTAL["x0"], PORTAL["x1"], 0.0, PORTAL["h"], "portal")]
 
-    def aussenwand(trakt, g, achse, lage, a0, a1, innen_seite):
+    def aussenwand(trakt, g, achse, lage, a0, a1, innen_seite, oben=None):
         """Eine Außenwand (Wandachse 'x' oder 'y' bei `lage`, von a0 bis a1, ein Geschoss hoch), Öffnungen nach
-        FENSTER_ALLE. `innen_seite` = +1, wenn der Raum auf der Plus-Seite der Wand liegt."""
+        FENSTER_ALLE. `innen_seite` = +1, wenn der Raum auf der Plus-Seite der Wand liegt. `oben`: Oberkante statt
+        Geschossdecke (Eckrisalit unter der verlängerten Dachfläche)."""
         z = GESCHOSSE[g]; d = A["aussen"] if trakt == "A" else N["aussen"]
         w0, w1 = (lage, lage + d) if innen_seite > 0 else (lage - d, lage)
         name = f"Aussenwand {trakt} {g} {achse}{lage:g} {a0:g}-{a1:g}"
-        o = kiste(name, *((a0, w0, a1, w1) if achse == "y" else (w0, a0, w1, a1)), z, z + GESCHOSS, "putz", f"Trakt {trakt} {g}")
+        oeffnungen = []
         for (t, gg, ac, la, f0, f1, z0, z1, art) in FENSTER_ALLE:
             if t != trakt or gg != g or ac != achse or abs(la - lage) > 1e-6: continue
             if f1 <= a0 or f0 >= a1: continue
-            if achse == "y": loch(o, f0, w0 - 0.1, f1, w1 + 0.1, z0, z1)
-            else: loch(o, w0 - 0.1, f0, w1 + 0.1, f1, z0, z1)
+            oeffnungen.append((f0, f1, z0, z1))
             scheibe(trakt, g, achse, lage, f0, f1, z0, z1, art, innen_seite)
-        return o
+        return wandnetz(name, achse, w0, w1, a0, a1, z, oben or z + GESCHOSS, oeffnungen, "putz", f"Trakt {trakt} {g}")
 
     def scheibe(trakt, g, achse, lage, f0, f1, z0, z1, art, innen_seite):
         """Rahmen (Petrol) und Scheibe (Glas) in der Laibung, 0,3 m hinter der Außenflucht."""
@@ -444,14 +631,17 @@ def bauen():
             for zz in (z0, z1 - 0.08): kiste("Rahmen", lage + tiefe - 0.05, f0, lage + tiefe + 0.05, f1, zz, zz + 0.08, "rahmen", samm)
 
     for g in GESCHOSSE:
-        # Trakt A: SE-Front mit Risalit, NW-Front mit Treppenhausrisalit, Stirnwände x 0 und x 61,2
-        aussenwand("A", g, "y", A["y0"], A["x0"], RISALIT_SE[0], +1); aussenwand("A", g, "y", A["y0"], RISALIT_SE[2], A["x1"], +1)
+        # Trakt A: SE-Front mit Eckrisalit (West) und Mittelrisalit, NW-Front mit Treppenhausrisalit, Stirnwände x 0 und x 61,2
+        aussenwand("A", g, "y", E[1], E[0], E[2], +1, oben=eck_oben if g == "2OG" else None)
+        kiste(f"Eckrisalit Ruecksprung {g}", E[2] - A["aussen"], E[1] + A["aussen"], E[2], E[3], GESCHOSSE[g], GESCHOSSE[g] + GESCHOSS, "putz", f"Trakt A {g}")
+        aussenwand("A", g, "y", A["y0"], E[2], RISALIT_SE[0], +1); aussenwand("A", g, "y", A["y0"], RISALIT_SE[2], A["x1"], +1)
         aussenwand("A", g, "y", RISALIT_SE[1], RISALIT_SE[0], RISALIT_SE[2], +1)
         aussenwand("A", g, "x", RISALIT_SE[0], RISALIT_SE[1], A["y0"], +1); aussenwand("A", g, "x", RISALIT_SE[2], RISALIT_SE[1], A["y0"], -1)
         aussenwand("A", g, "y", A["y1"], A["x0"], RISALIT_NW[0], -1); aussenwand("A", g, "y", A["y1"], RISALIT_NW[2], A["x1"], -1)
         aussenwand("A", g, "y", RISALIT_NW[3], RISALIT_NW[0], RISALIT_NW[2], -1)
         aussenwand("A", g, "x", RISALIT_NW[0], A["y1"], RISALIT_NW[3], +1); aussenwand("A", g, "x", RISALIT_NW[2], A["y1"], RISALIT_NW[3], -1)
-        aussenwand("A", g, "x", A["x0"], A["y0"], A["y1"], +1)
+        aussenwand("A", g, "x", A["x0"], E[1], A["y0"], +1, oben=eck_oben if g == "2OG" else None)   # Stirnwand: Stück im Eckrisalit …
+        aussenwand("A", g, "x", A["x0"], A["y0"], A["y1"], +1)                                          # … und Hauptteil
         if g == "2OG": aussenwand("A", g, "x", A["x1"], A["y0"], A["y1"], -1)       # Stirnwand über dem Neubau frei
         else:
             aussenwand("N", g, "y", N["y0"], N["x0"], N["x1"], +1); aussenwand("N", g, "y", N["y1"], N["x0"], N["x1"], -1)
@@ -476,6 +666,12 @@ def bauen():
     netz("Walmdach", [(A["x0"] - u, A["y0"] - u, ze), (A["x1"] + u, A["y0"] - u, ze), (A["x1"] + u, A["y1"] + u, ze), (A["x0"] - u, A["y1"] + u, ze),
                       (fx0, DACH["first_y"], zf), (fx1, DACH["first_y"], zf)],
          [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4), (3, 2, 1, 0)], "ziegel", "Trakt A Dach")
+    # Eckrisalit: die SE-Dachfläche läuft über ihm 0,5 m weiter hinaus (gleiche Neigung), als flaches Prisma mit Unterseite
+    ex0, ex1, ey0, ey1 = E[0] - u, E[2] + u, E[1] - u, A["y0"] - u
+    ez0 = ze + (ey0 - ey1) * tan
+    netz("Dach Eckrisalit", [(ex0, ey0, ez0), (ex1, ey0, ez0), (ex1, ey1, ze), (ex0, ey1, ze),
+                              (ex0, ey0, ez0 - 0.2), (ex1, ey0, ez0 - 0.2), (ex1, ey1, ze - 0.2), (ex0, ey1, ze - 0.2)],
+         [(0, 1, 2, 3), (7, 6, 5, 4), (0, 4, 5, 1), (3, 2, 6, 7), (0, 3, 7, 4), (1, 5, 6, 2)], "ziegel", "Trakt A Dach")
     # Quergiebel: Sattel über dem Risalit, First z 16,6 von y −3,6 bis zum Hauptfirst
     hx = (RISALIT_SE[2] - RISALIT_SE[0]) / 2 + u; gy0 = RISALIT_SE[1] - u; gy1 = DACH["first_y"]
     netz("Quergiebel", [(xm - hx, gy0, gz1 - u * tan), (xm + hx, gy0, gz1 - u * tan), (xm, gy0, zf), (xm - hx, gy1, gz1 - u * tan), (xm + hx, gy1, gz1 - u * tan), (xm, gy1, zf)],
@@ -498,8 +694,7 @@ def bauen():
         kiste(f"Bank Dachgarten {i + 1}", x - 0.9, y - 0.25, x + 0.9, y + 0.25, zn, zn + 0.45, "holz", "Trakt N Dach")
     for i, (x, y) in enumerate(((68, 2), (82, 10))):
         kiste(f"Kuebel {i + 1}", x - 0.5, y - 0.5, x + 0.5, y + 0.5, zn, zn + 0.6, "beton", "Trakt N Dach")
-        einordnen(wz.zylinder(0.08, 1.6, (x, y, zn + 1.4), M["stamm"], "hinten", v=8, name=f"Felsenbirne {i + 1} Stamm"), "Trakt N Dach")
-        einordnen(wz.kugel(1.3, (x, y, zn + 3.0), M["krone"], "hinten", name=f"Felsenbirne {i + 1}"), "Trakt N Dach")
+        baum(f"Felsenbirne {i + 1}", x, y, 1.3, "laub", "laub", "Trakt N Dach", hoehe=3.8, z=zn + 0.6)
     for i, x in enumerate([N["x0"] + 0.4 + 0.6 * j for j in range(int((N["x1"] - N["x0"] - 0.8) / 0.6) + 1)]):   # Lamellen SE, 1. OG
         kiste(f"Lamelle SE {i + 1}", x, N["y0"] - 0.32, x + 0.1, N["y0"] - 0.2, GESCHOSS + 0.3, zn - 0.3, "lamelle", "Trakt N 1OG")
     for i, y in enumerate([AUFNAHME_GLAS["y0"] + 0.3 + 0.6 * j for j in range(16)]):                          # Lamellen NE vor der Glasfront
@@ -555,14 +750,13 @@ def bauen():
                 im_n = (achse == "y" and a0 >= N["x0"] - 1e-6) or (achse == "x" and lage > N["x0"] + 1e-6)
                 hoch = RAUMHOEHE["N" if im_n else "A"]; samm = f"Trakt {'N' if im_n else 'A'} {g}"
                 name = f"Wand {g} {achse}{lage:g} {a0:g}-{a1:g}"
-                if achse == "y": o = kiste(name, a0, lage - d / 2, a1, lage + d / 2, z, z + hoch, "wand", samm)
-                else: o = kiste(name, lage - d / 2, a0, lage + d / 2, a1, z, z + hoch, "wand", samm)
+                oeffnungen = []
                 for (mitte, breite, art, raum) in tueren.get((achse, lage), []):
                     if art == "offen" or mitte - breite / 2 < a0 - 1e-6 or mitte + breite / 2 > a1 + 1e-6: continue
                     th = TUER["h"] if breite < 2.5 else PORTAL["h"]
-                    if achse == "y": loch(o, mitte - breite / 2, lage - 1, mitte + breite / 2, lage + 1, z - 0.02, z + th)
-                    else: loch(o, lage - 1, mitte - breite / 2, lage + 1, mitte + breite / 2, z - 0.02, z + th)
+                    oeffnungen.append((mitte - breite / 2, mitte + breite / 2, z - 0.02, z + th))
                     tuerblatt(g, achse, lage, mitte, breite, art, raum, samm, z, th)
+                wandnetz(name, achse, lage - d / 2, lage + d / 2, a0, a1, z, z + hoch, oeffnungen, "wand", samm)
 
     def tuerblatt(g, achse, lage, mitte, breite, art, raum, samm, z, th):
         m = "glas" if art == "glas" else "tuer"
@@ -593,18 +787,19 @@ def bauen():
 
     # ---------------- Grobe Klötze im Probe-Flur (1. OG) und Sockelband ----------------
     z1 = GESCHOSSE["1OG"]
-    kiste("Tresen Stuetzpunkt 1OG", 26.6, 6.3, 30.3, 7.0, z1, z1 + 1.05, "holz", "Moebel Flur 1OG")   # beginnt 1,4 m hinter der Öffnungskante: am Bildrand, nicht angeschnitten
+    kiste("Tresen Stuetzpunkt 1OG", 28.3, 6.3, 30.3, 6.95, z1, z1 + 1.05, "holz", "Moebel Flur 1OG")   # 3,1 m hinter der Öffnungskante, 5 m vor Kamera (b): bei 70–80 % der Bildbreite, nicht angeschnitten
     kiste("Pflegewagen 1OG", 44.0, 9.2, 44.7, 9.8, z1, z1 + 0.95, "petrol", "Moebel Flur 1OG")
     kiste("Sitzbank Flur 1OG", 48.0, 9.5, 50.0, 9.95, z1 + 0.42, z1 + 0.47, "holz", "Moebel Flur 1OG")
     kiste("Sitzbank Flur 1OG Fuss", 48.1, 9.6, 49.9, 9.9, z1, z1 + 0.42, "petrol", "Moebel Flur 1OG")
     for i, (x, y) in enumerate(((33.0, 8.2), (52.0, 9.0))):          # Silhouetten: Figur als Kapsel 1,7 m
         einordnen(wz.zylinder(0.22, 1.45, (x, y, z1 + 0.725), M["figur"], "hinten", v=12, name=f"Silhouette {i + 1}"), "Moebel Flur 1OG")
         einordnen(wz.kugel(0.12, (x, y, z1 + 1.58), M["figur"], "hinten", name=f"Silhouette {i + 1} Kopf"), "Moebel Flur 1OG")
-    for (y, s) in ((FLUR[0], +1), (FLUR[1], -1)):                     # Sockel Mint 1,1 m an den Flurwänden
-        o = kiste(f"Sockel Flur 1OG y{y:g}", A["x0"] + 0.5, y + s * (A["innen"] / 2 + 0.004), A["x1"] - 0.5, y + s * (A["innen"] / 2 + 0.012), z1, z1 + 1.1, "paneel", "Moebel Flur 1OG")
-        for (name, x0, y0, x1, y1, boden, tl) in RAEUME["1OG"]:
-            for (achse, lage, mitte, breite, art) in tl:
-                if achse == "y" and abs(lage - y) < 1e-6: loch(o, mitte - breite / 2 - 0.1, y - 1, mitte + breite / 2 + 0.1, y + 1, z1 - 0.1, z1 + 1.2)
+    for (y, s) in ((FLUR[0], +1), (FLUR[1], -1)):                     # Sockel Mint 1,1 m an den Flurwänden, an den Türen unterbrochen
+        oeffnungen = [(mitte - breite / 2 - 0.1, mitte + breite / 2 + 0.1, z1 - 0.1, z1 + 1.2)
+                      for (name, x0, y0, x1, y1, boden, tl) in RAEUME["1OG"] for (achse, lage, mitte, breite, art) in tl
+                      if achse == "y" and abs(lage - y) < 1e-6]
+        w = sorted((y + s * (A["innen"] / 2 + 0.004), y + s * (A["innen"] / 2 + 0.012)))
+        wandnetz(f"Sockel Flur 1OG y{y:g}", "y", w[0], w[1], A["x0"] + 0.5, A["x1"] - 0.5, z1, z1 + 1.1, oeffnungen, "paneel", "Moebel Flur 1OG")
 
     # ---------------- Himmel (Bänder, werden je Kamera ausgerichtet) und Sonne ----------------
     bpy.ops.object.light_add(type='SUN'); sonne = bpy.context.object; sonne.name = "Sonne"
@@ -742,11 +937,23 @@ def durchgang(kamera_name, art, ortho=None):
         welt(hex_lin(k["himmel"][0])); sichtbar(); proben = PROBEN["flat"]
     elif art == "lines":
         emission_ueberall(lambda n: (1, 1, 1)); welt((1, 1, 1)); sichtbar(OHNE_LINIE)
-        if not ortho:                                   # ganz hinter der Kamera: Freestyle zeichnet sonst lose Striche (README)
+        if not ortho and k.get("linien_nur"):           # Innenkameras: alles außerhalb der genannten Sammlungen aus dem Linien-Durchgang nehmen
+            for c in bpy.data.collections:
+                if c.name not in k["linien_nur"]: c.hide_render = True
+        if not ortho:                                   # hinter der Kamera: Freestyle zeichnet sonst lose Striche (README)
+            import bmesh
             kam = sc.camera; blick = kam.matrix_world.to_quaternion() @ Vector((0, 0, -1)); ko = kam.matrix_world.translation
+            ebene = ko + blick * 0.45                   # Schnittebene knapp vor der Kamera (clip_start 0,3); Schnittkanten liegen außerhalb des Bildes
             for o in bpy.data.objects:
-                if o.type == 'MESH' and not o.hide_render and all((o.matrix_world @ Vector(v) - ko).dot(blick) < -0.3 for v in o.bound_box):
-                    o.hide_render = True
+                if o.type != 'MESH' or o.hide_render: continue
+                tiefen = [(o.matrix_world @ Vector(v) - ebene).dot(blick) for v in o.bound_box]
+                if max(tiefen) < 0: o.hide_render = True                       # ganz hinter der Kamera: weg
+                elif min(tiefen) < 0:                                          # reicht hinter die Kamera (Flurwände, Decke, Sockelband): kappen
+                    bm = bmesh.new(); bm.from_mesh(o.data)
+                    inv = o.matrix_world.inverted()
+                    co_l = inv @ ebene; no_l = (inv.to_3x3() @ blick).normalized()
+                    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], dist=1e-4, plane_co=co_l, plane_no=no_l, clear_inner=True)
+                    bm.to_mesh(o.data); bm.free(); o.data.update()
         sc.render.resolution_x, sc.render.resolution_y = aufl[0] * UEBER, aufl[1] * UEBER
         sc.render.use_freestyle = True; sc.render.line_thickness_mode = 'ABSOLUTE'
         vl = sc.view_layers[0]; vl.use_freestyle = True
@@ -765,6 +972,8 @@ def durchgang(kamera_name, art, ortho=None):
             if m.name in OHNE_SCHATTIERUNG:        # Himmel und Fernes gelten als beleuchtet (kein Schatten im Komposit)
                 b.inputs["Emission Color"].default_value = (1, 1, 1, 1); b.inputs["Emission Strength"].default_value = 1.0
         welt((0, 0, 0), 0.0); sc.cycles.max_bounces = 0; sichtbar(SONNE_AUS_MATERIAL); proben = PROBEN["sun"]
+        for o in bpy.data.objects:                 # Bäume werfen keinen Schatten (OHNE_SCHATTEN), bleiben aber selbst besonnt
+            if o.type == 'MESH' and any(c.name in OHNE_SCHATTEN for c in o.users_collection): o.visible_shadow = False
     else:
         raise SystemExit("unbekannter Durchgang " + art)
     sc.cycles.samples = proben; sc.cycles.use_denoising = art == "sun"
