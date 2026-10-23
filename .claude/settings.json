@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/haken/texte_pruefen.py\"",
+            "timeout": 20,
+            "statusMessage": "Texte prüfen"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/tools/haken/stand_pruefen.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
