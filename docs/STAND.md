@@ -1,8 +1,20 @@
-# Stand und Übergabe — 19.10.2026
+# Stand und Übergabe — 23.10.2026
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
+
+## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
+
+- Außengrün in ART_BIBLE §2 (Wiese `#ACB98B`, Laub `#6F8A62`, nur außen); Bäume aus mehreren Kugeln, Föhren als Schirm,
+  Fichten in Etagen; Wald vorn Laub, Mitte Petrol, hinten Papier; Bäume ohne Schlagschatten (Frage 3).
+- Fassade: Fensterpaare an sechs Achsen, leichter Eckrisalit West; Linden bei x 15 / 46 (bei x 18 verdeckte die Krone
+  noch das Portal), Kamera (a) unverändert; Stadt-Kulisse in der Talbiegung rechts neben Trakt N; Büsche, Wiesenflecken,
+  Parkweg im Vordergrund.
+- Flur: Wände mit Öffnungen als Rasternetz statt Boolean (die losen Striche kamen daher), Linien nur aus den Sammlungen
+  der Kamera, Tresen nach innen versetzt, Kamera (b) x 23,3. Flur bleibt im Schatten, Lamellen bleiben.
+- Probe-Renders und Grundrisse in `docs/haus/` neu. Einzelheiten und drei offene Fragen: KRANKENHAUS „Überarbeitung nach
+  Rückmeldung (23.10.2026)".
 
 ## Fertig (19.10.2026): Haus-Konzept und Blockout „Haus Föhrenhang"
 
@@ -186,30 +198,24 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag (ab 19.10.2026): Blockout nach Rückmeldung verbessern
+## Nächster Auftrag (ab 23.10.2026): Fragen zum Blockout klären, dann Aufnahme B1 im Haus
 
-Antworten des Nutzers stehen in KRANKENHAUS „Antworten des Nutzers zum Blockout (19.10.2026)": eigener Außen-Grünton,
-Flur bleibt im Schatten, Fassade auflockern, Linden nach außen, Lamellen bleiben. Dazu Mängel beheben: Stadt-Kulisse im
-Tal fehlt, leerer Vordergrund (Wiese, Weg, Büsche), lose Freestyle-Striche an der Flurdecke, Bäume als Lutscher
-(Kronen aus mehreren Kugeln oder Föhren mit Etagen), Tresen am rechten Bildrand im Flur. Danach (nach Freigabe):
-Aufnahme (B1, REDESIGN_FALL1 §8.3) als erster Raum im Haus, dann Lehrsaal und Monitorzimmer übernehmen, Flug-Renders.
+Zuerst die drei offenen Fragen in KRANKENHAUS „Überarbeitung nach Rückmeldung (23.10.2026)" mit dem Nutzer klären
+(Stadt breiter ins Bild?, Eckrisalit kräftiger oder beidseitig?, Bäume ohne Schlagschatten als Regel in ART_BIBLE §3?)
+und kleine Nacharbeiten am Blockout machen. Nach Freigabe: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
+dann Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen, danach Lehrsaal und
+Monitorzimmer übernehmen, Flug-Renders.
 
 ### Startnachricht
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
 (.venv mit bpy 5.2.2 und Python 3.13, Cycles auf Metal). Lies docs/STAND.md (Abschnitt „Nächster Auftrag"),
-dann docs/KRANKENHAUS.md ab „Konzept (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
-gen/blender/README.md Abschnitt „Haus-Blockout". Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
-Auftrag: den Blockout (gen/blender/haus_blockout.py) nach meinen Antworten zum Blockout verbessern:
-1. eigener Außen-Grünton für Rasen und Bäume in ART_BIBLE §2 (nur außen, wie der Ziegel), Bäume schöner
-   (keine Lutscher: Laubkronen aus mehreren Kugeln, Föhren in Etagen);
-2. Fassade auflockern: Fensterpaare und/oder Erker an den Enden statt 17 gleicher Achsen;
-3. Linden nach außen rücken (etwa x 18 und x 43), Kamera der Außenansicht bleibt;
-4. Flur bleibt im Schatten, Lamellen am Neubau bleiben;
-5. Mängel: Stadt-Kulisse im Tal ergänzen, Vordergrund beleben (Wiese, Weg, Büsche), lose Tuschestriche an der
-   Flurdecke weg, Tresen nicht mehr am rechten Bildrand.
-Dann beide Probe-Renders neu (niedrige Qualität), selbst prüfen, Grundrisse nur neu, wenn sich etwas ändert.
+dann docs/KRANKENHAUS.md ab „Blockout (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
+gen/blender/README.md Abschnitt „Haus-Blockout", dazu docs/REDESIGN_FALL1.md §8.3.
+Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
+Auftrag: zuerst die drei offenen Fragen zum Blockout mit mir klären und umsetzen; nach meiner Freigabe Raumkameras
+(render <raum>) ergänzen und die Aufnahme B1 als ersten Raum im Haus ausbauen.
 3D als Subagent auf Fable in eigenem Worktree, Code und Koordination auf Opus. Commit nach jedem Teilschritt,
 pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
