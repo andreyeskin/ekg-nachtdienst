@@ -115,6 +115,13 @@ Kamera wird dort gekappt. Jeder Raum ist eine benannte Bodenplatte (`"EG Lehrsaa
 der Sammlung seines Trakts und Geschosses (`Trakt A 1OG` usw.), damit Kameras und Klickzonen später darauf zeigen können.
 Nur Kubatur, Proportion, Licht und Palette — kein Ausbau, Möbel nur als Klötze im Probe-Flur.
 
+Außenbild (a), zweite Überarbeitung (KRANKENHAUS.md): Eckrisalite beidseitig mit eigenem Walm (`ECKRISALITE`), warme Fenster
+(`WARME_FENSTER`, Material `fenster_warm` gilt im Komposit als beleuchtet), Parkweg-Ast mit Laternen, Hecken und Bank
+(`PARKWEG_WEST`, `LATERNEN`, `HECKEN`, `BAENKE_WEG`), Rettungswagen (`RTW`), Tal mit Fluss und Gegenhang (`OSTHANG`, `GEGENHANG`,
+`FLUSS`, `STADT`), Wolken je Kamera (`KAMERAS[...]["wolken"]`). Schatten: Sammlungen in `OHNE_SCHATTEN` werfen keinen
+Schlagschatten und bekommen Fußschatten (`fussschatten`, Materialien in `IMMER_SCHATTEN` sind im Sonnen-Durchgang schwarz).
+Das Geländenetz liegt in der Sammlung `Boden`: Freestyle nutzt es als Verdecker, zeichnet daraus aber keine Linien.
+
 ```bash
 python3 gen/blender/haus_blockout.py bauen              # ≈ 50 s -> bau/blender/haus/haus_blockout.blend + .glb
 python3 gen/blender/haus_blockout.py render aussen      # §9 (a), 06:40 -> docs/haus/probe_aussen.jpg (≈ 10–30 s)

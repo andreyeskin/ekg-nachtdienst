@@ -86,6 +86,11 @@ Monitorzimmer: `#DCE9EA` / `#E6EFEE`), Silhouetten draußen in Petrol und Papier
 3. **Kein angeschnittener dunkler Vordergrund** (Türrahmen, Ständer o. Ä. am Bildrand): der Raum
    bleibt offen und ruhig. Tiefe entsteht durch Dreiviertelansicht, Tonwerte und Parallaxe.
 4. **Drei Ebenen für Parallaxe**: Figur · Mittelgrund · Hintergrund.
+5. **Schatten außen** (Entscheid 23.10.2026): Gebäude, Vordächer und Fahrzeuge werfen echte, harte Schlagschatten.
+   Bäume, Büsche, Hecken, Laternen und Bänke werfen **keinen** Schlagschatten (Kronenschatten zerlegen Fassaden in
+   Flecken, bei tiefer Sonne liefen 20–30 m lange Streifen ohne sichtbaren Werfer durchs Bild). Sie bekommen stattdessen
+   einen **Fußschatten**: eine flache, harte Form in derselben Schattenstufe wie alle anderen Schatten, knapp am Fuß, in
+   Sonnenrichtung versetzt und gestreckt — so stehen sie auf dem Boden statt aufgeklebt zu wirken.
 
 ## 4. Tageszeiten — kein ewiger Regen
 

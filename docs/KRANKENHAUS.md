@@ -616,8 +616,8 @@ Grundriss ≈ 5 s.
 **Bekannte Mängel:**
 - Flur (b): kein Sonnenstreifen auf dem Flurboden (vom Nutzer so angenommen, 19.10.: Flur bleibt im Schatten). Bei 35°
   Sonnenhöhe und 7 m tiefen Zimmern endet das Licht durch die SE-Fenster (Brüstung 0,9) nach 4,3 m auf dem Zimmerboden.
-- Stadt-Kulisse in (a) ist zart (Papier/Sand/Linoleum im Dunst, nur zwischen den Platanen am rechten Rand); wer sie
-  deutlicher will, braucht eine Stufe dunklere Dächer oder eine Kamera, die weiter nach Osten schwenkt.
+- Stadt-Kulisse in (a) war zart (Papier/Sand/Linoleum im Dunst, nur zwischen den Platanen am rechten Rand) — behoben in der
+  zweiten Überarbeitung (23.10.2026): Unterstadt hinter der Straße, Oberstadt am Gegenhang, Dächer Holz, Platanen-Lücke.
 - Treppen als Klötze ohne Stufen; Lifte ohne Kabinen; Grundrisse ohne Raumnamen (Schrift wäre ohnehin §6).
 - Behoben (23.10.2026): lose Freestyle-Striche an der Flurdecke; Linden als „Lutscher"; Kronenschatten als Flecken auf der
   Fassade; Tresen am rechten Bildrand; Stadt außerhalb des Bildes; leerer Vordergrund.
@@ -650,10 +650,59 @@ Umgesetzt in `gen/blender/haus_blockout.py` (alles Datentabellen am Skriptanfang
 **Offene Fragen an den Nutzer (23.10.2026):**
 1. Stadt-Kulisse: reicht die zarte Unterstadt zwischen den Platanen, oder soll die Talbiegung breiter ins Bild (Kamera (a)
    bliebe; dann müssten Platanen und Trakt-N-Vordach weichen oder die Stadt näher an die Straße rücken, x ≈ 130)?
+   **Entscheid (23.10.2026, an Claude delegiert):** Talbiegung breiter und deutlicher, Stadt näher heran, Dächer eine Stufe
+   dunkler, Fluss als heller Streifen; Platanen weichen aus der Lücke, Kamera (a) bleibt.
 2. Eckrisalit: nur West (0,5 m) — so lassen, kräftiger (1,0 m, dann mit eigenem Walm) oder beidseitig auch im 2. OG über
    dem Neubau?
+   **Entscheid (23.10.2026, an Claude delegiert):** kräftiger (1,0 m, eigener Walm) und beidseitig — West voll, Ost im 2. OG
+   über dem Flachdach des Neubaus; Grundrisse ändern sich nur außen, Raumrechtecke bleiben.
 3. Bäume ohne Schlagschatten (nur Gebäude und Büsche werfen Schatten): als Regel für alle Außenbilder in ART_BIBLE §3
    festschreiben?
+   **Entscheid (23.10.2026, an Claude delegiert):** keine Kronenschatten auf Fassaden; Bäume, Büsche, Hecken, Laternen
+   bekommen am Boden einen flachen, harten Fußschatten in Sonnenrichtung. Regel in ART_BIBLE §3.5.
+
+### Zweite Überarbeitung (23.10.2026): Außenansicht (a) lebendig
+
+Umgesetzt in `gen/blender/haus_blockout.py` (neue Tabellen `ECKRISALITE`, `ECK_VOR`, `ECK_NEIGUNG`, `WARME_FENSTER`,
+`PARKWEG_WEST`, `LATERNEN`, `LATERNE`, `HECKEN`, `BAENKE_WEG`, `RTW`, `WALD_AUSLAUF`, `OSTHANG`, `GEGENHANG`, `FLUSS`,
+`WOLKEN`, `WALDBAND_AUSLAUF`, `IMMER_SCHATTEN`; geändert `PLATANEN`, `BUESCHE`, `STADT`, `HUEGEL`, `OHNE_SCHATTEN`):
+- **Geisterschatten** (lange dunkle Streifen auf der leeren Wiese): Ursache war die Sonne bei 7° — jeder Schatten ist 8× so lang
+  wie sein Werfer. Büsche 6/7/10, Hecke 2 und Laternen 4–6 standen rechts außerhalb des Blickfelds (±27°, bei −30° … −50°)
+  und warfen 10–28 m lange Schatten nach Nordwest ins Bild. Jetzt werfen Büsche, Hecken, Laternen, Bänke und Bäume keinen
+  Schlagschatten mehr (Sammlungen `Buesche`, `Laternen`, `Baeume` in `OHNE_SCHATTEN`), sondern einen Fußschatten
+  (`fussschatten`: Ellipse in Bodenfarbe, Material `schatten_wiese`/`schatten_pflaster`, im Sonnen-Durchgang schwarz, darum
+  Schattenstufe im Komposit; auf dem Vorplatz eigener Zuschnitt in Pflasterfarbe). Gebäude, Vordach und RTW werfen echte Schatten.
+- **Vordergrund**: Parkweg-Ast `PARKWEG_WEST` von der Hangwiese (Kamera steht darauf) in einer S-Kurve zum Vorplatz und
+  Portal, drei Laternen (Mast Petrol, Kopf warmes Glas, Kappe) an seiner NW-Seite plus eine am Ast zur Haltestelle; zwei
+  geschnittene Hecken (Kugelketten; Quader lasen sich als Betonmauer), eine Ruhebank mit Lehne; Büsche kleiner (r 0,5–1,0)
+  in vier Gruppen mit Bodenkontakt, alle ≥ 30 m vor der Kamera. Wegstreifen alle 2 m unterteilt (tauchten an der
+  Terrassenkante unter die Wiese).
+- **Eckrisalite** beidseitig, 1,0 m vor, Walm 42° (steiler als das Hauptdach, sonst deckungsgleiche Flächen): West alle
+  Geschosse, Ost nur 2. OG; der First (z ≈ 15,4) steht 1,1 m über dem Hauptwalm; Dachlinie symmetrisch um den Mittelrisalit.
+- **Tal**: Waldhang läuft östlich x 110 … 170 aus, Osthang 8 % bis Talboden −5 (statt −25), Fluss 110 m breit bei x ≈ 420,
+  Gegenhang ab x 440 mit Oberstadt (260 Häuser, Zwiebel- und Helmturm), drei Papier-Kämme dahinter; Unterstadt klein
+  (Häuser × 0,65) in der linken Hälfte der Lücke gleich hinter der Klinikstraße mit Helmturm. Platanen-Lücke y −30 … 10.
+  Die Stadt liegt um 06:40 noch im Talschatten (`IMMER_SCHATTEN`), Dächer Holz; der Fluss spiegelt den Himmel. Aus 3 m
+  Kamerahöhe verdeckt die Terrassenkante (x 115) alles unter −1,3°: der Osthang selbst bleibt unsichtbar, nur Dächer,
+  Fluss (ab ≈ 450 m, als dünne helle Linie) und der zugewandte Gegenhang erscheinen. Das Geländenetz liegt in der
+  Sammlung `Boden`, die Freestyle als Verdecker nutzt, aber nicht zeichnet (die Terrassenkante schnitt sonst als Linie quer
+  durch die Stadt).
+- **Leben**: acht warme Fenster auf der SE-Front (`WARME_FENSTER`, 1. OG Achsen 3/6/9/11/15, 2. OG 4/14, EG 7), dazu Portal
+  (Foyer) und Schockraum-Oberlichter (Reanimation seit 06:30, REDESIGN_FALL1 §5.2) in `fenster_warm` `#F3CD8C`
+  (Morgenlicht-Abwandlung, im Komposit „beleuchtet"); Lamellenschirm NE mit oberer und unterer Schiene (die Einzelstäbe lasen
+  sich von (a) als lose Striche); drei flache Wolkenlinsen (`WOLKEN`, `#FBF0D6`/`#F8E7BF`, 10 m vor der Himmelsebene).
+- **Rost-Objekt**: Rettungswagen rückwärts am Rettungstor unter dem Vordach (`RTW`: Papier-Kasten, Fahrerhaus, Räder,
+  Rost-Streifen). Widerspricht Fall 1 nicht: Herr Baum kommt mit der Tochter im Auto (06:15), die Rettung brachte um 06:30
+  die Reanimation in den Schockraum — der Wagen steht dort noch. Von (a) aus klein (≈ 70 px), aber als Rost-Akzent lesbar.
+- Renderzeiten unverändert (bauen ≈ 90 s bei 2 370 Objekten und einem Geländenetz bis x 1060, Probe-Render ≈ 11 s).
+- **Nachbesserung (23.10.2026, abends):** Gehweg 2,5 m in Linoleum warm mit Sand-Kantenstein (`WEG`; der Papier-Weg war die
+  hellste Fläche und zog das Auge vom Haus weg, §3.1); Hecken als gefaste Quader (Kugelketten lasen sich als Raupen); Bank
+  kleiner und 36 m entfernt am Weg, Petrol-Gestell mit Holzlatten; RTW auf die Abstellfläche rechts der Trakt-N-Ecke
+  (x 96 … 98,4, längs y, Front zur Kamera) — unter dem Vordach verschwand er hinter Stütze und Ecke. Eckrisalit Ost ist aus
+  (a) nur als Walm-Bump am rechten Ende des Hauptdachs lesbar, seine Wand deckt Linde 2 (bewusst nicht vergrößert).
+- **Verbleibende Mängel:** Fluss nur als dünne helle Linie hinter den Unterstadt-Dächern (physikalisch richtig aus 3 m Höhe;
+  deutlicher nur mit höherer Kamera); RTW klein (≈ 60 px), Rost-Streifen aber sichtbar; der Ast zur Haltestelle erscheint
+  als dünne Linie (läuft quer zum Blick).
 
 **Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.

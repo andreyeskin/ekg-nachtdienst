@@ -15,6 +15,15 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   Berichte landen in `bau/berichte/` (nicht in Git).
 - **Berechtigungen** (`.claude/settings.json`): feste Bau- und Prüfbefehle laufen ohne Rückfrage.
 
+## Fertig (23.10.2026): Außenansicht (a) zweite Überarbeitung — drei Fragen an Claude delegiert
+
+- Talbiegung breiter (Platanen-Lücke, Unterstadt mit Helmturm, Fluss, Gegenhang mit Zwiebelturm); Eckrisalite 1,0 m mit
+  eigenem Walm, West voll, Ost im 2. OG über Trakt N; Bäume ohne Schlagschatten, aber mit flachem Fußschatten (ART_BIBLE §3.5).
+- Geisterschatten weg (Büsche und Laternen außerhalb des Bildes warfen bei 7° Sonne lange Streifen ins Bild); Weg 2,5 m als
+  S-Kurve zum Portal mit Laternen, geschnittene Hecken, kleine Bank, acht warme Fenster (Nachtdienst endet), Wolken,
+  Rettungswagen als Rost-Objekt. Einzelheiten: KRANKENHAUS „Zweite Überarbeitung (23.10.2026)". Nutzer hat das Bild noch
+  nicht gesehen.
+
 ## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
 
 - Außengrün in ART_BIBLE §2 (Wiese `#ACB98B`, Laub `#6F8A62`, nur außen); Bäume aus mehreren Kugeln, Föhren als Schirm,
@@ -211,9 +220,8 @@ Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 
 ## Nächster Auftrag (ab 23.10.2026): Fragen zum Blockout klären, dann Aufnahme B1 im Haus
 
-Zuerst die drei offenen Fragen in KRANKENHAUS „Überarbeitung nach Rückmeldung (23.10.2026)" mit dem Nutzer klären
-(Stadt breiter ins Bild?, Eckrisalit kräftiger oder beidseitig?, Bäume ohne Schlagschatten als Regel in ART_BIBLE §3?)
-und kleine Nacharbeiten am Blockout machen. Nach Freigabe: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
+Die drei Fragen sind entschieden und umgesetzt (siehe „Fertig" oben). Zuerst die Rückmeldung des Nutzers zur neuen
+`docs/haus/probe_aussen.jpg` abholen. Nach Freigabe: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
 dann Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen, danach Lehrsaal und
 Monitorzimmer übernehmen, Flug-Renders.
 
@@ -225,7 +233,7 @@ Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch c
 dann docs/KRANKENHAUS.md ab „Blockout (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
 gen/blender/README.md Abschnitt „Haus-Blockout", dazu docs/REDESIGN_FALL1.md §8.3.
 Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
-Auftrag: zuerst die drei offenen Fragen zum Blockout mit mir klären und umsetzen; nach meiner Freigabe Raumkameras
+Auftrag: zuerst meine Rückmeldung zur neuen Außenansicht abholen; nach meiner Freigabe Raumkameras
 (render <raum>) ergänzen und die Aufnahme B1 als ersten Raum im Haus ausbauen.
 3D als Subagent auf Fable in eigenem Worktree, Code und Koordination auf Opus. Commit nach jedem Teilschritt,
 pushen, STAND.md nachziehen. Antworte mir auf Russisch.
