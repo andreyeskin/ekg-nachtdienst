@@ -559,16 +559,21 @@ Skript `gen/blender/haus_blockout.py` (Aufrufe in `gen/blender/README.md`), Ausg
 und `.glb` (nicht im Repository), Bilder zur Prüfung in `docs/haus/`: `probe_aussen.jpg` (§9 a, 06:40), `probe_flur.jpg`
 (§9 b, 09:15), `grundriss_eg.png`, `grundriss_1og.png`, `grundriss_2og.png` (Schnitt 1,6 m über dem Boden, ohne Namen).
 
-**Gebaut:** Gelände (Terrasse z −0,6 südostseitig, Hang 6 % ab y −40, Waldhang 10 % ab y 35, Talboden ab y −200), Sockel,
-Trakt A mit drei Geschossen (Außenwände 0,45 mit Fensterlöchern an allen 17 Achsen, Portal, hohe Risalitfenster,
-Treppenhausfenster, Stirnfenster; Innenwände 0,15 aus den Raumrechtecken von §4 mit Türöffnungen, Tür „offen" = keine
-Wand; Decken 0,6 bzw. 1,0 stark), Mittelrisalit mit Giebelwand und Quergiebel, Treppenhausrisalit mit kleinem Walm,
-Walmdach 30° (Traufe 12, First 16,6 bei y 8) mit drei Kaminen, Trakt N (zwei Geschosse, Flachdach mit Attika 1,1,
+**Gebaut:** Gelände (Terrasse z −0,6 südostseitig, Hang 6 % ab y −40, Waldhang 10 % ab y 35 und 25 % ab y 60, Talboden ab
+y −200, Osthang 8 % östlich der Klinikstraße), Sockel, Trakt A mit drei Geschossen (Außenwände 0,45 mit Fensteröffnungen
+nach Achsraster — Einzelfenster und Fensterpaare an den Achsen 1, 2, 5, 13, 16, 17 —, Eckrisalit West, Portal, hohe
+Risalitfenster, Treppenhausfenster, Stirnfenster; Innenwände 0,15 aus den Raumrechtecken von §4 mit Türöffnungen, Tür
+„offen" = keine Wand; Decken 0,6 bzw. 1,0 stark; alle Wände mit Öffnungen als sauberes Rasternetz, keine Booleschen
+Löcher), Mittelrisalit mit Giebelwand und Quergiebel, Treppenhausrisalit mit kleinem Walm, Walmdach 30° (Traufe 12, First
+16,6 bei y 8) mit drei Kaminen und Dachstreifen über dem Eckrisalit, Trakt N (zwei Geschosse, Flachdach mit Attika 1,1,
 Hochbeete, Bänke, zwei Felsenbirnen in Kübeln, Holzlamellen SE im 1. OG und NE vor der Glasfront, Vordach auf zwei
 Petrol-Stützen, Rettungstor, Fensterbänder), Kerne S1–S3 (Läufe und Podeste als Klötze) und L1/L2 (Schächte), Vorplatz,
 Parkweg mit zwei Kehren, Laternen, Hecken, Klinikstraße mit sechs Platanen, Rettungszufahrt und Abstellfläche, Parkplatz
-hinter Hecke, Cafeteria-Terrasse, Waldtor mit Zaun, zwei Linden, Kastanie, Wald in drei Tiefenbändern (Petrol, Mischton,
-Papier; Bäume 18–28 m), Stadt im Tal als 40 Klötze mit zwei Kirchtürmen und zwei Hügeln. Im Probe-Flur (1. OG): Tresen des
+hinter Hecke, Cafeteria-Terrasse, Waldtor mit Zaun, zwei Linden, Kastanie, zehn Büsche und achtzehn Wiesenflecken im
+Vordergrund von (a), Wald: nahes Band als dichte Gruppe in zwei Reihen (Laub, Föhren, Fichten), Mitte und Ferne als
+Silhouettenbänder (je ein Netz), Westwald als Rahmen links, zwei Städte (Südost-Tal unsichtbar, Nordost-Talbiegung im
+Bild) mit je zwei Kirchtürmen, vier Hügel. Bäume: Stamm mit zwei Astansätzen, Krone aus 5–7 überlappenden Kugeln (ein
+Objekt), Föhren mit hohem Stamm und flachem Schirm, Fichten in vier Etagen. Im Probe-Flur (1. OG): Tresen des
 Stützpunkts, Pflegewagen, Sitzbank, zwei Silhouetten (Kapseln 1,7 m), Mint-Sockel 1,1 m an beiden Flurwänden.
 
 **Abweichungen von §2–§4 und wie gelöst:**
@@ -580,40 +585,42 @@ Stützpunkts, Pflegewagen, Sitzbank, zwei Silhouetten (Kapseln 1,7 m), Mint-Sock
 - Quergiebel: Giebelfuß z 13,5 (Risalitwand läuft 1,5 m über die Traufe), First 16,6 wie der Hauptfirst; der
   Treppenhaus-Walm hat seinen First bei z ≈ 12,7 und schneidet in die Hauptdachfläche (Blockout, keine Kehle).
 - Brandwand x 61,2 ist im EG und 1. OG eine Innenwand (Trakt N umschließt das Altbau-Ende), im 2. OG Außenwand.
-- Rasen in Mint `#BFD9CF`, Pflaster und Wege Papier, Asphalt Linoleum kühl: ART_BIBLE §2 hat kein Grün, deshalb Mint als
-  Fläche (Frage 1 unten). Wald: vorn Petrol, Mitte `#91A3A2` (Petrol/Papier gemischt, nicht in der Palette), hinten Papier.
-- Stadt und Hügel nur als Klötze/Kugeln; in Render (a) nicht im Bild (Blick nach Nordost).
+- Außengrün nach ART_BIBLE §2 „Wiese" `#ACB98B` (Rasen, Flecken `#B9C59A`) und „Laub" `#6F8A62` (Kronen, Hecken, Büsche,
+  nahes Waldband); Pflaster und Wege Papier, Asphalt Linoleum kühl. Wald: vorn Laub, Mitte Petrol, hinten Papier (Begründung
+  in §2 der Art Bible: Petrol ist die dunkle Form der Palette und liest als Kamm im Schatten hinter dem besonnten Grün;
+  der frühere Mischton `#91A3A2` entfällt).
+- Fassade SE (§2 nennt 17 gleiche Achsen): Rhythmus [PP] s s P s s [Risalit] s s P s s [PP] — Fensterpaare (zwei Flügel
+  1,0 breit, Pfosten 0,3, gesamt 2,3 statt 1,4) an den Achsen 1, 2, 5, 13, 16, 17 auf beiden Längsseiten; Eckrisalit nur am
+  Westende (x 0 … 7,2, 0,5 m vor der Flucht, Wand im 2. OG unter der um 0,5 m verlängerten SE-Dachfläche). Am Ostende
+  kein Eckrisalit: dort steckt das Altbau-Ende im Winkel des Neubaus, ein Vorsprung wäre nur im 2. OG über dem Flachdach
+  zu sehen. Raumrechtecke und Türen unverändert; die Paare bleiben 0,65 m von jeder Innenwand (x = 3,6·k) weg.
+- Linden bei x 15 und 46 (y −10) statt §5 x 23/38 (y −12) und statt der genannten x 18/43: Kamera (a) blickt diagonal, bei
+  x 18 deckte die Krone per Parallaxe noch das Portal (sie projiziert auf x ≈ 26,6 der Risalitfront). Ab x 15 / y −10 ist
+  der Mittelrisalit frei; Linde 2 steht vor dem Winkel Altbau/Neubau (Achse 17 halb verdeckt).
+- Waldhang: 10 % ab y 35 wie §5, dazu 25 % ab y 60 (Hügelrücken) — mit 10 % allein verschwinden die hinteren Waldbänder
+  aus Kamera (a) (z 3) hinter dem First (16,6) und dem nahen Band.
+- Stadt (§5: „jenseits y −120, Blick nach Südost und Süd"): bleibt dort (unsichtbar für Kamera (a), Blick nach Nordost).
+  Zusätzlich eine zweite Kulisse in der **Talbiegung nach Nordost**: östlich der Klinikstraße (x > 115) fällt das Gelände
+  mit 8 % (bis −25 m) in den Flusslauf, der das Tal nach Nordost verlässt; dort liegt die Unterstadt (x 185 … 345, y 0 …
+  140, 150 Häuser mit Satteldächern, Zwiebelturm und Helmturm), dahinter zwei lange Hügelkämme. Kamera (a) sieht sie
+  rechts neben Trakt N zwischen den Platanen, 18 … 25° rechts von +x. Dächer Linoleum warm, Wände Papier/Sand, keine
+  Linie, keine Schattierung (§5 nannte „Dächer in Papier und Sand" — auf Papier-Hügeln blieb die Stadt unsichtbar).
+- Bäume werfen keinen Schatten (Sammlung `Baeume`, `OHNE_SCHATTEN`): die Kronenschatten zerlegten die Fassade in Flecken;
+  nach ART_BIBLE §1 ist Licht nur eine harte, geometrische Form — der Schatten von Trakt N auf der SE-Front bleibt.
+  Büsche werfen Schatten (harte Formen auf der Wiese).
 
-**Renderzeiten** (M-Serie, Metal, 1600 × 900): bauen ≈ 50 s (1 440 Objekte, Fenster-Booleans), Probe-Render je 10–30 s
-(Fläche 1–5 s, Sonne 3–13 s, Linie 2–12 s; der erste Metal-Start ohne Kernel-Cache dauert bis 2 min), Grundriss ≈ 5 s.
+**Renderzeiten** (M-Serie, Metal, 1600 × 900): bauen ≈ 50 s (1 900 Objekte, davon ≈ 400 Kronen; Wände ohne Booleans),
+Probe-Render je ≈ 10 s mit Kernel-Cache (Fläche 2 s, Sonne 4 s, Linie 4 s; der erste Metal-Start ohne Cache bis 2 min),
+Grundriss ≈ 5 s.
 
 **Bekannte Mängel:**
-- Flur (b): kein Sonnenstreifen auf dem Flurboden. Bei 35° Sonnenhöhe und 7 m tiefen Zimmern endet das Licht durch die
-  SE-Fenster (Brüstung 0,9) nach 4,3 m auf dem Zimmerboden, erreicht also weder Tür noch Flur; der Flur bekommt nur
-  diffuses Licht (hier: eine flache Schattenstufe). §9 (b) „Streifen auf dem Boden" braucht entweder eine tiefere Sonne
-  (≈ 15°, also früher am Tag oder Herbst) oder Oberlichter/Glas in den Zimmertüren.
-- Freestyle: einige lose Striche an der Flurdecke (Wände, die hinter die Kamera reichen; README-Regel). Der Flur ist
-  eine durchgehende Wand, Kürzen hilft erst im Ausbau.
-- Bäume sind Kugeln/Kegel auf Stämmen, die Linden lesen als „Lutscher"; Wald als Kugelreihe, keine Silhouettenbänder.
-- Linden werfen bei 7° Sonnenhöhe lange Schatten auf die Fassade (richtig, aber im Bild als große helle/dunkle Flecken).
-- Tresen des Stützpunkts beginnt 1,4 m hinter der Öffnungskante und füllt trotzdem den rechten Bildrand (24 mm, Kamera
-  nur 2,6 m davor); kein dunkler Anschnitt, aber groß.
+- Flur (b): kein Sonnenstreifen auf dem Flurboden (vom Nutzer so angenommen, 19.10.: Flur bleibt im Schatten). Bei 35°
+  Sonnenhöhe und 7 m tiefen Zimmern endet das Licht durch die SE-Fenster (Brüstung 0,9) nach 4,3 m auf dem Zimmerboden.
+- Stadt-Kulisse in (a) ist zart (Papier/Sand/Linoleum im Dunst, nur zwischen den Platanen am rechten Rand); wer sie
+  deutlicher will, braucht eine Stufe dunklere Dächer oder eine Kamera, die weiter nach Osten schwenkt.
 - Treppen als Klötze ohne Stufen; Lifte ohne Kabinen; Grundrisse ohne Raumnamen (Schrift wäre ohnehin §6).
-
-**Fragen an den Nutzer zu den Bildern:**
-1. Rasen und Wald: Mint `#BFD9CF` als Rasen und Petrol-Kugeln als Bäume — passt die Grünlösung ohne eigenes Grün in
-   der Palette, oder soll ART_BIBLE §2 einen Außen-Grünton bekommen (wie beim Ziegel)?
-2. Flur (b): Sonne bei 09:15 tiefer stellen (Streifen auf dem Flurboden, wie in §9 beschrieben) oder das Bild so lassen
-   (Flur im Schatten, Licht nur in den Zimmern und am Flurende)?
-3. Kubatur (a): Haus 61 + 24 m bei drei Geschossen plus Walm — wirkt es im Bild groß genug für „ein Haus für alle
-   Kapitel" oder zu kasernenhaft (17 gleiche Achsen)? Wenn zu streng: Fensterpaare oder Erker an den Enden?
-4. Vorplatz: die beiden Linden stehen in der Außenansicht genau vor dem Risalit und verdecken Portal und Giebel halb.
-   Linden nach außen rücken (x 18 und x 43) oder Kamera (a) höher/weiter links?
-5. Trakt N: Lamellen im 1. OG als dunkles Band — soll die SE-Front des Neubaus heller (Papier mit wenigen Lamellen) oder
-   so bleiben (Holz dicht, wie beim Vorbild „Holzlamellen")?
-
-**Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
-(`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.
+- Behoben (23.10.2026): lose Freestyle-Striche an der Flurdecke; Linden als „Lutscher"; Kronenschatten als Flecken auf der
+  Fassade; Tresen am rechten Bildrand; Stadt außerhalb des Bildes; leerer Vordergrund.
 
 **Antworten des Nutzers zum Blockout (19.10.2026):**
 1. Außengrün: **eigener Grünton** für Rasen und Bäume in ART_BIBLE §2 (nur außen, wie der Ziegel).
@@ -621,6 +628,35 @@ Stützpunkts, Pflegewagen, Sitzbank, zwei Silhouetten (Kapseln 1,7 m), Mint-Sock
 3. Fassade: **auflockern** (Fensterpaare und/oder Erker an den Enden, nicht 17 gleiche Achsen).
 4. Linden: **nach außen rücken** (etwa x 18 und x 43), Kamera (a) bleibt.
 5. Lamellen Trakt N: **bleiben** wie gerendert.
+
+### Überarbeitung nach Rückmeldung (23.10.2026)
+
+Umgesetzt in `gen/blender/haus_blockout.py` (alles Datentabellen am Skriptanfang: `ECKRISALIT`, `FENSTERPAARE`, `PAAR`,
+`LINDEN`, `BUESCHE`, `WIESENFLECKEN`, `WALD_NAH`, `WALD_WEST`, `WALDBAENDER`, `STADT`, `HUEGEL`, `OSTHANG_X`, `WALD_STEIL`,
+`OHNE_SCHATTEN`, `KAMERAS["flur"]["linien_nur"]`):
+1. Außengrün Wiese/Laub in ART_BIBLE §2 und in `PALETTE`; Mint kommt außen nicht mehr vor.
+2. Bäume neu (Kugelkronen, Schirm-Föhren, Etagen-Fichten; Kronen als je ein Objekt, Freestyle zeichnet nur die sichtbare
+   Silhouette); Wald hinten als zwei Silhouettenbänder; Westwald rahmt (a) links.
+3. Fassade: Eckrisalit West und Fensterpaare (siehe Abweichungen); Grundrisse neu.
+4. Linden x 15 / 46; Kamera (a) unverändert.
+5. Flur bleibt im Schatten, Lamellen bleiben.
+6. Mängel: Stadt in der Talbiegung sichtbar; Vordergrund mit Büschen, Wiesenflecken, Parkweg und Laternen; Flurdecke ohne
+   lose Striche — Ursache waren nicht nur Wände hinter der Kamera, sondern die Boolesch gelochten Wände (n-Ecke mit
+   Schlitz-Triangulation), durch die Freestyle Kanten dahinter (Liftschacht, Wandoberkanten) als sichtbar wertete; alle
+   Wände mit Öffnungen sind jetzt Rasternetze, der Linien-Durchgang innen nimmt nur die Sammlungen der Kamera, Geometrie
+   hinter der Kamera wird gekappt. Tresen x 28,3 … 30,3 (y 6,3 … 6,95) und Kamera (b) bei x 23,3 (statt 24): das Türblatt
+   von Zimmer 107 liegt damit ganz hinter dem Bildrand (§3.3 kein dunkler Anschnitt), der Tresen bei 65 … 80 % der Breite.
+
+**Offene Fragen an den Nutzer (23.10.2026):**
+1. Stadt-Kulisse: reicht die zarte Unterstadt zwischen den Platanen, oder soll die Talbiegung breiter ins Bild (Kamera (a)
+   bliebe; dann müssten Platanen und Trakt-N-Vordach weichen oder die Stadt näher an die Straße rücken, x ≈ 130)?
+2. Eckrisalit: nur West (0,5 m) — so lassen, kräftiger (1,0 m, dann mit eigenem Walm) oder beidseitig auch im 2. OG über
+   dem Neubau?
+3. Bäume ohne Schlagschatten (nur Gebäude und Büsche werfen Schatten): als Regel für alle Außenbilder in ART_BIBLE §3
+   festschreiben?
+
+**Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
+(`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.
 
 ## Nächster Schritt (eigener Chat)
 

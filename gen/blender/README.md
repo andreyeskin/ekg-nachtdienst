@@ -106,8 +106,12 @@ nirgends abgeschrieben.
 `haus_blockout.py` baut das ganze Haus aus Datentabellen am Skriptanfang (Trakte, Geschosse, Achsen, Räume je Geschoss
 mit Türen, Sonderfenster, Umgebung, Kameras): Gelände mit Hang und Sockel, Trakt A (drei Geschosse, Außenwände mit
 Fensterlöchern nach Achsraster, Innenwände aus den Raumrechtecken mit Türöffnungen, Risalite, Walmdach mit Quergiebel,
-Kamine), Trakt N (Flachbau, Holzlamellen, Vordach, Dachgarten), Treppen und Lifte als Kerne, Wege, Bäume als Platzhalter,
-Stadt im Tal als Klötze. Jeder Raum ist eine benannte Bodenplatte (`"EG Lehrsaal"`, Eigenschaften `raum`, `geschoss`) in
+Kamine), Trakt N (Flachbau, Holzlamellen, Vordach, Dachgarten), Treppen und Lifte als Kerne, Wege, Büsche, Bäume (Stamm
+mit Astansatz, Krone aus überlappenden Kugeln als ein Objekt; Föhren als Schirm, Fichten in Etagen), Wald hinten als
+Silhouettenbänder, Stadt im Tal als Klötze mit Satteldächern. Wände mit Öffnungen sind Rasternetze ohne Boolesche Löcher
+(`wandnetz`): Boolesch gelochte n-Ecke ließen Freestyle die Verdeckung verlieren, Kanten dahinter erschienen als lose
+Striche. Innenkameras nennen in `KAMERAS[...]["linien_nur"]` die Sammlungen für den Linien-Durchgang; Geometrie hinter der
+Kamera wird dort gekappt. Jeder Raum ist eine benannte Bodenplatte (`"EG Lehrsaal"`, Eigenschaften `raum`, `geschoss`) in
 der Sammlung seines Trakts und Geschosses (`Trakt A 1OG` usw.), damit Kameras und Klickzonen später darauf zeigen können.
 Nur Kubatur, Proportion, Licht und Palette — kein Ausbau, Möbel nur als Klötze im Probe-Flur.
 

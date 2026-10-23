@@ -45,6 +45,8 @@ Bildschirm-Inhalt, nie als Raum.
 | Mint hell | `#D6E4DD` | Wände des kühlen Raums (Monitorzimmer) — Mint als Fläche, nicht als Sockel |
 | Glas | `#1E2A30` | Geräteschirme (EKG-Wagen, Bettmonitore): Tinte als Fläche, die Kurve kommt aus dem Code |
 | Ziegel | `#C9795A` | nur außen: Dachziegel des Hauses (Entscheid des Nutzers 19.10.2026); gedeckter als Rost, zählt nicht als „das eine Objekt" |
+| Wiese | `#ACB98B` | nur außen: Rasen, Wiese, Hang (Entscheid des Nutzers 23.10.2026: eigener Außen-Grünton statt Mint); warm-gedecktes Graugrün zwischen Sand und Laub, Wiesenflecken eine Stufe heller `#B9C59A` |
+| Laub | `#6F8A62` | nur außen: Kronen der Laubbäume, Hecken, Büsche, vorderes Waldband (Entscheid des Nutzers 23.10.2026). Tiefenstaffelung des Walds: vorn Laub (besonnt), Mitte Petrol (Kamm im Schatten — die dunkle Form der Palette, kein Mischton mehr), hinten Papier (Dunst); Stadtdächer im Tal Linoleum warm |
 
 Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
 in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
