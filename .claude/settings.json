@@ -1,4 +1,16 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(python3 gen/kunst.py)",
+      "Bash(python3 tools/baue.py)",
+      "Bash(python3 tools/woerter.py)",
+      "Bash(node tools/durchlauf.mjs *)",
+      "Bash(python3 prototyp/fall1/baue.py)",
+      "Bash(node prototyp/fall1/pruefe.mjs)",
+      "Bash(python3 prototyp/bewegung/baue.py)",
+      "Bash(node prototyp/bewegung/schuss.mjs *)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
