@@ -707,6 +707,49 @@ Umgesetzt in `gen/blender/haus_blockout.py` (neue Tabellen `ECKRISALITE`, `ECK_V
 **Nächster Schritt:** nach Freigabe Raumkameras aus §9 als `render <raum>` ergänzen (Tabelle `KAMERAS`), dann Aufnahme B1
 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen.
 
+### Fassade ausdetailliert (25.10.2026, Auftrag B)
+
+Vorbild nur für den Detailgrad: zwei Fotos eines realen Altbau-Klinikgebäudes des Nutzers (`vorlagen/haus/fotos/`, nie im
+Repository) — kein Nachbau, kein Wappen, keine Hausnummer; Kubatur und Palette bleiben Haus Föhrenhang (ART_BIBLE §2 „Außen").
+Umgesetzt in `gen/blender/haus_blockout.py` (Tabellen siehe `gen/blender/README.md`), beide Stile gerendert
+(`docs/haus/stil_tag.jpg`, `stil_blau.jpg`; alte Probe `probe_aussen.jpg` mitgezogen):
+
+- **Fenster Altbau:** weißer Rahmen 0,13 m, Pfosten, Kämpfer bei 68 % der Höhe, Scheibe 0,14 m hinter der Flucht; Fasche
+  0,14 m und Sohlbank 0,2 m in Papier; auf den sichtbaren Seiten (SE, West) nach festem Zufall 26 % grüne Rollläden in
+  wechselnder Höhe (0,3 … 1,0), 30 % Gardinen (helle Fläche im unteren Teil), 7 % nach außen geöffnete Flügel (Kastenfenster).
+  Rahmen, Faschen, Gardinen ohne eigene Linie — bei ≈ 17 px/m wurde jede zusätzliche Kante zu Tinte.
+- **Wand:** Sockelgeschoss gebändert (`rustika` mit sechs Fugen, Trakt A EG), Gesimse über EG und 1. OG, Traufgesims mit
+  Sparrenköpfen, Rinne und sechs Fallrohre; Trakt N hell (`beton`) statt gelb, damit Alt- und Neubau sich trennen.
+- **Dach:** vier Giebelgauben auf der SE-Fläche (x 13 / 19,2 / 42 / 48,2), Kaminköpfe.
+- **Giebel:** senkrechte Holzverschalung in zwei Tönen, Rundfenster, Giebelbalkon mit dunkler Holzbrüstung und Tür.
+- **Portal:** Rundbogen (Zwickel als Prisma durch die Wand), dunkle Holz-Doppeltür mit Griffen, warmes Oberlicht, Pilaster
+  mit Fuß und Kapitell, Balkon im 1. OG als Vordach (Konsolen, Brüstung, Kugeln), zwei Wandleuchten, Schild rechts der
+  Tür (Textbalken, Schrift unlesbar), drei Stufen über den Sockel (0,6 m), zwei Pflanzkübel mit Formgehölz.
+- **Trakt N:** Lamellen SE als flache Holzstreifen (ohne Linie) zwischen zwei Schienen mit Linie — vorher ein schwarzes
+  Loch; dahinter Fensterband Schaltraum/Arztzimmer HKL (1. OG) und Triage (EG), ein warmes Fenster Technik. Das
+  Herzkatheterlabor bleibt fensterlos (§3).
+- **Hof:** geschwungene Pflaster-Zufahrt (4,5 m, Bordsteine) vom Vorplatz zur Rettungsvorfahrt; drei Stellplätze mit
+  zwei Pkw (weiß, blau); sechs Figuren als Silhouetten (Portal, Vorplatz, Raucherecke, Haltestelle; eine im weißen Kittel);
+  Wegweiser „Notaufnahme → / ← Bettenstationen" an der Kehre (Pfeile, Textbalken); Haltestelle (Glashäuschen, H-Schild)
+  an der Klinikstraße, rechts am Bildrand klein; Raucherecke (Bank, Standascher) an der SE-Ecke von Trakt N; vier
+  Fahrradbügel mit zwei Rädern am Vorplatz.
+- **Spätherbst (ART_BIBLE §4):** Linde 1 gelb, Linde 2 rostig, Kastanie rostig, vier Jungbäume an der Zufahrt gemischt, zwei
+  kahle Jungbäume (Stamm mit Astfächer ohne Linie), 35 % der Laubkronen im nahen Wald gelb/rostig; Herbstlaub als kleine
+  Ellipsen auf dem Parkweg West, unter den Linden (in Sonnenrichtung versetzt) und auf dem Vorplatz.
+- **Wolken:** fünf Kumulus mit Umriss (flache Grundlinie, Kreiskette mit Kerben, runde Enden) statt Linsen; in der Blauen
+  Stunde dunkel vor dem Morgenrot.
+- **Bau:** 4 050 Objekte, `bauen` 42 s (Quader ohne Fase als Netz statt Operator), Render Tag 13–26 s, Blau 8–13 s.
+
+**Offene Punkte / Fragen an den Nutzer:**
+- Gardinen lesen sich als helle untere Scheibe, nicht als Stoff — reicht das, oder lieber nur Rollläden und Glas?
+- Loggia mit Bögen (wie am Vorbild) gibt es nicht; stattdessen zwei Balkone (Portal, Giebel). Gewünscht?
+- Kopfsteinmuster der Zufahrt fehlt (bei 17 px/m nicht zeichenbar); Pflaster bleibt eine Fläche.
+- Kahle Bäume stehen vor der Westfassade (x −7 / y −28,5) und vor Trakt N (44,5 / −17,5): Astwerk ohne Linie liest als
+  Gestrüpp; gefallen sie, oder weg damit?
+- Schild „Haus Föhrenhang" trägt nur Textbalken; lesbarer Schriftzug erst in der Spielgrafik (Overlay) möglich.
+- Figuren sind Kapseln ohne Haltung; echte Silhouetten kommen mit `figuren_zeichnen.py`.
+- Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
+
 ## Nächster Schritt (eigener Chat)
 
 Blender-Blockout nach §2 bis §5 (Skript in `gen/blender/`, z. B. `haus_blockout.py`: Hülle, Geschosse, Flure, Räume

@@ -122,10 +122,22 @@ Außenbild (a), zweite Überarbeitung (KRANKENHAUS.md): Eckrisalite beidseitig m
 Schlagschatten und bekommen Fußschatten (`fussschatten`, Materialien in `IMMER_SCHATTEN` sind im Sonnen-Durchgang schwarz).
 Das Geländenetz liegt in der Sammlung `Boden`: Freestyle nutzt es als Verdecker, zeichnet daraus aber keine Linien.
 
+Fassade und Hof ausdetailliert (25.10.2026, KRANKENHAUS.md „Fassade ausdetailliert"): Tabellen `FENSTERDEKOR`, `RUSTIKA`,
+`GESIMSE`, `FASSADENKANTEN`, `TRAUFE_OHNE`, `SPARREN`, `FALLROHRE`, `GAUBEN`/`GAUBE`, `PORTAL_DEKOR`, `GIEBEL_DEKOR`, `ZUFAHRT`,
+`STELLPLAETZE`, `FIGUREN`, `WEGWEISER`, `HALTESTELLE`, `RAUCHERECKE`, `FAHRRAEDER`, `JUNGBAEUME`, `KAHLE_BAEUME`, `HERBST`, `LAUB`,
+`WOLKEN_KUMULUS`; Funktionen `prisma` (ebenes Vieleck ausgezogen, Bogenzwickel des Portals), `bank`, `auto`, `figur`, `balkon`,
+`kante_box` (Gesimse und Sparrenköpfe entlang `FASSADENKANTEN`), `laubfleck`, `kumulus` (in `himmel_setzen`), Baumart `kahl`.
+Maßstab von Kamera (a) ≈ 17 px/m: alles unter 0,1 m bekommt **keine eigene Tuschelinie** (Materialien `rahmen`, `fasche`,
+`fuge`, `holz_gruen`, `gardine`, `zink`, `schrift`, `sparren`, `lamelle`, `ast`, `laub_boden*` in `OHNE_LINIE`), sonst wurden
+Fensterrahmen und Astwerk zu schwarzem Gekritzel; Linie nur an Laibung, Scheibe, Rollladen, Gesims, Handlauf. `kiste` ohne Fase
+baut jetzt ein Netz per `from_pydata` statt `bpy.ops` (bei 4 000 Objekten kostete jeder Operator eine Depsgraph-Aktualisierung:
+Bau 8 min statt 42 s). Kumuluswolken müssen ganz im Bild liegen (±458 m auf der 900-m-Ebene), sonst läuft ihre flache
+Grundlinie als Lineal bis zum Bildrand. Sammlungen `Hof` und `Figuren` sind in `OHNE_SCHATTEN`.
+
 ```bash
-python3 gen/blender/haus_blockout.py bauen              # ≈ 50 s -> bau/blender/haus/haus_blockout.blend + .glb
+python3 gen/blender/haus_blockout.py bauen              # ≈ 45 s (4 050 Objekte) -> bau/blender/haus/haus_blockout.blend + .glb
 python3 gen/blender/haus_blockout.py render aussen      # §9 (a), 06:40 -> docs/haus/probe_aussen.jpg (≈ 10–30 s)
-python3 gen/blender/haus_blockout.py render aussen --stil tag|blau   # Stilprobe (Palette, Licht, Linie) -> docs/haus/stil_<stil>.jpg
+python3 gen/blender/haus_blockout.py render aussen --stil tag|blau   # Außenstile Tag / Blaue Stunde (ART_BIBLE §2) -> docs/haus/stil_<stil>.jpg (≈ 15 s)
 python3 gen/blender/haus_blockout.py render flur        # §9 (b), 09:15 -> docs/haus/probe_flur.jpg   (≈ 10–30 s)
 python3 gen/blender/haus_blockout.py grundriss alle     # eg|1og|2og: Schnitt 1,6 m über dem Boden -> docs/haus/grundriss_<g>.png (≈ 5 s je Geschoss)
 ```

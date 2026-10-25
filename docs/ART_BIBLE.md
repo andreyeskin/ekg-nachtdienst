@@ -65,6 +65,11 @@ als die Innenräume. Beide Proben wurden angenommen, jede für ihre Tageszeit (�
   Linie aus §1, bis die Innenräume neu entschieden sind.
 - Die Werte stehen in `TAG_PALETTE` und `STILE` in `gen/blender/haus_blockout.py` (`render aussen --stil tag|blau`). Die
   Außenzeilen Ziegel, Wiese, Laub oben gelten nur noch für die alte Probe `probe_aussen.jpg`.
+- **Fassadendetails und Spätherbst (25.10.2026, Auftrag B):** Faschen, Gesimse, Sohlbänke Papier `#F4F1E6`; Sockelgeschoss
+  gebändert `#D6D0BE` mit Fugen `#AFA896`; Rollläden und Giebelholz Grün `#4F7F4A` (zwischen Laub und Hecke); Portaltür
+  dunkles Holz `#4A2E22`; Stufen, Kübel, Kapitelle Stein `#CFC9BA`; Rinne, Fallrohre, Pfosten Zink `#7E858F`. Herbsttöne nur
+  außen: Kronen gelb `#D9A93C` und rostig `#B9652C`, Laub am Boden `#B8762F` / `#D8A24A` — gedeckte Ocker- und Brauntöne,
+  kein Rot: Rost `#C8382B` bleibt allein dem Rettungswagen. Blaue Stunde nimmt alles als Duoton mit.
 - **Offen:** ob die Innenräume die sattere Palette mitgehen oder pastell bleiben (ruhiger Raum, scharfer Streifen, §1).
 
 Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
