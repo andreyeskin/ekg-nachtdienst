@@ -1,339 +1,272 @@
-"""Szene „Lehrsaal" (Einschulungstag, 08:10, Vormittag) — 3D-Grundlage für die Ebenen des Spiels.
+"""Ausbau „Lehrsaal" im Haus Föhrenhang (Einschulungstag und Kurswoche, 08:10) — docs/raeume/lehrsaal.md.
 
-Nach docs/raeume/lehrsaal.md: Seminarraum mit Untersuchungsliege, Projektionsleinwand an der Rückwand,
-Whiteboard an der rechten Seitenwand, hohe Fenster rechts, Tür links in den Flur. Rückwand bei y=0, Raum
-nach −y (die Raumbeschreibung misst y von der Rückwand in den Raum; hier negiert). Kamera blickt entlang +y
-ohne Neigung (Objektivverschiebung wie im Monitorzimmer): die Rückwand bleibt frontal, die Leinwand ist im
-Bild ein exaktes Rechteck, auf das das Spiel zeichnet (`schirmflaeche("projektion")`).
+Baustein nach KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut": die Hülle (Wände, Fenster,
+Türen, Decke) baut `haus_blockout.py`, dieses Skript nur die Einrichtung, in Hauskoordinaten und in der Sammlung
+„Ausbau Lehrsaal". `haus_blockout.bauen()` ruft `ausbau()` auf; die Farben, die Kamera und die Linienregeln stehen hier
+und werden dort übernommen. Kein bpy auf Modulebene: haus_blockout importiert dieses Modul auch ohne Blender.
 
-Kamera: 28 mm, (0,9 / −9,0 / 2,0). Die vorgeschlagenen −7,6 m reichen nicht: mit der Tür ganz links
-(x −4,9) und dem Whiteboard an der rechten Seitenwand (x 4,4, y −0,9 … −2,9) braucht das Bild 63° Sichtwinkel,
-bei 7,6 m Abstand fiele eines von beiden aus dem Bild. Die Hülle ist entsprechend 8,4 m tief.
-Rendern: python3 gen/blender/ebenen.py lehrsaal alle
+Raum (Entscheid des Nutzers 25.10.2026, Vorbild ein Seminarsaal mit Fensterfront und Tischreihen): Westende des EG,
+x 0 … 14,4, y 0 … 7 (Achsen 1–4), dazu die 1-m-Nische des Eckrisalits West (x 0 … 7,2, y −1 … 0). Lichte Flächen: Giebel
+x 0,45, Fensterwand y −0,55 (Nische) bzw. 0,45, Flurwand y 6,925, Rückwand x 14,325, Raumhöhe 3,4.
+Blick der Spielkamera nach Südwesten (−x): links die Fenster (Südost, Morgensonne), vorn der Giebel mit der Leinwand
+zwischen zwei Fenstern, rechts zwei Türen in den Flur. Vorn links in der Nische Liege und EKG-Wagen.
+
+    python3 gen/blender/haus_blockout.py bauen && python3 gen/blender/haus_blockout.py render lehrsaal
 """
 import math
+import random
 
-import bpy
-from mathutils import Vector
+SAMMLUNG = "Ausbau Lehrsaal"
 
-from werkzeug import (fenster, himmel_baender, jalousie, kegel, kiste, kugel, leeren, loch, markiere, material,
-                      platte, platzhalter, raum_huelle, schirmflaeche, zylinder)
+# Lichte Maße (Hauskoordinaten, Meter)
+GIEBEL, FENSTER_NISCHE, FENSTER_WAND, FLUR_WAND, RUECK = 0.45, -0.55, 0.45, 6.925, 14.325
+NISCHE_X1 = 7.2                     # Ende des Eckrisalits (Rücksprung x 6,75 … 7,2)
+HOEHE = 3.4
+BRUESTUNG, STURZ = 0.9, 3.1         # Fenster des Altbaus (FENSTER in haus_blockout)
+# Öffnungen in den Außenwänden (aus haus_blockout: Achsen 1–2 gekoppelt, 3–4 einzeln, Giebel zwei Fenster)
+FENSTER_SE_NISCHE = [(0.65, 1.65), (1.95, 2.95), (4.25, 5.25), (5.55, 6.55)]
+FENSTER_SE = [(8.3, 9.7), (11.9, 13.3)]
+GIEBELFENSTER = [(0.4, 1.8), (4.6, 6.0)]          # y-Bereiche; dazwischen die Leinwand (Mitte y 3,2)
+TUEREN = [(3.4, 4.4), (9.3, 10.3)]                # Flurwand y 7, Türblatt 1,0 × 2,1 (vorn für die Lehrenden, hinten für alle)
+SOCKEL_H = 0.8                                    # Mint-Sockel bis unter die Brüstung (0,9), Holzleiste darauf
 
-leeren()
-sc = bpy.context.scene
+# Tischreihen: je Reihe zwei Tische 1,8 × 0,5 m (drei Plätze), Mittelgang y 3,15 … 4,05, Gang an der Fensterseite
+# 0,9 m, an der Flurseite 1,1 m. Fünf Reihen, 30 Plätze; Blick aller Stühle nach vorn (−x). Hinter der letzten Reihe
+# bleiben gut 4 m frei: die Kamera steht dort, und am unteren Bildrand liegt heller Boden statt angeschnittener
+# Stühle (ART_BIBLE §3.3; eine sechste Reihe bei x 11,0 lag mit den Lehnen im Bildrand).
+REIHEN_X = (5.0, 6.2, 7.4, 8.6, 9.8)
+BLOECKE = ((1.35, 3.15), (4.05, 5.85))
+TISCH_T, TISCH_H = 0.5, 0.74
 
-# Materialien: Grauwerte nur für den Licht-Durchgang, die Bildfarbe steht in PALETTE
-M = {n: material(n, c, r) for n, c, r in (
-    ("wand", (0.62, 0.60, 0.55), 0.85), ("boden", (0.50, 0.48, 0.44), 0.4), ("decke", (0.5, 0.5, 0.5), 0.9),
-    ("paneel", (0.30, 0.36, 0.36), 0.8), ("holz", (0.36, 0.26, 0.17), 0.5), ("papier", (0.90, 0.86, 0.78), 0.8),
-    ("petrol", (0.22, 0.24, 0.25), 0.55), ("dunkel", (0.07, 0.08, 0.09), 0.5), ("metall", (0.45, 0.47, 0.48), 0.4),
-    ("rahmen", (0.85, 0.82, 0.76), 0.6), ("flur", (0.8, 0.8, 0.8), 0.9), ("mint", (0.55, 0.68, 0.62), 0.7),
-    ("leinwand", (0.95, 0.93, 0.9), 0.8), ("projektion", (0.98, 0.97, 0.95), 0.8), ("tafel", (0.95, 0.93, 0.9), 0.5),
-    ("glas", (0.08, 0.1, 0.11), 0.3), ("kobalt", (0.1, 0.2, 0.5), 0.5), ("lamelle", (0.55, 0.68, 0.62), 0.6),
-    ("band", (0.85, 0.82, 0.76), 0.7), ("himmel_oben", (0.85, 0.9, 0.9), 0.9), ("himmel_unten", (0.8, 0.86, 0.87), 0.9),
-    ("hof", (0.7, 0.72, 0.7), 0.9), ("baum", (0.3, 0.45, 0.4), 0.9), ("nachbarbau", (0.85, 0.82, 0.76), 0.9),
-    ("leuchte", (0.9, 0.9, 0.88), 0.8), ("kabel", (0.07, 0.08, 0.09), 0.5), ("pulli", (0.3, 0.36, 0.4), 0.8),
-)}
-
-# Lokalfarben (docs/ART_BIBLE.md §2, Zeile Lehrsaal): Wand Papier, Sockel Mint mit Holzleiste, Linoleum warm,
-# Holz-Seminartisch, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug, Gestelle Tinte (hier „dunkel"). Rost kommt
-# im Raumrender NICHT vor: das eine Rost-Objekt ist die rote Klemme am rechten Arm des Freiwilligen (Figur Jonas).
-# Kobaltblau nur in der Linealschachtel (und an Dr. Wieser). Leinwand und Whiteboard wie EKG-Papier #FFF8F4:
-# die Kurven und Zeichnungen darauf kommen aus dem Code (schirme.json).
+# Lokalfarben (ART_BIBLE §2, Zeile Lehrsaal): Wand Papier, Sockel Mint mit Holzleiste, Linoleum warm, Holz für Tische
+# und die Lattendecke, Stühle Petrol, Gestelle Tinte. Rost kommt im Raum nicht vor (das eine Objekt ist die rote Klemme
+# an der Figur Jonas). Kobalt nur in der Linealschachtel. Leinwand und Whiteboard wie EKG-Papier.
 PALETTE = {
-    "wand": "#F7F1E4", "boden": "#C9BDA2", "decke": "#EAE2D0", "paneel": "#BFD9CF", "holz": "#C99A5B",
-    "papier": "#F7F1E4", "petrol": "#2C5560", "dunkel": "#2C3E46", "metall": "#8A9598", "rahmen": "#F7F1E4",
-    "flur": "#E4DED2", "mint": "#BFD9CF", "leinwand": "#F7F1E4", "projektion": "#FFF8F4", "tafel": "#FFF8F4",
-    "glas": "#1E2A30", "kobalt": "#2F5DA8", "lamelle": "#BFD9CF", "band": "#F7F1E4",
-    "himmel_oben": "#EAF1F0", "himmel_unten": "#DCE9EA", "hof": "#D6DED7", "baum": "#2C5560", "nachbarbau": "#F7F1E4",
-    "leuchte": "#F7F1E4", "kabel": "#2C3E46", "pulli": "#52636A",
+    "ls_wand": "#F7F1E4", "ls_sockel": "#BFD9CF", "ls_boden": "#C9BDA2", "ls_decke": "#C99A5B", "ls_holz": "#C99A5B",
+    "ls_petrol": "#2C5560", "ls_dunkel": "#2C3E46", "ls_metall": "#8A9598", "ls_papier": "#F7F1E4", "ls_mint": "#BFD9CF",
+    "ls_vorhang": "#BFD9CF", "ls_leinwand": "#F7F1E4", "ls_projektion": "#FFF8F4", "ls_tafel": "#FFF8F4",
+    "ls_kobalt": "#2F5DA8", "ls_leuchte": "#FBF6EA", "ls_glas": "#1E2A30", "ls_flasche": "#D6E4DD",
+    "ls_pflanze": "#2C5560", "ls_topf": "#EFE6D3", "ls_jacke": "#52636A", "ls_jacke2": "#BFD9CF",
 }
-HIMMEL = "#EAF1F0"
-OHNE_LINIE = {"himmel_oben", "himmel_unten"}
-OHNE_SCHATTIERUNG = {"himmel_oben", "himmel_unten", "hof", "baum", "nachbarbau", "projektion", "tafel", "glas",
-                     "leinwand"}   # Himmel, Draußen und Schirmflächen bleiben flach
-SONNE_AUS = set()
+OHNE_LINIE = set()
+OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
+
+# Spielkamera: hinten im Mittelgang, Augenhöhe 1,55, Blick zur Leinwand. Sonne 08:10 Anfang November (47° N): Azimut 126°,
+# Höhe 9° — sie steht fast senkrecht vor der Südostfront und legt lange Lichtbahnen über Tische, Boden und Flurwand.
+KAMERA = dict(ort=(14.05, 3.6, 1.55), ziel=(GIEBEL, 3.3, 1.45), brennweite=24, sonne=(126.0, 9.0),
+              licht="#F8E7BF", anteil=0.55, himmel=["#DCE9EA", "#E6EFEE", "#EAF1F0"], schatten=0.2,
+              linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
+              sonne_staerke=80.0)   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
 
 
-def rohr(punkte, r, m, ebene, zone=None, name="kabel"):
-    """Kabel als runder Strich entlang einer glatten Kurve (Bezier -> Netz), wie figuren.Figur.rohr."""
-    cu = bpy.data.curves.new("rohr", 'CURVE'); cu.dimensions = '3D'
-    cu.bevel_depth = r; cu.bevel_resolution = 3; cu.fill_mode = 'FULL'; cu.use_fill_caps = True; cu.resolution_u = 12
-    sp = cu.splines.new('BEZIER'); sp.bezier_points.add(len(punkte) - 1)
-    for bp, p in zip(sp.bezier_points, punkte):
-        bp.co = Vector(p); bp.handle_left_type = bp.handle_right_type = 'AUTO'
-    tmp = bpy.data.objects.new("rohr_tmp", cu); sc.collection.objects.link(tmp)
-    bpy.context.view_layer.update()
-    me = bpy.data.meshes.new_from_object(tmp.evaluated_get(bpy.context.evaluated_depsgraph_get()))
-    bpy.data.objects.remove(tmp, do_unlink=True); bpy.data.curves.remove(cu)
-    o = bpy.data.objects.new(name, me); sc.collection.objects.link(o)
-    for p in me.polygons: p.use_smooth = True
-    o.data.materials.append(m)
-    return markiere(o, ebene, zone)
+def ausbau(h):
+    """Baut die Einrichtung. `h`: Euler (mathutils), kiste/netz/wandnetz aus haus_blockout. Alle Körper als Netz aus
+    Punktlisten, ohne bpy.ops: in der Szene mit 4000 Objekten kostete jeder Operator-Aufruf eine Depsgraph-Aktualisierung
+    (erste Fassung mit werkzeug-Grundkörpern: Bau 9:44 min statt einiger Sekunden)."""
+    Euler = h["Euler"]
+    zr = random.Random(8)
 
+    def netz(name, verts, faces, m):
+        return h["netz"](name, verts, faces, m, SAMMLUNG)
 
-def torus(R, r, ort, m, ebene, zone=None, dreh=(0, 0, 0), name="torus"):
-    bpy.ops.mesh.primitive_torus_add(major_radius=R, minor_radius=r, location=ort, rotation=dreh, major_segments=32, minor_segments=10)
-    o = bpy.context.object; o.name = name; o.data.materials.append(m); bpy.ops.object.shade_smooth()
-    return markiere(o, ebene, zone)
+    def box(name, x0, y0, x1, y1, z0, z1, m):                     # achsparallel
+        return h["kiste"](name, x0, y0, x1, y1, z0, z1, m, SAMMLUNG)
 
+    def gedreht(punkte, ort, dreh):
+        mat = Euler(dreh).to_matrix()
+        return [tuple(mat @ h["Vector"](p) + h["Vector"](ort)) for p in punkte]
 
-# ---------------- Raum ----------------
-X0, X1, HOEHE, TIEFE = -5.4, 4.4, 3.4, 8.4
-raum = raum_huelle(X0, X1, HOEHE, M["wand"], M["boden"], M["decke"], TIEFE, name="raum")
-TX0, TX1, THOEHE = -4.9, -3.95, 2.1                 # Tür links, offen in den Flur
-FX0, FX1, FZ0, FZ1 = 1.6, 4.0, 1.0, 2.9              # zwei hohe Seminarfenster rechts
-loch(raum, (TX1 - TX0, 0.8, THOEHE), ((TX0 + TX1) / 2, 0.15, THOEHE / 2))
-loch(raum, (FX1 - FX0, 0.8, FZ1 - FZ0), ((FX0 + FX1) / 2, 0.15, (FZ0 + FZ1) / 2))
+    def kiste(groesse, ort, m, dreh=0.0, kipp=0.0, fase=0.0, name="kiste"):   # gedreht um z (Grad), gekippt um die lokale x-Achse
+        a, b, c = (g / 2 for g in groesse)
+        v = [(-a, -b, -c), (a, -b, -c), (a, b, -c), (-a, b, -c), (-a, -b, c), (a, -b, c), (a, b, c), (-a, b, c)]
+        return netz(name, gedreht(v, ort, (math.radians(kipp), 0, math.radians(dreh))),
+                    [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (2, 3, 7, 6), (3, 0, 4, 7), (1, 2, 6, 5)], m)
 
-# Sockel (Mint) bis 0,95 m mit Holzleiste: Rückwand links und rechts der Tür, rechte Seitenwand
-PZ = 0.95
-for (xa, xb, name) in ((X0, TX0 - 0.1, "links"), (TX1 + 0.1, X1, "rechts")):
-    kiste((xb - xa, 0.03, PZ), ((xa + xb) / 2, -0.015, PZ / 2), M["paneel"], "hinten", fase=0, name="paneel_" + name)
-    kiste((xb - xa, 0.05, 0.05), ((xa + xb) / 2, -0.025, PZ + 0.025), M["holz"], "hinten", fase=0.005, name="leiste_" + name)
-kiste((0.03, 4.2, PZ), (X1 - 0.015, -2.1, PZ / 2), M["paneel"], "hinten", fase=0, name="paneel_seite")
-kiste((0.05, 4.2, 0.05), (X1 - 0.025, -2.1, PZ + 0.025), M["holz"], "hinten", fase=0.005, name="leiste_seite")
+    def kegelstumpf(r0, r1, hoehe, ort, m, dreh=(0, 0, 0), v=16, name="zylinder"):   # Achse lokal z, Mitte bei ort
+        ring = [(math.cos(2 * math.pi * i / v), math.sin(2 * math.pi * i / v)) for i in range(v)]
+        pts = [(r0 * c, r0 * s, -hoehe / 2) for c, s in ring] + [(r1 * c, r1 * s, hoehe / 2) for c, s in ring]
+        faces = [tuple(range(v - 1, -1, -1)), tuple(range(v, 2 * v))] + [(i, (i + 1) % v, v + (i + 1) % v, v + i) for i in range(v)]
+        return netz(name, gedreht(pts, ort, dreh), faces, m)
 
-# Tür: Holzzarge, Flügel steht offen im Flur, dahinter der Flur im Tageslicht (innen, keine Sonne von dort)
-for x in (TX0 - 0.04, TX1 + 0.04):
-    kiste((0.08, 0.06, THOEHE + 0.04), (x, -0.03, (THOEHE + 0.04) / 2), M["holz"], "hinten", "ausgang", fase=0.005, name="zarge")
-kiste((TX1 - TX0 + 0.16, 0.06, 0.08), ((TX0 + TX1) / 2, -0.03, THOEHE + 0.04), M["holz"], "hinten", "ausgang", fase=0.005, name="zarge_oben")
-_tw = math.radians(108)                               # Türblatt, am linken Band, 108° in den Flur geschwenkt
-kiste((0.9, 0.045, THOEHE - 0.05), (TX0 + 0.45 * math.cos(_tw), 0.3 + 0.45 * math.sin(_tw), (THOEHE - 0.05) / 2),
-      M["holz"], "hinten", fase=0.004, dreh=(0, 0, _tw), name="tuerblatt")
-kiste((5.5, 0.1, 2.8), (-7.0, 1.7, 1.4), M["flur"], "hinten", fase=0, name="flur_wand")
-kiste((6.0, 3.0, 0.05), (-6.9, 1.9, 2.725), M["flur"], "hinten", fase=0, name="flur_decke")
-kiste((5.5, 0.06, 0.05), (-7.0, 1.62, 0.9), M["holz"], "hinten", fase=0.008, name="handlauf")
-kiste((6.0, 1.6, 0.05), (-6.9, 0.95, -0.025), M["boden"], "hinten", fase=0, name="flur_boden")
+    def zyl(r, hoehe, ort, m, dreh=(0, 0, 0), v=16, name="zylinder"):
+        return kegelstumpf(r, r, hoehe, ort, m, dreh, v, name)
 
-# Kleiderhaken rechts neben der Tür mit dem Kapuzenpulli der Spielfigur (sie trägt heute den Kittel)
-HX, HZ = -3.68, 1.82
-kiste((0.05, 0.03, 0.08), (HX, -0.015, HZ), M["dunkel"], "hinten", fase=0.004, name="haken")
-kiste((0.02, 0.05, 0.02), (HX, -0.05, HZ + 0.03), M["dunkel"], "hinten", fase=0.004, name="haken_nase")
-_pk = kugel(1.0, (HX, -0.07, HZ - 0.02), M["pulli"], "hinten", name="pulli_kapuze"); _pk.scale = (0.14, 0.07, 0.11)
-_pb = kiste((0.34, 0.1, 0.58), (HX + 0.02, -0.07, HZ - 0.4), M["pulli"], "hinten", fase=0.05, dreh=(0, math.radians(-4), 0), name="pulli")
-_pa = kiste((0.1, 0.09, 0.42), (HX + 0.2, -0.065, HZ - 0.36), M["pulli"], "hinten", fase=0.04, dreh=(0, math.radians(-10), 0), name="pulli_aermel")
+    def ring(R, r, ort, m, n=40, k=8, name="ring"):
+        pts = [((R + r * math.cos(2 * math.pi * j / k)) * math.cos(2 * math.pi * i / n), (R + r * math.cos(2 * math.pi * j / k)) * math.sin(2 * math.pi * i / n),
+                r * math.sin(2 * math.pi * j / k)) for i in range(n) for j in range(k)]
+        faces = [(i * k + j, i * k + (j + 1) % k, ((i + 1) % n) * k + (j + 1) % k, ((i + 1) % n) * k + j) for i in range(n) for j in range(k)]
+        return netz(name, gedreht(pts, ort, (0, 0, 0)), faces, m)
 
-# Wanduhr rechts über der Tür (Hintergrund): Rand, Zifferblatt, Stift — die Zeiger setzt das Spiel als SVG
-# aus der Klickzone "uhr" (docs/ART_BIBLE.md §7.3). Ø 0,42 m statt 0,32 m, damit die Klickzone ≥ 44 CSS-px bleibt.
-UX, UZ = -3.6, 2.65
-zylinder(0.21, 0.02, (UX, -0.01, UZ), M["dunkel"], "hinten", "uhr", dreh=(math.radians(90), 0, 0), name="uhr_rand")
-zylinder(0.19, 0.03, (UX, -0.02, UZ), M["rahmen"], "hinten", "uhr", dreh=(math.radians(90), 0, 0), name="uhr_blatt", fase=0.004)
-zylinder(0.009, 0.015, (UX, -0.04, UZ), M["dunkel"], "hinten", "uhr", dreh=(math.radians(90), 0, 0), v=12, name="uhr_stift")
+    def wand(name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m):
+        return h["wandnetz"](name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m, SAMMLUNG)
 
-# Projektionsleinwand an der Rückwand: Kasten oben (Rolle), Tuch 2,4 × 1,5 m (Unterkante 1,10 m), Gewichtsleiste
-# unten; die Bildfläche (leicht eingerückt, heller: der Beamer läuft) ist die Schirmfläche "projektion".
-LX, LB, LH, LZ0 = -1.2, 2.4, 1.5, 1.10
-kiste((LB + 0.1, 0.09, 0.09), (LX, -0.045, LZ0 + LH + 0.045), M["dunkel"], "hinten", "projektion", fase=0.008, name="leinwand_kasten")
-kiste((LB, 0.012, LH), (LX, -0.04, LZ0 + LH / 2), M["leinwand"], "hinten", "projektion", fase=0, name="leinwand_tuch")
-kiste((LB + 0.02, 0.03, 0.03), (LX, -0.045, LZ0 - 0.015), M["dunkel"], "hinten", "projektion", fase=0.004, name="leinwand_leiste")
-proj = kiste((LB - 0.16, 0.004, LH - 0.12), (LX, -0.048, LZ0 + LH / 2), M["projektion"], "hinten", "projektion", fase=0, name="projektion_bild")
-schirmflaeche("projektion", proj, "hintergrund")
+    # ---------------- Boden, Wandflächen, Sockel ----------------
+    box("LS Boden", GIEBEL, FENSTER_NISCHE, RUECK, FLUR_WAND, 0.0, 0.015, "ls_boden")
+    fo = lambda liste: [(a0, a1, BRUESTUNG, STURZ) for a0, a1 in liste]
+    d = 0.02                                                   # Wandfläche 2 cm vor der Rohwand (Altbau-Rustika innen)
+    wand("LS Wand Giebel", "x", GIEBEL, GIEBEL + d, FENSTER_NISCHE, FLUR_WAND, 0, HOEHE, fo(GIEBELFENSTER), "ls_wand")
+    wand("LS Wand Nische", "y", FENSTER_NISCHE - d, FENSTER_NISCHE, GIEBEL, 6.75, 0, HOEHE, fo(FENSTER_SE_NISCHE), "ls_wand")
+    box("LS Pfeiler Nische", 6.75 - d, FENSTER_NISCHE, NISCHE_X1, FENSTER_WAND, 0, HOEHE, "ls_wand")
+    wand("LS Wand Fenster", "y", FENSTER_WAND, FENSTER_WAND + d, NISCHE_X1, RUECK, 0, HOEHE, fo(FENSTER_SE), "ls_wand")
+    tueren = [(a0, a1, -0.02, 2.1) for a0, a1 in TUEREN]
+    wand("LS Wand Flur", "y", FLUR_WAND - d, FLUR_WAND, GIEBEL, RUECK, 0, HOEHE, tueren, "ls_wand")
+    s = 0.03                                                   # Sockel Mint, Holzleiste darauf
+    box("LS Sockel Giebel", GIEBEL + d, FENSTER_NISCHE + d, GIEBEL + d + s, FLUR_WAND - d, 0, SOCKEL_H, "ls_sockel")
+    box("LS Leiste Giebel", GIEBEL + d, FENSTER_NISCHE + d, GIEBEL + d + s + 0.02, FLUR_WAND - d, SOCKEL_H, SOCKEL_H + 0.05, "ls_holz")
+    box("LS Sockel Nische", GIEBEL + d, FENSTER_NISCHE, 6.75 - d, FENSTER_NISCHE + s, 0, SOCKEL_H, "ls_sockel")
+    box("LS Leiste Nische", GIEBEL + d, FENSTER_NISCHE, 6.75 - d, FENSTER_NISCHE + s + 0.02, SOCKEL_H, SOCKEL_H + 0.05, "ls_holz")
+    box("LS Sockel Fenster", NISCHE_X1, FENSTER_WAND + d, RUECK, FENSTER_WAND + d + s, 0, SOCKEL_H, "ls_sockel")
+    box("LS Leiste Fenster", NISCHE_X1, FENSTER_WAND + d, RUECK, FENSTER_WAND + d + s + 0.02, SOCKEL_H, SOCKEL_H + 0.05, "ls_holz")
+    tuer_sockel = [(a0 - 0.1, a1 + 0.1, -0.1, SOCKEL_H + 0.2) for a0, a1 in TUEREN]
+    wand("LS Sockel Flur", "y", FLUR_WAND - d - s, FLUR_WAND - d, GIEBEL + d, RUECK, 0, SOCKEL_H, tuer_sockel, "ls_sockel")
+    for i, (a0, a1) in enumerate([(GIEBEL + d, TUEREN[0][0] - 0.1), (TUEREN[0][1] + 0.1, TUEREN[1][0] - 0.1), (TUEREN[1][1] + 0.1, RUECK)]):
+        box(f"LS Leiste Flur {i}", a0, FLUR_WAND - d - s - 0.02, a1, FLUR_WAND - d, SOCKEL_H, SOCKEL_H + 0.05, "ls_holz")
+    for a0, a1 in TUEREN:                                      # Holzzarge zur Flurseite der Tür
+        for x in (a0 - 0.08, a1):
+            box("LS Zarge", x, FLUR_WAND - d - 0.05, x + 0.08, FLUR_WAND, 0, 2.18, "ls_holz")
+        box("LS Zarge oben", a0 - 0.08, FLUR_WAND - d - 0.05, a1 + 0.08, FLUR_WAND, 2.1, 2.18, "ls_holz")
 
-# Beamer unter der Decke, Linse zur Leinwand (die Leinwand ist seine sichtbare Lichtquelle, §3.2)
-BX, BY, BZ = LX, -3.9, 3.08
-zylinder(0.025, 0.26, (BX, BY, HOEHE - 0.13), M["dunkel"], "hinten", v=12, name="beamer_stange")
-kiste((0.34, 0.26, 0.1), (BX, BY, BZ), M["dunkel"], "hinten", fase=0.012, name="beamer")
-zylinder(0.03, 0.03, (BX + 0.08, BY + 0.14, BZ), M["glas"], "hinten", dreh=(math.radians(90), 0, 0), v=16, name="beamer_linse")
-# Deckenleuchten (aus — es ist hell genug): zwei flache Paneele
-for x in (-2.6, 1.4):
-    kiste((1.2, 0.3, 0.012), (x, -3.2, HOEHE - 0.008), M["leuchte"], "hinten", fase=0, name="deckenleuchte")
+    # Fensterbänke innen (Papier) und Vorhänge (Mint, je Fenstergruppe links und rechts gerafft), Vorhangschiene
+    def fensterbank(achse, lage, innen, a0, a1):
+        w0, w1 = sorted((lage, lage + innen * 0.28))
+        if achse == "y": box("LS Fensterbank", a0 - 0.05, w0, a1 + 0.05, w1, BRUESTUNG - 0.04, BRUESTUNG, "ls_papier")
+        else: box("LS Fensterbank", w0, a0 - 0.05, w1, a1 + 0.05, BRUESTUNG - 0.04, BRUESTUNG, "ls_papier")
 
-# Fenster: dasselbe Bauteil wie in den anderen Räumen, zwei hohe Flügel; Jalousie halb oben (Lamellen schräg offen)
-fenster(FX0, FX1, FZ0, FZ1, M["rahmen"], M["dunkel"], griff_z=1.9)
-jalousie(FX0 + 0.03, FX1 - 0.03, FZ1 - 0.01, 1.95, M["lamelle"], M["band"], M["rahmen"], y=0.0, pitch=0.085, breite=0.075, neigung=22, schnur=0.55)
-# Draußen: Hofseite am Vormittag — flache Himmelsbänder, Hofpflaster, ein Baum in Petrol, ein Nachbarflügel in
-# Papier. Alles niedrig und nie im Weg der Sonne (SONNE_AUS).
-AUSSEN = himmel_baender(40.0, [(-20.0, 1.2, M["hof"]), (1.2, 11.0, M["himmel_unten"]), (11.0, 40.0, M["himmel_oben"])])
-AUSSEN.append(kiste((60, 40, 0.1), (0, 20.5, -0.05), M["hof"], "hinten", fase=0, name="hofboden"))
-AUSSEN.append(zylinder(0.14, 1.8, (7.4, 15.0, 0.9), M["baum"], "hinten", v=12, name="baumstamm"))
-for i, (bx, by, bz, br) in enumerate(((7.4, 15.0, 2.6, 1.4), (6.5, 15.3, 2.1, 1.0), (8.4, 15.2, 2.2, 1.0))):
-    AUSSEN.append(kugel(br, (bx, by, bz), M["baum"], "hinten", name=f"baumkrone_{i}"))
-AUSSEN.append(kiste((14.0, 3.0, 3.0), (16.0, 24.0, 1.5), M["nachbarbau"], "hinten", fase=0, name="nachbarbau"))
-AUSSEN.append(kiste((14.3, 3.3, 0.14), (16.0, 24.0, 3.07), M["dunkel"], "hinten", fase=0, name="nachbar_dach"))
-SONNE_AUS = {o.name for o in AUSSEN}
+    def vorhang(achse, lage, innen, a, seite):
+        """Gerafftes Paket: drei Falten (schmale Kisten), leicht versetzt, vom Boden bis zur Schiene."""
+        for f in range(3):
+            u = a + seite * (0.06 + 0.09 * f); w = lage + innen * (0.05 + 0.035 * (f % 2))
+            if achse == "y": box("LS Vorhang", u - 0.06, w - 0.03, u + 0.06, w + 0.03, 0.06, 3.22, "ls_vorhang")
+            else: box("LS Vorhang", w - 0.03, u - 0.06, w + 0.03, u + 0.06, 0.06, 3.22, "ls_vorhang")
 
-# Whiteboard an der rechten Seitenwand (y −0,9 … −2,9, Unterkante 0,9 m): Tafel (im Render leer, der Code zeichnet
-# das Einthoven-Dreieck als SVG), Metallrahmen, Ablage mit zwei Markern und einem Schwamm. Vorderseite = lokale
-# −y-Seite, um −90° gedreht, damit sie in den Raum (−x) zeigt und ebenen.py ihre vier Ecken exportiert.
-WY, WZ0, WB, WH = -1.85, 0.9, 2.0, 1.2
-_wd = (0, 0, math.radians(-90))
-kiste((WB + 0.06, 0.03, WH + 0.06), (X1 - 0.015, WY, WZ0 + WH / 2), M["metall"], "hinten", "whiteboard", fase=0, dreh=_wd, name="tafel_rahmen")
-tafel = kiste((WB, 0.004, WH), (X1 - 0.032, WY, WZ0 + WH / 2), M["tafel"], "hinten", "whiteboard", fase=0, dreh=_wd, name="tafel")
-schirmflaeche("whiteboard", tafel, "hintergrund")
-kiste((WB * 0.6, 0.07, 0.03), (X1 - 0.05, WY, WZ0 - 0.015), M["metall"], "hinten", "whiteboard", fase=0.004, dreh=_wd, name="tafel_ablage")
-for k, (dy, m) in enumerate(((-0.35, "dunkel"), (-0.2, "petrol"))):
-    zylinder(0.009, 0.13, (X1 - 0.055, WY + dy, WZ0 + 0.012), M[m], "hinten", "whiteboard", dreh=(math.radians(90), 0, math.radians(6 * k)), v=12, name="marker")
-kiste((0.08, 0.05, 0.03), (X1 - 0.06, WY + 0.35, WZ0 + 0.015), M["papier"], "hinten", "whiteboard", fase=0.006, dreh=_wd, name="schwamm")
+    gruppen = [("y", FENSTER_NISCHE, +1, (0.65, 2.95)), ("y", FENSTER_NISCHE, +1, (4.25, 6.55)),
+               ("y", FENSTER_WAND + d, +1, FENSTER_SE[0]), ("y", FENSTER_WAND + d, +1, FENSTER_SE[1]),
+               ("x", GIEBEL + d, +1, GIEBELFENSTER[0]), ("x", GIEBEL + d, +1, GIEBELFENSTER[1])]
+    for achse, lage, innen, (a0, a1) in gruppen:
+        fensterbank(achse, lage, innen, a0, a1)
+        vorhang(achse, lage, innen, a0, -1); vorhang(achse, lage, innen, a1, +1)
+    box("LS Schiene Nische", GIEBEL + d, FENSTER_NISCHE + 0.02, 6.75 - d, FENSTER_NISCHE + 0.06, 3.22, 3.26, "ls_dunkel")
+    box("LS Schiene Fenster", NISCHE_X1, FENSTER_WAND + 0.04, RUECK, FENSTER_WAND + 0.08, 3.22, 3.26, "ls_dunkel")
+    box("LS Schiene Giebel", GIEBEL + 0.04, FENSTER_NISCHE + d, GIEBEL + 0.08, FLUR_WAND - d, 3.22, 3.26, "ls_dunkel")
 
-# ---------------- Mittelgrund ----------------
-# Untersuchungsliege, Mitte (0,6 / −2,4), 20° gedreht, Kopfende zur Rückwand (nach links hinten: so liegt die
-# linke Seite mit Tritt und Dr. Wieser zur Kamera, die rechte zum Wagen). Lokale Koordinaten: u entlang der
-# Liege zum Kopfende, v quer nach links (zur Kamera-linken Seite), z Höhe. Liegefläche 0,75 m.
-LC = Vector((0.6, -2.4, 0.0)); LA = math.radians(-20)
-D = Vector((math.sin(LA), math.cos(LA), 0.0)); N = Vector((-math.cos(LA), math.sin(LA), 0.0))
-LROT = (0, 0, -LA)
+    # Pflanzen auf den Fensterbänken (Petrol, die dunkle Form): Topf und drei bis fünf Blätter als gekippte Kisten
+    def pflanze(x, y, groesse=1.0):
+        zyl(0.08 * groesse, 0.14 * groesse, (x, y, BRUESTUNG + 0.07 * groesse), "ls_topf", v=14, name="LS Topf")
+        for b in range(zr.randint(3, 5)):
+            w = zr.uniform(0, 360); k = zr.uniform(15, 40)
+            kiste((0.05 * groesse, 0.02, 0.24 * groesse), (x + 0.04 * math.cos(math.radians(w)), y + 0.04 * math.sin(math.radians(w)),
+                  BRUESTUNG + 0.24 * groesse), "ls_pflanze", dreh=w, kipp=k, name="LS Blatt")
 
+    pflanze(1.15, FENSTER_NISCHE + 0.14); pflanze(5.9, FENSTER_NISCHE + 0.13, 1.3); pflanze(12.2, FENSTER_WAND + 0.17, 0.9)
+    pflanze(GIEBEL + 0.16, 5.5, 1.2)
 
-def L(u, v, z):
-    p = LC + u * D + v * N
-    return (p.x, p.y, z)
+    # ---------------- Decke: Holzlatten längs des Raums, Lichtbänder quer, zwei Ringleuchten, Beamer ----------------
+    y = FENSTER_NISCHE
+    while y < FLUR_WAND - 0.05:                                # Latten 0,6 m, Fuge 2,4 cm; in der Nische nur bis zum Rücksprung
+        box("LS Latte", GIEBEL, y + 0.012, NISCHE_X1 if y + 0.3 < FENSTER_WAND else RUECK, min(y + 0.6, FLUR_WAND) - 0.012, 3.31, 3.36, "ls_decke")
+        y += 0.6
+    for (x, ya, yb) in ((1.6, 0.6, 5.2), (3.7, 1.8, 6.2), (6.4, -0.2, 3.0), (8.3, 2.4, 6.0), (10.5, 0.9, 4.6), (12.6, 3.0, 6.4)):
+        box("LS Lichtband", x - 0.03, ya, x + 0.03, yb, 3.29, 3.31, "ls_leuchte")
+    for (x, y) in ((7.8, 2.25), (7.8, 4.95)):                  # Ringleuchten (aus), an drei dünnen Seilen
+        ring(0.55, 0.025, (x, y, 2.75), "ls_leuchte", name="LS Ringleuchte")
+        for w in (90, 210, 330):
+            zyl(0.004, 0.56, (x + 0.55 * math.cos(math.radians(w)), y + 0.55 * math.sin(math.radians(w)), 3.03), "ls_dunkel", v=6, name="LS Seil")
+    zyl(0.02, 0.18, (6.6, 3.25, 3.22), "ls_dunkel", v=10, name="LS Beamer Stange")
+    kiste((0.34, 0.3, 0.11), (6.6, 3.25, 3.08), "ls_papier", fase=0.012, name="LS Beamer")
+    zyl(0.035, 0.03, (6.42, 3.25, 3.08), "ls_glas", dreh=(0, math.radians(90), 0), v=16, name="LS Beamer Linse")
 
+    # ---------------- Giebel: Leinwand zwischen den Fenstern, Uhr; Flurwand vorn: Whiteboard ----------------
+    gx = GIEBEL + d; lm, lb, lh, lz = 3.2, 2.4, 1.5, 1.0
+    box("LS Leinwand Kasten", gx, lm - lb / 2 - 0.05, gx + 0.09, lm + lb / 2 + 0.05, lz + lh, lz + lh + 0.09, "ls_dunkel")
+    box("LS Leinwand Tuch", gx + 0.03, lm - lb / 2, gx + 0.042, lm + lb / 2, lz, lz + lh, "ls_leinwand")
+    box("LS Leinwand Leiste", gx + 0.02, lm - lb / 2 - 0.01, gx + 0.05, lm + lb / 2 + 0.01, lz - 0.03, lz, "ls_dunkel")
+    box("LS Projektion", gx + 0.042, lm - lb / 2 + 0.08, gx + 0.046, lm + lb / 2 - 0.08, lz + 0.06, lz + lh - 0.06, "ls_projektion")
+    for (r, t, m) in ((0.21, 0.02, "ls_dunkel"), (0.19, 0.03, "ls_papier")):   # Wanduhr über der vorderen Tür
+        zyl(r, t, (sum(TUEREN[0]) / 2, FLUR_WAND - d - t / 2, 2.6), m, dreh=(math.radians(90), 0, 0), v=32, name="LS Uhr")
+    wx0, wx1, wz0, wz1 = 0.9, 2.9, 0.9, 2.1
+    box("LS Whiteboard Rahmen", wx0 - 0.03, FLUR_WAND - d - 0.03, wx1 + 0.03, FLUR_WAND - d, wz0 - 0.03, wz1 + 0.03, "ls_metall")
+    box("LS Whiteboard", wx0, FLUR_WAND - d - 0.034, wx1, FLUR_WAND - d - 0.03, wz0, wz1, "ls_tafel")
+    box("LS Whiteboard Ablage", wx0 + 0.3, FLUR_WAND - d - 0.1, wx1 - 0.3, FLUR_WAND - d, wz0 - 0.06, wz0 - 0.03, "ls_metall")
 
-LIEGE_OBEN = 0.75
-kiste((0.55, 1.3, 0.06), L(0, 0, 0.03), M["petrol"], "mitte", fase=0.01, dreh=LROT, name="liege_fuss")
-kiste((0.32, 0.5, 0.52), L(0, 0, 0.31), M["dunkel"], "mitte", fase=0.01, dreh=LROT, name="liege_saeule")
-kiste((0.62, 1.9, 0.05), L(0, 0, 0.595), M["dunkel"], "mitte", fase=0.006, dreh=LROT, name="liege_rahmen")
-kiste((0.65, 1.95, 0.13), L(0, 0, LIEGE_OBEN - 0.065), M["mint"], "mitte", fase=0.03, dreh=LROT, name="liege_polster")
-platte(0.52, 1.86, L(-0.02, 0, LIEGE_OBEN + 0.002), M["papier"], "mitte", dreh=LROT, name="liege_papier")
-kiste((0.4, 0.3, 0.07), L(0.78, 0, LIEGE_OBEN + 0.035), M["papier"], "mitte", fase=0.03, dreh=LROT, name="kissen")
-# Papierrolle am Kopfende auf zwei Haltern
-zylinder(0.065, 0.56, L(1.03, 0, LIEGE_OBEN + 0.09), M["papier"], "mitte", dreh=(0, math.radians(90), -LA), name="papierrolle")
-for v in (-0.3, 0.3):
-    kiste((0.03, 0.03, 0.17), L(1.03, v, LIEGE_OBEN + 0.02), M["dunkel"], "mitte", fase=0.004, dreh=LROT, name="rollenhalter")
-# Tritt links an der Liege, beim Kopfende (Dr. Wiesers Fuß steht darauf)
-kiste((0.42, 0.45, 0.25), L(0.5, 0.325 + 0.21, 0.125), M["dunkel"], "mitte", fase=0.01, dreh=LROT, name="tritt")
-kiste((0.42, 0.45, 0.012), L(0.5, 0.325 + 0.21, 0.256), M["petrol"], "mitte", fase=0, dreh=LROT, name="tritt_flaeche")
-# Jonas' Schuhe stehen unter der Liege (seine Socken sind senfgelb, die Figur)
-for v in (0.32, 0.19):
-    kiste((0.11, 0.3, 0.09), L(-0.55, v, 0.045), M["dunkel"], "mitte", fase=0.025, dreh=LROT, name="schuh")
-# Klickzonen: `liege` (ohne Figur) am Fußende, `jonas` am Kopfende — figuren_zeichnen.py vereinigt die
-# Figur mit ihrer Zone und hält beide getrennt (getrennt in ebenen_figuren.aufbau)
-platzhalter("liege", (0.4, 0.4, 0.25), L(-0.75, 0, LIEGE_OBEN + 0.12))
-platzhalter("jonas", (0.6, 1.0, 0.3), L(0.4, 0, LIEGE_OBEN + 0.15))
+    # ---------------- Vorn: Dozententisch mit Linealschachtel, Liege und EKG-Wagen in der Nische ----------------
+    def tisch(xm, ym, lx, ly, h_=TISCH_H, name="LS Tisch"):
+        box(name + " Platte", xm - lx / 2, ym - ly / 2, xm + lx / 2, ym + ly / 2, h_ - 0.03, h_, "ls_holz")
+        for ya in (ym - ly / 2 + 0.06, ym + ly / 2 - 0.1):     # T-Gestell an beiden Enden (wie Klapptische)
+            box(name + " Bein", xm - 0.02, ya, xm + 0.02, ya + 0.04, 0.04, h_ - 0.03, "ls_dunkel")
+            box(name + " Fuss", xm - lx / 2 + 0.02, ya, xm + lx / 2 - 0.02, ya + 0.04, 0.0, 0.04, "ls_dunkel")
+        box(name + " Zarge", xm - 0.02, ym - ly / 2 + 0.1, xm + 0.02, ym + ly / 2 - 0.1, h_ - 0.09, h_ - 0.03, "ls_dunkel")
 
-# EKG-Wagen am Kopfende rechts neben der Liege, Schirm zur Kamera (gleiches Bauteil wie in der Aufnahme):
-# zwei Böden auf vier Pfosten mit Rollen, Gerät mit geneigtem Schirm (dunkles Glas, Kurve aus dem Code über
-# "wagen_schirm"), Papierfach vorn, Haken mit den sechs Saugelektroden (noch nicht geklebt — das ist die Aufgabe).
-# Klickzone "wagen" nur Gerät, Schirm und obere Ablage: das Gestell darunter überlappte sonst das Fußende der Liege (§7.6)
-WC = Vector((1.25, -1.4, 0.0)); WA = math.radians(-8)
+    tx, ty = 2.1, 4.9                                          # Dozententisch rechts vor der Leinwand, quer zum Raum
+    tisch(tx, ty, 0.75, 1.6, name="LS Dozententisch")
+    kiste((0.2, 0.26, 0.07), (tx + 0.05, ty - 0.45, TISCH_H + 0.035), "ls_papier", dreh=8, name="LS Linealschachtel")
+    for k in range(5):
+        kiste((0.04, 0.19, 0.004), (tx + 0.0 + 0.025 * k, ty - 0.45, TISCH_H + 0.075 + 0.003 * k), "ls_kobalt", dreh=8 + 3 * k, name="LS Lineal")
+    kiste((0.21, 0.3, 0.02), (tx - 0.1, ty + 0.05, TISCH_H + 0.01), "ls_papier", dreh=-6, name="LS EKG-Blaetter")
+    kiste((0.24, 0.33, 0.015), (tx + 0.05, ty + 0.5, TISCH_H + 0.008), "ls_dunkel", dreh=0, name="LS Laptop")
+    kiste((0.24, 0.015, 0.22), (tx - 0.07, ty + 0.5, TISCH_H + 0.12), "ls_dunkel", dreh=90, kipp=-12, name="LS Laptop Deckel")
+    zyl(0.035, 0.24, (tx + 0.22, ty - 0.1, TISCH_H + 0.12), "ls_flasche", v=14, name="LS Flasche")
 
+    # Liege längs der Nische, Kopfende zum Giebel; Tritt zur Raumseite; Wagen am Kopfende, Schirm zum Raum
+    lx0, lx1, ly0, ly1, lo = 2.5, 4.45, -0.42, 0.23, 0.75
+    lyM = (ly0 + ly1) / 2
+    box("LS Liege Fuss", lx0 + 0.3, ly0 + 0.05, lx1 - 0.3, ly1 - 0.05, 0.0, 0.06, "ls_petrol")
+    box("LS Liege Saeule", (lx0 + lx1) / 2 - 0.25, lyM - 0.16, (lx0 + lx1) / 2 + 0.25, lyM + 0.16, 0.06, 0.57, "ls_dunkel")
+    box("LS Liege Rahmen", lx0 + 0.03, ly0 + 0.015, lx1 - 0.03, ly1 - 0.015, 0.57, 0.62, "ls_dunkel")
+    kiste((lx1 - lx0, ly1 - ly0, 0.13), ((lx0 + lx1) / 2, lyM, lo - 0.065), "ls_mint", fase=0.03, name="LS Liege Polster")
+    box("LS Liege Papier", lx0 + 0.05, ly0 + 0.07, lx1 - 0.05, ly1 - 0.07, lo, lo + 0.003, "ls_papier")
+    kiste((0.3, 0.4, 0.07), (lx0 + 0.2, lyM, lo + 0.035), "ls_papier", fase=0.03, name="LS Kissen")
+    zyl(0.065, 0.56, (lx0 - 0.03, lyM, lo + 0.09), "ls_papier", dreh=(math.radians(90), 0, 0), v=20, name="LS Papierrolle")
+    box("LS Tritt", lx0 + 0.25, ly1 + 0.02, lx0 + 0.7, ly1 + 0.44, 0.0, 0.25, "ls_dunkel")
+    box("LS Tritt Flaeche", lx0 + 0.25, ly1 + 0.02, lx0 + 0.7, ly1 + 0.44, 0.25, 0.262, "ls_petrol")
+    wcx, wcy = 1.85, 0.55                                      # EKG-Wagen
+    box("LS Wagen Boden oben", wcx - 0.23, wcy - 0.28, wcx + 0.23, wcy + 0.28, 0.9, 0.95, "ls_petrol")
+    box("LS Wagen Boden unten", wcx - 0.23, wcy - 0.28, wcx + 0.23, wcy + 0.28, 0.22, 0.26, "ls_petrol")
+    for dx in (-0.18, 0.18):
+        for dy in (-0.23, 0.23):
+            zyl(0.012, 0.9, (wcx + dx, wcy + dy, 0.5), "ls_metall", v=8, name="LS Wagen Pfosten")
+    box("LS Wagen Geraet", wcx - 0.18, wcy - 0.25, wcx + 0.18, wcy + 0.25, 0.95, 1.06, "ls_dunkel")
+    kiste((0.03, 0.34, 0.25), (wcx + 0.12, wcy, 1.19), "ls_dunkel", dreh=0, name="LS Wagen Schirmrahmen")
+    box("LS Wagen Schirm", wcx + 0.135, wcy - 0.15, wcx + 0.139, wcy + 0.15, 1.095, 1.285, "ls_glas")
+    box("LS Wagen Streifen", wcx + 0.18, wcy - 0.06, wcx + 0.183, wcy + 0.06, 0.82, 1.0, "ls_papier")
 
-def W(dx, dy, z):
-    p = WC + Vector((dx * math.cos(WA) - dy * math.sin(WA), dx * math.sin(WA) + dy * math.cos(WA), 0.0))
-    return (p.x, p.y, z)
+    # Stuhl der Dozentin neben dem Tisch, Jacke über der Lehne (sie sitzt nicht)
+    def stuhl(x, y, dreh=-90.0, name="LS Stuhl", jacke=None, tasche=None):
+        """Seminarstuhl: Sitz und Lehne Petrol, Gestell Tinte. Lehne auf der lokalen +y-Seite; dreh −90° = Lehne nach +x."""
+        a = math.radians(dreh); c, s_ = math.cos(a), math.sin(a)
+        P = lambda dx, dy, z: (x + dx * c - dy * s_, y + dx * s_ + dy * c, z)
+        kiste((0.44, 0.44, 0.05), P(0, 0, 0.455), "ls_petrol", dreh=dreh, fase=0.015, name=name + " Sitz")
+        for dx in (-0.19, 0.19):
+            for dy in (-0.19, 0.19):
+                zyl(0.011, 0.43, P(dx, dy, 0.215), "ls_dunkel", v=8, name=name + " Bein")
+        kiste((0.44, 0.035, 0.26), P(0, 0.23, 0.74), "ls_petrol", dreh=dreh, kipp=-8, fase=0.012, name=name + " Lehne")
+        for dx in (-0.19, 0.19):
+            zyl(0.011, 0.3, P(dx, 0.21, 0.62), "ls_dunkel", v=8, name=name + " Holm")
+        if jacke:
+            kiste((0.36, 0.07, 0.5), P(0.02, 0.28, 0.6), jacke, dreh=dreh + 4, kipp=-6, name=name + " Jacke")   # hängt hinter der Lehne
+        if tasche:
+            kiste((0.34, 0.14, 0.3), P(0.32, -0.05, 0.15), tasche, dreh=dreh + zr.uniform(-20, 20), fase=0.04, name=name + " Tasche")
 
+    stuhl(tx + 0.55, ty + 0.55, dreh=180 + 20, name="LS Stuhl Dozentin", jacke="ls_dunkel")
 
-WROT = (0, 0, WA)
-kiste((0.56, 0.46, 0.05), W(0, 0, 0.92), M["petrol"], "mitte", "wagen", fase=0.012, dreh=WROT, name="wagen_boden_oben")
-kiste((0.56, 0.46, 0.04), W(0, 0, 0.24), M["petrol"], "mitte", None, fase=0.012, dreh=WROT, name="wagen_boden_unten")
-for dx in (-0.23, 0.23):
-    for dy in (-0.18, 0.18):
-        zylinder(0.012, 0.9, W(dx, dy, 0.5), M["metall"], "mitte", None, v=10, name="wagen_pfosten")
-        kugel(0.035, W(dx, dy, 0.035), M["dunkel"], "mitte", None, name="wagen_rolle")
-kiste((0.5, 0.36, 0.11), W(0, 0, 1.0), M["dunkel"], "mitte", "wagen", fase=0.014, dreh=WROT, name="wagen_geraet")
-kiste((0.34, 0.03, 0.25), W(0, -0.12, 1.185), M["dunkel"], "mitte", "wagen", fase=0.008, dreh=(math.radians(-14), 0, WA), name="wagen_schirm_rahmen")
-wschirm = kiste((0.30, 0.004, 0.19), W(0, -0.137, 1.19), M["glas"], "mitte", "wagen", fase=0, dreh=(math.radians(-14), 0, WA), name="wagen_schirm")
-schirmflaeche("wagen_schirm", wschirm, "mittelgrund")
-kiste((0.22, 0.02, 0.01), W(0.02, -0.19, 0.985), M["petrol"], "mitte", "wagen", fase=0, dreh=WROT, name="papierfach")
-kiste((0.12, 0.08, 0.003), W(0.02, -0.22, 0.99), M["papier"], "mitte", "wagen", fase=0, dreh=(math.radians(10), 0, WA), name="streifen")
-kiste((0.12, 0.003, 0.22), W(0.02, -0.262, 0.88), M["papier"], "mitte", None, fase=0, dreh=(math.radians(4), 0, WA), name="streifen_hang")
-# Haken an der rechten Seite mit den Brustwand-Saugelektroden (sechs Bälle an kurzen Leitungen)
-kiste((0.03, 0.06, 0.03), W(0.28, -0.02, 0.9), M["dunkel"], "mitte", None, fase=0.004, name="haken_wagen")
-for k in range(6):
-    dz = 0.1 + 0.035 * (k % 3); dy = -0.06 + 0.04 * (k // 3) + 0.01 * (k % 3)
-    rohr([W(0.29, -0.02, 0.9), W(0.31, dy, 0.9 - dz * 0.5), W(0.3, dy, 0.9 - dz)], 0.003, M["kabel"], "mitte", None, name="saug_leitung")
-    kugel(0.018, W(0.3, dy, 0.9 - dz - 0.02), M["petrol"], "mitte", None, name="saugelektrode")
-# Patientenkabel: vom Gerät (linke Seite) zur Liege, dort am Kopfende die Verteilung in vier Leitungen entlang
-# der Polsterkanten — zu den Extremitätenklemmen des Freiwilligen (die Klemmen gehören zur Figur Jonas; die
-# Leitungsenden liegen unter seinen Armen und Beinen, damit die Figurenebene sie deckt). Ampel-Regel
-# (docs/FACHREGELN.md): rot = rechter Arm und schwarz = rechtes Bein (seine rechte Seite liegt zur Kamera, lokal +v),
-# gelb = linker Arm und grün = linkes Bein (zum Wagen, −v). Er liegt flach, Arme neben dem Körper, Beine gestreckt.
-STAMM = [W(-0.25, 0.0, 0.96), W(-0.33, 0.0, 0.93), L(1.1, -0.4, 0.85), L(1.08, -0.3, LIEGE_OBEN + 0.015)]
-rohr(STAMM, 0.007, M["kabel"], "mitte", None, name="patientenkabel")
-kugel(0.02, L(1.08, -0.3, LIEGE_OBEN + 0.02), M["dunkel"], "mitte", None, name="kabelverteiler")
-Z = LIEGE_OBEN + 0.012
-LEITUNGEN = {
-    "rot": [L(1.08, -0.3, Z), L(1.1, 0.0, Z), L(1.05, 0.33, Z), L(0.6, 0.36, Z), L(0.15, 0.36, Z), L(0.03, 0.32, Z + 0.02)],
-    "gelb": [L(1.08, -0.3, Z), L(0.7, -0.36, Z), L(0.15, -0.36, Z), L(0.03, -0.32, Z + 0.02)],
-    "gruen": [L(1.08, -0.3, Z), L(0.4, -0.34, Z), L(-0.5, -0.35, Z), L(-0.8, -0.2, Z + 0.02)],
-    "schwarz": [L(1.08, -0.3, Z), L(0.4, -0.33, Z), L(-0.6, -0.34, Z), L(-1.0, -0.25, Z), L(-1.03, 0.08, Z), L(-0.9, 0.22, Z), L(-0.8, 0.19, Z + 0.02)],
-}
-for name, pts in LEITUNGEN.items():
-    rohr(pts, 0.004, M["kabel"], "mitte", None, name="leitung_" + name)
+    # ---------------- Tischreihen ----------------
+    for r, xm in enumerate(REIHEN_X):
+        for (ya, yb) in BLOECKE:
+            tisch(xm, (ya + yb) / 2, TISCH_T, yb - ya)
+            for p in range(3):
+                yp = ya + 0.3 + 0.6 * p
+                raus = zr.choice((0.0, 0.0, 0.05, 0.12, 0.25)); dreh = -90 + zr.choice((0, 0, 0, -8, 6, 12))
+                jacke = zr.choice((None,) * 9 + ("ls_jacke", "ls_jacke2"))
+                tasche = zr.choice((None,) * 8 + ("ls_dunkel", "ls_petrol"))
+                if r == len(REIHEN_X) - 1: tasche = None    # keine dunklen Klötze am unteren Bildrand (ART_BIBLE §3.3)
+                stuhl(xm + TISCH_T / 2 + 0.3 + raus, yp, dreh, jacke=jacke, tasche=tasche)
+                if zr.random() < 0.55:                     # Block und Stift am Platz
+                    kiste((0.21, 0.29, 0.006), (xm + 0.05, yp, TISCH_H + 0.003), "ls_papier", dreh=90 + zr.uniform(-8, 8), name="LS Block")
+                    kiste((0.008, 0.14, 0.008), (xm + 0.06, yp + 0.17, TISCH_H + 0.01), "ls_dunkel", dreh=zr.uniform(-20, 20), name="LS Stift")
+            if zr.random() < 0.6:                          # eine Wasserflasche je zweitem Tisch
+                zyl(0.028, 0.2, (xm - 0.15, ya + 0.25 + zr.uniform(0, 1.2), TISCH_H + 0.1), "ls_flasche", v=14, name="LS Flasche")
 
-# Seminartisch (Holz, 1,8 × 0,8, 0,75 m), Mitte (−2,6 / −3,2), parallel zur Rückwand; darauf die offene Schachtel
-# mit den blauen Linealen (Klickzone "lineale", mit unsichtbarem Rahmen auf Fingergröße), ein Zirkel und ein
-# Stapel leerer EKG-Blätter
-TXM, TYM, TB, TT, TH = -2.1, -2.0, 1.8, 0.8, 0.75   # Beschreibung: (−2,6 / 3,2) — näher an Rückwand und Mitte, sonst fiele der Tisch links aus dem 28-mm-Bild
-kiste((TB, TT, 0.04), (TXM, TYM, TH - 0.02), M["holz"], "mitte", fase=0.008, name="tischplatte")
-kiste((TB - 0.16, TT - 0.16, 0.06), (TXM, TYM, TH - 0.07), M["dunkel"], "mitte", fase=0.006, name="tischzarge")
-for dx in (-0.8, 0.8):
-    for dy in (-0.32, 0.32):
-        kiste((0.05, 0.05, TH - 0.1), (TXM + dx, TYM + dy, (TH - 0.1) / 2), M["dunkel"], "mitte", fase=0.004, name="tischbein")
-SX0, SY0 = TXM + 0.35, TYM + 0.1
-kiste((0.26, 0.2, 0.003), (SX0, SY0, TH + 0.0015), M["papier"], "mitte", "lineale", fase=0, dreh=(0, 0, math.radians(-10)), name="schachtel_boden")
-for (dx, dy, bx, by) in ((0, -0.095, 0.26, 0.012), (0, 0.095, 0.26, 0.012), (-0.125, 0, 0.012, 0.2), (0.125, 0, 0.012, 0.2)):
-    a = math.radians(-10); rx = dx * math.cos(a) - dy * math.sin(a); ry = dx * math.sin(a) + dy * math.cos(a)
-    kiste((bx, by, 0.07), (SX0 + rx, SY0 + ry, TH + 0.035), M["papier"], "mitte", "lineale", fase=0, dreh=(0, 0, a), name="schachtel_wand")
-for k in range(5):     # Lineale: flache blaue Streifen, leicht gefächert
-    kiste((0.19, 0.04, 0.003), (SX0 - 0.01 + 0.004 * k, SY0 - 0.06 + 0.03 * k, TH + 0.012 + 0.004 * k), M["kobalt"], "mitte", "lineale", fase=0,
-          dreh=(0, 0, math.radians(-10 + 3 * k)), name="lineal")
-kiste((0.19, 0.04, 0.003), (SX0 + 0.14, SY0 - 0.2, TH + 0.0015), M["kobalt"], "mitte", "lineale", fase=0, dreh=(0, 0, math.radians(25)), name="lineal_einzeln")
-platzhalter("lineale", (0.42, 0.42, 0.3), (SX0, SY0 - 0.05, TH + 0.12))
-kiste((0.3, 0.21, 0.02), (TXM - 0.5, TYM - 0.05, TH + 0.01), M["papier"], "mitte", fase=0, dreh=(0, 0, math.radians(6)), name="blaetter")
-# Zirkel liegt auf dem Blätterstapel, leicht gespreizt
-GX, GY, GL, GW = TXM - 0.5, TYM + 0.03, 0.17, math.radians(14)      # Gelenk bei (GX, GY), Schenkel nach −y
-for w in (GW, -GW):
-    kiste((0.012, 0.012, GL), (GX + GL / 2 * math.sin(w), GY - GL / 2 * math.cos(w), TH + 0.028), M["metall"], "mitte", fase=0,
-          dreh=(math.radians(90), 0, w), name="zirkel")
-zylinder(0.016, 0.012, (GX, GY, TH + 0.028), M["metall"], "mitte", name="zirkel_gelenk")
-
-
-def stuhl(x, y, dreh, zone=None, lehne_tief=0.0):
-    """Seminarstuhl: Sitz und Lehne Petrol-Polster, Gestell dunkel; Lehne auf der +y-Seite (zur Rückwand)."""
-    a = math.radians(dreh); c, s = math.cos(a), math.sin(a)
-    def P(dx, dy, z): return (x + dx * c - dy * s, y + dx * s + dy * c, z)
-    kiste((0.44, 0.44, 0.05), P(0, 0, 0.455), M["petrol"], "mitte", zone, fase=0.02, dreh=(0, 0, a), name="stuhl_sitz")
-    for dx in (-0.19, 0.19):
-        for dy in (-0.19, 0.19):
-            zylinder(0.011, 0.43, P(dx, dy, 0.215), M["dunkel"], "mitte", zone, v=10, name="stuhl_bein")
-        zylinder(0.011, 0.34, P(dx, 0.2, 0.65), M["dunkel"], "mitte", zone, v=10, dreh=(math.radians(-8), 0, a), name="stuhl_holm")
-    kiste((0.44, 0.035, 0.24), P(0, 0.23, 0.71), M["petrol"], "mitte", zone, fase=0.015, dreh=(math.radians(-8), 0, a), name="stuhl_lehne")
-    return P
-
-
-for k, dx in enumerate((-0.68, -0.23, 0.23, 0.68)):   # vier Stühle an der Tischseite zur Kamera, der dritte um 0,4 m herausgezogen (Platz der Spielerin)
-    if k == 2: stuhl(TXM + dx + 0.06, TYM - 0.4 - 0.33 - 0.4, -18)
-    else: stuhl(TXM + dx, TYM - 0.4 - 0.33, 0)
-# Stuhl neben der Liege, unter der Leinwand: Dr. Wiesers Jacke über der Lehne, das Stethoskop darüber (sie sitzt nicht)
-SA = 200
-P5 = stuhl(-1.6, -0.9, SA)
-_j = kiste((0.5, 0.14, 0.42), P5(0, 0.25, 0.78), M["dunkel"], "mitte", fase=0.06, dreh=(math.radians(-8), 0, math.radians(SA)), name="jacke")
-_jk = kugel(1.0, P5(0, 0.24, 0.98), M["dunkel"], "mitte", name="jacke_kragen"); _jk.scale = (0.2, 0.09, 0.05); _jk.rotation_euler = (0, 0, math.radians(SA))
-rohr([P5(-0.12, 0.3, 0.96), P5(-0.14, 0.33, 0.8), P5(-0.1, 0.32, 0.62)], 0.0085, M["kabel"], "mitte", name="stethoskop")
-rohr([P5(0.1, 0.3, 0.96), P5(0.13, 0.33, 0.84), P5(0.12, 0.34, 0.7)], 0.0085, M["kabel"], "mitte", name="stethoskop")
-zylinder(0.024, 0.012, P5(-0.1, 0.32, 0.6), M["metall"], "mitte", dreh=(math.radians(90), 0, 0), name="bruststueck")
-
-# Dr. Wieser steht links neben dem Kopfende der Liege, ein Fuß auf dem Tritt (Figur aus eigener Ebene)
-platzhalter("wieser", (0.7, 0.01, 1.75), (-0.45, -2.05, 1.75 / 2))
-
-# ---------------- Licht: 08:10, Vormittag, neutrales Tageslicht von rechts durch die hohen Fenster ----------------
-bpy.ops.object.light_add(type='SUN'); sonne = bpy.context.object
-sonne.data.energy = 12.0; sonne.data.angle = math.radians(1.0); sonne.data.color = (1.0, 0.99, 0.96)
-sc.world = bpy.data.worlds.new("Welt"); sc.world.use_nodes = True
-
-
-def sonne_stellen(s):
-    """Vormittagssonne, ~28° hoch, von rechts hinten durchs Fenster: die beiden Flügel legen zwei helle
-    Parallelogramme auf Boden, Wagen und das Kopfende der Liege (Lichtinsel auf Jonas), die halb hochgezogene
-    Jalousie darüber kurze Streifen davor. Keine langen Morgenschatten."""
-    s.data.energy = 12.0; s.data.angle = math.radians(0.8)
-    s.rotation_euler = Vector((-0.44, -0.765, -0.47)).to_track_quat('-Z', 'Y').to_euler()
-
-
-sonne_stellen(sonne)
-
-# ---------------- Kamera: frontal, rechts der Mitte, ohne Neigung, Objektivverschiebung ----------------
-bpy.ops.object.camera_add(location=(0.9, -9.0, 2.0), rotation=(math.radians(90), 0, 0))
-kamera = bpy.context.object; sc.camera = kamera
-kamera.data.lens = 28; kamera.data.sensor_width = 36; kamera.data.sensor_fit = 'HORIZONTAL'
-sc.render.resolution_x, sc.render.resolution_y = 1600, 900
-# Verschiebung: Bildmitte (x) auf 0,65 an der Rückwand — so liegen die linke Zarge der Tür und die Vorderkante
-# des Whiteboards gerade noch im Bild; Bodenlinie der Rückwand (y) auf ~615 px
-bpy.context.view_layer.update()
-from bpy_extras.object_utils import world_to_camera_view  # noqa: E402
-p = world_to_camera_view(sc, kamera, Vector((0.55, 0.0, 0.0)))
-kamera.data.shift_x = p.x - 0.5
-kamera.data.shift_y = (p.y - (1 - 615 / 900)) * 900 / 1600
-bpy.context.view_layer.update()
+    # Stehleuchten zwischen den Fenstern (aus): Fuß, Stange, Schirm
+    for (x, y) in ((7.75, 0.85), (10.85, 0.85)):
+        zyl(0.16, 0.02, (x, y, 0.01), "ls_dunkel", v=20, name="LS Stehleuchte Fuss")
+        zyl(0.012, 1.45, (x, y, 0.74), "ls_dunkel", v=8, name="LS Stehleuchte Stange")
+        kegelstumpf(0.22, 0.15, 0.3, (x, y, 1.6), "ls_petrol", v=24, name="LS Stehleuchte Schirm")

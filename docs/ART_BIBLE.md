@@ -81,7 +81,7 @@ sonst sind sie nicht zu unterscheiden:
 
 | Raum | Wand | Sockel | Boden | Möbel | Rost (das eine Objekt) |
 |---|---|---|---|---|---|
-| Lehrsaal (08:10, neutral) | Papier | Mint | Linoleum warm | Holz-Seminartisch, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug | rote Elektrodenklemme am rechten Arm des Freiwilligen (`docs/raeume/lehrsaal.md`) |
+| Lehrsaal (08:10, Sonne von links) | Papier | Mint | Linoleum warm | Holz-Klapptische in Reihen, Holz-Lattendecke, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug, Vorhänge Mint | rote Elektrodenklemme am rechten Arm des Freiwilligen (`docs/raeume/lehrsaal.md`) |
 | Aufnahme (06:40, warm) | Sand | Mint | Linoleum warm | Holz-Tresen, Petrol-Polster der Bank, Geräte Tinte | Betablocker-Schachtel in Herrn Baums Tüte (die Tüte ist sein Gegenstand, keine Klickzone mit Fortschritt — `KONZEPT.md` §1.3) |
 | Monitorzimmer (09:15, kühl) | Mint hell | Sand | Linoleum kühl | Papier-Tischplatte auf Petrol-Blöcken, Holz-Aktenschrank | Dr. Falks Zirkel |
 
@@ -127,7 +127,7 @@ eigener Tag. Die Kopfzeile nennt Dienst und Uhrzeit („Dienst 1 · 06:40").
 
 | Kapitel | Dienst | Zeit | Licht |
 |---|---|---|---|
-| 0 Lehrsaal | Einschulungstag | 08:10 | Vormittag, neutrales Tageslicht von rechts, Beamer an, kurze Schatten |
+| 0 Lehrsaal | Einschulungstag, Kurswoche | 08:10 | Novembersonne 9° hoch von links durch die Südostfenster, lange Lichtbahnen über Tische und Flurwand; Giebelfenster vorn kühl; Beamer an, Deckenlicht aus |
 | 1 Aufnahme | Dienst 1 | 06:40 | Blaue Stunde vor dem Fenster, drinnen Kunstlicht; Sonnenaufgang gegen 07:10, das erste warme Licht fällt kurz vor der Frist 07:15 durch die Jalousien |
 | 2 Monitorzimmer | Dienst 1 | 09:15 | heller Vormittag, kühles Tageslicht, Bildschirme blass |
 | 3 Station | Dienst 2 | 13:30 | Mittag, flaches Licht, Staub in der Luft |

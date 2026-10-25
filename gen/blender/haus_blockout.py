@@ -3,6 +3,7 @@
     python3 gen/blender/haus_blockout.py bauen            baut die Szene, speichert bau/blender/haus/haus_blockout.blend + .glb
     python3 gen/blender/haus_blockout.py render aussen    Probe-Render (a): Außenansicht 06:40  -> docs/haus/probe_aussen.jpg
     python3 gen/blender/haus_blockout.py render flur      Probe-Render (b): Flur 1. OG 09:15    -> docs/haus/probe_flur.jpg
+    python3 gen/blender/haus_blockout.py render lehrsaal  Lehrsaal EG 08:10 (Hülle + Ausbau szene_lehrsaal.py) -> docs/haus/probe_lehrsaal.jpg
     python3 gen/blender/haus_blockout.py grundriss eg|1og|2og|alle   Draufsicht (orthografisch) -> docs/haus/grundriss_<g>.png
 
 Alle Maße stehen in den Tabellen oben (Meter, lokale Koordinaten nach KRANKENHAUS §2: Ursprung Südwestecke des
@@ -69,8 +70,7 @@ def patientenzimmer(nummern, y0, y1, k0, art="zu", breite=TUER["patient"]):
 
 RAEUME = {
     "EG": [
-        ("Lehrsaal", 0, 0, 10.8, 7, "lino_warm", [T("y", 7, 9.8)]),
-        ("Garderobe Lehre", 10.8, 0, 14.4, 7, "lino_warm", [T("y", 7, 12.6)]),
+        ("Lehrsaal", 0, 0, 14.4, 7, "lino_warm", [T("y", 7, 3.9), T("y", 7, 9.8)]),     # 14,4 × 7 mit Nische (Entscheid 25.10.2026)
         ("Ambulanz Innere", 14.4, 0, 21.6, 7, "lino_warm", [T("y", 7, 16)]),
         ("Portier", 21.6, 0, 25.2, 7, "lino_warm", [T("x", 25.2, 3.5, 2.0, "glas")]),
         ("Eingangshalle", 25.2, -3, 36, 10, "lino_warm", [T("y", -3, (PORTAL["x0"] + PORTAL["x1"]) / 2, PORTAL["x1"] - PORTAL["x0"], "glas"),
@@ -171,6 +171,7 @@ SONDERFENSTER = [
     ("A", "1OG", "y", 19, 27.4, 28.6, 6.0, 10.0, "glas"),                  # zweites hohes Fenster (z 6 … 10)
     ("A", "EG", "x", 0, 7.3, 9.7, 0.9, 3.1, "glas"), ("A", "1OG", "x", 0, 7.3, 9.7, 4.9, 7.1, "glas"),   # Stirnfenster
     ("A", "2OG", "x", 0, 7.3, 9.7, 8.9, 11.1, "glas"),
+    ("A", "EG", "x", 0, 0.4, 1.8, 0.9, 3.1, "glas"), ("A", "EG", "x", 0, 4.6, 6.0, 0.9, 3.1, "glas"),   # Lehrsaal: Giebelfenster beidseits der Leinwand
     ("N", "EG", "x", 85.2, AUFNAHME_GLAS["y0"], AUFNAHME_GLAS["y1"], 0.0, AUFNAHME_GLAS["h"], "glas"),  # Fensterfront Aufnahme
     ("N", "EG", "x", 85.2, RETTUNGSTOR["y0"], RETTUNGSTOR["y1"], 0.0, RETTUNGSTOR["h"], "tor"),         # Rettungstor
     ("N", "EG", "x", 85.2, -1.6, -0.4, 1.0, 2.6, "glas"),                                               # Triage NE Seitenlicht
@@ -427,6 +428,13 @@ STILE = {
                  schatten="#1A2350", tinte="#0E1226", kontur=2.6, innen=1.3, mit_sonne=False,
                  duoton=("#121A48", "#8FA4EC"), eigen=0.10, leuchten=("fenster_warm", "himmel_3", "himmel_4", "wolke_schatten", "wolke_streif")),
 }
+
+# Ausbau je Raum (KRANKENHAUS „Ein Haus, aus Bausteinen"): eigenes Skript in Hauskoordinaten, eigene Sammlung, eigene Farben
+# und Kamera; `bauen` ruft `ausbau()` auf. Ein Render zeigt nur die Ausbauten seiner Kamera (`ausbau`), die Außenansicht keinen.
+import szene_lehrsaal  # noqa: E402
+AUSBAUTEN = {"lehrsaal": szene_lehrsaal}
+for _n, _a in AUSBAUTEN.items():
+    PALETTE.update(_a.PALETTE); OHNE_LINIE |= _a.OHNE_LINIE; OHNE_SCHATTIERUNG |= _a.OHNE_SCHATTIERUNG; KAMERAS[_n] = _a.KAMERA
 
 
 def stil():
@@ -1706,6 +1714,11 @@ def bauen():
         w = sorted((y + s * (A["innen"] / 2 + 0.004), y + s * (A["innen"] / 2 + 0.012)))
         wandnetz(f"Sockel Flur 1OG y{y:g}", "y", w[0], w[1], A["x0"] + 0.5, A["x1"] - 0.5, z1, z1 + 1.1, oeffnungen, "paneel", "Moebel Flur 1OG")
 
+    # ---------------- Ausbau je Raum (eigene Skripte, eigene Sammlungen) ----------------
+    from mathutils import Euler
+    hilfe = dict(Euler=Euler, Vector=Vector, kiste=kiste, netz=netz, wandnetz=wandnetz)
+    for a in AUSBAUTEN.values(): a.ausbau(hilfe)
+
     # ---------------- Himmel (Bänder, werden je Kamera ausgerichtet) und Sonne ----------------
     bpy.ops.object.light_add(type='SUN'); sonne = bpy.context.object; sonne.name = "Sonne"
     sonne.data.energy = 12.0; sonne.data.angle = math.radians(1.0)
@@ -1953,11 +1966,21 @@ def durchgang(kamera_name, art, ortho=None):
             if m.name in ohne_sch and m.name not in immer:   # Himmel, Fernes, warme Fenster gelten als beleuchtet
                 b.inputs["Emission Color"].default_value = (1, 1, 1, 1); b.inputs["Emission Strength"].default_value = 1.0
         welt((0, 0, 0), 0.0); sc.cycles.max_bounces = 0; sichtbar(SONNE_AUS_MATERIAL); proben = PROBEN["sun"]
+        sonne.data.energy = k.get("sonne_staerke", sonne.data.energy)   # flache Sonne innen: streifend getroffene Tischplatten über die Schwelle
+        if not ortho and k.get("linien_nur"):           # Innenkameras: nur Raum und Hülle werfen Schatten; Hügel, Wald und Stadt
+            for o in bpy.data.objects:                   # fingen die 9°-Sonne sonst in 300 m Entfernung ab (Lichtfleck nur oben an der Wand)
+                if o.type == 'MESH' and not any(c.name in k["linien_nur"] for c in o.users_collection): o.visible_shadow = False
         for o in bpy.data.objects:                 # Bäume werfen keinen Schatten (OHNE_SCHATTEN), bleiben aber selbst besonnt
             if o.type == 'MESH' and any(c.name in OHNE_SCHATTEN for c in o.users_collection) and not (stil() or {}).get("baumschatten"):
                 o.visible_shadow = False
     else:
         raise SystemExit("unbekannter Durchgang " + art)
+    if not ortho:                                        # Ausbauten: nur die der Kamera; Innenkameras ohne Scheiben und Gardinen
+        for c in bpy.data.collections:                   # (der Blick hinaus kommt später als Tafel, KRANKENHAUS „Bausteine" Punkt 4)
+            if c.name.startswith("Ausbau ") and c.name not in k.get("ausbau", ()): c.hide_render = True
+        if k.get("ohne_scheiben"):
+            for o in bpy.data.objects:
+                if o.name.startswith(("Scheibe", "Gardine", "Fluegel offen Glas")): o.hide_render = True
     sc.cycles.samples = proben; sc.cycles.use_denoising = art == "sun"
     sc.render.filepath = BAU + f"{kamera_name}{stil_endung()}_{art}.png"
     t = time.time(); bpy.ops.render.render(write_still=True)

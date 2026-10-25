@@ -253,7 +253,7 @@ Vorschläge, Rost-Objekt je Raum bleibt bei der Fallakte).
 
 | Raum | Trakt, Geschoss | Maße (m) | Kapitel | Dienst, Zeit | Hauptkombination (Wand / Sockel / Boden) |
 |---|---|---|---|---|---|
-| Lehrsaal | A, EG | 10,8 × 7,0 | 0 | Einschulungstag 08:10 | Papier / Mint / Linoleum warm |
+| Lehrsaal (Saal mit Tischreihen, 30 Plätze; Entscheid 25.10.2026) | A, EG | 14,4 × 7,0, dazu Nische 7,2 × 1,0 im Eckrisalit | 0, Kurswoche | Einschulungstag 08:10 | Papier / Mint / Linoleum warm; Holz-Lattendecke |
 | Aufnahme (Notaufnahme: Tresen, Kojen 1–3, EKG-Wagen) | N, EG | 19,2 × 16,0 | 1 | Dienst 1, 06:40 | Sand / Mint / Linoleum warm |
 | Monitorzimmer (Überwachung, 4 Betten, Zentrale am Fenster) | A, 1. OG | 10,8 × 6,0 | 2 | Dienst 1, 09:15 | Mint hell / Sand / Linoleum kühl |
 | Patientenzimmer 104 (2 Betten) | A, 1. OG | 3,6 × 7,0 | 3 | Dienst 2, 13:30 | Sand / Mint / Linoleum warm; Vorhänge Mint |
@@ -289,8 +289,7 @@ Rechtecke als (x0, y0, x1, y1). Türen: Wand und Lage. Fenster: Achsen nach §2.
 
 | Raum | x0 | y0 | x1 | y1 | Tür | Fenster |
 |---|---|---|---|---|---|---|
-| Lehrsaal (Spiel) | 0 | 0 | 10,8 | 7 | Flurwand y 7 bei x 9,8 | SE Achsen 1–3 (die „Rückwand" aus `lehrsaal.md` ist die Südostfassade) |
-| Garderobe / Nebenraum Lehre | 10,8 | 0 | 14,4 | 7 | y 7 bei x 12,6 | SE Achse 4 |
+| Lehrsaal (Spiel) | 0 | 0 | 14,4 | 7 | Flurwand y 7 bei x 3,9 (vorn) und x 9,8 | SE Achsen 1–4 (1–2 in der Nische des Eckrisalits, y −1); Giebel x 0: zwei Fenster y 0,4 … 1,8 und 4,6 … 6,0 beidseits der Leinwand (neu 25.10.2026) |
 | Ambulanz Innere, Vorbefund (Kulisse) | 14,4 | 0 | 21,6 | 7 | y 7 bei x 16 | SE Achsen 5–6 |
 | Portier | 21,6 | 0 | 25,2 | 7 | offen zur Halle (x 25,2, Fenster mit Tresen) | SE Achse 7 |
 | Eingangshalle (Spiel: Flug) | 25,2 | −3 | 36 | 10 | Portal y −3, x 29,1 … 32,1; Windfang y −3 … −0,5; nach beiden Seiten in den Flur offen | Risalit SE: Portal Achse 9, Fenster Achsen 8 und 10 (hoch, 1,4 × 2,8) |
@@ -510,7 +509,7 @@ Raumkameras (alle Dreiviertelansicht, Verschiebung statt Neigung, 1600 × 900, V
 | 6 Rhythmusambulanz | (41, 6,6, 1,55) | −y zum Fenster, Liege links, Ergometer rechts | 28 mm |
 | 7 Aufwachraum | (12, 6,6, 1,55) | −y, Lampeninseln | 28 mm |
 | 8 Befundraum | (27, 6,5, 1,5) | −y in den Erker, Regen am Glas | 28 mm |
-| 0 Lehrsaal | nach `docs/raeume/lehrsaal.md` §7, gedreht: Rückwand = Südostfassade | | 28 mm |
+| 0 Lehrsaal | (14,05, 3,6, 1,55) → (0,45, 3,3, 1,45), längs des Saals zur Leinwand (`docs/raeume/lehrsaal.md` §7) | | 24 mm |
 
 ### 10. Mentoren je Dienst
 
@@ -820,6 +819,17 @@ eine einzige große Datei**, sondern Bausteine:
 Die Rückseite bleibt Blockout, solange keine Kamera sie zeigt. Erster Raum nach diesem Muster ist
 der **Lehrsaal** (Wunsch des Nutzers, 25.10.2026): `szene_lehrsaal.py` wird zum Ausbau im EG (Raum „Lehrsaal" aus §4,
 Kamera nach §9). Danach folgen Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) und das Monitorzimmer.
+
+**Umgesetzt für den Lehrsaal (25.10.2026):** Der Nutzer wollte einen Saal wie auf seinem Foto (Fensterfront, Tischreihen,
+Holzdecke) im Stil des Hauses; Ort gewählt: Westende des EG, Lehrsaal und Garderobe zusammengelegt zu 14,4 × 7 m mit
+der Nische des Eckrisalits, zwei neue Giebelfenster beidseits der Leinwand (in der Außenansicht (a) links unten
+sichtbar), Stühle Petrol. Technik: `szene_lehrsaal.py` liefert `PALETTE` (Namen `ls_…`), `KAMERA` und `ausbau(h)`;
+`haus_blockout.py` importiert es (`AUSBAUTEN`), ruft `ausbau` in `bauen` auf und rendert mit `render lehrsaal`. Die
+Kamera kennt `ausbau` (welche Ausbau-Sammlungen sichtbar sind; die Außenansicht zeigt keine), `ohne_scheiben` (Scheiben,
+Gardinen und offene Glasflügel aus) und `sonne_staerke`; im Sonnen-Durchgang werfen bei Innenkameras nur die Sammlungen
+aus `linien_nur` Schatten (Hügel und Wald fingen die 9°-Sonne sonst ab). Alle Körper des Ausbaus sind Netze aus
+Punktlisten: mit `bpy.ops`-Grundkörpern dauerte der Bau 9:44 min, so 11 s. Fensterblick-Tafel und Ebenen-Pipeline für
+Hausräume (Mittelgrund, Klickzonen, Schirmflächen) stehen noch aus. Probe: `docs/haus/probe_lehrsaal.jpg`.
 
 ## Nächster Schritt (eigener Chat)
 

@@ -4,6 +4,23 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Lehrsaal als Saal im Haus (erster Ausbau nach „Ein Haus, aus Bausteinen")
+
+- Nutzer schickte ein Foto eines Seminarsaals (Fensterfront, Tischreihen, Holzdecke) und drei Lofi-Illustrationen
+  (Fenster und Kleinigkeiten tragen die Stimmung) und wählte: **Westende des EG, 14,4 × 7 m** (Lehrsaal + Garderobe,
+  mit der Nische des Eckrisalits), **Leinwand an der Stirnwand zwischen zwei neuen Giebelfenstern, Stühle Petrol**.
+- `gen/blender/szene_lehrsaal.py` ist jetzt ein Ausbau in Hauskoordinaten (`PALETTE`, `KAMERA`, `ausbau(h)`), von
+  `haus_blockout.py` eingebunden (`AUSBAUTEN`, `render lehrsaal` → `docs/haus/probe_lehrsaal.jpg`, ≈ 25 s mit Bau).
+  Fünf Reihen à sechs Plätze, Mittelgang, Dozententisch, Liege und EKG-Wagen in der Nische, Lattendecke, Lichtbänder,
+  Ringleuchten, Vorhänge, Pflanzen; Novembersonne 126°/9° von links. Neue Kamera-Schlüssel `ausbau`,
+  `ohne_scheiben`, `sonne_staerke`. Außenansicht und Grundriss EG neu gerendert (zwei Giebelfenster links unten).
+- Doku: `docs/raeume/lehrsaal.md` (Kopf, §1, §3, §6–§8), KRANKENHAUS (§3, §4, §9, „Umgesetzt für den Lehrsaal"),
+  ART_BIBLE §2/§4, `gen/blender/README.md`.
+- **Offen:** Rückmeldung des Nutzers zum Probebild (Lattendecke Holz? Lichtbahnen kräftiger? Leben im Saal:
+  Mitstudierende als Silhouetten?); Fensterblick als Tafel; Ebenen-Pipeline für Hausräume (Mittelgrund,
+  `schirme.json`, `hitboxes.json`, Figuren Wieser und Jonas neu setzen). Bis dahin bleiben die alten Ebenen in
+  `art/szenen/lehrsaal/`; `ebenen.py lehrsaal` läuft nicht mehr.
+
 ## Fertig (25.10.2026): Figuren mit Haltung und lesbare Schrift in der Außenansicht (a) (Auftrag B, dritter Teil)
 
 - `haus_blockout.py`: `HALTUNGEN` und `figur` (Röhrengerüst, Mantel, Gegenstand, Haar, Dutt, Mütze); sieben Figuren, davon
@@ -172,7 +189,8 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 
 ## Halb fertig: Lehrsaal
 
-Raum fertig (`gen/blender/szene_lehrsaal.py`, `art/szenen/lehrsaal/`), Figuren Dr. Wieser und Jonas samt
+Seit 25.10.2026 als Saal im Haus neu gebaut (siehe „Fertig" oben); die folgenden Punkte gelten für die Figuren weiter.
+Alter Stand: Raum (`art/szenen/lehrsaal/`), Figuren Dr. Wieser und Jonas samt
 Porträts als **ungeprüfter Zwischenstand** eingebettet; noch keine Spiellogik. Vor dem Weiterbauen prüfen:
 
 - Jonas' Elektroden nach Ampel-Regel (FACHREGELN, Lektion 2): rechter Arm rot, linker Arm gelb,
@@ -304,7 +322,7 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 vom Nutzer angenommen). **Räume ab jetzt nach KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut"**
 (Hülle + Ausbau je Raum in eigenem Skript, Fensterblick als Hintergrundtafel, nur ausarbeiten, was eine Spielkamera
 zeigt). Rest: offene Fragen (Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
-KRANKENHAUS §9; erster Raum im Haus ist der Lehrsaal (Wunsch des Nutzers), danach Aufnahme B1.
+KRANKENHAUS §9; erster Raum im Haus ist der Lehrsaal (**Probe steht, 25.10.2026**, wartet auf Rückmeldung), danach Aufnahme B1.
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne

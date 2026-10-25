@@ -166,28 +166,23 @@ Sonne. Renderzeiten (M-Serie, Metal, 1600 × 900, 4/16/4 Proben): erster Durchga
 ohne Cache bis ≈ 2 min; ein Probe-Render gesamt 10–30 s. Grundrisse: Kamera orthografisch von oben, `clip_start`
 schneidet 1,6 m über dem Boden (Tür- und Fensteröffnungen sichtbar), Geschosse darüber per Sammlung ausgeblendet.
 
-## Lehrsaal (Einschulungstag, 08:10)
+## Lehrsaal (Einschulungstag, 08:10) — Ausbau im Haus
 
-`szene_lehrsaal.py` nach `docs/raeume/lehrsaal.md`; Rückwand y = 0, Raum nach −y (die Beschreibung misst y von der
-Rückwand in den Raum, die Szene negiert). Kamera 28 mm bei (0,9 / −9,0 / 2,0) statt der vorgeschlagenen −7,6 m: Tür ganz
-links und Whiteboard an der rechten Seitenwand brauchen 63° Sichtwinkel. Schirmflächen `projektion` (Leinwand, exaktes
-Rechteck), `whiteboard` (Seitenwand: `ebenen.py` nimmt die große Seite der dünnen Kiste, die der Kamera näher liegt —
-vier Ecken, kein Rechteck) und `wagen_schirm`. Zonen `jonas` (Kopfende) und `liege` (Fußende, Elektroden-Aufgabe)
-sind Platzhalter, `figuren_zeichnen.py einsetzen lehrsaal` hält sie getrennt. Die vier Extremitätenleitungen sind
-Raumobjekte (Mittelgrund) und enden unter Jonas' Armen und Beinen; die Klemmen selbst gehören zur Figur (rote Klemme =
-das Rost-Objekt). Der Tisch steht näher an der Rückwand als beschrieben ((−2,1 / −2,0) statt (−2,6 / −3,2)), sonst
-schnitte der 28-mm-Ausschnitt die Stühle an.
+Seit 25.10.2026 ein Saal 14,4 × 7 m im Westende des EG von Haus Föhrenhang (`docs/raeume/lehrsaal.md`), gebaut als
+**Ausbau** nach KRANKENHAUS „Ein Haus, aus Bausteinen": `szene_lehrsaal.py` enthält kein bpy auf Modulebene, nur
+`PALETTE` (Namen `ls_…`), `KAMERA` und `ausbau(h)`; `haus_blockout.py` übernimmt Farben und Kamera (`AUSBAUTEN`) und
+ruft `ausbau` beim `bauen` auf (Sammlung „Ausbau Lehrsaal"). Körper nur als Netze aus Punktlisten (`h["netz"]`,
+`h["kiste"]`): jeder `bpy.ops`-Aufruf kostet in der 4000-Objekte-Szene eine Depsgraph-Aktualisierung (9:44 min statt 11 s).
 
 ```bash
-BLENDER_THREADS=2 python3 gen/blender/ebenen.py lehrsaal alle && python3 gen/blender/komposit.py lehrsaal --layers
-BLENDER_THREADS=2 python3 gen/blender/ebenen_figuren.py lehrsaal            # Blockout-Vorschau (Haltung, Platz)
-BLENDER_THREADS=2 python3 gen/blender/ebenen_figuren.py portraits wieser jonas
-python3 gen/blender/figuren_zeichnen.py portrait wieser --seed 3 --uebernehmen
-python3 gen/blender/figuren_zeichnen.py vorlage lehrsaal
-python3 gen/blender/figuren_zeichnen.py malen wieser --seed 7 --portrait    # Stilphrase stil/figur_wieser.txt
-python3 gen/blender/figuren_zeichnen.py malen jonas --seed 7 --portrait     # liegend: Liege nicht in der Vorlage (wie Herrn K.s Stuhl)
-BLENDER_THREADS=2 python3 gen/blender/figuren_zeichnen.py einsetzen lehrsaal
+.venv/bin/python gen/blender/haus_blockout.py bauen && .venv/bin/python gen/blender/haus_blockout.py render lehrsaal   # -> docs/haus/probe_lehrsaal.jpg, ≈ 25 s
 ```
+
+Kamera-Schlüssel für Innenräume: `linien_nur` (Linien und, im Sonnen-Durchgang, Schattenwerfer), `ausbau` (sichtbare
+Ausbau-Sammlungen; ohne Angabe keine), `ohne_scheiben` (Scheiben, Gardinen, offene Glasflügel aus: der Blick hinaus ist
+das Haus selbst, später eine Tafel), `sonne_staerke` (flache Sonne: streifend getroffene Flächen über die Schwelle).
+Die alte Einzelszene (Seminarraum, `ebenen.py lehrsaal`) läuft nicht mehr; ihre Ebenen in `art/szenen/lehrsaal/`
+bleiben, bis Hausräume durch die Ebenen-Pipeline gehen (Mittelgrund, `schirme.json`, `hitboxes.json`, Figuren).
 
 Regeln, die aus Fehlern stammen:
 * Raum nicht aus sich durchdringenden Kisten bauen — die Fugen bekommen sonst keine oder flackernde Linien.

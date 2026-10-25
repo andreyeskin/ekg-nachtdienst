@@ -1,12 +1,23 @@
 # Raum „Lehrsaal" — Einschulungstag, 08:10
 
-Stand: 11.10.2026. Raumbeschreibung für den Bau in Blender (`gen/blender/szene_lehrsaal.py`) nach
-`docs/ART_BIBLE.md` (§2 Farben, §3 Licht, §5 Figuren, §7 Logik). Der Raum trägt die Lektionen 1–7
-(`docs/faelle/lehrsaal.md`); was hier steht, ist baubar, ohne die Fallakte gelesen zu haben.
+Stand: 25.10.2026. Raumbeschreibung für den Bau in Blender nach `docs/ART_BIBLE.md` (§2 Farben, §3 Licht,
+§5 Figuren, §7 Logik). Der Raum trägt die Lektionen 1–7 (`docs/faelle/lehrsaal.md`) und die Kurswoche aus
+`docs/MECHANIK.md` §4; was hier steht, ist baubar, ohne die Fallakte gelesen zu haben.
+
+**Neu am 25.10.2026 (Entscheid des Nutzers):** Der Lehrsaal ist kein Seminarraum für vier mehr, sondern ein Saal
+**14,4 × 7 m im Westende des EG** von Haus Föhrenhang, gebaut als Ausbau in Hauskoordinaten
+(`gen/blender/szene_lehrsaal.py`, Hülle aus `haus_blockout.py`; KRANKENHAUS „Ein Haus, aus Bausteinen"). Vorbild
+war ein Foto des Nutzers: langer Saal, Fenster an einer Längsseite und an der Stirn, Tischreihen, Holzdecke. Daraus
+übernommen: Fensterfront links, Stirnwand mit **Leinwand zwischen zwei Fenstern**, zwei Türen rechts, Lattendecke
+mit Lichtbändern, zwei Ringleuchten, Stehleuchten, Vorhänge. Nicht übernommen: die roten Stühle (Rost gehört genau
+einem Objekt), sie sind **Petrol**. Probe: `docs/haus/probe_lehrsaal.jpg`. §4, §5 und die Figurenplätze gelten
+inhaltlich weiter; ihre Ebenen (`schirme.json`, `hitboxes.json`) entstehen, sobald Hausräume durch die
+Ebenen-Pipeline laufen (bis dahin bleiben die alten Ebenen in `art/szenen/lehrsaal/`, `ebenen.py lehrsaal` läuft
+nicht mehr).
 
 ## 1. Zweck
 
-Der EKG-Kurs der Fakultät, ein Seminarraum mit Untersuchungsliege. Hier lernt die Spielerin, bevor sie
+Der EKG-Kurs der Fakultät, ein Lehrsaal mit 30 Plätzen und einer Untersuchungsliege vorn. Hier lernt die Spielerin, bevor sie
 einen Patienten sieht: Papier und Eichzacke, die zwölf Ableitungen und wo die Elektroden hingehören,
 die Zacken und ihre Namen, Messen mit Zirkel und Lineal, Lagetyp, Rhythmus und Frequenz. Es gibt keinen
 Kranken in diesem Raum. Auf der Liege liegt ein Kommilitone mit einem normalen EKG; alles Pathologische
@@ -79,16 +90,18 @@ Hand — die Schachtel ist der Ursprung.
 | **Untersuchungsliege** mit Papierrolle, Tritt, Mint-Bezug | dem Kurs | Jonas liegt darauf; Elektroden kleben, EKG schreiben | Mittelgrund |
 | **EKG-Wagen** (gleiches Bauteil wie in der Aufnahme: Gehäuse Petrol, Schirm Tinte, Papierfach, Kabelbaum mit zehn Elektrodenkabeln, Saugelektroden-Satz) | der Fakultät | das eine Gerät, an dem gemessen wird; sein Schirm zeigt die laufende Ableitung II | Mittelgrund |
 | **Elektrodenkabel** am Wagen: vier Extremitätenklemmen — rot, gelb, grün, schwarz — und sechs Brustwand-Saugelektroden | zum Wagen | Lektion 2, Ampel-Regel; **die rote Klemme ist das Rost-Objekt des Raums** (`#B5552D`), weil sie die erste Aufgabe anstößt (rechter Arm) | Mittelgrund |
-| **Projektionsfläche** (Leinwand, 2,4 × 1,5 m, Unterkante 1,10 m) an der Rückwand | dem Seminarraum | der Code zeichnet darauf: das 12-Kanal-Blatt, einzelne Ableitungen groß, Millimeterpapier mit Eichzacke, Cabrera-Kreis | Hintergrund (Schirmfläche `projektion`) |
-| **Beamer** an der Decke (kleiner Kasten, Linse zur Leinwand) | dem Seminarraum | sichtbare Lichtquelle (§3.2) für die Projektion | Hintergrund |
+| **Projektionsfläche** (Leinwand, 2,4 × 1,5 m, Unterkante 1,0 m) an der Stirnwand zwischen den Giebelfenstern | dem Saal | der Code zeichnet darauf: das 12-Kanal-Blatt, einzelne Ableitungen groß, Millimeterpapier mit Eichzacke, Cabrera-Kreis | Hintergrund (Schirmfläche `projektion`) |
+| **Beamer** an der Decke (kleiner Kasten, Linse zur Leinwand) | dem Saal | sichtbare Lichtquelle (§3.2) für die Projektion | Hintergrund |
 | **Whiteboard** (2,0 × 1,2 m, Unterkante 0,9 m), leer, Marker in der Ablage, ein Schwamm | Dr. Wieser | sie zeichnet darauf — aber nur im Code (SVG), **keine Schrift im Bild** | Hintergrund |
-| **Seminartisch** (Holz, 1,8 × 0,8 m, 0,75 m hoch) mit der **Schachtel Lineale** (Papier-Karton, offen, blaue Lineale darin), einem Zirkel, einem Stapel leerer EKG-Blätter | Dr. Wieser | Werkzeuge der Lektionen 3, 4, 7; die Schachtel ist die Klickzone für „Lineal nehmen" | Mittelgrund |
-| **Vier Stühle** (Petrol-Polster, Tinte-Gestell) an der Tischseite zur Kamera, einer herausgezogen | dem Kurs | der Platz der Spielerin; der herausgezogene Stuhl ist ihr Schatten im Bild | Mittelgrund |
+| **Dozententisch** (Holz, 1,6 × 0,75 m, rechts vor der Leinwand) mit der **Schachtel Lineale** (Papier-Karton, offen, blaue Lineale darin), einem Zirkel, einem Stapel leerer EKG-Blätter | Dr. Wieser | Werkzeuge der Lektionen 3, 4, 7; die Schachtel ist die Klickzone für „Lineal nehmen" | Mittelgrund |
+| **Tischreihen**: fünf Reihen zu zwei Klapptischen (Holz, 1,8 × 0,5 m, T-Gestell Tinte), je drei Stühle (Petrol-Polster, Tinte-Gestell), Mittelgang; auf manchen Plätzen Block und Stift, Wasserflaschen, Jacken über Lehnen, Taschen | dem Kurs, die Kleinigkeiten den Mitstudierenden | der Kurs ist voll (Kurswoche, Abstimmung, Mitstudentin, MECHANIK §4); ein freier Platz ist der der Spielerin | Mittelgrund |
+| **Lattendecke** (Holz, Latten 0,6 m längs des Saals), Lichtbänder quer, zwei Ringleuchten, Stehleuchten zwischen den Fenstern (alle aus) | dem Haus | Altbau, neu ausgebaut; die Latten führen den Blick zur Leinwand | Hintergrund |
+| **Vorhänge** (Mint, gerafft) an jeder Fenstergruppe, Pflanzen auf drei Fensterbänken | dem Haus, die Pflanzen dem Sekretariat | Ruhe, Leben im Raum (die Vorlagen des Nutzers: Fenster und Kleinigkeiten tragen die Stimmung) | Hintergrund |
 | **Stuhl neben der Liege** mit Dr. Wiesers Stethoskop über der Lehne und ihrer Jacke | Dr. Wieser | zeigt, dass sie nicht sitzt | Mittelgrund |
 | **Wanduhr** (rund, Zeiger als SVG aus `hitboxes.json`, Zone `uhr`) | dem Haus | Spielzeit; Ebene Hintergrund wie überall (§7.3) | Hintergrund |
-| **Fenster** (zwei hohe Flügel, Jalousie halb oben) rechts | dem Haus | Lichtquelle; draußen Hofseite, Vormittag | Hintergrund |
-| **Kleiderhaken** an der Tür mit einem Kapuzenpulli | der Spielfigur | ihr Kapuzenpulli unter dem Kittel (ART_BIBLE §5) hängt hier, weil sie heute den Kittel bekommen hat | Hintergrund |
-| **Tür** links, offen in den Flur | dem Haus | Ausgang; Zone `ausgang`; freier Boden davor (§7.1) | Hintergrund |
+| **Fenster**: links vier Achsen zur Südostseite (zwei Paare in der Nische, zwei einzelne), vorn zwei Giebelfenster | dem Haus | Lichtquelle (Morgensonne von links), draußen Park und Hof im Spätherbst | Hintergrund |
+| **Kleiderhaken** an der Rückwand mit einem Kapuzenpulli (noch nicht gebaut, hinter der Kamera) | der Spielfigur | ihr Kapuzenpulli unter dem Kittel (ART_BIBLE §5) hängt hier, weil sie heute den Kittel bekommen hat | – |
+| **Zwei Türen** rechts in den Flur (vorn x 3,9 für die Lehrenden, hinten x 9,8), Holzzarge | dem Haus | Ausgang; Zone `ausgang` an der hinteren Tür; freier Boden davor (§7.1) | Hintergrund |
 
 Nicht im Raum: Monitore an der Wand, Infusionsständer, Betten — alles, was „medizinisch aussieht" und
 hier niemandem gehört (§2, Regel 4). Kein Poster mit EKG-Kurve (Text und Kurven sind verboten im Bild).
@@ -126,56 +139,55 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
 
 ## 6. Tageszeit, Licht, Farben
 
-- **Einschulungstag, 08:10, Vormittag.** Neues Blatt in ART_BIBLE §4 (Rotation): die Tabelle bekommt die
-  Zeile „0 Lehrsaal · Einschulungstag 08:10 · Vormittag, neutrales Tageslicht, Beamer an".
-- **Licht**: Tageslicht von rechts durch die hohen Fenster (hart, als zwei helle Parallelogramme auf
-  Boden und Liege — die Lichtinsel liegt auf Jonas und dem Wagen); Beamerkegel schwach von der Decke auf
-  die Leinwand; Deckenleuchten aus (es ist hell genug). Keine langen Morgenschatten wie in der Aufnahme —
-  die Sonne steht schon höher; Schatten kurz.
-- **Farben** (ART_BIBLE §2, eigene Verteilung je Raum):
+- **Einschulungstag und Kurswoche, 08:10, Spätherbst** (ART_BIBLE §4). Sonne Anfang November bei 47° N: Azimut 126°,
+  Höhe 9°. Sie steht fast senkrecht vor der Südostfront: **lange Lichtbahnen von links** über Tische, Stuhllehnen und
+  die Flurwand (dort als Fensterbilder bis gut 2 m Höhe). Deckenleuchten aus, Beamer an. Die Giebelfenster (Südwest)
+  bekommen keine Sonne: vorn kühles Licht, links warmes, wie in den Vorlagen des Nutzers.
+- **Farben** (ART_BIBLE §2, eigene Verteilung je Raum; im Skript `PALETTE`, Namen `ls_…`):
 
-| Wand | Sockel | Boden | Möbel | Rost (das eine Objekt) |
-|---|---|---|---|---|
-| Papier `#F7F1E4` | Mint `#BFD9CF` (bis 0,95 m, Holzleiste) | Linoleum warm `#C9BDA2` | Holz-Tisch, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug, Gestelle Tinte | **rote Elektrodenklemme** am rechten Arm des Freiwilligen |
+| Wand | Sockel | Boden | Decke | Möbel | Rost (das eine Objekt) |
+|---|---|---|---|---|---|
+| Papier `#F7F1E4` | Mint `#BFD9CF` (bis 0,8 m, unter der Brüstung, Holzleiste) | Linoleum warm `#C9BDA2` | Holzlatten `#C99A5B` | Tische Holz, Stühle Petrol, Gestelle Tinte, Liege mit Mint-Bezug, Vorhänge Mint | **rote Elektrodenklemme** am rechten Arm des Freiwilligen (Figur) |
 
-  Himmel draußen: flache Bänder `#EAF1F0` → `#DCE9EA`, Hofbaum in Petrol/Papier-Silhouette. Leinwand
-  `#FFF8F4` (wie EKG-Papier, die Kurve kommt aus dem Code). Kobaltblau nur an Dr. Wieser und in der
-  Linealschachtel; Senfgelb nur an Jonas.
+  Draußen: der echte Blick aus dem Haus (Park, Linden im Herbstlaub), flach und ohne Linie; Scheiben und Gardinen
+  sind im Innenrender aus. Später als Fensterblick-Tafel (KRANKENHAUS „Bausteine" Punkt 4). Leinwand `#FFF8F4` (wie
+  EKG-Papier, die Kurve kommt aus dem Code). Kobaltblau nur an Dr. Wieser und in der Linealschachtel; Senfgelb nur
+  an Jonas; Pflanzen Petrol (Laub ist nur außen).
 
 ## 7. Kamera und Ebenen
 
-- **Dreiviertelansicht**: Kamera rechts der Mitte (wie Monitorzimmer), Blick entlang +y ohne Neigung,
-  Objektivverschiebung statt Kippung — so bleibt die Rückwand frontal und die Projektionsfläche ein
-  exaktes Rechteck, auf das der Code zeichnet. Vorschlag: Kamera (0,9 / −7,6 / 1,55), Brennweite 28 mm,
-  Sensor 36 mm horizontal, Bild 1600 × 900. Tiefe aus Liege und Tisch, die schräg zur Rückwand stehen
-  (Liege 20° gedreht, Kopfende zur Rückwand).
-- **Kein angeschnittener dunkler Vordergrund** (§3.3). Der herausgezogene Stuhl bleibt ganz im Bild,
-  hell, unten rechts, nicht angeschnitten.
-- **Drei Ebenen** (§3.4): Hintergrund (Raumhülle, Fenster, Leinwand, Whiteboard, Uhr, Tür, Beamer);
-  Mittelgrund (Liege, Wagen, Tisch, Stühle, Schachtel); Figuren (Dr. Wieser, Jonas, Spielerinnenschatten).
-  Der Mittelgrund nimmt nur seine eigenen Linien mit (`linesmid`).
-- **Bewegung** (§7.5): Dr. Wieser atmet und dreht alle paar Sekunden das Lineal (zwei Posen, Wechsel
-  per CSS); Jonas atmet sichtbar (Brustkorb); die Kurve auf dem Wagenschirm läuft; Jalousieschatten
-  wandern nicht (eine Stunde ist zu kurz).
+- **Blick längs des Saals** von hinten aus dem Mittelgang zur Leinwand: Kamera (14,05 / 3,6 / 1,55), Ziel
+  (0,45 / 3,3 / 1,45), 24 mm, Bild 1600 × 900, Objektivverschiebung statt Neigung (die Stirnwand bleibt frontal,
+  die Leinwand ein exaktes Rechteck). Links die Fensterfront, rechts Whiteboard, Uhr und Türen, vorn links in der
+  Nische Liege und Wagen, vorn rechts der Dozententisch. Render: `python3 gen/blender/haus_blockout.py render lehrsaal`.
+- **Kein angeschnittener dunkler Vordergrund** (§3.3): deshalb fünf Reihen statt sechs, hinter der letzten Reihe
+  heller Boden, keine Taschen in der letzten Reihe.
+- **Ebenen** (§3.4): Hintergrund (Hülle, Fenster, Decke, Leinwand, Whiteboard, Uhr, Türen, Vorhänge, Beamer);
+  Mittelgrund (Liege, Wagen, Tische, Stühle, Schachtel); Figuren (Dr. Wieser, Jonas, Mitstudierende,
+  Spielerinnenschatten). Die Trennung kommt mit der Ebenen-Pipeline für Hausräume.
+- **Bewegung** (§7.5): Dr. Wieser atmet und dreht alle paar Sekunden das Lineal (zwei Posen, Wechsel per CSS);
+  Jonas atmet sichtbar (Brustkorb); die Kurve auf dem Wagenschirm läuft; die Lichtbahnen wandern nicht.
 
 ## 8. Maße (ART_BIBLE §7.4)
 
+Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben.
+
 | Ding | Maß |
 |---|---|
-| Raumhülle | X0 = −5,4 m, X1 = 4,4 m, Höhe 3,4 m, Tiefe 7,0 m (Rückwand y = 0, nichts hinter der Kamera) |
-| Tür | 0,95 × 2,10 m, links (x ≈ −4,9 … −3,95), Zarge Holz |
-| Fenster | zwei Flügel, x ≈ 1,6 … 4,0, z 1,0 … 2,9 (hohe Seminarfenster) |
-| Leinwand | 2,4 × 1,5 m, Mitte x = −1,2, Unterkante z = 1,10 |
-| Whiteboard | 2,0 × 1,2 m, Mitte x = 2,6 (rechts neben der Leinwand, links vom Fenster: x 1,6 … 3,6 geht nicht — Whiteboard deshalb an die rechte Seitenwand, y 1,0 … 3,0, Unterkante 0,9 m) |
-| Liege | 1,95 × 0,65 m, Liegefläche 0,75 m hoch, Tritt 0,25 m; Position Mitte (0,6 / 2,4), 20° gedreht, Kopfende zur Rückwand |
-| EKG-Wagen | 0,55 × 0,5 m Grundfläche, Arbeitsfläche 0,95 m, Schirm 0,9 … 1,2 m; neben der Liege am Fußende, Schirm zur Kamera |
-| Seminartisch | 1,8 × 0,8 m, 0,75 m hoch, Mitte (−2,6 / 3,2), parallel zur Rückwand |
-| Stühle | Sitz 0,47 m, Lehne 0,9 m; vier Stück, einer um 0,4 m herausgezogen |
-| Wanduhr | Ø 0,32 m, Mitte z = 2,6, x = −3,6 (über der Tür-Seite, Hintergrund) |
-| Figuren | Dr. Wieser 1,72 m, stehend zwischen Liege und Leinwand, Fuß auf dem Tritt: `PLATZ["wieser"] = dict(ort=(−0,4, 1,6, 0), drehung=35, haltung="tritt")`; Jonas 1,80 m liegend: `PLATZ["jonas"] = dict(ort=(0,6, 2,4, 0,75), drehung=20, haltung="liegen")` |
+| Raum | x 0 … 14,4, y 0 … 7 (EG, Achsen 1–4), dazu Nische des Eckrisalits x 0 … 7,2, y −1 … 0; lichte Flächen: Stirn x 0,45, Fenster y −0,55 (Nische) bzw. 0,45, Flur y 6,925, Rückwand x 14,325; Höhe 3,4 |
+| Fenster | Südost: Paare x 0,65 … 1,65 / 1,95 … 2,95 und 4,25 … 5,25 / 5,55 … 6,55 (Nische), einzeln x 8,3 … 9,7 und 11,9 … 13,3; Giebel y 0,4 … 1,8 und 4,6 … 6,0; alle z 0,9 … 3,1 |
+| Türen | Flurwand y 7, Mitte x 3,9 und x 9,8, je 1,0 × 2,1 |
+| Leinwand | 2,4 × 1,5 m, Mitte y 3,2, Unterkante z 1,0, an der Stirnwand |
+| Whiteboard | Flurwand vorn, x 0,9 … 2,9, z 0,9 … 2,1; Wanduhr über der vorderen Tür, z 2,6 |
+| Dozententisch | 1,6 × 0,75 m, Mitte (2,1 / 4,9), quer zum Saal |
+| Liege | 1,95 × 0,65 m, x 2,5 … 4,45, y −0,42 … 0,23 (in der Nische), Liegefläche 0,75 m, Kopfende zur Stirn, Tritt zur Raumseite |
+| EKG-Wagen | Mitte (1,85 / 0,55), am Kopfende, Schirm zum Saal |
+| Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
+| Decke | Latten z 3,31 … 3,36, Lichtbänder darunter, Ringleuchten Ø 1,1 m auf z 2,75 bei x 7,8 |
+| Figuren | Dr. Wieser 1,72 m zwischen Liege und Leinwand, Fuß auf dem Tritt; Jonas 1,80 m liegend; Plätze werden mit der Ebenen-Pipeline neu gesetzt |
 
-Alles steht auf dem Boden (Füße auf der Bodenlinie), Wege frei: zwischen Tür und Liege 1,2 m Gang,
-zwischen Tisch und Liege 1,0 m.
+Alles steht auf dem Boden, Wege frei: Fenstergang 0,9 m, Mittelgang 0,9 m, Flurgang 1,1 m; vorn 2,6 m zwischen
+Leinwand und erster Reihe.
 
 ## 9. Was dieser Raum nicht braucht
 
