@@ -21,8 +21,8 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   eigenem Walm, West voll, Ost im 2. OG über Trakt N; Bäume ohne Schlagschatten, aber mit flachem Fußschatten (ART_BIBLE §3.5).
 - Geisterschatten weg (Büsche und Laternen außerhalb des Bildes warfen bei 7° Sonne lange Streifen ins Bild); Weg 2,5 m als
   S-Kurve zum Portal mit Laternen, geschnittene Hecken, kleine Bank, acht warme Fenster (Nachtdienst endet), Wolken,
-  Rettungswagen als Rost-Objekt. Einzelheiten: KRANKENHAUS „Zweite Überarbeitung (23.10.2026)". Nutzer hat das Bild noch
-  nicht gesehen.
+  Rettungswagen als Rost-Objekt. Einzelheiten: KRANKENHAUS „Zweite Überarbeitung (23.10.2026)". Vom Nutzer freigegeben
+  (25.10.2026).
 
 ## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
 
@@ -220,8 +220,8 @@ Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 
 ## Nächster Auftrag (ab 23.10.2026): Fragen zum Blockout klären, dann Aufnahme B1 im Haus
 
-Die drei Fragen sind entschieden und umgesetzt (siehe „Fertig" oben). Zuerst die Rückmeldung des Nutzers zur neuen
-`docs/haus/probe_aussen.jpg` abholen. Nach Freigabe: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
+Die drei Fragen sind entschieden und umgesetzt (siehe „Fertig" oben); der Nutzer hat die neue
+`docs/haus/probe_aussen.jpg` am 25.10.2026 freigegeben. Jetzt: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
 dann Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen, danach Lehrsaal und
 Monitorzimmer übernehmen, Flug-Renders.
 
@@ -233,8 +233,9 @@ Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch c
 dann docs/KRANKENHAUS.md ab „Blockout (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
 gen/blender/README.md Abschnitt „Haus-Blockout", dazu docs/REDESIGN_FALL1.md §8.3.
 Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
-Auftrag: zuerst meine Rückmeldung zur neuen Außenansicht abholen; nach meiner Freigabe Raumkameras
-(render <raum>) ergänzen und die Aufnahme B1 als ersten Raum im Haus ausbauen.
+Auftrag: Außenansicht ist freigegeben. Phase 1: Raumkameras aus KRANKENHAUS §9 als render <raum> ergänzen
+(Kameras am Grundriss prüfen, Probe-Renders docs/haus/raum_<raum>.jpg), committen. Phase 2: Aufnahme B1 nach
+REDESIGN_FALL1 §8.3 als ersten Raum im Haus ausbauen.
 3D als Subagent auf Fable in eigenem Worktree, Code und Koordination auf Opus. Commit nach jedem Teilschritt,
 pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
