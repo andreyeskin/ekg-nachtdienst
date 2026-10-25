@@ -38,15 +38,19 @@ REIHEN_X = (5.0, 6.2, 7.4, 8.6, 9.8)
 BLOECKE = ((1.35, 3.15), (4.05, 5.85))
 TISCH_T, TISCH_H = 0.5, 0.74
 
-# Lokalfarben (ART_BIBLE §2, Zeile Lehrsaal): Wand Papier, Sockel Mint mit Holzleiste, Linoleum warm, Holz für Tische
-# und die Lattendecke, Stühle Petrol, Gestelle Tinte. Rost kommt im Raum nicht vor (das eine Objekt ist die rote Klemme
-# an der Figur Jonas). Kobalt nur in der Linealschachtel. Leinwand und Whiteboard wie EKG-Papier.
+# Lokalfarben „Morgen" (vom Nutzer gewählt 25.10.2026 aus drei Proben; Vorlagen: Lofi-Zimmer im Morgenlicht, Ligne claire,
+# Foto des Saals; ART_BIBLE §2 nur als Ausgangspunkt): Wand warmes Papier, Sockel Salbei mit Holzleiste, Parkett Honig-Eiche,
+# Lattendecke dunkler als der Boden (rahmt das Bild oben), Tische helles Holz, Stühle Petrol, Gestelle Tinte. Akzente:
+# Vorhänge Pfirsich, Lampenschirme und Töpfe Terrakotta, Pflanzen Tannengrün, Jacken Oliv und Koralle (Senf bleibt Jonas), Taschen Blau und
+# Pflaume. Kobalt nur in der Linealschachtel. Leinwand und Whiteboard wie EKG-Papier. Das Licht macht die Stimmung: Sonne
+# warm, alles ohne Sonne kühl (KAMERA `schattenfarbe`), nicht nur dunkler.
 PALETTE = {
-    "ls_wand": "#F7F1E4", "ls_sockel": "#BFD9CF", "ls_boden": "#C9BDA2", "ls_decke": "#C99A5B", "ls_holz": "#C99A5B",
-    "ls_petrol": "#2C5560", "ls_dunkel": "#2C3E46", "ls_metall": "#8A9598", "ls_papier": "#F7F1E4", "ls_mint": "#BFD9CF",
-    "ls_vorhang": "#BFD9CF", "ls_leinwand": "#F7F1E4", "ls_projektion": "#FFF8F4", "ls_tafel": "#FFF8F4",
+    "ls_wand": "#F6E8CF", "ls_sockel": "#A8C2B4", "ls_boden": "#C99260", "ls_decke": "#A9774E", "ls_holz": "#D2A673",
+    "ls_petrol": "#2C5560", "ls_dunkel": "#2C3E46", "ls_metall": "#8A9598", "ls_papier": "#F7F1E4", "ls_mint": "#A8C2B4",
+    "ls_vorhang": "#EBC3A6", "ls_leinwand": "#F7F1E4", "ls_projektion": "#FFF8F4", "ls_tafel": "#FFF8F4",
     "ls_kobalt": "#2F5DA8", "ls_leuchte": "#FBF6EA", "ls_glas": "#1E2A30", "ls_flasche": "#D6E4DD",
-    "ls_pflanze": "#2C5560", "ls_topf": "#EFE6D3", "ls_jacke": "#52636A", "ls_jacke2": "#BFD9CF",
+    "ls_pflanze": "#2F5A45", "ls_topf": "#C2683F", "ls_jacke": "#8E9F6B", "ls_jacke2": "#E39A86",
+    "ls_stuhl": "#2E5E6B", "ls_lampe": "#C2683F", "ls_tasche": "#3F5F8C", "ls_tasche2": "#7A4E6E",
 }
 OHNE_LINIE = set()
 OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
@@ -54,7 +58,8 @@ OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
 # Spielkamera: hinten im Mittelgang, Augenhöhe 1,55, Blick zur Leinwand. Sonne 08:10 Anfang November (47° N): Azimut 126°,
 # Höhe 9° — sie steht fast senkrecht vor der Südostfront und legt lange Lichtbahnen über Tische, Boden und Flurwand.
 KAMERA = dict(ort=(14.05, 3.6, 1.55), ziel=(GIEBEL, 3.3, 1.45), brennweite=24, sonne=(126.0, 9.0),
-              licht="#F8E7BF", anteil=0.55, himmel=["#DCE9EA", "#E6EFEE", "#EAF1F0"], schatten=0.2,
+              licht="#FFD9A3", anteil=0.6, himmel=["#9EC3E0", "#C9DCE6", "#F2D2B0"],
+              schatten=0.24, schattenfarbe="#6F7FB0",   # ohne Sonne: ein Viertel zum kühlen Blau (Lofi-Vorlagen), Sonne Pfirsich
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
               sonne_staerke=80.0)   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
 
@@ -234,11 +239,11 @@ def ausbau(h):
         """Seminarstuhl: Sitz und Lehne Petrol, Gestell Tinte. Lehne auf der lokalen +y-Seite; dreh −90° = Lehne nach +x."""
         a = math.radians(dreh); c, s_ = math.cos(a), math.sin(a)
         P = lambda dx, dy, z: (x + dx * c - dy * s_, y + dx * s_ + dy * c, z)
-        kiste((0.44, 0.44, 0.05), P(0, 0, 0.455), "ls_petrol", dreh=dreh, fase=0.015, name=name + " Sitz")
+        kiste((0.44, 0.44, 0.05), P(0, 0, 0.455), "ls_stuhl", dreh=dreh, fase=0.015, name=name + " Sitz")
         for dx in (-0.19, 0.19):
             for dy in (-0.19, 0.19):
                 zyl(0.011, 0.43, P(dx, dy, 0.215), "ls_dunkel", v=8, name=name + " Bein")
-        kiste((0.44, 0.035, 0.26), P(0, 0.23, 0.74), "ls_petrol", dreh=dreh, kipp=-8, fase=0.012, name=name + " Lehne")
+        kiste((0.44, 0.035, 0.26), P(0, 0.23, 0.74), "ls_stuhl", dreh=dreh, kipp=-8, fase=0.012, name=name + " Lehne")
         for dx in (-0.19, 0.19):
             zyl(0.011, 0.3, P(dx, 0.21, 0.62), "ls_dunkel", v=8, name=name + " Holm")
         if jacke:
@@ -256,7 +261,7 @@ def ausbau(h):
                 yp = ya + 0.3 + 0.6 * p
                 raus = zr.choice((0.0, 0.0, 0.05, 0.12, 0.25)); dreh = -90 + zr.choice((0, 0, 0, -8, 6, 12))
                 jacke = zr.choice((None,) * 9 + ("ls_jacke", "ls_jacke2"))
-                tasche = zr.choice((None,) * 8 + ("ls_dunkel", "ls_petrol"))
+                tasche = zr.choice((None,) * 8 + ("ls_tasche", "ls_tasche2"))
                 if r == len(REIHEN_X) - 1: tasche = None    # keine dunklen Klötze am unteren Bildrand (ART_BIBLE §3.3)
                 stuhl(xm + TISCH_T / 2 + 0.3 + raus, yp, dreh, jacke=jacke, tasche=tasche)
                 if zr.random() < 0.55:                     # Block und Stift am Platz
@@ -269,4 +274,4 @@ def ausbau(h):
     for (x, y) in ((7.75, 0.85), (10.85, 0.85)):
         zyl(0.16, 0.02, (x, y, 0.01), "ls_dunkel", v=20, name="LS Stehleuchte Fuss")
         zyl(0.012, 1.45, (x, y, 0.74), "ls_dunkel", v=8, name="LS Stehleuchte Stange")
-        kegelstumpf(0.22, 0.15, 0.3, (x, y, 1.6), "ls_petrol", v=24, name="LS Stehleuchte Schirm")
+        kegelstumpf(0.22, 0.15, 0.3, (x, y, 1.6), "ls_lampe", v=24, name="LS Stehleuchte Schirm")

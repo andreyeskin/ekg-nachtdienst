@@ -180,7 +180,8 @@ ruft `ausbau` beim `bauen` auf (Sammlung „Ausbau Lehrsaal"). Körper nur als N
 
 Kamera-Schlüssel für Innenräume: `linien_nur` (Linien und, im Sonnen-Durchgang, Schattenwerfer), `ausbau` (sichtbare
 Ausbau-Sammlungen; ohne Angabe keine), `ohne_scheiben` (Scheiben, Gardinen, offene Glasflügel aus: der Blick hinaus ist
-das Haus selbst, später eine Tafel), `sonne_staerke` (flache Sonne: streifend getroffene Flächen über die Schwelle).
+das Haus selbst, später eine Tafel), `sonne_staerke` (flache Sonne: streifend getroffene Flächen über die Schwelle), `schattenfarbe` (Farbe, zu der alles ohne
+Sonne um den Anteil `schatten` gezogen wird; Lehrsaal kühles Blau, Standard Petrol). Farben je Raum stehen im Ausbau-Skript.
 Die alte Einzelszene (Seminarraum, `ebenen.py lehrsaal`) läuft nicht mehr; ihre Ebenen in `art/szenen/lehrsaal/`
 bleiben, bis Hausräume durch die Ebenen-Pipeline gehen (Mittelgrund, `schirme.json`, `hitboxes.json`, Figuren).
 

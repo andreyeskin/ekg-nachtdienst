@@ -143,16 +143,24 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
   Höhe 9°. Sie steht fast senkrecht vor der Südostfront: **lange Lichtbahnen von links** über Tische, Stuhllehnen und
   die Flurwand (dort als Fensterbilder bis gut 2 m Höhe). Deckenleuchten aus, Beamer an. Die Giebelfenster (Südwest)
   bekommen keine Sonne: vorn kühles Licht, links warmes, wie in den Vorlagen des Nutzers.
-- **Farben** (ART_BIBLE §2, eigene Verteilung je Raum; im Skript `PALETTE`, Namen `ls_…`):
+- **Farben „Morgen"** (eigenes Design dieses Raums, vom Nutzer am 25.10.2026 aus drei Proben gewählt; Vorlagen:
+  Lofi-Zimmer im Morgenlicht, Ligne claire, Foto des Saals; ART_BIBLE §2 nur als Ausgangspunkt). Im Skript `PALETTE`,
+  Namen `ls_…`; die Stimmung macht das Licht an der Kamera: **Sonne Pfirsich** `#FFD9A3` (Anteil 0,6), **alles ohne
+  Sonne ein Viertel zum kühlen Blau** `#6F7FB0` (`schattenfarbe`, `schatten` 0,24) statt nur dunkler.
 
-| Wand | Sockel | Boden | Decke | Möbel | Rost (das eine Objekt) |
+| Wand | Sockel | Boden | Decke | Möbel | Akzente |
 |---|---|---|---|---|---|
-| Papier `#F7F1E4` | Mint `#BFD9CF` (bis 0,8 m, unter der Brüstung, Holzleiste) | Linoleum warm `#C9BDA2` | Holzlatten `#C99A5B` | Tische Holz, Stühle Petrol, Gestelle Tinte, Liege mit Mint-Bezug, Vorhänge Mint | **rote Elektrodenklemme** am rechten Arm des Freiwilligen (Figur) |
+| warmes Papier `#F6E8CF` | Salbei `#A8C2B4` (bis 0,8 m, unter der Brüstung, Holzleiste) | Parkett Honig-Eiche `#C99260` | Holzlatten `#A9774E`, dunkler als der Boden (rahmt das Bild oben) | Tische helles Holz `#D2A673`, Stühle Petrol `#2E5E6B`, Gestelle Tinte, Liege mit Salbei-Bezug | Vorhänge Pfirsich `#EBC3A6`, Lampenschirme und Töpfe Terrakotta `#C2683F`, Pflanzen Tannengrün `#2F5A45`, Jacken Oliv `#8E9F6B` und Koralle `#E39A86`, Taschen Blau `#3F5F8C` und Pflaume `#7A4E6E` |
+
+  Erste Fassung (bis 25.10.2026): Papier, Mint, Linoleum `#C9BDA2`, Schatten nur dunkler Richtung Petrol — dem Nutzer
+  zu blass. Rot bleibt der Elektrodenklemme am rechten Arm des Freiwilligen (Figur); Terrakotta an Lampen und Töpfen ist
+  bewusst wärmer und matter.
 
   Draußen: der echte Blick aus dem Haus (Park, Linden im Herbstlaub), flach und ohne Linie; Scheiben und Gardinen
   sind im Innenrender aus. Später als Fensterblick-Tafel (KRANKENHAUS „Bausteine" Punkt 4). Leinwand `#FFF8F4` (wie
   EKG-Papier, die Kurve kommt aus dem Code). Kobaltblau nur an Dr. Wieser und in der Linealschachtel; Senfgelb nur
-  an Jonas; Pflanzen Petrol (Laub ist nur außen).
+  an Jonas (deshalb Jacken Oliv, nicht Senf); Pflanzen Tannengrün (Laub ist nur außen). Himmel `#9EC3E0` → `#F2D2B0`
+  (Blau oben, Pfirsich am Horizont), sichtbar erst mit der Fensterblick-Tafel.
 
 ## 7. Kamera und Ebenen
 

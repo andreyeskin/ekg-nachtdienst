@@ -4,6 +4,18 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Eigenes Farbdesign „Morgen" für den Lehrsaal
+
+- Nutzer fand die Farben zu blass, schickte Vorlagen (Lofi-Zimmer, Ligne claire, Foto des Saals) und wünscht sich
+  **für jeden Raum ein eigenes Design**; ART_BIBLE §2 ist nur der Ausgangspunkt (dort vermerkt). Drei Proben gerendert
+  („Morgen", „Saal" mit roten Stühlen, „Pastell"), gewählt **„Morgen" mit Petrol-Stühlen**, nur für den Lehrsaal.
+- `szene_lehrsaal.py`: neue Palette (warmes Papier, Salbei, Parkett Honig-Eiche, dunklere Lattendecke, Akzente Pfirsich,
+  Terrakotta, Tannengrün, Oliv, Koralle) und eigene Materialien `ls_stuhl`, `ls_lampe`, `ls_tasche`, `ls_tasche2`. Kamera:
+  Sonne Pfirsich, alles ohne Sonne 24 % zum kühlen Blau (`schattenfarbe`, neu im Komposit von `haus_blockout.py`).
+  Jacken Oliv statt Senf (Senf bleibt Jonas). Probe `docs/haus/probe_lehrsaal.jpg` neu; Doku `lehrsaal.md` §6, ART_BIBLE §2,
+  README. Offen: Sonne erreicht im Saal nur kleine Flecken; große Lichtbahnen wären eine Lichtfrage (nicht Palette).
+  Für die Ebenen-Pipeline: `komposit.py` muss dieselbe kühle Schattenstufe nehmen wie das Haus-Komposit.
+
 ## Fertig (25.10.2026): Lehrsaal als Saal im Haus (erster Ausbau nach „Ein Haus, aus Bausteinen")
 
 - Nutzer schickte ein Foto eines Seminarsaals (Fensterfront, Tischreihen, Holzdecke) und drei Lofi-Illustrationen

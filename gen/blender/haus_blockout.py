@@ -1998,7 +1998,7 @@ def komposit(kamera_name, ziel, k, mit_sonne=True, max_kb=300):
     lade = lambda n: np.asarray(Image.open(BAU + f"{kamera_name}{stil_endung()}_{n}.png").convert("RGB")).astype(np.float32) / 255
     flach = lade("flat"); t = ko.tinte(lade("lines"))[..., None]
     s = stil() or {}
-    schattenfarbe = ko.hexc(s.get("schatten", "#2C5560")); tinte = ko.hexc(s.get("tinte", "#1E2A30"))
+    schattenfarbe = ko.hexc(s.get("schatten", k.get("schattenfarbe", "#2C5560"))); tinte = ko.hexc(s.get("tinte", "#1E2A30"))
     mit_sonne = mit_sonne and s.get("mit_sonne", True)
     if "duoton" in s:                                  # Blaue Stunde: Helligkeit der Lokalfarbe auf eine Blau-Skala, ein Rest Eigenfarbe;
         pal = dict(s["palette"], **{f"himmel_{i}": f for i, f in enumerate(k["himmel"])})   # leuchtende Flächen behalten ihre Farbe

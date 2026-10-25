@@ -76,12 +76,14 @@ Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal 
 in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
 
 ### Je Raum eine eigene Hauptkombination (10.10.2026)
+**Seit 25.10.2026 (Nutzer):** Jeder Raum bekommt sein eigenes Design aus Vorlagen des Nutzers, in Proben verglichen;
+diese Tabelle ist der Ausgangspunkt, keine Vorschrift. Die gewählten Farben stehen in der Raumbeschreibung (`docs/raeume/`).
 Alle Räume teilen Sand/Papier/Mint/Petrol/Tinte/Holz, aber jeder Raum hat eine eigene Verteilung,
 sonst sind sie nicht zu unterscheiden:
 
 | Raum | Wand | Sockel | Boden | Möbel | Rost (das eine Objekt) |
 |---|---|---|---|---|---|
-| Lehrsaal (08:10, Sonne von links) | Papier | Mint | Linoleum warm | Holz-Klapptische in Reihen, Holz-Lattendecke, Petrol-Stühle und -Wagen, Liege mit Mint-Bezug, Vorhänge Mint | rote Elektrodenklemme am rechten Arm des Freiwilligen (`docs/raeume/lehrsaal.md`) |
+| Lehrsaal (08:10, Sonne von links) — eigenes Design „Morgen" (25.10.2026): Sonne Pfirsich, Schatten kühles Blau | warmes Papier | Salbei | Parkett Honig-Eiche | helle Holztische in Reihen, dunklere Lattendecke, Petrol-Stühle und -Wagen; Akzente Pfirsich (Vorhänge), Terrakotta (Lampen, Töpfe), Tannengrün (Pflanzen) | rote Elektrodenklemme am rechten Arm des Freiwilligen (`docs/raeume/lehrsaal.md` §6) |
 | Aufnahme (06:40, warm) | Sand | Mint | Linoleum warm | Holz-Tresen, Petrol-Polster der Bank, Geräte Tinte | Betablocker-Schachtel in Herrn Baums Tüte (die Tüte ist sein Gegenstand, keine Klickzone mit Fortschritt — `KONZEPT.md` §1.3) |
 | Monitorzimmer (09:15, kühl) | Mint hell | Sand | Linoleum kühl | Papier-Tischplatte auf Petrol-Blöcken, Holz-Aktenschrank | Dr. Falks Zirkel |
 
