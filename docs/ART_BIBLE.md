@@ -89,6 +89,9 @@ Werkstoff-Logik: Holz für Arbeitsplatten, Tresen, Zargen, Armlehnen; Petrol fü
 Gehäuse; Tinte für Gestelle, Griffe und dunkles Glas; Papier für Ablagen, Rahmen, Zettel. Himmel draußen
 als flache Bänder aus Morgenlicht-Abwandlungen (Aufnahme: `#F8E7BF` → `#F6DCA4` → `#F3CD8C`, Sonne `#FFF6DC`;
 Monitorzimmer: `#DCE9EA` / `#E6EFEE`), Silhouetten draußen in Petrol und Papier.
+**Entscheid des Nutzers (25.10.2026), Außenstile tag/blau:** Figuren draußen tragen farbige Mäntel aus der vorhandenen
+Palette (Ziegelrot, Ockergelb, Blau, Grün, Petrol, Papier für Kittel) und Haut für Kopf und Hände (`haut`, Tag `#E8C4A0`),
+wie bei Chaland und Floc'h. Rost bleibt dem einen Objekt vorbehalten; jede Figur nur eine Mantelfarbe.
 
 ### Regeln, die aus der Recherche kommen
 1. Der Streifen ist das einzige hochfrequente Element am Bildschirm. Raster, Korn, Dithering

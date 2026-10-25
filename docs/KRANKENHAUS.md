@@ -778,9 +778,8 @@ gesprenkelten Lichtflecken unter Kronen (Floc'h) ergeben sich nur aus dem Kronen
   eine Ärztin im Kittel mit Klemmbrett und Dutt mitten im Satz mit einem Patienten im Bademantel am Infusionsständer; eine
   Pflegerin raucht an der Raucherecke, an der Haltestelle wartet jemand mit Telefon. Die Figuren am Portal bleiben
   Silhouetten mit Farbfleck; lesbar ist die Haltung nur bei den beiden vorn.
-- **Abweichung von ART_BIBLE §2** („Silhouetten draußen in Petrol und Papier"): Mäntel in Ziegelrot, Ockergelb, Blau und
-  Grün aus der vorhandenen Palette, dazu Haut (`haut`) für Kopf und Hände (nach den Referenzen Chaland und Floc'h). Wartet auf
-  Bestätigung.
+- **Farben:** Mäntel in Ziegelrot, Ockergelb, Blau und Grün aus der vorhandenen Palette, dazu Haut (`haut`) für Kopf und
+  Hände (nach den Referenzen Chaland und Floc'h); vom Nutzer am 25.10.2026 angenommen, Entscheid in ART_BIBLE §2.
 - **Schrift:** „HAUS FÖHRENHANG" in Antiqua-Versalien (Rockwell) auf der Giebelwand über dem Traufgesims (0,6 m, ≈ 11 px).
   Unter dem Traufgesims verdeckten die Fensterfaschen die Buchstaben. Wegweiser vom Vorplatz an den Parkweg West verlegt
   (30 m vor der Kamera, DIN, „↑ Haupteingang", „Notaufnahme →"); an der Kehre war er 60 m weit und unlesbar. Grünes „H" an
@@ -791,7 +790,6 @@ gesprenkelten Lichtflecken unter Kronen (Floc'h) ergeben sich nur aus dem Kronen
 - Gardinen lesen sich als helle untere Scheibe, nicht als Stoff — reicht das, oder lieber nur Rollläden und Glas?
 - Kopfsteinmuster der Zufahrt fehlt (bei 17 px/m nicht zeichenbar); Pflaster bleibt eine Fläche.
 - Der kahle Baum (rechts, vor Tal und Himmel) ist jetzt ein Fächer aus Zweigen (25.10.): so lassen?
-- Farbige Mäntel und Hautton der Figuren draußen (Abweichung von ART_BIBLE §2): so lassen?
 - Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
 
 ## Nächster Schritt (eigener Chat)

@@ -9,7 +9,7 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 - `haus_blockout.py`: `HALTUNGEN` und `figur` (Röhrengerüst, Mantel, Gegenstand, Haar, Dutt, Mütze); sieben Figuren, davon
   zwei vorn auf dem Parkweg (älterer Herr mit Gehstock, Besucherin mit Tasche). `schrift` setzt Text aus Schriftdateien:
   „HAUS FÖHRENHANG" auf der Giebelwand, Wegweiser am Parkweg („↑ Haupteingang", „Notaufnahme →"), „H" an der Haltestelle.
-- Offen beim Nutzer: farbige Mäntel und Hautton draußen statt nur Petrol und Papier (ART_BIBLE §2), siehe KRANKENHAUS.
+- Entschieden: farbige Mäntel und Hautton draußen bleiben (ART_BIBLE §2, Entscheid 25.10.2026).
 
 ## Fertig (25.10.2026): Natur, Himmel und Ferne der Außenansicht (a) (Auftrag B, zweiter Teil)
 
@@ -301,7 +301,7 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 ## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
 **Stand 25.10.2026: Fassade, Natur/Himmel/Ferne, Figuren und Schrift fertig** (siehe „Fertig" oben; Bäume und Himmel
-vom Nutzer angenommen). Rest: offene Fragen (Farben der Figuren, Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
+vom Nutzer angenommen). Rest: offene Fragen (Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
 KRANKENHAUS §9 und Aufnahme B1.
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
