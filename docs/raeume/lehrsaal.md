@@ -193,8 +193,8 @@ Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben
 | Leinwand | 2,4 × 1,5 m, Mitte y 3,2, Unterkante z 1,0, an der Stirnwand |
 | Whiteboard | Flurwand ganz vorn im Eck (Wunsch des Nutzers), x 0,55 … 1,75, z 0,95 … 2,05; von der ersten Bank schräg am rechten Bildrand. Wanduhr Ø 0,42 über der Leinwand, Mitte z 2,97 |
 | Dozententisch | 1,2 × 0,6 m (Pult, vom Nutzer verkleinert), Mitte (2,1 / 4,9), quer zum Saal |
-| Liege | 1,95 × 0,65 m, quer vor dem linken Giebelfenster: x 0,85 … 1,5, y 0,35 … 2,3, Liegefläche 0,75 m (unter der Brüstung), Kopfteil 0,5 m um 20° hochgestellt mit Kissen (liest sich als Liege), Kopfende zur Fensterwand, Füße zur Leinwand, Holzhocker an der Fußseite statt eines dunklen Tritts; der Freiwillige zeigt der Klasse seine rechte Seite |
-| EKG-Wagen | Mitte (1,175 / 0,03), am Kopfende in der Ecke, Schirm 0,36 × 0,24 um 31° zur ersten Bank gedreht |
+| Liege | 1,95 × 0,65 m, quer vor dem linken Giebelfenster: x 0,85 … 1,5, y 0,35 … 2,3, Liegefläche 0,75 m (unter der Brüstung), Kopfteil 0,5 m um 20° hochgestellt mit Kissen (liest sich als Liege), Kopfende zur Fensterwand, Füße zur Leinwand, kein Tritt, kein Hocker, keine Papierrolle (die Ecke wirkte voll, Nutzer 25.10.2026); der Freiwillige zeigt der Klasse seine rechte Seite |
+| EKG-Wagen | Mitte (1,9 / 0,02), schräg vor dem Kopfende, im Bild mit Abstand links der Liege; Schirm 0,36 × 0,24 um 38° zur ersten Bank gedreht |
 | Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
 | Decke | Latten z 3,31 … 3,36, Lichtbänder darunter, Ringleuchten Ø 1,1 m auf z 2,75 bei x 7,8 |
 | Figuren | Dr. Wieser 1,72 m, Jonas 1,80 m liegend (Kopf zur Fensterwand); Plätze werden mit der Ebenen-Pipeline neu gesetzt (Vorschlag: Wieser zwischen Liege und Leinwand auf dem freien Boden, nicht vor der Leinwand) |

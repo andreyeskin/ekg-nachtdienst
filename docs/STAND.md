@@ -16,7 +16,9 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   Block, EKG-Streifen und Zirkel liegt (`werkzeug()` in `szene_lehrsaal.py`); Dozententisch 1,2 × 0,6 m. Dann „schön
   stellen": Whiteboard an die Flurwand ins Eck (rechter Bildrand; Nutzer wollte die Tafel behalten, Inhalt: Schemata aus
   dem Code, die Leinwand zeigt echte Kurven), Liege mit hochgestelltem Kopfteil und Kissen, Hocker statt Tritt, Wagenschirm
-  um 31° zur Bank gedreht (für `schirme.json` ebenfalls gedreht), Stuhl der Dozentin weg, Ziel y 3,3.
+  um 31° zur Bank gedreht (für `schirme.json` ebenfalls gedreht), Stuhl der Dozentin weg, Ziel y 3,3. Linke Ecke entrümpelt
+  (Nutzer: „забито"): Wagen frei neben die Liege (1,9 / 0,02), ohne Hocker, Papierrolle, Topf auf der Nischenbank und
+  Flasche auf der eigenen Bank; Liegensäule schmaler, Petrol.
   Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
 - Für die Ebenen-Pipeline: das Whiteboard ist gedreht — `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an,
   für Hausräume die echten Eckpunkte der Vorderseite nehmen.
