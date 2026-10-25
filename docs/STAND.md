@@ -304,7 +304,7 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 vom Nutzer angenommen). **Räume ab jetzt nach KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut"**
 (Hülle + Ausbau je Raum in eigenem Skript, Fensterblick als Hintergrundtafel, nur ausarbeiten, was eine Spielkamera
 zeigt). Rest: offene Fragen (Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
-KRANKENHAUS §9 und Aufnahme B1.
+KRANKENHAUS §9; erster Raum im Haus ist der Lehrsaal (Wunsch des Nutzers), danach Aufnahme B1.
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne
@@ -312,7 +312,7 @@ Flügel offen; Gesims zwischen den Geschossen, Sockel, Eckquader, Dachrinne und 
 Portal mit Vordach und Schild „Haus Föhrenhang", Wegweiser Notaufnahme, Glasfront des Neubaus mit Leben dahinter
 (kein schwarzes Loch); Bordsteine, Fahrradständer, Raucherecke, Bushaltestelle, Laub auf dem Weg (Herbst); Wolken als
 Comic-Wolken statt Linsen; Figuren als Silhouetten. Nur was Kamera (a) sieht. Vorher `vorlagen/haus/vorschlaege.blend`
-und `vorlagen/haus/fotos/` des Nutzers lesen, falls vorhanden. Danach: Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
+und `vorlagen/haus/fotos/` des Nutzers lesen, falls vorhanden. Danach: Raumkameras aus KRANKENHAUS §9, zuerst den Lehrsaal ins Haus, dann Aufnahme B1.
 
 ### Startnachricht
 

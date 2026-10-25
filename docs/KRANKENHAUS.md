@@ -817,13 +817,14 @@ eine einzige große Datei**, sondern Bausteine:
    oder versetzt.
 
 **Folge für die Arbeit:** Ausgearbeitet wird nur, was eine Spielkamera zeigt (Kamera (a), Raumkameras aus §9, Flug §7).
-Die Rückseite bleibt Blockout, solange keine Kamera sie zeigt. Erster Raum nach diesem Muster: Aufnahme B1
-(`docs/REDESIGN_FALL1.md` §8.3); Lehrsaal und Monitorzimmer folgen ebenso.
+Die Rückseite bleibt Blockout, solange keine Kamera sie zeigt. Erster Raum nach diesem Muster ist
+der **Lehrsaal** (Wunsch des Nutzers, 25.10.2026): `szene_lehrsaal.py` wird zum Ausbau im EG (Raum „Lehrsaal" aus §4,
+Kamera nach §9). Danach folgen Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) und das Monitorzimmer.
 
 ## Nächster Schritt (eigener Chat)
 
 Blender-Blockout nach §2 bis §5 (Skript in `gen/blender/`, z. B. `haus_blockout.py`: Hülle, Geschosse, Flure, Räume
 als Quader aus den Tabellen, Treppen, Lifte, Dach, Gelände, Bäume als Platzhalter; glTF-Export mitdenken), dann die
 beiden Probe-Renders nach §9 in niedriger Qualität. Erst nach Freigabe durch den Nutzer werden Räume ausgebaut
-(Aufnahme B1 aus `docs/REDESIGN_FALL1.md` §8.3 als erster Raum des Hauses, danach Lehrsaal und Monitorzimmer
-in das Haus übernehmen).
+(seit 25.10.2026 zuerst der Lehrsaal, danach Aufnahme B1 aus `docs/REDESIGN_FALL1.md` §8.3 und das Monitorzimmer;
+siehe „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut").
