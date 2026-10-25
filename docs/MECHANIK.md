@@ -20,13 +20,14 @@ Reanimation**. Die Mechanik soll „maximal gut" werden.
 
 1. **Das ganze Spiel hat eine dramatische Frage: „Wird man dir die Nacht anvertrauen?"** Belohnung und Geschichte sind
    dasselbe: Wer zeigt, dass er es kann, bekommt mehr Verantwortung, und mehr Verantwortung ist die interessantere
-   Arbeit. Am Ende steht der erste Nachtdienst unter Rufbereitschaft; dort löst der Titel sich ein.
+   Arbeit. Am Ende steht der erste Nachtdienst, in dem die Spielerin die Erstrufe der Station annimmt, während der
+   Dienstarzt im Haus erreichbar ist; dort löst der Titel sich ein.
 2. Die drei Teile folgen der **Miller-Pyramide** der medizinischen Lehre: *wissen, wie* (Lehrsaal), *zeigen, wie*
    (Ambulanz, stabile Patienten, Mentor daneben), *tun* (Station, Intensiv, Reanimation, Nacht).
 3. **Kernschleife** auf vier Ebenen: Sekunden (Werkzeug am echten Streifen) → Minuten (ein Patient von der Frage bis
    zur Entscheidung) → Tag (Besprechung, Patienten, Bericht, Logbuch) → Spiel (Kurs, Prüfung, Ambulanz, Station, Nacht).
 4. **Belohnungs-Rückgrat ist das Logbuch mit Vertrauensstufen** (nach den Entrustable Professional Activities der
-   Medizindidaktik): je Tätigkeit vier Stufen von „zusehen" bis „allein, Mentor am Telefon". Steigt eine Stufe, ändert
+   Medizindidaktik): je Tätigkeit vier Stufen von „zusehen" bis „allein, Ärztin im Haus erreichbar". Steigt eine Stufe, ändert
    sich das Spiel spürbar: weniger Hilfe, mehr Entscheidungen, Routine wird kurz.
 5. Dazu **Noten** im Kurs (Testat je Lehrtag, Prüfungsnote; die beste Leistung zählt), der **Bericht des Mentors** nach
    jedem Kernfall (kurzer Mini-CEX-Bogen mit einem Satz „so weiter" und einem Satz „nächstes Mal"), die **Reaktion des
@@ -43,7 +44,7 @@ Reanimation**. Die Mechanik soll „maximal gut" werden.
    Die Spielerin schlägt vor, die Ärztin entscheidet mit (Sicherheitsnetz).
 10. **Teil 3, Station, Intensiv, Reanimation, Nacht:** Monitorzentrale mit Alarmen, instabile Patienten, Reanimation
     im Takt von zwei Minuten (Rhythmus erkennen, schockbar oder nicht), Rückkehrer aus der Ambulanz, Finale als erster
-    Nachtdienst mit Falk am Telefon; Schlussbild Sonnenaufgang um 07:10.
+    Nachtdienst mit Falk als Dienstarzt im Haus (Haustelefon); Schlussbild Sonnenaufgang um 07:10.
 
 ---
 
@@ -51,7 +52,7 @@ Reanimation**. Die Mechanik soll „maximal gut" werden.
 
 **Dramatische Frage des Spiels:** „Wird man dir die Nacht anvertrauen?" Sie steht im ersten Bild (Dr. Wieser beim
 Flug: „In drei Wochen macht ihr euren ersten Nachtdienst. Bis dahin zeigen wir euch, was ihr dafür braucht.") und wird
-im letzten beantwortet (Falk: „Heut Nacht bist du dran. Ich bin am Telefon."). Jede Teilfrage eines Falls („Darf Herr
+im letzten beantwortet (Falk: „Heut Nacht nimmst du die Anrufe. Ich bin im Dienstzimmer, ruf mich."). Jede Teilfrage eines Falls („Darf Herr
 Baum heim?") ist ein Baustein dieser Antwort.
 
 **Warum das trägt:** In der echten Ausbildung ist Vertrauen die Währung. Die Medizindidaktik beschreibt es als
@@ -64,8 +65,8 @@ KPJ-Studentin wirklich will, und sie verändert das Spiel selbst (Autonomie), st
 | Teil | Miller | Ort | Patienten | Unterstützung | Zeit |
 |---|---|---|---|---|---|
 | 1 Kurswoche | weiß, wie | Lehrsaal | Freiwilliger, Kursstreifen | Modell, Erklärung, beliebig viele Versuche | ohne Uhr |
-| 2 Ambulanz | zeigt, wie | Erstversorgung, Spezialambulanzen | stabil, kommen und gehen | Mentor daneben, schlägt nicht vor, fragt nach | Uhr mit Frist je Fall |
-| 3 Station und Nacht | tut | Monitorzimmer, Station, Intensiv | instabil, bleiben, kehren wieder | Mentor im Haus, am Ende am Telefon | Echtzeit im Notfall |
+| 2 Ambulanz | zeigt, wie | Erstversorgung, Spezialambulanzen | stabil, kommen und gehen (bewusste Ausnahme: A5) | Mentor daneben, schlägt nicht vor, fragt nach | Uhr mit Frist je Fall |
+| 3 Station und Nacht | tut | Monitorzimmer, Station, Intensiv | instabil, bleiben, kehren wieder | Mentor im Haus, am Ende nur auf Ruf (Haustelefon) | Echtzeit im Notfall |
 
 Zeitrahmen: **drei Wochen ab Anfang November** (Spätherbst, ART_BIBLE §4). Woche 1 Kurs, Woche 2 Ambulanz, Woche 3
 Station und Intensiv, am Freitag der Nachtdienst. Der erste Ambulanzmorgen beginnt um 06:40 in der Blauen Stunde
@@ -93,8 +94,10 @@ Patienten).
 
 ### 2.3 Der Befundsatz (neue gemeinsame Mechanik)
 
-Jede Befundung endet in **einem Satz mit Lücken** nach den fünf Schritten von Lektion 34 (FACHREGELN): „Sinusrhythmus,
-__ /min, PQ __ ms · Lagetyp __ · Q __ · R/S __ · ST/T __." Zahlen kommen aus den eigenen Messungen (Karten),
+Jede Befundung endet in **einem Satz mit Lücken** nach den fünf Schritten von Lektion 34 und der Reihenfolge von
+Lektion 35 (FACHREGELN): „Rhythmus __ · __ /min · P __ · PQ __ ms · QRS __ ms · QT __ / QTc __ ms · Lagetyp __ ·
+Q __ · R/S __ · ST/T __." „Sinusrhythmus" ist eine Antwort, kein Vordruck; ohne Rhythmus-, QRS- und QT-Lücke trügen
+VHF, Schenkelblock, Schrittmacher und lange QT den Satz nicht (Gutachten Nr. 2). Zahlen kommen aus den eigenen Messungen (Karten),
 Begriffe aus kurzen Auswahllisten. Derselbe Satz steht im Lehrsaal (mit Hilfe), in der Prüfung, im EKG-Stapel und im
 Nachtdienst (allein). Wer ihn einmal kann, kann ihn überall (LEHRPLAN §5.9).
 
@@ -163,7 +166,7 @@ Stufen (Wortlaut angelehnt an die Aufsichtsstufen der EPA):
 | 1 | zusehen | Mentor macht vor, Spielerin tippt mit, erklärt wird alles |
 | 2 | mit Mentor daneben | Spielerin macht, Mentor greift ein, Hilfen sichtbar |
 | 3 | Mentor prüft danach | Spielerin macht allein, Mentor sieht danach drauf; Routine wird kurz; Hilfen nur auf Wunsch |
-| 4 | allein, Mentor erreichbar | Mentor nur am Telefon oder auf Ruf; erst im Nachtdienst voll ausgespielt |
+| 4 | allein, Ärztin im Haus erreichbar | Ärztin nur auf Ruf (Haustelefon), sieht morgens alles durch; erst im Nachtdienst voll ausgespielt |
 
 **Wie eine Stufe steigt:** zweimal hintereinander im Bericht „das hätte ich dich allein machen lassen" für diese
 Tätigkeit. Die Regel steht offen im Logbuch („Noch einmal so, dann unterschreibt Dr. Falk."). Eine Stufe fällt nie;
@@ -261,10 +264,10 @@ Wirkung.
 
 | Tag | Thema (Lektionen) | Modell | Was man tut | Am Menschen | Werkzeug danach |
 |---|---|---|---|---|---|
-| 1 | Das Herz als Stromkreis (1) | **Reizleitung** (Ausbau von `web/raetsel_reizleitung.js`): Herz als Schnitt, der Impuls läuft sichtbar | Sinusknoten, AV-Knoten, His, Schenkel setzen; dann an Reglern drehen: Sinus schneller, AV-Knoten zäher, einen Schenkel blockieren; der Schemastreifen darunter ändert sich, daneben die echte Aufnahme dazu | Zacken auf Jonas' Streifen antippen (P, QRS, T) | Zacken-Lupe |
+| 1 | Das Herz als Stromkreis (1) | **Reizleitung** (Ausbau von `web/raetsel_reizleitung.js`): Herz als Schnitt, der Impuls läuft sichtbar | Sinusknoten, AV-Knoten, His, Schenkel setzen; dann an Reglern drehen: Sinus schneller (QT wird deutlich kürzer, PQ bleibt in der Norm), AV-Knoten zäher (PQ wächst, bei weiterem Drehen fallen Schläge aus: Vorschau), einen Schenkel blockieren (QRS breit; die Seite nur mit Schema V1 und V6); der Schemastreifen darunter ändert sich, daneben die echte Aufnahme dazu | Zacken auf Jonas' Streifen antippen (P, QRS, T) | Zacken-Lupe |
 | 2 | Ableitungen und Papier (2) | **Ableitungen als Kameras**: Herz mit Summenvektor, Ableitungen als Blickrichtungen | Vektor drehen, sehen, welche Ableitung positiv wird; Papiervorschub 25/50 mm/s am echten Streifen umschalten, Eichzacke prüfen | **Elektroden kleben** an Jonas (Ampel-Regel, Brustwand), Gerät einstellen, Streifen schreiben | Lineal |
-| 3 | Messen (3, 4, 7) | **Zeitlupe**: ein Schlag in Zeitlupe, Vorhof und Kammer füllen sich, unter jeder Phase das Intervall | Zirkel an P, PQ, QRS, QT; Frequenz dreimal (Kästchen, Lineal, Zirkel) | alles an Jonas' Streifen, dann an zwei Kursstreifen | Zirkel, QTc-Rechner |
-| 4 | Achse und Takt (5, 6, 8) | **Lagetyp-Kreis** (Cabrera) und **Taktgeber** (Sinus mit Atmung) | Vektor in den Kreis legen; Atmung an- und abschalten und sehen, wie die PP-Abstände schwanken | Lagetyp an Jonas (nach dem 12-Kanal-Export), Sinusarrhythmie 158, Sinusbradykardie 160 vergleichen | Lagetyp-Kreis |
+| 3 | Messen (3, 4, 7) | **Zeitlupe**: ein Schlag in Zeitlupe, die Erregung läuft durch Vorhof und Kammer, unter jeder Phase das Intervall; Mechanik höchstens richtig versetzt (P → Vorhofkontraktion, QRS → Kammerkontraktion, T → Erschlaffung), nie „Füllung während P" | Zirkel an P, PQ, QRS, QT; Frequenz dreimal (Kästchen, Lineal, Zirkel) | alles an Jonas' Streifen, dann an zwei Kursstreifen | Zirkel, QTc-Rechner |
+| 4 | Achse und Takt (5, 6, 8) | **Lagetyp-Kreis** (eine Konvention für Vektormodell und Kreis, wie im Kurs +aVR, beschriftet) und **Taktgeber** (Sinus mit Atmung) | Vektor in den Kreis legen; Atmung an- und abschalten und sehen, wie die PP-Abstände schwanken (einatmen: schneller) | Lagetyp an Jonas (nach dem 12-Kanal-Export), Sinusarrhythmie 158, Sinusbradykardie 160 vergleichen | Lagetyp-Kreis |
 
 Dazu am Donnerstag ein Blick nach vorn, ohne Testat: „Was ihr nächste Woche seht" (AV-Block I° als Schema am
 Reizleitungsmodell; Herr Baums Streifen wird **nicht** vorweggenommen).
@@ -335,13 +338,13 @@ Herzambulanz). Patienten kommen und gehen; jeder Tag endet mit der Frage „heim
 
 1. **Morgenbesprechung** (1 min): Mentor stellt sich und das Tagesthema in einem Satz vor (KRANKENHAUS §10, Wunsch 7);
    der Satz „Nächstes Mal" vom letzten Bericht steht still in der Ecke.
-2. **Warteliste** (Entscheidung): drei bis vier Namen mit Ersteinschätzung der Pflege (Leitsymptom, Uhrzeit,
+2. **Warteliste** (Entscheidung): drei bis vier Namen mit Ersteinschätzung der Triagepflege (Manchester-Triage; Leitsymptom, Uhrzeit,
    Vitalwerte). Die Spielerin wählt die Reihenfolge. Meist ist sie frei; an einem Tag ist sie es nicht (Brustschmerz:
    EKG binnen zehn Minuten, ESC-ACS, Beleg in der Fallakte). Vorbild: *Papers, Please* (ein Tag, eine wachsende
    Regel, Zusammenfassung am Abend), ohne dessen Strafen.
 3. **Kernfall** (15–25 min): ein Patient mit Geschichte, dramatischer Frage und sieben Takten nach dem Skill
    `handlung` (Muster Herr Baum, REDESIGN_FALL1 §3).
-4. **EKG-Stapel** (zwischendurch, frei): die Befunde des Vormittags gegenzeichnen, je ein Streifen, drei Zeilen
+4. **EKG-Stapel** (zwischendurch, frei): die EKGs des Vormittags vorbefunden, die Ärztin zeichnet gegen; je ein Streifen, drei Zeilen
    Vorgeschichte, ein Befundsatz (Nebenpatienten, LEHRPLAN §3). Hier liegt die Menge: alle passenden LUDB- und
    PTB-XL-Aufnahmen, **gemischt mit älteren Themen** (verteiltes und verschachteltes Üben; Cepeda 2006, Rohrer 2007).
    Der Stapel ist der frühere Befundraum (LEHRPLAN §6.1), jetzt mitten im Alltag.
@@ -360,7 +363,7 @@ aussieht:
 | 3 Ordnen | Sequel: Liste lesen, Dilemma, eine Entscheidung | Flags mit sichtbarer Folge |
 | 4 Befund | Untersuchung (Puls tasten, Blutdruck im Stehen), **EKG schreiben** (Elektroden, ab Stufe 3 ein Tipp), **Zirkel**, **Befundsatz** | Zirkel, Befundzeilen |
 | 5 Bedeutung | Karten vergleichen, Verdachtsliste nachziehen | Mappe-Vergleich |
-| 6 Höhepunkt | **Rücksprache nach ISBAR**, dann „Überzeugen Sie mich": Argumente als Karten vorlegen gegen den Anker (Vorbild *Ace Attorney*, im freundlichen Ton von KRANKENHAUS Wunsch 5); **Behandlungsvorschlag** auf dem Anordnungsbogen | ISBAR (REDESIGN §6), Gegenrede |
+| 6 Höhepunkt | **Rücksprache nach ISBAR**, dann „Überzeugen Sie mich": Argumente als Karten vorlegen gegen den Anker (Vorbild *Ace Attorney*, im freundlichen Ton von KRANKENHAUS Wunsch 5); **Behandlungsvorschlag** auf dem Bogen (die Ärztin unterschreibt oder streicht) | ISBAR (REDESIGN §6), Gegenrede |
 | 7 Ausklang | Gespräch mit dem Patienten in Laiensprache (Ausdruckswahl), Schlussbild | Schlussgespräch (REDESIGN §7) |
 
 **Wer entscheidet:** Die Spielerin schlägt Diagnose und Behandlung vor, die Ärztin zeichnet gegen. Ein falscher
@@ -384,10 +387,10 @@ die Ärztin weniger nach und übernimmt öfter wortlos.
 | Tag | Sprechstunde, Mentor | Kernfall (dramatische Frage) | Lernziel | Aufnahme | Nebenpatienten im Stapel |
 |---|---|---|---|---|---|
 | A1 Mo 06:40 | Erstversorgung; Marlene, ab 07:15 Dr. Falk | **Herr Baum, 68**, Synkope („Darf er heim?") | Sinus, Frequenz, PQ messen; AV-Block I°; keine Vorwarnung + EKG nicht normal → Monitor | LUDB 39 (Ersatz 134, 78, 107, 77) | Normal-EKG, Sinusarrhythmie, Sinusbradykardie |
-| A2 Di | Herzambulanz; Dr. Falk | Frau mit Luftnot, neu breiter QRS („Wird sie heute aufgenommen?"); dazu ein Präop-Patient mit Normvariante („Darf er operiert werden?") | Schenkelblock messen und benennen; nicht alles Auffällige ist krank | LUDB 24 (LSB) / 23 (RSB); Präop inkompletter RSB aus LUDB | Vorhofbefunde (P breit, LUDB 13, 102) |
-| A3 Mi | Rhythmusambulanz; Dr. Aylin Demir | Herr mit Herzstolpern seit Tagen, Vorhofflimmern neu („Was braucht er heute?") | VHF erkennen, mittlere Frequenz; Blutverdünnung und Frequenz als Entscheidung | LUDB 173 (Ersatz 110, 129) | junge Frau mit Herzrasen (PTB-XL SVT/WPW, nur Ansehen) |
-| A4 Do | Schrittmacher- und Medikamentenkontrolle; Dr. Demir | Frau zur Schrittmacherkontrolle („Arbeitet er richtig?"); Kontroll-EKG unter neuem Medikament mit langer QT („Darf sie die Tablette weiter nehmen?") | Spike finden, Stimulation erkennen; QT messen, QTc rechnen, Folge benennen | LUDB 74 (VVI); LUDB 29 (QTc 553) | Schrittmacher 90, 111; QT 61, 116 |
-| A5 Fr | Erstversorgung; Dr. Falk, Dr. Stefan Pichler (Katheter) | in der Warteliste „Magendrücken seit einer Stunde" zwischen harmlosen Namen („Wer zuerst?") | EKG binnen zehn Minuten bei Brustschmerz; Hebung sehen, Katheter rufen | PTB-XL Infarkt (nur Ansehen) | gemischter Stapel der ganzen Woche |
+| A2 Di | Herzambulanz; Dr. Falk (**erst nach dem 12-Kanal-Export**: rechts gegen links nur an V1/V2 gegen V5/V6, I, aVL) | Frau mit Luftnot seit Wochen, breiter QRS („Wird sie heute aufgenommen?"); **Must-not-miss** als Antwortoption: „Beschwerden jetzt? Vor-EKG? Troponin?" (Schenkelblock bei Ischämieverdacht wird wie eine ST-Hebung behandelt, ESC-ACS-2023 §3.2.1). Getrennt davon ein junger Präop-Patient mit Normvariante („Darf er operiert werden?") | (a) Schenkelblock messen, benennen und einordnen; (b) nur beim Präop-Patienten: nicht alles Auffällige ist krank | LUDB 24 (LSB) / 23 (RSB); Präop: Aufnahme mit **allein** „inkompletter RSB", jung, ohne LAH/LVH/PQ > 200 (nicht 102) | Vorhofbefunde nur mit alleinigem Etikett „Left atrial hypertrophy" (nicht 13: QRS 162 ms; nicht 102: PQ 206 ms); Lektion 12 vorher lesen |
+| A3 Mi | Rhythmusambulanz; Dr. Aylin Demir | Herr mit Herzstolpern seit Tagen, Vorhofflimmern neu („Was braucht er heute?") | VHF erkennen, mittlere Frequenz; Blutverdünnung (CHA2DS2-VA) und Frequenz als Entscheidung; Falle „gleich zurück in den Sinus" widerlegbar: seit über 24 h keine Kardioversion ohne drei Wochen Antikoagulation oder TEE (ESC-AF-2024 §7.2.1) | LUDB 173 (Ersatz 110, 129) | junge Frau mit Herzrasen (PTB-XL SVT/WPW, nur Ansehen) |
+| A4 Do | Schrittmacher- und Medikamentenkontrolle; Dr. Demir | Frau zur Schrittmacherkontrolle („Arbeitet er richtig?"); Kontroll-EKG unter neuem Medikament mit langer QT („Darf sie die Tablette weiter nehmen?") | Spike finden, Stimulation erkennen; QT messen, QTc rechnen, Folge benennen | LUDB 74 (VVI bei Sinusrhythmus und AV-Block III°; die Frage „warum Einkammer?" gehört in die Akte, ESC-Pacing §5.2.2.1); LUDB 29 (QTc 553) | Schrittmacher 90, 111; QT-Nebenpatienten neu wählen (QTc > 500 bei schmalem QRS, 60–80/min; 61 und 116 nicht) |
+| A5 Fr | Erstversorgung; Dr. Falk, Dr. Stefan Pichler (Katheter) | in der Warteliste „Magendrücken seit einer Stunde" zwischen harmlosen Namen („Wer zuerst?") | EKG binnen zehn Minuten bei Brustschmerz und Äquivalenten (ESC-ACS-2023 §3.2); Hebung sehen, sofort Dr. Falk holen (er ruft den Katheter) | PTB-XL Infarkt (nur Ansehen) | gemischter Stapel der ganzen Woche |
 
 A5 ist der Höhepunkt von Teil 2: Die Warteliste, die vier Tage lang frei war, ist es diesmal nicht. Wer die
 Ersteinschätzung liest, zieht den Mann vor; wer es nicht tut, hört Marlene nach acht Minuten („Der Herr in der Zwei
@@ -421,10 +424,10 @@ nur im Notfall in Echtzeit; sonst gilt die Uhr mit Zähnen wie in Teil 2.
 | Dienst | Ort, Mentor | Kernstück | Lernziel | Aufnahme |
 |---|---|---|---|---|
 | S1 Mo | Monitorzimmer und Station 1; Marlene, Dr. Falk | **Fallbesprechung Herr Baum**: die Spielerin liest seinen Monitorspeicher (Pause > 3 s im Wachen); Frau Lindner, Vorhofflimmern am Monitor, Alarm (Ampel) | Monitor gegen Papier (REDESIGN §9); Pause messen; was der Monitor nicht kann | LUDB 96 (Lindner); Speicherstreifen Herr Baum: Datenfrage (§10) |
-| S2 Di | Station 1, Spätdienst; Marlene | Bradykardie-Alarm: AV-Block höheren Grades | Mobitz II und III° erkennen (Ansehen), Ampel, Hilfe holen | PTB-XL 2AVB/3AVB (nur Ansehen) |
-| I1 Mi | Intensiv, Box 6; Dr. Ruth Haidinger | Schrittmacherpatient und Patient mit langer QT; Elektrolyte | Stimulation am Monitor; QT unter Medikamenten im Verlauf | LUDB 34, 90; LUDB 61 |
+| S2 Di | Station 1, Spätdienst; Marlene | Bradykardie-Alarm: AV-Block höheren Grades | AV-Block höheren Grades erkennen (Ansehen; Mobitz II nur, wenn die Aufnahme es zeigt), Ampel, Dienstärztin rufen, bei Instabilität Herzalarm | PTB-XL 2AVB/3AVB (nur Ansehen) |
+| I1 Mi | Intensiv, Box 6; Dr. Ruth Haidinger | Schrittmacherpatient und Patient mit langer QT | Stimulation am Monitor; QT unter Medikamenten im Verlauf (Kalium nur als Ursache, kein Hyperkaliämie-EKG) | LUDB 34, 90; QT-Aufnahme neu wählen (wie A4) |
 | R Do | Station, innerklinischer Notfall; Dr. Haidinger mit Notfallteam | **Reanimation** (§8.3) | schockbar oder nicht in Sekunden; Ablauf im Team | Daten fehlen (§10) |
-| N Fr 22:00–07:15 | Nachtdienst, Rufbereitschaft; Marlene (Nachtdienst Pflege), Dr. Falk am Telefon | **Finale** (§8.4) | alles zusammen, allein, mit Hilfe holen | gemischt |
+| N Fr 22:00–07:15 | Nachtdienst mitgehen; Marlene (Nachtdienst Pflege), Dr. Falk als Dienstarzt im Haus | **Finale** (§8.4) | alles zusammen, Erstruf, mit Hilfe holen | gemischt |
 
 ### 8.2 Monitorzentrale und Alarme
 
@@ -443,16 +446,22 @@ Haidinger leitet). Die Herzdruckmassage läuft im Bild weiter, die Spielerin tip
 **Schleife im Takt von zwei Minuten** (Ablauf nach der aktuellen ERC-Leitlinie, Einzelheiten und Dosen erst in der
 Fallakte mit Beleg):
 
-1. Rhythmuskontrolle: Massage pausiert, der echte Streifen steht wenige Sekunden still. Die Spielerin sagt an:
-   *Kammerflimmern / pulslose Kammertachykardie, schockbar* · *Asystolie, nicht schockbar* · *organisierter Rhythmus,
-   Puls prüfen*. Ein Uhrkreis zeigt die Pause; er bestraft nicht, er macht sichtbar, dass Pausen kosten.
-2. Haidinger bestätigt oder fragt nach („Schau noch mal auf die Ableitung."). Schock, weiter drücken.
+1. Rhythmuskontrolle alle zwei Minuten: Massage pausiert, der echte Streifen steht still. Die Spielerin sagt an, eine
+   von **vier** Ansagen: *Kammerflimmern / pulslose Kammertachykardie, schockbar* · *Asystolie, nicht schockbar* ·
+   *organisierter Rhythmus: Lebenszeichen und Puls prüfen* → mit Puls: Rückkehr des Kreislaufs · ohne Puls: *pulslose
+   elektrische Aktivität, nicht schockbar, weiter drücken*. Wer bei PEA die Massage anhält, hat den häufigsten Fehler
+   gemacht; genau dafür steht die vierte Ansage da (Gutachten Nr. 4). Ein Uhrkreis zeigt die Pause gegen fünf
+   Sekunden; er bestraft nicht, er macht sichtbar, dass Pausen kosten.
+2. Haidinger bestätigt oder fragt nach („Schau noch mal auf die Ableitung."). Geladen wird **während** der Massage;
+   die Schockfreigabe gibt Haidinger („Schock frei"), die Spielerin löst auf Kommando aus und sagt die Sicherheit an
+   („Alle weg, Sauerstoff weg"). Danach sofort weiter drücken; Wechsel der Drückenden alle zwei Minuten.
 3. Zwischen den Kontrollen eine ruhige Aufgabe: die Uhr für Medikamente im Blick, reversible Ursachen nach der
-   Leitlinie mit dem Team durchgehen (Kalium vom Labor, Vorgeschichte aus der Akte).
-4. Ende: Rückkehr des Kreislaufs (organisierter Rhythmus mit Puls), Übergabe an die Intensiv nach ISBAR.
+   Leitlinie (4 H, 4 T) mit dem Team durchgehen (Kalium vom Labor, Vorgeschichte aus der Akte).
+4. Ende: Rückkehr des Kreislaufs, Übergabe an die Intensiv nach ISBAR.
 
 Vorbilder: Rhythmus-Drills wie der *Six-Second-ECG*-Simulator von SKILLSTAT (Erkennen unter Zeit), virtuelle Patienten
-wie *Body Interact* (Ablauf im Team). Medizinischer Rahmen: ERC, offen zu belegen (§13).
+wie *Body Interact* (Ablauf im Team). Medizinischer Rahmen: ERC-ALS-2025 (Soar u. a., Resuscitation 2025;
+doi:10.1016/j.resuscitation.2025.110769), Volltext vor der Akte lesen; Dosen und Zeitpunkte nur mit Abschnitt.
 
 | Entscheidung R1: Rolle in der Reanimation | Bewertung |
 |---|---|
@@ -462,10 +471,13 @@ wie *Body Interact* (Ablauf im Team). Medizinischer Rahmen: ERC, offen zu belege
 
 ### 8.4 Finale: Nachtdienst
 
-22:00 bis 07:15. Marlene hat Nachtdienst, Falk ist zu Hause erreichbar (Stufe 4). Die Nacht besteht aus Anrufen der
-Station („Frau Lindner hat 140."), dem EKG-Stapel der Nacht (allein, ohne Prüfung als Ganzes, morgen sieht Falk
-drauf) und **einer** Verschlechterung, bei der die Kernentscheidung lautet: **selbst handeln, Falk anrufen oder das
-Notfallteam rufen?** Jede Stufe des Logbuchs zeigt sich hier: Was auf Stufe 3 sitzt, geht schnell; was fehlt, hat
+22:00 bis 07:15. Die Spielerin **geht den Nachtdienst mit** (KPJ: ärztliche Tätigkeit nur unselbständig unter
+Anleitung und Aufsicht, ÄrzteG 1998 § 49 Abs. 4; nachts ist immer eine Dienstärztin im Haus). Falk ist der
+Dienstarzt der Nacht, im Dienstzimmer oder in der Notaufnahme, über das Haustelefon erreichbar (Stufe 4: „allein,
+Ärztin im Haus erreichbar"). Das Vertrauen besteht darin, dass er sie die Erstrufe annehmen lässt. Marlene hat
+Nachtdienst. Die Nacht besteht aus Anrufen der Station („Frau Lindner hat 140.": Sinustachykardie bei Fieber oder
+schnelles Flimmern?), den EKGs, die die Pflege bringt (vorbefunden, Falk sieht sie noch in der Nacht) und **einer**
+Verschlechterung, bei der die Kernentscheidung lautet: **selbst handeln, den Dienstarzt Falk rufen oder Herzalarm?** Jede Stufe des Logbuchs zeigt sich hier: Was auf Stufe 3 sitzt, geht schnell; was fehlt, hat
 Marlene im Blick („Soll ich den Falk anrufen, oder machst du's?").
 
 Um 07:15 Übergabe an Falk nach ISBAR, alles, was die Nacht gebracht hat. Falk liest den Stapel, unterschreibt die
@@ -474,7 +486,7 @@ auf den ersten Morgen um 06:40). Epilog kurz, eine Folge je Kernpatient, belegt 
 
 | Entscheidung N1: Höhepunkt der Nacht | Bewertung |
 |---|---|
-| **(a) Eine Verschlechterung mit der Wahl „selbst, Falk, Notfallteam"; Reanimation schon am Donnerstag** | **Empfohlen.** Das Finale prüft Urteil und Hilfe holen, nicht Reflexe; keine zweite Reanimation. |
+| **(a) Eine Verschlechterung mit der Wahl „selbst, Dienstarzt Falk, Herzalarm"; Reanimation schon am Donnerstag** | **Empfohlen.** Das Finale prüft Urteil und Hilfe holen, nicht Reflexe; keine zweite Reanimation. |
 | (b) Reanimation als Finale | stärkster Effekt, aber dann entscheidet ein Reflex das Spiel, und der Donnerstag wird Vorschau |
 | (c) Chefvisite mit drei Fragen (alter Plan, KONZEPT §3 Kapitel 8) | ruhig und prüfbar, aber wiederholt die Prüfung statt sie zu überbieten |
 
@@ -494,14 +506,14 @@ Ausblenden der Hilfen, Renkl und Atkinson 2003).
 | 5 Leitung (9–11) | Schema am Reizleitungsmodell | AV-Block I° (Baum) | Mobitz II, III° (Ansehen), Schrittmacher |
 | 6 Muskel (12–15, 18) | – | Schenkelblock, Vorhofbefunde (A2) | – |
 | 7 Durchblutung (16, 17, 19, 20) | – | QT (A4), Infarkt (A5, Ansehen) | QT unter Medikamenten |
-| 8 Schnelles Herz und Rest (21–33) | – | Herzrasen (Ansehen), Schrittmacher (A4) | Monitor (31), Reanimationsrhythmen, Schrittmacher |
+| 8 Schnelles Herz und Rest (21–33) | – | Herzrasen (Ansehen), Schrittmacher (A4) | Monitor (31), Extrasystolen und Sinustachykardie (Ansehen), Reanimationsrhythmen, Schrittmacher |
 | Abschluss (34–38) | Befundsatz mit Hilfe | Befundsatz, als Ganzes geprüft; Stapel | Befundsatz allein in der Nacht |
 
 | Hilfe | Teil 1 | Teil 2 | Teil 3 |
 |---|---|---|---|
 | Prüfung des Befundsatzes | je Lücke sofort | als Ganzes, dann Erklärung | in der Nacht erst am Morgen |
 | Verdachtsliste | – | vorgegebene Einträge | Spielerin legt Einträge selbst an (ab Stufe 3) |
-| Mentor | erklärt | daneben, fragt nach | im Haus, dann am Telefon |
+| Mentor | erklärt | daneben, fragt nach | im Haus, dann nur auf Ruf |
 | Werkzeuge | eins je Tag dazu | alle | alle, schneller (Routine) |
 
 Bewusst **nicht im Spiel** bleiben (Datenlage, KONZEPT §5): Lektionen 21–23, 27, 29, 32, 33 vorerst nur als Schema
@@ -571,13 +583,18 @@ fachliche Belege für Spieltexte).
 1. **12-Kanal-Export aus LUDB** (UMBAU §5): Lagetyp am Lehrtag 4 und in der Prüfung, Befundsatz Schritte 2–4. Schon
    geplant; wird durch den Befundsatz dringlicher.
 2. **Reanimationsrhythmen:** LUDB und PTB-XL enthalten kein Kammerflimmern und keine Asystolie. Kandidaten auf
-   PhysioNet: MIT-BIH Malignant Ventricular Ectopy Database (VFDB), Creighton University Ventricular Tachyarrhythmia
-   Database (CUDB); **Lizenz und Annotation prüfen**, bevor etwas eingebaut wird (QUELLEN §1). Ohne diese Daten bleibt
-   die Reanimation ungebaut; ein gemaltes Flimmern ist verboten (ART_BIBLE §6).
+   PhysioNet: MIT-BIH Malignant Ventricular Ectopy Database (VFDB, 22 × 30 min, Rhythmus-Etiketten VT, VFL, VF, ASYS)
+   und CU Ventricular Tachyarrhythmia Database (CUDB, 35 × 8,5 min); **beide ODC-By 1.0** wie LUDB (Gutachten Nr. 19).
+   Keine Schlagmarken, also Ansehen und Ansagen, nicht Messen. PEA braucht keine eigene Aufnahme (organisierter
+   Rhythmus aus LUDB, „kein Puls tastbar"). Ein gemaltes Flimmern bleibt verboten (ART_BIBLE §6).
 3. **Monitorspeicher von Herrn Baum** (Pause > 3 s im Wachen): eine echte Aufnahme mit Sinusarrest oder Pause fehlt
-   (LUDB 175 nur „SA-Block, undefined"); Kandidaten auf PhysioNet suchen, sonst als Erzählung wie bisher.
-4. **Schemakurven der Modelle** (§4.2): Regel in ART_BIBLE §6 und KONZEPT §1.6 ergänzen, wenn der Nutzer F4 zustimmt.
-5. **Akten nach `fallakte`** für A2–A5, S1–S2, I1, R, N, bevor ein Satz Dialog entsteht.
+   (LUDB 175 zeigt keine). Kandidat: **MIT-BIH Arrhythmia Database, Record 232** (Sinusbradykardie, Pausen bis 6 s,
+   Sick-Sinus, Ableitung MLII, Schlagmarken), Ausschnitt um eine Pause; Lizenz am Datensatz prüfen. Mechanismus nur
+   nennen, wenn die Aufnahme ihn zeigt.
+4. **Extrasystolen und Sinustachykardie** (Gutachten Nr. 25): häufigster Monitoralarm und häufigster Nachtanruf;
+   PTB-XL PVC und STACH, nur Ansehen, als Ampel und Befundsatz in S1/S2 und N.
+5. **Schemakurven der Modelle** (§4.2): Regel in ART_BIBLE §6 und KONZEPT §1.6 ergänzen, wenn der Nutzer F4 zustimmt.
+6. **Akten nach `fallakte`** für A2–A5, S1–S2, I1, R, N, bevor ein Satz Dialog entsteht.
 
 ---
 
@@ -595,7 +612,7 @@ fachliche Belege für Spieltexte).
 | F8 | Form eines Ambulanztags (A2) | **Warteliste, ein Kernfall, EKG-Stapel** |
 | F9 | Die fünf Ambulanztage (§6.3) als Fallliste | **so übernehmen**, Akten folgen einzeln |
 | F10 | Schwelle zu Teil 3 (U1) | **weich: nur „EKG befunden" Stufe 3** |
-| F11 | Rolle in der Reanimation (R1) und Höhepunkt der Nacht (N1) | **Teammitglied am Monitor; Finale als Verschlechterung mit „selbst, Falk, Notfallteam"** |
+| F11 | Rolle in der Reanimation (R1) und Höhepunkt der Nacht (N1) | **Teammitglied am Monitor; Finale als Verschlechterung mit „selbst, Dienstarzt Falk, Herzalarm"** |
 | F12 | Eine Mitstudentin mit Namen, die durch alle Teile mitgeht (Zugehörigkeit, Peer im Lehrsaal)? | **Ja**, eine einzige; Name und Stimme mit dem Skill `dialoge` |
 | F13 | Zeitrahmen drei Wochen im November (Kurs, Ambulanz, Station mit Nacht) | **Ja** |
 | F14 | Reihenfolge des Baus: zuerst ein senkrechter Schnitt (Lehrtag 3 mit Testat, Prüfungsstation 3, Herr Baum mit Bericht und Logbuch), um die Schleife früh zu spielen | **Ja**, vor allem anderen |
@@ -604,7 +621,28 @@ fachliche Belege für Spieltexte).
 
 ## 14. Prüfung Medizin und Realismus (medizin-gutachter, 25.10.2026)
 
-*(wird nach dem Gutachten eingetragen)*
+Gutachten vollständig in `docs/MECHANIK_GUTACHTEN.md` (30 Befunde, Expertenfragen, fertige Vorschläge für FACHREGELN
+und QUELLEN, die beim Bau der jeweiligen Akte übernommen werden). Urteil: **nach Änderungen freigeben.** Eingearbeitet:
+
+| Nr. | Schwere | Befund | geändert in |
+|---|---|---|---|
+| 1 | muss | KPJ nie einzige ärztliche Ebene; keine Rufbereitschaft für Studierende (ÄrzteG 1998 § 49 Abs. 4) | §0, §1, §3.3 Stufe 4, §8.1 N, §8.4: „Nachtdienst mitgehen", Falk Dienstarzt im Haus, Wahl „selbst, Dienstarzt, Herzalarm" |
+| 2 | muss | Befundsatz ohne Rhythmus-, QRS-, QT-Lücke | §2.3 |
+| 3 | muss | A2: neuer Schenkelblock bei Luftnot ist ein Alarm, kein „nicht alles Auffällige ist krank" | §6.3 A2: Lernziele getrennt, Must-not-miss-Option |
+| 4 | muss | Reanimation ohne PEA; Pause, Laden, Schockfreigabe | §8.3 |
+| 6, 15, 16 | sollte, Hinweis | Schockfreigabe bei der Teamleitung; Studierende befunden vor, Ärztin unterschreibt | §8.3, §6.1, §6.2 |
+| 7–9 | sollte | A2-Aufnahmen 13 und 102 sind Fangfragen; Seite des Blocks nur im 12-Kanal | §6.3 A2 |
+| 10 | sollte | A3: Falle Kardioversion nach > 24 h | §6.3 A3 |
+| 11, 12 | sollte | A4: VVI bei Sinusrhythmus begründen; QT-Nebenpatienten 61, 116 ersetzen | §6.3 A4, §8.1 I1 |
+| 13 | sollte | A5: Studentin holt Falk, ruft nicht den Katheter; Triage durch die Pflege | §6.1, §6.3 A5 |
+| 18 | sollte | Mobitz II nur, wenn die Aufnahme es zeigt | §8.1 S2 |
+| 19, 20 | sollte | Lizenzen VFDB/CUDB (ODC-By); MIT-BIH 232 für die Pause | §12 |
+| 21–23 | sollte, Hinweis | Modelle: Erregung nicht mit Füllung vermischen; Frequenz koppelt QT; eine aVR-Konvention | §4.2 |
+| 25 | sollte | Extrasystolen und Sinustachykardie fehlen | §9, §12, §8.4 |
+| 26, 30 | Hinweis | Elektrolyte nur als Ursache; A5 als Ausnahme von „stabil" | §8.1 I1, §1 |
+
+Offen für die Akten (nicht für dieses Konzept): Klassen der Empfehlungen am PDF (ESC-ACS-2023, ESC-AF-2024), Volltext
+ERC-ALS-2025, Lektionen 12, 19, 20, 37 lesen, Technik-Station „Was stimmt hier nicht?" nach dem Export (Nr. 28).
 
 ---
 

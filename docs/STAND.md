@@ -13,8 +13,9 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   Logbuch mit Vertrauensstufen (EPA), Noten nur im Kurs, Mentorbericht (Mini-CEX), Patientenreaktion, Verlauf,
   Befundatlas, Werkzeuge, „Routine wird kurz"; keine Punkte, Serien, Ranglisten. Teil 1 vier Lehrtage, Prüfung als
   OSCE; Teil 2 fünf Ambulanztage (A1 = Herr Baum unverändert); Teil 3 Station, Intensiv, Reanimation, Finale
-  Nachtdienst. Bestand-Tabelle (§10), Vorbilder (§11), Datenaufträge (§12), **14 offene Fragen (§13)**, Gutachten
-  Medizin (§14).
+  Nachtdienst. Bestand-Tabelle (§10), Vorbilder (§11), Datenaufträge (§12), **14 offene Fragen (§13)**; Gutachten
+  Medizin eingearbeitet (§14, voll in `docs/MECHANIK_GUTACHTEN.md`: „nach Änderungen freigeben", vier Muss-Punkte
+  umgesetzt, u. a. Nachtdienst nur mitgehen, weil KPJ nie einzige ärztliche Ebene ist).
 - Ersetzt nach Freigabe KONZEPT §2–§3 und GAME_DESIGN §2, §5; bis dahin gelten diese.
 
 ## Fertig (25.10.2026): Außenstil Tag und Blaue Stunde
