@@ -1,8 +1,20 @@
-# Stand und Übergabe — 23.10.2026
+# Stand und Übergabe — 25.10.2026
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
+
+## Fertig (25.10.2026): Außenstil Tag und Blaue Stunde
+
+- Nutzer bringt Stilreferenzen (Chaland, Floc'h, Tram-Wandbild, Dauger; nur lokal in `vorlagen/haus/stil/`, Ordner
+  `vorlagen/` ist in `.gitignore`). Ergebnis: Ligne claire bleibt, außen aber satter, mit dickem Umriss.
+- `render aussen --stil tag|blau` in `gen/blender/haus_blockout.py` (`TAG_PALETTE`, `STILE`): Proben
+  `docs/haus/stil_tag.jpg` und `docs/haus/stil_blau.jpg`, je etwa 10 s. **Beide angenommen, je für ihre Tageszeit**;
+  Werte und Zuordnung in ART_BIBLE §2 „Außen: zwei Stile je Tageszeit" und §4. Offen: Innenräume satter oder pastell;
+  Jahreszeit für Blaue Stunde um 06:40 (ART_BIBLE §4).
+- Mitarbeit des Nutzers in Blender: eigene Kopie `vorlagen/haus/vorschlaege.blend` mit Sammlung `Vorschlaege`
+  (Klötze mit Namen, Kameras, Grease-Pencil-Notizen), Fotos realer Details in `vorlagen/haus/fotos/`. Die gebaute
+  `bau/blender/haus/haus_blockout.blend` wird bei jedem `bauen` überschrieben.
 
 ## Fertig (23.10.2026): Werkzeuge für Claude-Sitzungen
 
@@ -218,26 +230,28 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag (ab 23.10.2026): Fragen zum Blockout klären, dann Aufnahme B1 im Haus
+## Nächster Auftrag (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
-Die drei Fragen sind entschieden und umgesetzt (siehe „Fertig" oben); der Nutzer hat die neue
-`docs/haus/probe_aussen.jpg` am 25.10.2026 freigegeben. Jetzt: Raumkameras aus §9 als `render <raum>` (Tabelle `KAMERAS`),
-dann Aufnahme B1 (`docs/REDESIGN_FALL1.md` §8.3) als ersten Raum des Hauses ausbauen, danach Lehrsaal und
-Monitorzimmer übernehmen, Flug-Renders.
+Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
+Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne
+Flügel offen; Gesims zwischen den Geschossen, Sockel, Eckquader, Dachrinne und Fallrohre, Gauben, Kaminköpfe;
+Portal mit Vordach und Schild „Haus Föhrenhang", Wegweiser Notaufnahme, Glasfront des Neubaus mit Leben dahinter
+(kein schwarzes Loch); Bordsteine, Fahrradständer, Raucherecke, Bushaltestelle, Laub auf dem Weg (Herbst); Wolken als
+Comic-Wolken statt Linsen; Figuren als Silhouetten. Nur was Kamera (a) sieht. Vorher `vorlagen/haus/vorschlaege.blend`
+und `vorlagen/haus/fotos/` des Nutzers lesen, falls vorhanden. Danach: Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
 
 ### Startnachricht
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
 (.venv mit bpy 5.2.2 und Python 3.13, Cycles auf Metal). Lies docs/STAND.md (Abschnitt „Nächster Auftrag"),
-dann docs/KRANKENHAUS.md ab „Blockout (19.10.2026)" bis zum Ende, docs/ART_BIBLE.md §1–§4 und §7,
-gen/blender/README.md Abschnitt „Haus-Blockout", dazu docs/REDESIGN_FALL1.md §8.3.
-Sieh docs/haus/probe_aussen.jpg und probe_flur.jpg verkleinert an.
-Auftrag: Außenansicht ist freigegeben. Phase 1: Raumkameras aus KRANKENHAUS §9 als render <raum> ergänzen
-(Kameras am Grundriss prüfen, Probe-Renders docs/haus/raum_<raum>.jpg), committen. Phase 2: Aufnahme B1 nach
-REDESIGN_FALL1 §8.3 als ersten Raum im Haus ausbauen.
-3D als Subagent auf Fable in eigenem Worktree, Code und Koordination auf Opus. Commit nach jedem Teilschritt,
-pushen, STAND.md nachziehen. Antworte mir auf Russisch.
+docs/ART_BIBLE.md §1, §2 „Außen: zwei Stile je Tageszeit" und §4, gen/blender/README.md Abschnitt „Haus-Blockout".
+Sieh docs/haus/stil_tag.jpg und stil_blau.jpg verkleinert an, die Referenzen in vorlagen/haus/stil/ nur bei Bedarf.
+Auftrag: Fassade und Umgebung der Außenansicht (a) ausdetaillieren, in beiden Stilen rendern
+(render aussen --stil tag|blau). Meine Vorschläge stehen in vorlagen/haus/vorschlaege.blend (Sammlung Vorschlaege)
+und Fotos in vorlagen/haus/fotos/, falls vorhanden.
+3D als Subagent auf Fable, Code und Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md
+nachziehen. Antworte mir auf Russisch.
 ```
 
 ## Erledigt: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)

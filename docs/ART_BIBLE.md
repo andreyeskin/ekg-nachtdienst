@@ -48,6 +48,25 @@ Bildschirm-Inhalt, nie als Raum.
 | Wiese | `#ACB98B` | nur außen: Rasen, Wiese, Hang (Entscheid des Nutzers 23.10.2026: eigener Außen-Grünton statt Mint); warm-gedecktes Graugrün zwischen Sand und Laub, Wiesenflecken eine Stufe heller `#B9C59A` |
 | Laub | `#6F8A62` | nur außen: Kronen der Laubbäume, Hecken, Büsche, vorderes Waldband (Entscheid des Nutzers 23.10.2026). Tiefenstaffelung des Walds: vorn Laub (besonnt), Mitte Petrol (Kamm im Schatten — die dunkle Form der Palette, kein Mischton mehr), hinten Papier (Dunst); Stadtdächer im Tal Linoleum warm |
 
+### Außen: zwei Stile je Tageszeit (Entscheid des Nutzers 25.10.2026)
+
+Nach Stilreferenzen des Nutzers (europäische Ligne claire: Chaland, Floc'h, ein Tram-Wandbild; Olivier Dauger für die
+Nacht; Bilder nur lokal in `vorlagen/haus/stil/`, nie im Repository) ist das Haus von außen **satter und kontrastreicher**
+als die Innenräume. Beide Proben wurden angenommen, jede für ihre Tageszeit (§4):
+
+- **Tag** (`docs/haus/stil_tag.jpg`): Fassade Schönbrunner Gelb `#E9C46A`, Dach Ziegelrot `#B8452F`, Fensterrahmen weiß
+  `#F4F1E6`, Glas Nachtblau `#1B2240`, Rasen `#8DB255`, Laub `#5E9440`, Hecken `#3F7A3A`, ferner Wald in Dunst `#9DB8C8`,
+  Himmel Blau in drei Bändern (`#5E9AD0` → `#B9D7EE`), Wolken weiß. Schatten flach und kühl (`#3B4A7A`, Anteil 0,45),
+  Bäume werfen Schatten (Sonne höher als 20°). Rost bleibt das eine Objekt (`#C8382B` am Rettungswagen).
+- **Blaue Stunde** (`docs/haus/stil_blau.jpg`): dieselbe Lokalfarbe als Duoton auf einer Blau-Skala (`#121A48` → `#8FA4EC`,
+  10 % Eigenfarbe); nur warme Fenster, Laternen und ein Streifen Morgenrot `#E9A86A` am Horizont behalten ihre Farbe.
+  Keine Sonne, keine Schlagschatten; große dunkle Flächen dürfen fast in die Tinte `#0E1226` gehen.
+- **Linie außen:** Umriss (Silhouette, Kontur, Rand) 2,6 px, Binnenlinie (Knick) 1,3 px; innen bleibt die gleichmäßige
+  Linie aus §1, bis die Innenräume neu entschieden sind.
+- Die Werte stehen in `TAG_PALETTE` und `STILE` in `gen/blender/haus_blockout.py` (`render aussen --stil tag|blau`). Die
+  Außenzeilen Ziegel, Wiese, Laub oben gelten nur noch für die alte Probe `probe_aussen.jpg`.
+- **Offen:** ob die Innenräume die sattere Palette mitgehen oder pastell bleiben (ruhiger Raum, scharfer Streifen, §1).
+
 Magenta `#C2185B` bleibt der Oberfläche vorbehalten (Zirkel, Messwerte, Signal im UI) und kommt
 in keinem Raumbild vor. Rot-Rosa und reines Schwarz gehören dem Millimeterpapier und der Kurve.
 
@@ -107,6 +126,13 @@ eigener Tag. Die Kopfzeile nennt Dienst und Uhrzeit („Dienst 1 · 06:40").
 | 4 Intensiv | Dienst 3 | 18:50 | Abendrot, lange Schatten |
 | 5 Aufwachraum / Innere | Dienst 6 | 22:10 | Nacht, nur Lampeninseln |
 | 6 Befundraum / Finale | Nachtdienst | 02:14 | tiefe Nacht, Regen — jetzt ist es verdient |
+
+**Außenansicht je Tageszeit (25.10.2026):** Blaue Stunde für Dienst 1 · 06:40 (Ende der Nacht, Sonnenaufgang steht
+bevor) und, tiefer und ohne Morgenrot, für 22:10 und 02:14 (dort mit
+Regen); Tag für den Einschulungstag (Flug 07:55, Lehrsaal 08:10), 10:00, 13:30 und 15:00. Für 18:50 (Abendrot) kommt ein
+dritter Außenstil, wenn Kapitel 4 dran ist. **Offen:** REDESIGN_FALL1 §8.1 legt 06:40 in Anfang April oder September,
+dann steht die Sonne schon 6–8° hoch und das Licht in der Aufnahme kommt durch die Jalousien. Blaue Stunde außen um 06:40
+verlangt Spätherbst oder Winter (Sonnenaufgang nach 07:00) oder eine frühere Ankunft; zu entscheiden mit Kapitel 1.
 
 Herzkatheter (Dienst 4, 10:00, hartes Kunstlicht) und Rhythmusambulanz (Dienst 5, 15:00, Nachmittag)
 bekommen ihre Zeile, sobald ihre Räume beschrieben sind.
