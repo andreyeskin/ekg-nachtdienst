@@ -283,6 +283,9 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 
 ## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
+**Stand 25.10.2026: erster Teil fertig** (siehe „Fertig" oben). Rest: Antworten des Nutzers auf die offenen Fragen
+einarbeiten, Figuren mit Haltung, Schild lesbar, dann Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
+
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne
 Flügel offen; Gesims zwischen den Geschossen, Sockel, Eckquader, Dachrinne und Fallrohre, Gauben, Kaminköpfe;
