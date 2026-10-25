@@ -125,14 +125,16 @@ Das Geländenetz liegt in der Sammlung `Boden`: Freestyle nutzt es als Verdecker
 Fassade und Hof ausdetailliert (25.10.2026, KRANKENHAUS.md „Fassade ausdetailliert"): Tabellen `FENSTERDEKOR`, `RUSTIKA`,
 `GESIMSE`, `FASSADENKANTEN`, `TRAUFE_OHNE`, `SPARREN`, `FALLROHRE`, `GAUBEN`/`GAUBE`, `PORTAL_DEKOR`, `GIEBEL_DEKOR`, `ZUFAHRT`,
 `STELLPLAETZE`, `FIGUREN`, `WEGWEISER`, `HALTESTELLE`, `RAUCHERECKE`, `FAHRRAEDER`, `JUNGBAEUME`, `KAHLE_BAEUME`, `HERBST`, `LAUB`,
-`WOLKEN_KUMULUS`; Funktionen `prisma` (ebenes Vieleck ausgezogen, Bogenzwickel des Portals), `bank`, `auto`, `figur`, `balkon`,
+`WOLKEN_KUMULUS`, `LOGGIA`, `UNTERHOLZ`; Funktionen `prisma` (ebenes Vieleck ausgezogen, Bogenzwickel des Portals), `bank`, `auto`, `figur`, `balkon`,
 `kante_box` (Gesimse und Sparrenköpfe entlang `FASSADENKANTEN`), `laubfleck`, `kumulus` (in `himmel_setzen`), Baumart `kahl`.
 Maßstab von Kamera (a) ≈ 17 px/m: alles unter 0,1 m bekommt **keine eigene Tuschelinie** (Materialien `rahmen`, `fasche`,
 `fuge`, `holz_gruen`, `gardine`, `zink`, `schrift`, `sparren`, `lamelle`, `ast`, `laub_boden*` in `OHNE_LINIE`), sonst wurden
 Fensterrahmen und Astwerk zu schwarzem Gekritzel; Linie nur an Laibung, Scheibe, Rollladen, Gesims, Handlauf. `kiste` ohne Fase
 baut jetzt ein Netz per `from_pydata` statt `bpy.ops` (bei 4 000 Objekten kostete jeder Operator eine Depsgraph-Aktualisierung:
 Bau 8 min statt 42 s). Kumuluswolken müssen ganz im Bild liegen (±458 m auf der 900-m-Ebene), sonst läuft ihre flache
-Grundlinie als Lineal bis zum Bildrand. Sammlungen `Hof` und `Figuren` sind in `OHNE_SCHATTEN`.
+Grundlinie als Lineal bis zum Bildrand, und links müssen sie über dem fernen Waldband 2 liegen (Unterkante ≥ z 220: das Band
+steht VOR der Himmelsebene). Sammlungen `Hof` und `Figuren` sind in `OHNE_SCHATTEN`. Waldbäume bekommen `stammanteil` (Krone
+tief, Unterkrone, keine Astgabel), sonst stehen ihre Stämme als Pfähle neben dem Haus.
 
 ```bash
 python3 gen/blender/haus_blockout.py bauen              # ≈ 45 s (4 050 Objekte) -> bau/blender/haus/haus_blockout.blend + .glb

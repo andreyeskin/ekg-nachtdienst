@@ -222,6 +222,7 @@ GAUBEN = [13.0, 19.2, 42.0, 48.2]              # Giebelgauben auf der SE-Dachfl�
 GAUBE = dict(b=1.6, y=1.8, tiefe=1.8, fenster=(1.0, 1.1))
 PORTAL_DEKOR = dict(bogen=1.5, tuer_h=2.4, pilaster=0.6, pilaster_vor=0.22, stufen=3, stufe=0.37, stufen_b=6.4,
                     balkon=(27.4, 33.8, 1.45), bruestung=0.95, baluster=0.2)   # Balkon 1. OG = Vordach des Portals, Holzbrüstung
+LOGGIA = dict(pfeiler=0.42, tiefe=0.3, z_kaempfer=6.2, ueber_bogen=0.35)   # Arkade vor dem Portalbalkon: Bogenansatz z 6,2, Platte darüber (25.10.)
 GIEBEL_DEKOR = dict(streifen=0.32, balkon=(27.6, 33.6, 1.2), rundfenster=(0.42, 15.72), tuer=(0.95, 1.7))
 # Umgebung: Zufahrt (Pflaster, 4,5 m, geschwungen vom Vorplatz zur Rettungsvorfahrt), Stellplätze mit Autos, Figuren als Silhouetten,
 # Wegweiser an der Kehre, Haltestelle an der Klinikstraße, Raucherecke an der Ecke von Trakt N, Fahrradständer am Vorplatz
@@ -233,7 +234,7 @@ HALTESTELLE = dict(x=106.6, y0=3.5, y1=7.5, tiefe=1.6, hoehe=2.6, schild=(105.6,
 RAUCHERECKE = dict(bank=(66.0, -8.4), ascher=(63.6, -8.0))
 FAHRRAEDER = dict(buegel=(21.2, 22.0, 22.8, 23.6), y=-5.0, raeder=((21.6, "figur"), (23.2, "tor")))
 JUNGBAEUME = [(57.0, -18.6, 2.0, "laub_gelb"), (70.5, -19.0, 1.9, "laub"), (84.0, -18.2, 2.1, "laub_rost"), (10.0, -15.0, 1.8, "laub_gelb")]
-KAHLE_BAEUME = [(44.5, -17.5, 3.0), (-7.0, -28.5, 2.6)]          # junge Bäume ohne Laub (Spätherbst): Stamm und Astfächer
+KAHLE_BAEUME = [(13.0, -45.0, 2.8)]       # ein kahler Jungbaum auf der Wiese rechts des Wegs, vor Wiese und Himmel (vor der Fassade las das Astwerk als Gekritzel)
 HERBST = dict(linden=("laub_gelb", "laub_rost"), kastanie="laub_rost", wald_anteil=0.35)   # Spätherbst (ART_BIBLE §4): Kronen teils gelb/rostig
 LAUB = dict(weg=(18.0, 95.0, 90, 2.6), linden=6.5, je_linde=28, vorplatz=30, radius=(0.25, 0.7))   # Herbstlaub: (s0, s1, Anzahl, Streubreite) am Parkweg West
 
@@ -278,9 +279,11 @@ WOLKEN = [(260.0, 150.0, 520.0, 24.0, "wolke_warm"), (-140.0, 232.0, 820.0, 30.0
 # Comic-Wolken (Stile tag/blau, 25.10.2026): geballte Kumulus mit Umriss statt Linsen — (seitlich m, Unterkante z, Länge, Höhe, Material);
 # Umriss = flache Unterkante, oben eine Kette überlappender Kreise mit Kerben (siehe `kumulus` in himmel_setzen). Dachfirst liegt auf
 # der Himmelsebene bei z ≈ 140, Bildoberkante bei ≈ 300.
-WOLKEN_KUMULUS = [(-320.0, 190.0, 230.0, 75.0, "wolke_hell"), (-70.0, 250.0, 170.0, 52.0, "wolke_hell"),
-                  (190.0, 165.0, 270.0, 92.0, "wolke_hell"), (375.0, 240.0, 140.0, 44.0, "wolke_warm"), (-200.0, 150.0, 100.0, 32.0, "wolke_warm")]
-                                           # alle innerhalb des Bildes (± 458 m bei 900 m): eine angeschnittene Wolke zog ihre Grundlinie als Lineal bis zum Rand
+WOLKEN_KUMULUS = [(-320.0, 224.0, 230.0, 62.0, "wolke_hell"), (-70.0, 250.0, 170.0, 52.0, "wolke_hell"),
+                  (190.0, 165.0, 270.0, 92.0, "wolke_hell"), (375.0, 240.0, 140.0, 44.0, "wolke_warm"), (-30.0, 198.0, 80.0, 26.0, "wolke_warm")]
+                                           # alle innerhalb des Bildes (± 458 m bei 900 m): eine angeschnittene Wolke zog ihre Grundlinie als Lineal bis zum Rand.
+                                           # Links liegt das ferne Waldband 2 (wald_fern, 170–240 m vor der Kamera) VOR der Himmelsebene und reicht aus (a) bis
+                                           # ≈ 13° (z ≈ 208 auf 890 m): Wolken links brauchen eine Unterkante ≥ 220, sonst schiebt sich das Band in die Wolke.
 
 # Vordergrund von Render (a): Büsche (x, y, Radius) in drei Gruppen mit Bodenkontakt neben dem Parkweg, nicht in der Bildmitte,
 # alle ≥ 33 m vor der Kamera (näher werden sie zu grünen Wolken); Wiesenflecken zufällig im Bildausschnitt
@@ -293,7 +296,8 @@ WIESENFLECKEN = dict(bereich=(-40.0, -70.0, 90.0, -5.0), anzahl=18, radius=(4.0,
 # Wald (§5): nahes Band als dichte Baumgruppen (zwei Reihen), Mitte und Ferne als Silhouettenbänder (ein Netz je Band).
 # Tiefenstaffelung: vorn Laub (grün, besonnt), Mitte Petrol (Kamm im Schatten, die dunkle Form), hinten Papier (Dunst).
 WALD_NAH = dict(x0=-10.0, x1=150.0, reihen=((38.0, 44.0), (45.0, 52.0)), abstand=6.0, hoehe=(17.0, 26.0))
-WALD_WEST = dict(x0=-62.0, x1=-24.0, y0=-40.0, y1=38.0, abstand=(8.0, 9.0), hoehe=(16.0, 24.0))
+UNTERHOLZ = [(-4.0, 36.5, 2.6), (2.5, 36.0, 2.9), (9.0, 36.8, 2.4), (15.5, 36.2, 2.7)]   # Büsche am Waldrand (25.10.): Stämme der Reihe 1 standen als Pfähle neben dem Haus
+WALD_WEST = dict(x0=-62.0, x1=-24.0, y0=-26.0, y1=38.0, abstand=(8.0, 9.0), hoehe=(16.0, 24.0))   # y0 −26 (25.10.): bei −40 ragten zwei Föhrenstämme 23 m neben der Kamera als „Pfähle" in den linken Bildrand
 WALDBAENDER = [(76.0, -150.0, 230.0, "wald_mitte", (20.0, 28.0)), (106.0, -160.0, 205.0, "wald_fern", (22.0, 30.0))]   # (y, x0, x1, Material, Höhen)
 WALDBAND_AUSLAUF = 40.0      # auf den letzten Metern sinkt die Oberkante eines Bands (kein senkrechter Schnitt hinter Trakt N)
 
@@ -341,12 +345,12 @@ PALETTE = {
     # Fassadendetails (25.10.2026): Faschen/Gesimse Papier, Sockelgeschoss Linoleum kühl mit Fugen, Rollläden und Giebelholz Laub,
     # Portaltür dunkles Holz, Zink für Rinne und Fallrohre, Schrift Tinte; Herbst: Kronen gelb/rostig, Laub am Boden
     "fasche": "#F7F1E4", "gesims": "#F7F1E4", "rustika": "#D8D2C0", "fuge": "#B6AE9C", "rollladen": "#6F8A62", "holz_gruen": "#6F8A62",
-    "gardine": "#E6E4DC", "holz_dunkel": "#5A3A2A", "stein": "#D9D2C2", "zink": "#8A8F96", "schrift": "#1E2A30", "sparren": "#3B2A22", "ast": "#2C3E46",
+    "gardine": "#E6E4DC", "holz_dunkel": "#5A3A2A", "stein": "#D9D2C2", "zink": "#8A8F96", "schrift": "#1E2A30", "sparren": "#3B2A22",
     "auto_weiss": "#F7F1E4", "auto_blau": "#2C5560", "laub_gelb": "#D0A54A", "laub_rost": "#B8703A", "laub_boden": "#B07A3C", "laub_boden_hell": "#D2A354",
 }
 OHNE_LINIE = {"himmel_0", "himmel_1", "himmel_2", "wald_fern", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
               "fluss", "schatten_wiese", "schatten_pflaster",
-              "rahmen", "fasche", "fuge", "holz_gruen", "gardine", "zink", "schrift", "sparren", "laub_boden", "laub_boden_hell", "lamelle", "ast"}
+              "rahmen", "fasche", "fuge", "holz_gruen", "gardine", "zink", "schrift", "sparren", "laub_boden", "laub_boden_hell", "lamelle"}
 OHNE_SCHATTIERUNG = {"himmel_0", "himmel_1", "himmel_2", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
                      "fluss", "wolke_hell", "wolke_warm", "fenster_warm", "rahmen", "fasche", "fuge", "gardine", "schrift", "laub_boden", "laub_boden_hell"}
 IMMER_SCHATTEN = {"schatten_wiese", "schatten_pflaster", "stadt", "stadt_sand", "stadt_dach"}   # im Sonnen-Durchgang schwarz: das Komposit
@@ -369,7 +373,7 @@ TAG_PALETTE = {
     "schatten_wiese": "#8DB255", "schatten_pflaster": "#E2D7B9", "rtw": "#F4F1E6", "rost": "#C8382B",
     # Fassadendetails und Herbst (ART_BIBLE §2 „Außen", Ergänzung 25.10.2026)
     "fasche": "#F4F1E6", "gesims": "#F4F1E6", "rustika": "#D6D0BE", "fuge": "#AFA896", "rollladen": "#4F7F4A", "holz_gruen": "#4F7F4A",
-    "gardine": "#E3E6EC", "holz_dunkel": "#4A2E22", "stein": "#CFC9BA", "zink": "#7E858F", "schrift": "#1A1F2E", "sparren": "#3B2A22", "ast": "#3B2A22",
+    "gardine": "#E3E6EC", "holz_dunkel": "#4A2E22", "stein": "#CFC9BA", "zink": "#7E858F", "schrift": "#1A1F2E", "sparren": "#3B2A22",
     "auto_weiss": "#F4F1E6", "auto_blau": "#3A5A8C", "laub_gelb": "#D9A93C", "laub_rost": "#B9652C", "laub_boden": "#B8762F", "laub_boden_hell": "#D8A24A",
 }
 STILE = {
@@ -669,42 +673,40 @@ def bauen():
         k.scale = (1, 1, 0.85); bpy.ops.object.transform_apply(scale=True); teile.append(k)
         return vereinen(teile, name)
 
-    def baum(name, x, y, r, art="laub", m="laub", samm="Baeume", hoehe=None, z=None):
+    def baum(name, x, y, r, art="laub", m="laub", samm="Baeume", hoehe=None, z=None, stammanteil=None):
         """laub: Stamm sichtbar, zwei Astansätze, Krone aus 5–7 Kugeln. foehre: hoher Stamm, lichter Schirm aus drei
         flachen Kugeln. fichte: vier gestapelte Kegel mit Lücken. Zufall je Baum aus dem Namen (reproduzierbar)."""
         zr = random.Random(name)
         if z is None: z = gelaende_z(x, y); fussschatten(name + " Schatten", x, y, r)    # nur Bäume auf dem Gelände (nicht im Kübel)
         if art == "laub":
-            h = hoehe or r * 2.6; hs = h * 0.36; rs = max(0.12, r * 0.07)
+            h = hoehe or r * 2.6; hs = h * (stammanteil or 0.36); rs = max(0.12, r * 0.07)   # Waldbäume: Krone tiefer (0,2), sonst stehen 8-m-Stämme als „Pfähle" neben dem Haus
             stamm = wz.zylinder(rs, hs + 0.4, (x, y, z + (hs + 0.4) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm")
             aeste = [stamm]
-            for j in range(2):                                     # zwei Äste schräg in die Krone
+            for j in range(0 if stammanteil else 2):               # zwei Äste schräg in die Krone (Waldbäume: keine, die Gabel ragte unter der Krone hervor)
                 ang = zr.uniform(0, 2 * math.pi); neig = math.radians(zr.uniform(28, 42)); la = r * 0.55
                 dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
                 mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z + hs + math.cos(neig) * la / 2)
                 aeste.append(wz.zylinder(rs * 0.5, la, mitte, M["stamm"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
             einordnen(vereinen(aeste, name + " Stamm"), samm)
             zc = z + hs + (h - hs) * 0.5
-            einordnen(krone_kugeln(name, x, y, zc, r, (h - hs) * 0.22, zr, 5 + zr.randint(0, 2), m), samm)
+            krone = krone_kugeln(name, x, y, zc, r, (h - hs) * 0.22, zr, 5 + zr.randint(0, 2), m)
+            if stammanteil:                                        # Waldbäume: eine Unterkrone direkt über dem Stammende, damit kein langer Stamm frei steht
+                unten = wz.kugel(r * 0.7, (x, y, z + hs + r * 0.55), M[m], "hinten", name=name); unten.scale = (1, 1, 0.8)
+                bpy.ops.object.transform_apply(scale=True); krone = vereinen([krone, unten], name)
+            einordnen(krone, samm)
         elif art == "foehre":
             h = hoehe or r * 3.4; hs = h * 0.62; rs = max(0.14, r * 0.08)
             einordnen(wz.zylinder(rs, hs + 0.3, (x + zr.uniform(-0.3, 0.3), y, z + (hs + 0.3) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
             einordnen(krone_kugeln(name, x, y, z + hs + (h - hs) * 0.45, r * 0.95, (h - hs) * 0.18, zr, 3, m, flach=(0.45, 0.6)), samm)
-        elif art == "kahl":                                        # Spätherbst: junger Baum ohne Laub, Stamm und Astfächer (ein Objekt)
-            h = hoehe or r * 2.4; rs = max(0.1, r * 0.05)
-            einordnen(wz.zylinder(rs, h * 0.55, (x, y, z + h * 0.275), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
-            teile = []                                             # Äste und Zweige ohne Tuschelinie (Material ast): bei 17 px/m wurden sie sonst zum Gekritzel
-            for j in range(6):
-                ang = zr.uniform(0, 2 * math.pi) if j else zr.uniform(0, 0.5); neig = math.radians(zr.uniform(18, 48)); la = h * zr.uniform(0.4, 0.55)
-                z0_ = z + h * zr.uniform(0.42, 0.56); dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
+        elif art == "kahl":                                        # Spätherbst: junger Baum ohne Laub — Stamm und fünf kräftige Hauptäste mit Umriss,
+            h = hoehe or r * 2.6; rs = max(0.14, r * 0.05)          # keine feinen Zweige (bei 17–30 px/m wurden sie zu Gekritzel); ein Objekt
+            teile = [wz.zylinder(rs, h * 0.5, (x, y, z + h * 0.25), M["stamm"], "hinten", v=8, name=name + " Stamm")]
+            for j in range(5):
+                ang = j * 2 * math.pi / 5 + zr.uniform(-0.3, 0.3); neig = math.radians(zr.uniform(22, 42)); la = h * zr.uniform(0.45, 0.6)
+                z0_ = z + h * zr.uniform(0.4, 0.5); dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
                 mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z0_ + math.cos(neig) * la / 2)
-                teile.append(wz.zylinder(rs * 0.6, la, mitte, M["ast"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
-                for k in range(1 + (j % 2)):                       # je Ast ein bis zwei Zweige weiter außen
-                    t = zr.uniform(0.55, 0.95); ang2 = ang + zr.uniform(-0.9, 0.9); neig2 = neig + math.radians(zr.uniform(-25, 25)); lz = la * 0.5
-                    px, py, pz = (x + math.sin(neig) * la * t * math.cos(ang), y + math.sin(neig) * la * t * math.sin(ang), z0_ + math.cos(neig) * la * t)
-                    m2 = (px + math.sin(neig2) * lz / 2 * math.cos(ang2), py + math.sin(neig2) * lz / 2 * math.sin(ang2), pz + math.cos(neig2) * lz / 2)
-                    teile.append(wz.zylinder(rs * 0.3, lz, m2, M["ast"], "hinten", dreh=(neig2 * math.sin(ang2), -neig2 * math.cos(ang2), 0), v=5, name=name + " Zweig"))
-            einordnen(vereinen(teile, name + " Aeste"), samm)
+                teile.append(wz.zylinder(rs * 0.55, la, mitte, M["stamm"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
+            einordnen(vereinen(teile, name), samm)
         else:                                                      # fichte: Etagen
             h = hoehe or r * 3.2; hs = h * 0.18; rs = max(0.12, r * 0.07)
             einordnen(wz.zylinder(rs, h * 0.6, (x, y, z + h * 0.3), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
@@ -754,6 +756,7 @@ def bauen():
     for i, (x, y, r) in enumerate(KAHLE_BAEUME): baum(f"Kahler Baum {i + 1}", x, y, r, "kahl")
     for i, (x, y, r) in enumerate(PLATANEN): baum(f"Platane {i + 1}", x, y, r)
     for i, (x, y, r) in enumerate(BUESCHE): busch(f"Busch {i + 1}", x, y, r)
+    for i, (x, y, r) in enumerate(UNTERHOLZ): busch(f"Unterholz {i + 1}", x, y, r, "wald_nah")   # Waldrand hinter dem Haus: verdeckt die Stämme links des Westgiebels
 
     # ---------------- Hof (25.10.2026): Zufahrt, Stellplätze mit Autos, Figuren, Wegweiser, Haltestelle, Raucherecke, Herbstlaub ----------------
     band("Zufahrt", ZUFAHRT, 4.5, "pflaster", hoch=0.03)
@@ -848,13 +851,13 @@ def bauen():
         while x < wn["x1"]:
             xx = x + zufall.uniform(-1.5, 1.5); yy = zufall.uniform(y0, y1); w = zufall.random()
             art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
-            baum(f"Wald {reihe + 1} {x:g}", xx, yy, zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*wn["hoehe"]))
+            baum(f"Wald {reihe + 1} {x:g}", xx, yy, zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*wn["hoehe"]), stammanteil=0.14)
             x += wn["abstand"]
     ww = WALD_WEST
     for x in range(int(ww["x0"]), int(ww["x1"]), int(ww["abstand"][0])):     # Wald westlich (x < −20), rahmt Render (a) links
         for y in range(int(ww["y0"]), int(ww["y1"]), int(ww["abstand"][1])):
             w = zufall.random(); art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
-            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*ww["hoehe"]))
+            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*ww["hoehe"]), stammanteil=0.14)
 
     def waldband(name, y, x0, x1, m, hoehen):
         """Silhouettenband: ein senkrechtes Netz bei y, Oberkante = Umriss überlappender Kronen und Wipfel."""
@@ -1199,6 +1202,21 @@ def bauen():
         kiste("Wandleuchte Kappe", lx - 0.03, yg - 0.3, lx + 0.28, yg, 2.66, 2.72, "sparren", "Trakt A EG")
         kiste("Portal Konsole", a0 + 0.1, yg - 1.0, a0 + pw - 0.1, yg, 3.4, 3.95, "stein", "Trakt A 1OG")
     balkon("Portalbalkon", px0, px1, yg, pt, 3.95, pd["bruestung"], "Trakt A 1OG", bal=pd["baluster"])
+    # Loggia (25.10.2026, Korrekturrunde): vor dem Balkon eine Arkade mit drei Rundbögen auf vier Pfeilern, darüber eine Platte
+    # (= Austritt des 2. OG mit Brüstung). Bogenfeld als ein Prisma mit drei Ausschnitten; die 1.-OG-Fenster des Risalits bleiben dahinter sichtbar.
+    lg = LOGGIA; yv = yg - pt; pfeiler = lg["pfeiler"]; n_b = 3; lichte = ((px1 - px0) - (n_b + 1) * pfeiler) / n_b; R = lichte / 2
+    zs_ = lg["z_kaempfer"]; zo = zs_ + R + lg["ueber_bogen"]
+    for i in range(n_b + 1):
+        xp = px0 + i * (lichte + pfeiler)
+        kiste(f"Loggia Pfeiler {i + 1}", xp, yv - 0.05, xp + pfeiler, yv + lg["tiefe"], 4.15, zs_, "gesims", "Trakt A 1OG")
+    pts = [(px0, zs_)]
+    for i in range(n_b):
+        xl = px0 + pfeiler + i * (lichte + pfeiler); cx_ = xl + R
+        pts.append((xl, zs_)); pts += [(cx_ + R * math.cos(math.radians(a)), zs_ + R * math.sin(math.radians(a))) for a in range(170, 0, -10)]
+        pts.append((xl + lichte, zs_))
+    pts += [(px1, zs_), (px1, zo), (px0, zo)]
+    prisma("Loggia Bogenfeld", pts, "y", yv - 0.05, yv + lg["tiefe"], "gesims", "Trakt A 1OG")
+    balkon("Loggia Austritt 2OG", px0, px1, yg, pt + 0.05, zo, pd["bruestung"], "Trakt A 2OG", bal=pd["baluster"])
     sx0 = PORTAL["x1"] + 0.2 + pw + 0.7                            # Schild „Haus Föhrenhang": weiße Tafel, drei Textbalken (Schrift bei 17 px/m unlesbar)
     kiste("Schild Haus", sx0, yg - 0.04, sx0 + 0.95, yg, 1.5, 2.25, "rtw", "Trakt A EG")
     for i, (zs, lb_) in enumerate(((2.08, 0.55), (1.92, 0.75), (1.68, 0.4))):

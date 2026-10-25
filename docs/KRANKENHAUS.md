@@ -740,12 +740,18 @@ Umgesetzt in `gen/blender/haus_blockout.py` (Tabellen siehe `gen/blender/README.
   Stunde dunkel vor dem Morgenrot.
 - **Bau:** 4 050 Objekte, `bauen` 42 s (Quader ohne Fase als Netz statt Operator), Render Tag 13–26 s, Blau 8–13 s.
 
+**Korrekturrunde (25.10.2026, nach Sichtung durch den Koordinator):** Loggia mit drei Rundbögen auf vier Pfeilern vor dem
+Portalbalkon (`LOGGIA`, Bogenfeld als Prisma), darüber Austritt des 2. OG mit Brüstung. Wolken links höher gesetzt: das ferne
+Waldband 2 (`wald_fern`, 170–240 m vor der Kamera) liegt VOR der Himmelsebene und reichte bis z ≈ 208 auf 890 m in die Wolke.
+Kahle Bäume: nur noch einer (Wiese rechts des Wegs, 13 / −45), als klare Form Stamm + fünf kräftige Hauptäste mit Umriss,
+keine Zweige; der vor der Fassade ist weg. Die „Pfähle" am linken Bildrand waren Stämme der nahen Waldreihe (x −4 … 7, y 40,
+109 m weit) links des Westgiebels: Waldbäume tragen die Krone jetzt tiefer (`stammanteil` 0,14, Unterkrone, keine Astgabel),
+dazu Unterholz am Waldrand (`UNTERHOLZ`); Wald West beginnt bei y −26 (bei −40 standen Föhrenstämme 23 m neben der Kamera).
+
 **Offene Punkte / Fragen an den Nutzer:**
 - Gardinen lesen sich als helle untere Scheibe, nicht als Stoff — reicht das, oder lieber nur Rollläden und Glas?
-- Loggia mit Bögen (wie am Vorbild) gibt es nicht; stattdessen zwei Balkone (Portal, Giebel). Gewünscht?
 - Kopfsteinmuster der Zufahrt fehlt (bei 17 px/m nicht zeichenbar); Pflaster bleibt eine Fläche.
-- Kahle Bäume stehen vor der Westfassade (x −7 / y −28,5) und vor Trakt N (44,5 / −17,5): Astwerk ohne Linie liest als
-  Gestrüpp; gefallen sie, oder weg damit?
+- Der eine kahle Baum (rechts, vor Tal und Himmel): behalten?
 - Schild „Haus Föhrenhang" trägt nur Textbalken; lesbarer Schriftzug erst in der Spielgrafik (Overlay) möglich.
 - Figuren sind Kapseln ohne Haltung; echte Silhouetten kommen mit `figuren_zeichnen.py`.
 - Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
