@@ -4,6 +4,18 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Lehrsaal — Spielkamera an der ersten Bank, Vorderseite umgestellt
+
+- Nutzer: Decke zu dunkel → helles Holz `#CFA06A`, Boden `#C08552`. Spielkamera neu: **die Spielerin sitzt an der ersten
+  Bank** (5,65 / 2,85 / 1,2), Blick frontal zur Stirnwand, 20 mm; neuer Kamera-Schlüssel `gier` in `haus_blockout.py`
+  (feste Blickrichtung, Ziel per Verschiebung in x und y).
+- Weil von dort Nische, Flurwand und Türen außerhalb liegen, vom Nutzer bestätigt umgestellt: Liege quer vor dem linken
+  Giebelfenster (Kopf zur Fensterwand), Wagen am Kopfende in der Ecke, Whiteboard auf fahrbarem Gestell rechts hinter dem
+  Dozententisch (−28° zur Klasse), Uhr über der Leinwand, Stuhl der Dozentin hinter dem Tisch; Ausgang wird ein Pfeil am
+  rechten Bildrand. Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
+- Für die Ebenen-Pipeline: das Whiteboard ist gedreht — `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an,
+  für Hausräume die echten Eckpunkte der Vorderseite nehmen.
+
 ## Fertig (25.10.2026): Eigenes Farbdesign „Morgen" für den Lehrsaal
 
 - Nutzer fand die Farben zu blass, schickte Vorlagen (Lofi-Zimmer, Ligne claire, Foto des Saals) und wünscht sich

@@ -1751,7 +1751,7 @@ def kamera_stellen(sc, k, aufloesung=(B, H)):
     from bpy_extras.object_utils import world_to_camera_view
     kam = bpy.data.objects["Kamera"]; sc.camera = kam
     ox, oy, oz = k["ort"]; zx, zy, zz = k["ziel"]
-    gier = math.atan2(zy - oy, zx - ox)
+    gier = math.radians(k["gier"]) if "gier" in k else math.atan2(zy - oy, zx - ox)   # feste Blickrichtung: Wand bleibt frontal
     kam.location = k["ort"]; kam.rotation_euler = (math.radians(90), 0, gier - math.radians(90))
     kam.data.type = 'PERSP'; kam.data.lens = k["brennweite"]; kam.data.shift_x = 0; kam.data.shift_y = 0
     kam.data.clip_start = 0.3; kam.data.clip_end = 2000
@@ -1759,6 +1759,7 @@ def kamera_stellen(sc, k, aufloesung=(B, H)):
     bpy.context.view_layer.update()
     p = world_to_camera_view(sc, kam, Vector(k["ziel"]))          # Ziel in die Bildmitte: Verschiebung statt Neigung
     kam.data.shift_y = (p.y - 0.5) * aufloesung[1] / aufloesung[0]
+    if "gier" in k: kam.data.shift_x = p.x - 0.5                  # mit fester Richtung auch seitlich verschieben
     bpy.context.view_layer.update()
     return gier
 
