@@ -125,6 +125,7 @@ Das Geländenetz liegt in der Sammlung `Boden`: Freestyle nutzt es als Verdecker
 ```bash
 python3 gen/blender/haus_blockout.py bauen              # ≈ 50 s -> bau/blender/haus/haus_blockout.blend + .glb
 python3 gen/blender/haus_blockout.py render aussen      # §9 (a), 06:40 -> docs/haus/probe_aussen.jpg (≈ 10–30 s)
+python3 gen/blender/haus_blockout.py render aussen --stil tag|blau   # Stilprobe (Palette, Licht, Linie) -> docs/haus/stil_<stil>.jpg
 python3 gen/blender/haus_blockout.py render flur        # §9 (b), 09:15 -> docs/haus/probe_flur.jpg   (≈ 10–30 s)
 python3 gen/blender/haus_blockout.py grundriss alle     # eg|1og|2og: Schnitt 1,6 m über dem Boden -> docs/haus/grundriss_<g>.png (≈ 5 s je Geschoss)
 ```

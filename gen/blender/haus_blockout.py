@@ -306,6 +306,37 @@ OHNE_SCHATTEN = {"Baeume", "Buesche", "Laternen"}   # Sammlungen, deren Objekte 
                                          # Sie bekommen stattdessen einen flachen Fußschatten (`fussschatten`). Gebäude und RTW werfen echte.
 SONNE_AUS_MATERIAL = {"glas"}            # Glas lässt die Sonne durch (Sonnen-Durchgang ohne Scheiben)
 
+# Stilproben (25.10.2026, Referenzen des Nutzers: Chaland/Tram-Wandbild für „tag", Dauger für „blau"). Nur Farbe, Licht und
+# Linie; die Geometrie bleibt. Aufruf `render aussen --stil tag|blau` -> docs/haus/stil_<stil>.jpg; die freigegebene Probe
+# bleibt unberührt. Grundpalette beider Stile ist TAG_PALETTE; „blau" legt sie im Komposit als Duoton in den Blauen Stunde.
+TAG_PALETTE = {
+    "putz": "#E9C46A", "sockel": "#8F8A7A", "ziegel": "#B8452F", "rahmen": "#F4F1E6", "glas": "#1B2240", "tor": "#3A5A8C",
+    "lamelle": "#B9783E", "beton": "#ECE8DC", "attika": "#ECE8DC", "stuetze": "#3A5A8C",
+    "wiese": "#8DB255", "wiese_hell": "#A5C46A", "weg": "#D9C9A0", "kante": "#F4F1E6", "asphalt": "#6E7480", "pflaster": "#E2D7B9",
+    "hecke": "#3F7A3A", "stamm": "#3B2A22", "laub": "#5E9440", "wald_nah": "#3F7A3A", "wald_mitte": "#2F5A55", "wald_fern": "#9DB8C8",
+    "stadt": "#E8DCC2", "stadt_sand": "#D9C08A", "stadt_dach": "#B8452F", "beet": "#8A5A3A",
+    "fenster_warm": "#FFD25A", "fluss": "#7FB3D5", "wolke_hell": "#FFFFFF", "wolke_warm": "#F2F6FA",
+    "schatten_wiese": "#8DB255", "schatten_pflaster": "#E2D7B9", "rtw": "#F4F1E6", "rost": "#C8382B",
+}
+STILE = {
+    "tag": dict(palette=TAG_PALETTE, kamera=dict(sonne=(115.0, 24.0), licht="#FFF3D6", anteil=0.22, schatten=0.45,
+                                                 himmel=["#5E9AD0", "#86B6E0", "#B9D7EE"]),
+                schatten="#3B4A7A", tinte="#1A1F2E", kontur=2.6, innen=1.3, baumschatten=True),
+    "blau": dict(palette=dict(TAG_PALETTE, wolke_hell="#3A3A3A", wolke_warm="#303030"),
+                 kamera=dict(sonne=(80.0, 7.0), licht="#F6C98A", anteil=0.0, schatten=0.0,
+                             himmel=["#0E0E0E", "#262626", "#E9A86A"]),           # unten ein Streifen Morgenrot (Dienst endet)
+                 schatten="#1A2350", tinte="#0E1226", kontur=2.6, innen=1.3, mit_sonne=False,
+                 duoton=("#121A48", "#8FA4EC"), eigen=0.10, leuchten=("fenster_warm", "himmel_2")),
+}
+
+
+def stil():
+    return STILE.get(os.environ.get("HAUS_STIL", ""))
+
+
+def stil_endung():
+    return "_" + os.environ["HAUS_STIL"] if stil() else ""
+
 
 def hexc(s):
     return tuple(int(s[i:i + 2], 16) / 255 for i in (1, 3, 5))
@@ -1054,8 +1085,11 @@ def durchgang(kamera_name, art, ortho=None):
             if c: c.hide_render = True
         gier = math.radians(90)
     else:
-        k = KAMERAS[kamera_name]; aufl = (B, H)
+        k = dict(KAMERAS[kamera_name]); aufl = (B, H)
+        if stil(): k.update(stil()["kamera"])
         gier = kamera_stellen(sc, k, aufl)
+    pal = dict(PALETTE)
+    if stil(): pal.update(stil()["palette"]); pal.update({f"himmel_{i}": f for i, f in enumerate(k["himmel"])})
     himmel_setzen(sc, k, gier, M)
     sonne = bpy.data.objects["Sonne"]
     from mathutils import Vector
@@ -1101,7 +1135,7 @@ def durchgang(kamera_name, art, ortho=None):
 
     sonne.hide_render = art != "sun"
     if art == "flat":
-        emission_ueberall(lambda n: hex_lin(PALETTE[n]) if n in PALETTE else (0.5, 0.5, 0.5))
+        emission_ueberall(lambda n: hex_lin(pal[n]) if n in pal else (0.5, 0.5, 0.5))
         for m in bpy.data.materials:
             if m.node_tree and m.name not in OHNE_SCHATTIERUNG and m.node_tree.nodes.get("Material Output"): stufen_nach_richtung(m)
         welt(hex_lin(k["himmel"][0])); sichtbar(); proben = PROBEN["flat"]
@@ -1134,6 +1168,13 @@ def durchgang(kamera_name, art, ortho=None):
         if boden: ls.select_by_collection = True; ls.collection = boden; ls.collection_negation = 'EXCLUSIVE'
         if ls.linestyle is None: ls.linestyle = bpy.data.linestyles.new("claire")
         ls.linestyle.color = (0, 0, 0); ls.linestyle.alpha = 1.0; ls.linestyle.thickness = 1.5 * UEBER; ls.linestyle.caps = "ROUND"
+        if stil():                                      # Stilprobe: Umriss dick (Silhouette, Kontur, Rand), Binnenlinie (Knick) dünn
+            ls.select_crease = False; ls.linestyle.thickness = stil()["kontur"] * UEBER
+            li = fs.linesets.new("innen"); li.select_by_visibility = True
+            li.select_silhouette = li.select_border = li.select_contour = False; li.select_crease = True
+            if boden: li.select_by_collection = True; li.collection = boden; li.collection_negation = 'EXCLUSIVE'
+            li.linestyle = bpy.data.linestyles.new("innen"); li.linestyle.color = (0, 0, 0); li.linestyle.caps = "ROUND"
+            li.linestyle.thickness = stil()["innen"] * UEBER
         proben = PROBEN["lines"]
     elif art == "sun":
         for m in bpy.data.materials:
@@ -1146,11 +1187,12 @@ def durchgang(kamera_name, art, ortho=None):
                 b.inputs["Emission Color"].default_value = (1, 1, 1, 1); b.inputs["Emission Strength"].default_value = 1.0
         welt((0, 0, 0), 0.0); sc.cycles.max_bounces = 0; sichtbar(SONNE_AUS_MATERIAL); proben = PROBEN["sun"]
         for o in bpy.data.objects:                 # Bäume werfen keinen Schatten (OHNE_SCHATTEN), bleiben aber selbst besonnt
-            if o.type == 'MESH' and any(c.name in OHNE_SCHATTEN for c in o.users_collection): o.visible_shadow = False
+            if o.type == 'MESH' and any(c.name in OHNE_SCHATTEN for c in o.users_collection) and not (stil() or {}).get("baumschatten"):
+                o.visible_shadow = False
     else:
         raise SystemExit("unbekannter Durchgang " + art)
     sc.cycles.samples = proben; sc.cycles.use_denoising = art == "sun"
-    sc.render.filepath = BAU + f"{kamera_name}_{art}.png"
+    sc.render.filepath = BAU + f"{kamera_name}{stil_endung()}_{art}.png"
     t = time.time(); bpy.ops.render.render(write_still=True)
     if art == "lines":
         from PIL import Image
@@ -1163,17 +1205,29 @@ def komposit(kamera_name, ziel, k, mit_sonne=True, max_kb=300):
     import numpy as np
     from PIL import Image, ImageFilter
     sys.path.insert(0, HIER); import komposit as ko
-    lade = lambda n: np.asarray(Image.open(BAU + f"{kamera_name}_{n}.png").convert("RGB")).astype(np.float32) / 255
+    lade = lambda n: np.asarray(Image.open(BAU + f"{kamera_name}{stil_endung()}_{n}.png").convert("RGB")).astype(np.float32) / 255
     flach = lade("flat"); t = ko.tinte(lade("lines"))[..., None]
+    s = stil() or {}
+    schattenfarbe = ko.hexc(s.get("schatten", "#2C5560")); tinte = ko.hexc(s.get("tinte", "#1E2A30"))
+    mit_sonne = mit_sonne and s.get("mit_sonne", True)
+    if "duoton" in s:                                  # Blaue Stunde: Helligkeit der Lokalfarbe auf eine Blau-Skala, ein Rest Eigenfarbe;
+        pal = dict(s["palette"], **{f"himmel_{i}": f for i, f in enumerate(k["himmel"])})   # leuchtende Flächen behalten ihre Farbe
+        leuchtet = np.zeros(flach.shape[:2], bool)
+        for n in s["leuchten"]: leuchtet |= np.abs(flach - ko.hexc(pal[n])).max(axis=2) < 0.04
+        dunkel, hell = ko.hexc(s["duoton"][0]), ko.hexc(s["duoton"][1])
+        l = ko.luma(flach)[..., None] ** 1.15
+        blau = dunkel * (1 - l) + hell * l
+        blau = blau * (1 - s["eigen"]) + flach * s["eigen"]
+        flach = np.where(leuchtet[..., None], flach, blau)
     if mit_sonne:
         ls = ko.luma(lade("sun"))
         licht = np.clip((ls - 0.35) / 0.08 + 0.5, 0, 1)
         licht = np.asarray(Image.fromarray((licht * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
         licht = ko.weich(licht, 0.7)[..., None]
         schatten = (1 - licht) * k["schatten"]
-        flach = flach * (1 - schatten) + ko.SCHATTEN * schatten          # Schattenseite: flache Stufe
+        flach = flach * (1 - schatten) + schattenfarbe * schatten        # Schattenseite: flache Stufe
         flach = flach * (1 - licht * k["anteil"]) + ko.hexc(k["licht"]) * licht * k["anteil"]
-    bild = flach * (1 - t) + ko.TINTE * t
+    bild = flach * (1 - t) + tinte * t
     im = Image.fromarray((np.clip(bild, 0, 1) * 255 + 0.5).astype(np.uint8))
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     if ziel.endswith(".jpg"):
@@ -1209,10 +1263,15 @@ def main():
         bauen()
     elif befehl == "render":
         name = sys.argv[2]
+        if "--stil" in sys.argv:                  # Stilprobe: der Name geht über die Umgebung an die Unterprozesse
+            i = sys.argv.index("--stil"); os.environ["HAUS_STIL"] = sys.argv[i + 1]; del sys.argv[i:i + 2]
+            if not stil(): raise SystemExit("unbekannter Stil, bekannt: " + ", ".join(STILE))
         if len(sys.argv) > 3:                     # Unterprozess: ein Durchgang
             durchgang(name, sys.argv[3]); return
-        zeiten = {art: unterprozess(["render", name, art]) for art in ("flat", "sun", "lines")}
-        komposit(name, DOCS + f"probe_{name}.jpg", KAMERAS[name])
+        arten = ("flat", "sun", "lines") if (stil() or {}).get("mit_sonne", True) else ("flat", "lines")
+        zeiten = {art: unterprozess(["render", name, art]) for art in arten}
+        k = dict(KAMERAS[name]); k.update((stil() or {}).get("kamera", {}))
+        komposit(name, DOCS + (f"stil_{os.environ['HAUS_STIL']}.jpg" if stil() else f"probe_{name}.jpg"), k)
         print("ZEITEN", " ".join(f"{a} {t:.0f}s" for a, t in zeiten.items()), f"gesamt {sum(zeiten.values()):.0f}s")
     elif befehl == "grundriss":
         g = sys.argv[2]
