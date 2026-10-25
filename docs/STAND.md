@@ -16,10 +16,9 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   `ohne_scheiben`, `sonne_staerke`. Außenansicht und Grundriss EG neu gerendert (zwei Giebelfenster links unten).
 - Doku: `docs/raeume/lehrsaal.md` (Kopf, §1, §3, §6–§8), KRANKENHAUS (§3, §4, §9, „Umgesetzt für den Lehrsaal"),
   ART_BIBLE §2/§4, `gen/blender/README.md`.
-- **Offen:** Rückmeldung des Nutzers zum Probebild (Lattendecke Holz? Lichtbahnen kräftiger? Leben im Saal:
-  Mitstudierende als Silhouetten?); Fensterblick als Tafel; Ebenen-Pipeline für Hausräume (Mittelgrund,
-  `schirme.json`, `hitboxes.json`, Figuren Wieser und Jonas neu setzen). Bis dahin bleiben die alten Ebenen in
-  `art/szenen/lehrsaal/`; `ebenen.py lehrsaal` läuft nicht mehr.
+- **Vom Nutzer angenommen** (25.10.2026). Offen: Fensterblick als Tafel, Ebenen-Pipeline für Hausräume, Figuren
+  (= „Nächster Auftrag" unten). Bis dahin bleiben die alten Ebenen in `art/szenen/lehrsaal/`; `ebenen.py lehrsaal`
+  läuft nicht mehr.
 
 ## Fertig (25.10.2026): Figuren mit Haltung und lesbare Schrift in der Außenansicht (a) (Auftrag B, dritter Teil)
 
@@ -91,82 +90,30 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   Berichte landen in `bau/berichte/` (nicht in Git).
 - **Berechtigungen** (`.claude/settings.json`): feste Bau- und Prüfbefehle laufen ohne Rückfrage.
 
-## Fertig (23.10.2026): Außenansicht (a) zweite Überarbeitung — drei Fragen an Claude delegiert
+## Fertig (23.10.2026): Außenansicht (a) zweite Überarbeitung
 
-- Talbiegung breiter (Platanen-Lücke, Unterstadt mit Helmturm, Fluss, Gegenhang mit Zwiebelturm); Eckrisalite 1,0 m mit
-  eigenem Walm, West voll, Ost im 2. OG über Trakt N; Bäume ohne Schlagschatten, aber mit flachem Fußschatten (ART_BIBLE §3.5).
-- Geisterschatten weg (Büsche und Laternen außerhalb des Bildes warfen bei 7° Sonne lange Streifen ins Bild); Weg 2,5 m als
-  S-Kurve zum Portal mit Laternen, geschnittene Hecken, kleine Bank, acht warme Fenster (Nachtdienst endet), Wolken,
-  Rettungswagen als Rost-Objekt. Einzelheiten: KRANKENHAUS „Zweite Überarbeitung (23.10.2026)". Vom Nutzer freigegeben
-  (25.10.2026).
+Talbiegung, Eckrisalite, Parkweg mit Laternen, Hecken, warme Fenster, Rettungswagen; Geisterschatten behoben. Vom Nutzer
+freigegeben. Einzelheiten: KRANKENHAUS „Zweite Überarbeitung (23.10.2026)".
 
 ## Fertig (23.10.2026): Blockout nach Rückmeldung überarbeitet
 
-- Außengrün in ART_BIBLE §2 (Wiese `#ACB98B`, Laub `#6F8A62`, nur außen); Bäume aus mehreren Kugeln, Föhren als Schirm,
-  Fichten in Etagen; Wald vorn Laub, Mitte Petrol, hinten Papier; Bäume ohne Schlagschatten (Frage 3).
-- Fassade: Fensterpaare an sechs Achsen, leichter Eckrisalit West; Linden bei x 15 / 46 (bei x 18 verdeckte die Krone
-  noch das Portal), Kamera (a) unverändert; Stadt-Kulisse in der Talbiegung rechts neben Trakt N; Büsche, Wiesenflecken,
-  Parkweg im Vordergrund.
-- Flur: Wände mit Öffnungen als Rasternetz statt Boolean (die losen Striche kamen daher), Linien nur aus den Sammlungen
-  der Kamera, Tresen nach innen versetzt, Kamera (b) x 23,3. Flur bleibt im Schatten, Lamellen bleiben.
-- Probe-Renders und Grundrisse in `docs/haus/` neu. Einzelheiten und drei offene Fragen: KRANKENHAUS „Überarbeitung nach
-  Rückmeldung (23.10.2026)".
+Außengrün (ART_BIBLE §2), Bäume, Fensterpaare, Flur als Rasternetz, Kamera (b). Einzelheiten: KRANKENHAUS
+„Überarbeitung nach Rückmeldung (23.10.2026)".
 
 ## Fertig (19.10.2026): Haus-Konzept und Blockout „Haus Föhrenhang"
 
-- **Lokal auf dem Mac eingerichtet** (siehe unten „Lokal auf dem Mac arbeiten"), Cycles auf Metal.
-- **`docs/KRANKENHAUS.md` ausgearbeitet:** Vorbild Gebäude 31 (Links, kein Fassadenfoto frei verfügbar), Antworten des
-  Nutzers (Innere mit Kardiologie und Notaufnahme, fiktive Stadt Annabrunn, Haus Föhrenhang, Flug als Bildfolge 40 s,
-  Dr. Wieser führt ein, Altbau plus Neubau, Dach Ziegel `#C9795A` in ART_BIBLE §2), Raumprogramm, Grundrisse je
-  Geschoss mit Maßen, Wege der Kapitel, Drehbuch des Flugs, Lageplan, Mentorenvorschlag (Namen noch offen).
-- **Blockout `gen/blender/haus_blockout.py`** (`bauen` → `bau/blender/haus/haus_blockout.{blend,glb}`; `render aussen|flur`;
-  `grundriss eg|1og|2og|alle`; Aufrufe in `gen/blender/README.md`). Probe-Renders und Grundrisse in `docs/haus/`.
-  Bekannte Mängel und fünf Fragen an den Nutzer im Abschnitt „Blockout (19.10.2026)" von KRANKENHAUS.md.
+`docs/KRANKENHAUS.md` (Raumprogramm, Grundrisse, Flug, Lageplan) und `gen/blender/haus_blockout.py` (`bauen`, `render`,
+`grundriss`; Aufrufe in `gen/blender/README.md`). Lokal auf dem Mac eingerichtet (unten).
 
 ## Fertig (18.10.2026): Redesign-Entwurf Fall 1, Bewegungs-Prototyp, Skill `handlung`
 
-- **`docs/REDESIGN_FALL1.md`** (Entwurf zur Freigabe, Spiel unverändert): Diagnose des Ist-Zustands; Lernziel =
-  dramatische Frage „Darf Herr Baum heim?" (keine Vorwarnung + EKG nicht normal → nicht niedrig → Monitor,
-  ESC-Synkope-2018 Tab. 6/7 am Postprint geprüft); Bogen in sieben Takten (Szene/Sequel) mit Frist 07:15, Wendung
-  (verschwiegene Ohnmacht am Sonntag), Tochter Sabine am Telefon (Fremdanamnese), Verdachtsliste als roter Faden,
-  ISBAR-Übergabe und Falks Gegenrede, Behandlungsentscheidung (Bisoprolol pausieren), Schlussgespräch, Epilog;
-  alle Dialoge neu; Realismus-Prüfung (Koje statt Bank, Schichtwechsel, KPJ); Ersatz für „Drei Monitore"
-  („Monitor gegen Papier", Namen an der Zentrale); Bewegungskonzept; Umbauliste; Belege; offene Entscheidungen
-  (§13). Geprüft mit Skill `handlung` (§14) und durch ein Gutachten Medizin/Realismus/Dialoge (§15), beides
-  eingearbeitet.
-- **`prototyp/bewegung/`** (`leben.js`, `aufnahme.html`, `baue.py`, `schuss.mjs`): Leben in der Aufnahme über den
-  vorhandenen Ebenen (Uhr mit Sekundenzeiger, Lidschlag, Blicke, Lichtkeil mit Staub, Fenster, Flur, Vordergrund,
-  Handy, EKG-Wagen mit echter Kurve erst beim Schreiben). Bau: `python3 prototyp/bewegung/baue.py` →
-  `bau/prototyp_bewegung_{de,ru}.html`; Prüfung: `node prototyp/bewegung/schuss.mjs bau/prototyp_bewegung_de.html`.
-- **`prototyp/fall1/`** (spielbarer Prototyp der neuen Geschichte, nur Deutsch, alte Raumgrafik): `motor.js` (Dialoge,
-  Uhr, Verdachtsliste, Mappe, Stand, Telefon, ISBAR, Gegenrede), `daten.js` (Drehbuch §3–§7 wörtlich), Zirkel und
-  Streifen aus `web/`. Bau: `python3 prototyp/fall1/baue.py` → `bau/prototyp_fall1.html`; Prüfung:
-  `node prototyp/fall1/pruefe.mjs` (guter Weg, Irrwege, iPad mit reduced-motion, Zufallsläufe) → „Alle Prüfungen bestanden."
-- **Skill `.claude/skills/handlung/`**: Fehlbilder H1–H8, Szene/Sequel in 5–7 Takten, Entscheidungstest,
-  Branch-and-Bottleneck, Enden und Epilog (nach jwynia/agent-skills, MIT).
+`docs/REDESIGN_FALL1.md` (Entwurf zur Freigabe; „Darf Herr Baum heim?", sieben Takte, Gutachten eingearbeitet);
+`prototyp/bewegung/` und `prototyp/fall1/` (Bau und Prüfung dort, `baue.py`, `pruefe.mjs`); Skill `.claude/skills/handlung/`.
 
 ## Fertig (13.10.2026): Referenzfall Herr Baum im neuen Fallschema
 
-- **Fallschema und Motor** (KONZEPT §6): `web/motor/fall.js` spielt Fälle aus reinen Datenobjekten;
-  `web/motor/fenster.js` (Frage, Auswahl, Befundzeilen), `web/motor/szenenbild.js` (bildschirmfüllende
-  Nahaufnahme mit ruhiger Einblendung). `web/spiel.js` enthält nur noch Start, Kopfleiste, Kapitel 2.
-- **Fall `aufnahme_baum`** (`web/faelle/aufnahme_baum.js`, Akte `docs/faelle/aufnahme_baum.md` §8a): Szenenbild am
-  Tresen (Marlene reicht den Aufnahmebogen), Anamnese mit zehn Pflichtfragen und Vertiefung, Medikationsplan
-  im Gespräch, Kurzuntersuchung als Befundzeilen, Expertenfragen bei Marlene und Dr. Falk (TIA, Krampf,
-  Unterzucker, Orthostase), EKG mit Zirkel (RR, PQ, optional QRS), Übergabe an Dr. Falk am Tresen
-  (Porträt-Dialog, nur mit beiden Zahlen; Rückwege zum Wagen und zum Patienten), Entscheidung Monitor,
-  Erzähler-Ende, Epilog als Erzählung (Dienst 3). Tüten-Station und Reizleitung bei Marlene sind raus.
-- **Texte über IDs**: `text/de/aufnahme_baum.json` ist die Quelle, `text/en/…` und `text/ru/…` tragen dieselben
-  Schlüssel (240 IDs, vollständig). `T(id, vars)` in `web/sprache.js` nimmt IDs und, übergangsweise, die alten
-  deutschen Sätze. Karten der Mappe speichern ID + Platzhalterwerte und übersetzen sich beim Sprachwechsel.
-- **Prüfungen** (`tools/durchlauf.mjs`): alle Wege des Falls (Pflichtfragen → Mahnung, TIA, Medikationsplan,
-  Übergabe nur mit beiden Zahlen, drei Rückwege, Ende und Epilog, Szenenbild, keine Tüte), Textüberlauf
-  de/en/ru bei 1024×768 und 1366×1024, Zirkel maßstabstreu bei 1024×768/1366×1024/1920×1080 (±2 ms),
-  ID-Vollständigkeit, Gedankenstrich-Verbot und Bildschirmmaß der Repliken; Kapitel 2 (vier Wege), Sprachen,
-  Hülle, Reizleitungs-Modul wie bisher. `tools/woerter.py` prüft zusätzlich die IDs (fehlend, verwaist,
-  Platzhalter) und räumt mit `--aufraeumen` verwaiste alte Sätze weg.
-- Leinwände (Zirkel, Frage, Karten) haben jetzt feste CSS-Höhen; vorher skalierte der Browser sie mit der
-  Breite hoch, und der Zirkel passte auf kein iPad ohne Scrollen.
+Motor `web/motor/` (fall, fenster, szenenbild), Fall `web/faelle/aufnahme_baum.js`, Akte `docs/faelle/aufnahme_baum.md`,
+Texte über IDs in `text/{de,en,ru}/aufnahme_baum.json`, Prüfungen in `tools/durchlauf.mjs` und `tools/woerter.py`.
 
 ## So legt man den nächsten Fall an (Muster: Herr Baum)
 
@@ -269,23 +216,6 @@ starten (oder `claude remote-control`, um vom Handy aus weiterzuarbeiten) und di
 zum Ansehen. Cycles wählt über `werkzeug.cycles_geraet()` die GPU (Metal), `BLENDER_GERAET=CPU` erzwingt die CPU;
 der erste Metal-Render kompiliert die Kernel einmalig (≈ 2 min). Build und Durchlauf: „Alle Prüfungen bestanden."
 
-### Startnachricht für den ersten lokalen Chat (Mac, Claude Desktop → Code, Ordner `~/ekg-nachtdienst`)
-
-```
-Du arbeitest lokal auf meinem Mac (Apple M4, 24 GB) im Repository andreyeskin/ekg-nachtdienst,
-Branch claude/stil-ligne-claire. Lies zuerst docs/STAND.md (auch „Lokal auf dem Mac arbeiten"),
-dann docs/KRANKENHAUS.md, docs/KONZEPT.md §1–§3, docs/ART_BIBLE.md, gen/blender/README.md und die Skills
-unter .claude/skills/.
-Schritt 1, Einrichtung: prüfe, was fehlt (Python-Version für bpy, bpy, Pillow, numpy, Node, npm install,
-Playwright-Chromium), erkläre mir jeden Installationsschritt kurz auf Russisch und frag vor jeder Installation.
-Stelle Cycles in gen/blender/ auf die GPU (Metal) um, wo es fest auf CPU steht. Dann prüfe den Build:
-python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
-Schritt 2, Auftrag: docs/KRANKENHAUS.md (Haus und Neuausrichtung) ausarbeiten, offene Fragen zuerst mit mir
-klären, Vorbild-Recherche mit Fotos (Gebäude 31, LKH-Univ. Klinikum Graz), dann Blender-Blockout des Gebäudes
-und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur).
-3D und Raumprogramm als Subagent auf Fable, Code auf Opus. Antworte mir auf Russisch.
-```
-
 ## Startnachricht für eine neue Sitzung
 
 ```
@@ -297,7 +227,7 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag A (ab 25.10.2026): Mechanik freigeben
+## Weiterer Auftrag (wartet auf den Nutzer): Mechanik freigeben
 
 Der Nutzer beantwortet die offenen Fragen in `docs/MECHANIK.md` §13 (F1–F14, je eine Entscheidung mit Empfehlung).
 Danach im selben Chat: Antworten in MECHANIK §13 eintragen, KONZEPT §2–§3, GAME_DESIGN §2/§5 und LEHRPLAN §2/§6 auf
@@ -309,65 +239,54 @@ unabhängig davon.
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire.
-Lies docs/STAND.md (Abschnitt „Nächster Auftrag A") und docs/MECHANIK.md ganz, dazu docs/KONZEPT.md §1–§3 und
+Lies docs/STAND.md (Abschnitt „Weiterer Auftrag … Mechanik freigeben") und docs/MECHANIK.md ganz, dazu docs/KONZEPT.md §1–§3 und
 docs/REDESIGN_FALL1.md §2–§3 nur bei Bedarf.
 Auftrag: Geh mit mir die offenen Fragen in MECHANIK §13 einzeln durch (eine Frage je Nachricht, kurz, mit
 Empfehlung), trag die Antworten ein und zieh KONZEPT, GAME_DESIGN und LEHRPLAN nach. Kein Code.
 Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
-## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
+## Nächster Auftrag (ab 25.10.2026): Lehrsaal ins Spiel — Fensterblick als Tafel, Ebenen für Hausräume
 
-**Stand 25.10.2026: Fassade, Natur/Himmel/Ferne, Figuren und Schrift fertig** (siehe „Fertig" oben; Bäume und Himmel
-vom Nutzer angenommen). **Räume ab jetzt nach KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut"**
-(Hülle + Ausbau je Raum in eigenem Skript, Fensterblick als Hintergrundtafel, nur ausarbeiten, was eine Spielkamera
-zeigt). Rest: offene Fragen (Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
-KRANKENHAUS §9; erster Raum im Haus ist der Lehrsaal (**Probe steht, 25.10.2026**, wartet auf Rückmeldung), danach Aufnahme B1.
+Der Saal ist gebaut und vom Nutzer angenommen (25.10.2026, „Fertig" oben, Probe `docs/haus/probe_lehrsaal.jpg`). Jetzt
+soll er im Spiel erscheinen, statt der alten Seminarraum-Ebenen in `art/szenen/lehrsaal/`.
 
-Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
-Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne
-Flügel offen; Gesims zwischen den Geschossen, Sockel, Eckquader, Dachrinne und Fallrohre, Gauben, Kaminköpfe;
-Portal mit Vordach und Schild „Haus Föhrenhang", Wegweiser Notaufnahme, Glasfront des Neubaus mit Leben dahinter
-(kein schwarzes Loch); Bordsteine, Fahrradständer, Raucherecke, Bushaltestelle, Laub auf dem Weg (Herbst); Wolken als
-Comic-Wolken statt Linsen; Figuren als Silhouetten. Nur was Kamera (a) sieht. Vorher `vorlagen/haus/vorschlaege.blend`
-und `vorlagen/haus/fotos/` des Nutzers lesen, falls vorhanden. Danach: Raumkameras aus KRANKENHAUS §9, zuerst den Lehrsaal ins Haus, dann Aufnahme B1.
+1. **Fensterblick als Tafel** (KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut", Punkt 4): je
+   Fassadenseite und Geschoss einmal von außen rendern (gleiche Tageszeit, gleicher Innenstil), als flache Tafel hinter
+   die Fensteröffnungen legen; für den Lehrsaal Südost EG und Giebel Südwest EG. Kronen dicht vor den Fenstern
+   ausdünnen. Bisher sieht man durch die Öffnungen das echte Haus, flach und ohne Linie (`ohne_scheiben`).
+2. **Ebenen-Pipeline für Hausräume**: Hülle + Ausbau sollen dieselben Ergebnisse liefern wie `ebenen.py` für die
+   Einzelszenen: `hintergrund.png`, `mittelgrund.png` (eigene Linien), `hitboxes.json`, `schirme.json` in
+   `art/szenen/lehrsaal/`. Dafür im Ausbau Ebenen und Zonen setzen (Liste in `docs/raeume/lehrsaal.md` §4 und §5:
+   Schirmflächen `projektion`, `wagen_schirm`, `whiteboard`; Zonen `wieser`, `jonas`, `liege`, `wagen`, `projektion`,
+   `whiteboard`, `lineale`, `uhr`, `ausgang` an der hinteren Tür). Ob `ebenen.py` die Haus-.blend lädt oder
+   `haus_blockout.py` die Durchgänge bekommt, entscheidet der Chat; eine Pipeline, kein zweiter Weg.
+3. **Figuren** Dr. Wieser und Jonas neu setzen (`figuren.py` `PLATZ`, Hauskoordinaten aus `lehrsaal.md` §8), dann
+   `figuren_zeichnen.py einsetzen lehrsaal` (ohne fal, die Quellbilder liegen in `art/figuren_quelle/`). Die offenen
+   Punkte zu Jonas' Elektroden stehen unter „Halb fertig: Lehrsaal".
+
+Fertig, wenn das gebaute Spiel den neuen Saal mit allen Zonen und Schirmflächen zeigt, der Durchlauf „Alle Prüfungen
+bestanden." meldet und der Agent `spieltester` den Lehrsaal ohne Stocken bedient. Offen aus Auftrag B (Außenansicht),
+nicht in diesem Block: Gardinen oder nur Rollläden? Kahlen Baum rechts behalten? Fensterband Trakt N 1. OG bestätigen?
 
 ### Startnachricht
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
-(.venv mit bpy 5.2.2 und Python 3.13, Cycles auf Metal). Lies docs/STAND.md (Abschnitt „Nächster Auftrag"),
-docs/ART_BIBLE.md §1, §2 „Außen: zwei Stile je Tageszeit" und §4, gen/blender/README.md Abschnitt „Haus-Blockout".
-Sieh docs/haus/stil_tag.jpg und stil_blau.jpg verkleinert an, die Referenzen in vorlagen/haus/stil/ nur bei Bedarf.
-Auftrag: Fassade und Umgebung der Außenansicht (a) ausdetaillieren, in beiden Stilen rendern
-(render aussen --stil tag|blau). Meine Vorschläge stehen in vorlagen/haus/vorschlaege.blend (Sammlung Vorschlaege)
-und Fotos in vorlagen/haus/fotos/, falls vorhanden.
-3D als Subagent auf Fable, Code und Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md
-nachziehen. Antworte mir auf Russisch.
-```
-
-## Erledigt: Krankenhaus zuerst (Idee des Nutzers, 18.10.2026)
-
-Nach dem spielbaren Prototyp von Fall 1 sagt der Nutzer: „schön, aber trotzdem unverständlich". Er will zuerst das
-ganze Krankenhaus bauen (ein eigenes Gebäude, eine Abteilung, Zimmer, Flure, Lehrsaal), am Anfang erklären, was
-man lernt und wie es abläuft, mit einem Flug durch die Abteilung, und ein 3D-Modell, dessen Räume das Spiel nutzt.
-Festgehalten mit Bausteinen, Folgen und offenen Fragen in **`docs/KRANKENHAUS.md`**. Am Abend kamen weitere Wünsche dazu
-(viel Grün, Psychiatrie-Gebäude am LKH Graz als Vorbild, Leben im Hintergrund, Format, freundlicher Ton, weniger Text
-und mehr Interaktion, Mentor je Dienst, Themenliste, Unterstützung durch Kollegen); ebenfalls dort, mit Empfehlung
-zum Format. Die Farbpalette (Merkzettel
-unten) wird am Haus mit ausprobiert.
-
-### Startnachricht für den Krankenhaus-Chat
-
-```
-Arbeite im Repository andreyeskin/ekg-nachtdienst auf dem Branch claude/stil-ligne-claire.
-Lies zuerst docs/STAND.md, dann docs/KRANKENHAUS.md, docs/KONZEPT.md §1–§3, docs/ART_BIBLE.md, gen/blender/README.md
-und die Skills unter .claude/skills/. Prüfe den Build:
-python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"
-3D und Raumprogramm als Subagent auf Fable, Code auf Opus.
-Auftrag für diesen Chat: docs/KRANKENHAUS.md (Haus und Neuausrichtung) ausarbeiten, offene Fragen zuerst mit mir klären,
-Vorbild-Recherche mit Fotos, dann Blender-Blockout
-des Gebäudes und zwei Probe-Renders in niedriger Qualität (Außenansicht im Morgenlicht, ein Flur).
+(.venv mit bpy 5.2.2, Blender-Skripte mit .venv/bin/python, Cycles auf Metal).
+Lies docs/STAND.md (Abschnitte „Nächster Auftrag" und „Halb fertig: Lehrsaal"), dann docs/raeume/lehrsaal.md
+§4–§8, docs/KRANKENHAUS.md Abschnitt „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut" samt „Umgesetzt
+für den Lehrsaal", gen/blender/README.md (Ablauf je Raum oben und „Lehrsaal … Ausbau im Haus"), dann
+gen/blender/szene_lehrsaal.py, gen/blender/ebenen.py und in gen/blender/haus_blockout.py nur KAMERAS, AUSBAUTEN
+und durchgang(). docs/haus/probe_lehrsaal.jpg verkleinert ansehen.
+Auftrag: den neuen Lehrsaal ins Spiel bringen.
+1. Fensterblick als Tafel hinter den Fenstern (Südost EG, Giebel Südwest EG).
+2. Ebenen-Pipeline für Hausräume: hintergrund, mittelgrund, hitboxes.json, schirme.json nach art/szenen/lehrsaal/,
+   Zonen und Schirmflächen nach lehrsaal.md §4/§5.
+3. Dr. Wieser und Jonas neu setzen (figuren.py PLATZ, figuren_zeichnen.py einsetzen lehrsaal).
+Prüfung: python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html"
+"$PWD/bau/durchlauf", danach der Agent spieltester für den Lehrsaal. Alles auf Opus (Detailarbeit an einer
+bestehenden Szene). Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
 ## Danach: Design-Prüfung und Farbpalette (neuer Chat mit den Plugins „Design" und „audit-suite")
