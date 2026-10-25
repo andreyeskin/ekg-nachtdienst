@@ -106,9 +106,9 @@ nirgends abgeschrieben.
 `haus_blockout.py` baut das ganze Haus aus Datentabellen am Skriptanfang (Trakte, Geschosse, Achsen, Räume je Geschoss
 mit Türen, Sonderfenster, Umgebung, Kameras): Gelände mit Hang und Sockel, Trakt A (drei Geschosse, Außenwände mit
 Fensterlöchern nach Achsraster, Innenwände aus den Raumrechtecken mit Türöffnungen, Risalite, Walmdach mit Quergiebel,
-Kamine), Trakt N (Flachbau, Holzlamellen, Vordach, Dachgarten), Treppen und Lifte als Kerne, Wege, Büsche, Bäume (Stamm
-mit Astansatz, Krone aus überlappenden Kugeln als ein Objekt; Föhren als Schirm, Fichten in Etagen), Wald hinten als
-Silhouettenbänder, Stadt im Tal als Klötze mit Satteldächern. Wände mit Öffnungen sind Rasternetze ohne Boolesche Löcher
+Kamine), Trakt N (Flachbau, Holzlamellen, Vordach, Dachgarten), Treppen und Lifte als Kerne, Wege, Büsche, Bäume (Astwerk
+aus verjüngten Röhren, Kronen aus gezackten Lappen; Föhren als Schirm, Fichten als Sternetagen), Wald hinten als
+Silhouettenbänder, Stadt im Tal als Häuser in Gassen mit Satteldächern und Fensterreihen. Wände mit Öffnungen sind Rasternetze ohne Boolesche Löcher
 (`wandnetz`): Boolesch gelochte n-Ecke ließen Freestyle die Verdeckung verlieren, Kanten dahinter erschienen als lose
 Striche. Innenkameras nennen in `KAMERAS[...]["linien_nur"]` die Sammlungen für den Linien-Durchgang; Geometrie hinter der
 Kamera wird dort gekappt. Jeder Raum ist eine benannte Bodenplatte (`"EG Lehrsaal"`, Eigenschaften `raum`, `geschoss`) in
@@ -127,6 +127,14 @@ Fassade und Hof ausdetailliert (25.10.2026, KRANKENHAUS.md „Fassade ausdetaill
 `STELLPLAETZE`, `FIGUREN`, `WEGWEISER`, `HALTESTELLE`, `RAUCHERECKE`, `FAHRRAEDER`, `JUNGBAEUME`, `KAHLE_BAEUME`, `HERBST`, `LAUB`,
 `WOLKEN_KUMULUS`, `LOGGIA`, `UNTERHOLZ`; Funktionen `prisma` (ebenes Vieleck ausgezogen, Bogenzwickel des Portals), `bank`, `auto`, `figur`, `balkon`,
 `kante_box` (Gesimse und Sparrenköpfe entlang `FASSADENKANTEN`), `laubfleck`, `kumulus` (in `himmel_setzen`), Baumart `kahl`.
+
+Natur, Himmel und Ferne (25.10.2026, KRANKENHAUS.md „Natur, Himmel und Ferne"): `Bau` sammelt Ecken und Flächen für ein Netz
+ohne `bpy.ops` (`roehre`, `lappen`, `etage`); `astwerk` verzweigt rekursiv (Leittrieb, Radius ÷ √n, Auftrieb), `baum` kennt
+`laub`, `licht` (halb kahl), `kahl`, `foehre`, `fichte`; Zweige ab Stufe 3 im Material `zweig` ohne Linie. Stadt: `STADT_MAT`,
+`…_fern` (Dunst), Gassen statt Überlappung, `fenster_reihen`, Bäume und Pappeln, Türme mit Schallöffnungen; Hügel mit
+Baumsaum. Himmel der Stile: `himmel_grenzen` (fünf Stufen), Wolkenschatten (`wolke_schatten`, blau: angestrahlt),
+`WOLKEN_STREIFEN`, `VOEGEL`. Boden: `GRAS`, `FELDSTEINE`, dunkle Wiesenflecken. Linien der Stile werden ab 90 m dünner
+(Freestyle-Modifikator „Entfernung zur Kamera", bis ×0,35 bei 260 m).
 Maßstab von Kamera (a) ≈ 17 px/m: alles unter 0,1 m bekommt **keine eigene Tuschelinie** (Materialien `rahmen`, `fasche`,
 `fuge`, `holz_gruen`, `gardine`, `zink`, `schrift`, `sparren`, `lamelle`, `ast`, `laub_boden*` in `OHNE_LINIE`), sonst wurden
 Fensterrahmen und Astwerk zu schwarzem Gekritzel; Linie nur an Laibung, Scheibe, Rollladen, Gesims, Handlauf. `kiste` ohne Fase
@@ -137,7 +145,7 @@ steht VOR der Himmelsebene). Sammlungen `Hof` und `Figuren` sind in `OHNE_SCHATT
 tief, Unterkrone, keine Astgabel), sonst stehen ihre Stämme als Pfähle neben dem Haus.
 
 ```bash
-python3 gen/blender/haus_blockout.py bauen              # ≈ 45 s (4 050 Objekte) -> bau/blender/haus/haus_blockout.blend + .glb
+python3 gen/blender/haus_blockout.py bauen              # ≈ 12 s (3 450 Objekte) -> bau/blender/haus/haus_blockout.blend + .glb
 python3 gen/blender/haus_blockout.py render aussen      # §9 (a), 06:40 -> docs/haus/probe_aussen.jpg (≈ 10–30 s)
 python3 gen/blender/haus_blockout.py render aussen --stil tag|blau   # Außenstile Tag / Blaue Stunde (ART_BIBLE §2) -> docs/haus/stil_<stil>.jpg (≈ 15 s)
 python3 gen/blender/haus_blockout.py render flur        # §9 (b), 09:15 -> docs/haus/probe_flur.jpg   (≈ 10–30 s)

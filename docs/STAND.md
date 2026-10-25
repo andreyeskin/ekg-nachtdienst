@@ -4,6 +4,16 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Natur, Himmel und Ferne der Außenansicht (a) (Auftrag B, zweiter Teil)
+
+- Nutzer: Bäume lesen schlecht, kahle Bäume wie Hergé, Details und ferne Stadt wie in den Referenzen, Himmel auch
+  (Referenzen lokal `vorlagen/haus/stil/natur/`). Ausgeführt auf Opus (Freigabe des Nutzers statt Fable).
+- `gen/blender/haus_blockout.py`: Astwerk rekursiv, Kronen als gezackte Lappen an den Astspitzen, Spätherbst halb kahl
+  („licht"), kahler Baum als Fächer mit Tinten-Zweigen, Sternfichten, Hecken gebeult; Stadt in Gassen mit Fensterreihen,
+  Dach- und Wandtönen, Bäumen, Turm mit Uhr, Oberstadt im Dunst, Hügel mit Baumsaum; Himmel fünf Stufen, Wolkenschatten
+  (blau: glühend), Schleier, Vögel; Grasbüschel, dunkle Wiesenflecken, Feldsteine; Linien ab 90 m dünner. Bau ≈ 12 s.
+  Renders `docs/haus/stil_tag.jpg`, `stil_blau.jpg`, `probe_aussen.jpg`; Einzelheiten KRANKENHAUS „Natur, Himmel und Ferne".
+
 ## Fertig (25.10.2026): Fassade und Hof der Außenansicht (a) ausdetailliert (Auftrag B, erster Teil)
 
 - Nutzer schickte zwei Fotos eines Altbau-Klinikgebäudes als **Beispiel** für Detailgrad (lokal
@@ -283,8 +293,9 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 
 ## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
-**Stand 25.10.2026: erster Teil fertig** (siehe „Fertig" oben). Rest: Antworten des Nutzers auf die offenen Fragen
-einarbeiten, Figuren mit Haltung, Schild lesbar, dann Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
+**Stand 25.10.2026: Fassade und Natur/Himmel/Ferne fertig** (siehe „Fertig" oben). Rest: Rückmeldung des Nutzers zu
+den neuen Bäumen und zum Himmel, offene Fragen (Gardinen, kahler Baum, Trakt N), Figuren mit Haltung, Schild lesbar, dann
+Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne

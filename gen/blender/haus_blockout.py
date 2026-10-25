@@ -8,7 +8,7 @@
 Alle Maße stehen in den Tabellen oben (Meter, lokale Koordinaten nach KRANKENHAUS §2: Ursprung Südwestecke des
 Altbaus am EG-Boden, +x entlang des Riegels nach Nordost, +y nach Nordwest, +z nach oben). Eine Maßänderung ist eine
 Zeile in einer Tabelle. Räume sind Quader (Bodenplatte mit Raumnamen + Wände mit Tür- und Fensteröffnungen), Möbel nur
-grobe Klötze im Probe-Flur, Bäume aus Stamm und Kugel-Kronen bzw. Kegel-Etagen (Wald hinten als Silhouettenbänder),
+grobe Klötze im Probe-Flur, Bäume aus Astwerk und gezackten Kronenlappen bzw. Sternetagen (Wald hinten als Silhouettenbänder),
 Stadt im Tal eine ferne Kulisse (Südost unsichtbar, Nordost-Talbiegung im Bild von Kamera (a)).
 
 Render: Fläche (Lokalfarbe, Stufen nach Flächenrichtung), Sonne (nur direktes Licht, grau) und Freestyle-Linie wie in

@@ -748,10 +748,32 @@ keine Zweige; der vor der Fassade ist weg. Die „Pfähle" am linken Bildrand wa
 109 m weit) links des Westgiebels: Waldbäume tragen die Krone jetzt tiefer (`stammanteil` 0,14, Unterkrone, keine Astgabel),
 dazu Unterholz am Waldrand (`UNTERHOLZ`); Wald West beginnt bei y −26 (bei −40 standen Föhrenstämme 23 m neben der Kamera).
 
+### Natur, Himmel und Ferne (25.10.2026, Auftrag B, zweiter Teil)
+
+Nutzer: Bäume lesen schlecht, kahle Bäume wie im Hergé-Cover, Details wie in den Referenzen (Rom-Forum, Floc'h, Chaland,
+Pinceau, lokal `vorlagen/haus/stil/natur/`), ferne Stadt wie dort, „и небо тоже". Umgesetzt in `haus_blockout.py`:
+- **Laubbäume:** Stamm gabelt sich zweimal (2–3 Äste, Leittrieb), Kronen als Lappen an Astspitzen und Gabeln, Rand aus
+  Kuppen mit Kerben (Binnenlinien wie die Blattbüschel bei Pinceau), Lücken zeigen das Astwerk. Kugelhaufen lasen als
+  Luftballons, einzelne Lappen auf Stielen als Pilzhüte (daher die Füll-Lappen an den Gabeln).
+- **Spätherbst:** Jungbaum 2 und jede zweite Platane „licht" (vier Stufen Astwerk, wenig Laub); der kahle Baum (9,6 m)
+  als Fächer aus sechs Stufen, ab Stufe 3 Zweige massiv in Tinte ohne Umriss (dünner als 2 px wurden sie grau).
+- **Fichten** als gezackte Sternetagen mit hängenden Spitzen, Waldbänder mit Sägezahn bzw. Ballen, nahe Waldbäume feiner.
+  Hecken mit gebeulter Oberkante und gerundeten Enden (der senkrechte Schnitt las als Tunnelportal).
+- **Stadt:** Häuser in Gassen (keine Überlappung mehr, die gab eine rote Schliere), drei Wand- und vier Dachtöne,
+  Fensterreihen, Kaminköpfe, Bäume und wenige Pappeln, Kirchturm mit Gesims, Schallöffnungen und Uhr. Oberstadt mit Dunst
+  (`…_fern`, 42 % zum Horizont), ohne Linie; in den Stilen besonnt; Hügel mit Baumsaum (Pappeln dort lasen als Felsnadeln).
+- **Himmel:** fünf Stufen zum Horizont heller; Wolken mit Schattenbank unten (Blaue Stunde: vom Morgenrot angestrahlt, glüht),
+  gestaffelt, dazu Schleierwolken über der Stadt und ein kleiner Vogelschwarm.
+- **Boden:** Grasbüschel im Vordergrund (nicht am Weg), dunkle Wiesenflecken, fünf Feldsteine am Parkweg.
+- Linien werden ab 90 m dünner (Luftperspektive). Bau ≈ 12 s, Render je Stil ≈ 15 s.
+
+Schwächen: Stadt zeigt sich nur in der schmalen Lücke rechts von Trakt N; Lappen bleiben bei Nähe leicht facettiert; die
+gesprenkelten Lichtflecken unter Kronen (Floc'h) ergeben sich nur aus dem Kronenschatten, keine eigenen Flecken.
+
 **Offene Punkte / Fragen an den Nutzer:**
 - Gardinen lesen sich als helle untere Scheibe, nicht als Stoff — reicht das, oder lieber nur Rollläden und Glas?
 - Kopfsteinmuster der Zufahrt fehlt (bei 17 px/m nicht zeichenbar); Pflaster bleibt eine Fläche.
-- Der eine kahle Baum (rechts, vor Tal und Himmel): behalten?
+- Der kahle Baum (rechts, vor Tal und Himmel) ist jetzt ein Fächer aus Zweigen (25.10.): so lassen?
 - Schild „Haus Föhrenhang" trägt nur Textbalken; lesbarer Schriftzug erst in der Spielgrafik (Overlay) möglich.
 - Figuren sind Kapseln ohne Haltung; echte Silhouetten kommen mit `figuren_zeichnen.py`.
 - Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
