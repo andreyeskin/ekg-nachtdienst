@@ -10,8 +10,9 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   `vorlagen/` ist in `.gitignore`). Ergebnis: Ligne claire bleibt, außen aber satter, mit dickem Umriss.
 - `render aussen --stil tag|blau` in `gen/blender/haus_blockout.py` (`TAG_PALETTE`, `STILE`): Proben
   `docs/haus/stil_tag.jpg` und `docs/haus/stil_blau.jpg`, je etwa 10 s. **Beide angenommen, je für ihre Tageszeit**;
-  Werte und Zuordnung in ART_BIBLE §2 „Außen: zwei Stile je Tageszeit" und §4. Offen: Innenräume satter oder pastell;
-  Jahreszeit für Blaue Stunde um 06:40 (ART_BIBLE §4).
+  Werte und Zuordnung in ART_BIBLE §2 „Außen: zwei Stile je Tageszeit" und §4. Offen: Innenräume satter oder pastell.
+- **Jahreszeit entschieden: Spätherbst** (Anfang bis Mitte November): 06:40 Blaue Stunde, Sonnenaufgang etwa 07:10
+  (ART_BIBLE §4; Vermerke in KRANKENHAUS §5 und REDESIGN_FALL1).
 - Mitarbeit des Nutzers in Blender: eigene Kopie `vorlagen/haus/vorschlaege.blend` mit Sammlung `Vorschlaege`
   (Klötze mit Namen, Kameras, Grease-Pencil-Notizen), Fotos realer Details in `vorlagen/haus/fotos/`. Die gebaute
   `bau/blender/haus/haus_blockout.blend` wird bei jedem `bauen` überschrieben.
@@ -161,6 +162,8 @@ mit dem Ersatz für „Drei Monitore" (dort §9).
 ## Bekannte offene Punkte
 
 - Aufnahme um 09:20 zeigt noch das Sonnenaufgangslicht (zweite Lichtfassung fehlt).
+- Spätherbst (25.10.2026, ART_BIBLE §4): Aufnahme braucht eine Fassung 06:40 im Kunstlicht mit Blauer Stunde vor dem
+  Fenster; der Sonnenstreifen kommt erst gegen 07:10. Außen: Laub, tiefe Sonne (Tag-Stil höchstens etwa 25°).
 - Thermoskanne: ART_BIBLE §5 sagt Magenta, §2 verbietet Magenta im Raum; gerendert ist Rost.
 - Rund 150 ältere Sätze (Reizleitung, Kapitel 2, Hülle) ohne en/ru-Übersetzung; sie wandern mit der
   Migration der jeweiligen Kapitel auf IDs.

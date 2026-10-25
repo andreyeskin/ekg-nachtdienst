@@ -437,7 +437,7 @@ y-3                                 └──────┘
 | Waldtor | (48, 34) | zwei Putzpfeiler mit kleinem Ziegeldach, Holzlattentor, Weg in den Wald; frei nach Link 8 |
 | Wald | y > 35, und x < −20 | Buchen und Föhren als Silhouettenbänder in Petrol und Papier (ART_BIBLE §2), drei Tiefenebenen |
 | Stadt-Kulisse | jenseits y −120, Blick nach Südost und Süd | Flusstal, Dächer in Papier und Sand, zwei Kirchtürme (einer mit Zwiebelhaube), Hügel links und rechts; nur Bänder, keine Wahrzeichen |
-| Sonne am Morgen | Azimut etwa 80° (Ostnordost), Höhe 6–8° um 06:40 Anfang April oder Anfang September (REDESIGN §8.1); in lokalen Koordinaten kommt das Licht aus Richtung (0,82 / −0,57), also von der Südost-Seite und vom Nordost-Ende | Die Südostfassade und die Glasfront der Notaufnahme liegen im Morgenlicht; die Linden werfen lange Schatten über den Vorplatz nach Nordwest. Blender-Sonne: Richtung des Lichts (−0,82 / 0,57 / −0,14), Farbe Morgenlicht `#F8E7BF` |
+| Sonne am Morgen | **Überholt (25.10.2026, Spätherbst, ART_BIBLE §4):** um 06:40 Blaue Stunde ohne Sonne, Aufgang etwa 07:05–07:10 bei Azimut etwa 115°. Frühere Annahme: Azimut etwa 80° (Ostnordost), Höhe 6–8° um 06:40 Anfang April oder Anfang September (REDESIGN §8.1); in lokalen Koordinaten kommt das Licht aus Richtung (0,82 / −0,57), also von der Südost-Seite und vom Nordost-Ende | Die Südostfassade und die Glasfront der Notaufnahme liegen im Morgenlicht; die Linden werfen lange Schatten über den Vorplatz nach Nordwest. Blender-Sonne: Richtung des Lichts (−0,82 / 0,57 / −0,14), Farbe Morgenlicht `#F8E7BF` |
 
 ### 6. Wege der Kapitel (Kamerafahrten, 4–8 s, keine Laufwege)
 

@@ -120,7 +120,7 @@ eigener Tag. Die Kopfzeile nennt Dienst und Uhrzeit („Dienst 1 · 06:40").
 | Kapitel | Dienst | Zeit | Licht |
 |---|---|---|---|
 | 0 Lehrsaal | Einschulungstag | 08:10 | Vormittag, neutrales Tageslicht von rechts, Beamer an, kurze Schatten |
-| 1 Aufnahme | Dienst 1 | 06:40 | Sonnenaufgang, langes warmes Licht durch die Jalousien |
+| 1 Aufnahme | Dienst 1 | 06:40 | Blaue Stunde vor dem Fenster, drinnen Kunstlicht; Sonnenaufgang gegen 07:10, das erste warme Licht fällt kurz vor der Frist 07:15 durch die Jalousien |
 | 2 Monitorzimmer | Dienst 1 | 09:15 | heller Vormittag, kühles Tageslicht, Bildschirme blass |
 | 3 Station | Dienst 2 | 13:30 | Mittag, flaches Licht, Staub in der Luft |
 | 4 Intensiv | Dienst 3 | 18:50 | Abendrot, lange Schatten |
@@ -130,9 +130,14 @@ eigener Tag. Die Kopfzeile nennt Dienst und Uhrzeit („Dienst 1 · 06:40").
 **Außenansicht je Tageszeit (25.10.2026):** Blaue Stunde für Dienst 1 · 06:40 (Ende der Nacht, Sonnenaufgang steht
 bevor) und, tiefer und ohne Morgenrot, für 22:10 und 02:14 (dort mit
 Regen); Tag für den Einschulungstag (Flug 07:55, Lehrsaal 08:10), 10:00, 13:30 und 15:00. Für 18:50 (Abendrot) kommt ein
-dritter Außenstil, wenn Kapitel 4 dran ist. **Offen:** REDESIGN_FALL1 §8.1 legt 06:40 in Anfang April oder September,
-dann steht die Sonne schon 6–8° hoch und das Licht in der Aufnahme kommt durch die Jalousien. Blaue Stunde außen um 06:40
-verlangt Spätherbst oder Winter (Sonnenaufgang nach 07:00) oder eine frühere Ankunft; zu entscheiden mit Kapitel 1.
+dritter Außenstil, wenn Kapitel 4 dran ist.
+
+**Jahreszeit (Entscheid des Nutzers 25.10.2026): Die Geschichte spielt im Spätherbst** (Anfang bis Mitte November, Graz
+als Maß). Um 06:40 ist bürgerliche Dämmerung, also Blaue Stunde; die Sonne geht etwa um 07:05–07:10 auf, Azimut etwa
+115° (Ostsüdost), und steht mittags nur rund 25° hoch: lange Schatten den ganzen Tag, Laub auf Wegen und Wiese, kahle
+oder gelbe Kronen möglich, Dunst im Tal. Ersetzt die frühere Annahme „Anfang April oder September" (REDESIGN_FALL1 §8.1,
+KRANKENHAUS §5). Folge für Kapitel 1: die Aufnahme beginnt im Kunstlicht; die vorhandenen Aufnahme-Renders mit
+Sonnenstreifen um 06:40 gelten erst ab etwa 07:10.
 
 Herzkatheter (Dienst 4, 10:00, hartes Kunstlicht) und Rhythmusambulanz (Dienst 5, 15:00, Nachmittag)
 bekommen ihre Zeile, sobald ihre Räume beschrieben sind.

@@ -995,6 +995,9 @@ prüfen". Der Nutzer (Arzt in Graz) ist hier die Quelle, nicht eine Leitlinie.
   Papier, Linoleum. Marlenes Kanne, Herrn Baums Sackerl mit Medikationsplan und Foto, die Schiebermütze.
 - Pflegeanamnese mit Stehversuch (liegend, 1 min, 3 min) und Blutzucker-Stix durch die Pflege: Alltag.
 - Sonnenaufgang 06:40: in Graz Anfang April oder Anfang September; passt zu „Sonntag, Friedhof, Bus jede Stunde".
+  **Überholt (25.10.2026):** die Geschichte spielt im Spätherbst (ART_BIBLE §4). Um 06:40 Blaue Stunde, Sonnenaufgang
+  etwa 07:05–07:10, also kurz vor Falks Frist 07:15. Der Friedhof am Sonntag passt dazu sogar besser (Allerheiligen,
+  Allerseelen Anfang November); ob das in die Fremdanamnese soll, entscheidet der Fall.
 - Falk kommt als Oberarzt des Tagdienstes herunter und ist um 09:15 (Kapitel 2) noch da: passt.
 
 ### 8.2 Was nicht stimmt (wird geändert)
