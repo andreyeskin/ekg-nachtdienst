@@ -22,3 +22,6 @@ bau/blender/
 
 # Arbeitskopien der Agenten
 .claude/worktrees/
+
+# Eigene Fotos und Blender-Vorschläge des Nutzers (nur lokal, nie ins Repository)
+vorlagen/
