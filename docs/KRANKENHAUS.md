@@ -792,6 +792,34 @@ gesprenkelten Lichtflecken unter Kronen (Floc'h) ergeben sich nur aus dem Kronen
 - Der kahle Baum (rechts, vor Tal und Himmel) ist jetzt ein Fächer aus Zweigen (25.10.): so lassen?
 - Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
 
+## Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut
+
+**Anlass:** Probe-Rundgang am 25.10.2026, acht Außenansichten rundum und vier Blicke aus Fenstern, nur als
+Probe-Renders, nicht im Repository. Er zeigte dreierlei. Nur die Seiten, die Kamera (a) sieht, sind ausgearbeitet; Rückseite,
+Ostgiebel und Hof hinter dem Haus sind noch Blockout. Von innen sind Scheiben und warme Fensterflächen undurchsichtig.
+Und Freestyle verliert in der 600-m-Szene die Verdeckung: Kronenlinien laufen über Fensterrahmen und Wand. Der Nutzer
+fragte, ob „alles in einem Blender-Haus" überhaupt sinnvoll ist. Antwort und Entscheid, vom Nutzer angenommen:
+
+**Ja, ein Haus** (ein Koordinatensystem, ein Maßstab, ein Licht): Fenster eines Raums zeigen dorthin, wo sie an der
+Fassade sitzen, Türen führen in den Raum aus dem Grundriss, Kamerafahrten zwischen Räumen sind möglich. **Aber nicht
+eine einzige große Datei**, sondern Bausteine:
+
+1. **Hülle** — `gen/blender/haus_blockout.py`: Wände, Fenster, Türen, Geschosse, Dach, Gelände, Umgebung. Wie bisher.
+2. **Ausbau je Raum in einem eigenen Skript**, gebaut in Hauskoordinaten und in einer eigenen Sammlung (z. B.
+   `szene_aufnahme.py` stellt Möbel, Geräte und Figurenplätze genau an den Ort der Aufnahme aus §4). Ein Raum lässt sich
+   ändern und rendern, ohne die anderen anzufassen; `bauen` der Hülle überschreibt keinen Ausbau.
+3. **Render eines Raums** = Hülle + nur dieser Ausbau; andere Ausbauten bleiben aus. Den Linien-Durchgang grenzt
+   `KAMERAS[...]["linien_nur"]` auf Raum und Hülle ein (wie beim Flur, Kamera (b)).
+4. **Blick aus dem Fenster als Hintergrundtafel:** je Fassadenseite und Geschoss einmal von außen gerendert (gleiche
+   Tageszeit und gleicher Stil wie der Raum) und hinter die Fensteröffnung gelegt; Scheiben und warme Fensterflächen
+   sind in Innenrenders aus. Das spart Renderzeit, die Linien bleiben sauber, und der Blick stimmt trotzdem, weil er aus
+   demselben Haus stammt. Kronen dicht vor einem Fenster, durch das eine Raumkamera schaut, werden dort ausgedünnt
+   oder versetzt.
+
+**Folge für die Arbeit:** Ausgearbeitet wird nur, was eine Spielkamera zeigt (Kamera (a), Raumkameras aus §9, Flug §7).
+Die Rückseite bleibt Blockout, solange keine Kamera sie zeigt. Erster Raum nach diesem Muster: Aufnahme B1
+(`docs/REDESIGN_FALL1.md` §8.3); Lehrsaal und Monitorzimmer folgen ebenso.
+
 ## Nächster Schritt (eigener Chat)
 
 Blender-Blockout nach §2 bis §5 (Skript in `gen/blender/`, z. B. `haus_blockout.py`: Hülle, Geschosse, Flure, Räume
