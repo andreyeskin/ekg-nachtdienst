@@ -51,16 +51,17 @@ PALETTE = {
     "ls_kobalt": "#2F5DA8", "ls_leuchte": "#FBF6EA", "ls_glas": "#1E2A30", "ls_flasche": "#D6E4DD",
     "ls_pflanze": "#2F5A45", "ls_topf": "#C2683F", "ls_jacke": "#8E9F6B", "ls_jacke2": "#E39A86",
     "ls_stuhl": "#2E5E6B", "ls_lampe": "#C2683F", "ls_tasche": "#3F5F8C", "ls_tasche2": "#7A4E6E",
+    "ls_streifen": "#FFF8F4",
 }
 OHNE_LINIE = set()
 OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
 
-# Spielkamera: die Spielerin sitzt an der ersten Bank (Gangplatz links, Augenhöhe 1,2), Blick frontal zur Stirnwand
-# (`gier` 180: Leinwand ein exaktes Rechteck, Verschiebung statt Drehung), 20 mm. Im Bild: Liege und Wagen links vor
-# dem Giebelfenster, Leinwand mit Uhr in der Mitte, Dozententisch und Whiteboard rechts; die eigene Bank liegt unter dem
-# Bildrand bis auf ihre helle Holzkante (man sitzt). Die Türen liegen rechts außerhalb: der Ausgang ist ein Pfeil am rechten Rand.
+# Spielkamera: die Spielerin sitzt an der ersten Bank (Gangplatz links, Augenhöhe 1,25, leicht zurückgelehnt), Blick frontal
+# zur Stirnwand (`gier` 180: Leinwand ein exaktes Rechteck, Verschiebung statt Drehung), 18 mm. Im Bild: Liege und Wagen links vor
+# dem Giebelfenster, Leinwand mit Uhr in der Mitte, Dozententisch und Whiteboard rechts; unten die hintere Hälfte der eigenen
+# Bank mit Block, EKG-Streifen und Zirkel (`werkzeug`). Die Türen liegen rechts außerhalb: der Ausgang ist ein Pfeil am rechten Rand.
 # Sonne 08:10 Anfang November (47° N): Azimut 126°, Höhe 9°, fast senkrecht vor der Südostfront, lange Lichtbahnen.
-KAMERA = dict(ort=(5.65, 2.85, 1.2), ziel=(GIEBEL, 3.0, 0.8), gier=180.0, brennweite=20, sonne=(126.0, 9.0),
+KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.0, 0.4), gier=180.0, brennweite=18, sonne=(126.0, 9.0),
               licht="#FFD9A3", anteil=0.6, himmel=["#9EC3E0", "#C9DCE6", "#F2D2B0"],
               schatten=0.24, schattenfarbe="#6F7FB0",   # ohne Sonne: ein Viertel zum kühlen Blau (Lofi-Vorlagen), Sonne Pfirsich
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
@@ -201,14 +202,14 @@ def ausbau(h):
         box(name + " Zarge", xm - 0.02, ym - ly / 2 + 0.1, xm + 0.02, ym + ly / 2 - 0.1, h_ - 0.09, h_ - 0.03, "ls_dunkel")
 
     tx, ty = 2.1, 4.9                                          # Dozententisch rechts vor der Leinwand, quer zum Raum
-    tisch(tx, ty, 0.75, 1.6, name="LS Dozententisch")
-    kiste((0.2, 0.26, 0.07), (tx + 0.05, ty - 0.45, TISCH_H + 0.035), "ls_papier", dreh=8, name="LS Linealschachtel")
+    tisch(tx, ty, 0.6, 1.2, name="LS Dozententisch")      # klein: ein Pult für Laptop und Schachtel (Nutzer)
+    kiste((0.2, 0.26, 0.07), (tx + 0.05, ty - 0.35, TISCH_H + 0.035), "ls_papier", dreh=8, name="LS Linealschachtel")
     for k in range(5):
-        kiste((0.04, 0.19, 0.004), (tx + 0.0 + 0.025 * k, ty - 0.45, TISCH_H + 0.075 + 0.003 * k), "ls_kobalt", dreh=8 + 3 * k, name="LS Lineal")
+        kiste((0.04, 0.19, 0.004), (tx + 0.0 + 0.025 * k, ty - 0.35, TISCH_H + 0.075 + 0.003 * k), "ls_kobalt", dreh=8 + 3 * k, name="LS Lineal")
     kiste((0.21, 0.3, 0.02), (tx - 0.1, ty + 0.05, TISCH_H + 0.01), "ls_papier", dreh=-6, name="LS EKG-Blaetter")
-    kiste((0.24, 0.33, 0.015), (tx + 0.05, ty + 0.5, TISCH_H + 0.008), "ls_dunkel", dreh=0, name="LS Laptop")
-    kiste((0.24, 0.015, 0.22), (tx - 0.07, ty + 0.5, TISCH_H + 0.12), "ls_dunkel", dreh=90, kipp=-12, name="LS Laptop Deckel")
-    zyl(0.035, 0.24, (tx + 0.22, ty - 0.1, TISCH_H + 0.12), "ls_flasche", v=14, name="LS Flasche")
+    kiste((0.24, 0.33, 0.015), (tx + 0.05, ty + 0.35, TISCH_H + 0.008), "ls_dunkel", dreh=0, name="LS Laptop")
+    kiste((0.24, 0.015, 0.22), (tx - 0.07, ty + 0.35, TISCH_H + 0.12), "ls_dunkel", dreh=90, kipp=-12, name="LS Laptop Deckel")
+    zyl(0.035, 0.24, (tx + 0.18, ty - 0.05, TISCH_H + 0.12), "ls_flasche", v=14, name="LS Flasche")
 
     # Whiteboard auf fahrbarem Gestell hinter dem Tisch, vor dem rechten Giebelfenster, zur Klasse gedreht (die Flurwand
     # liegt außerhalb des Bilds der Spielkamera an der ersten Bank). Lokal +x = Tafelseite.
@@ -266,9 +267,23 @@ def ausbau(h):
         if tasche:
             kiste((0.34, 0.14, 0.3), P(0.32, -0.05, 0.15), tasche, dreh=dreh + zr.uniform(-20, 20), fase=0.04, name=name + " Tasche")
 
-    stuhl(tx - 0.65, ty + 0.1, dreh=90 - 10, name="LS Stuhl Dozentin", jacke="ls_dunkel")   # hinter dem Tisch (rechts am Bildrand lag er als dunkler Klotz)
+    stuhl(tx - 0.58, ty + 0.1, dreh=90 - 10, name="LS Stuhl Dozentin", jacke="ls_dunkel")   # hinter dem Tisch (rechts am Bildrand lag er als dunkler Klotz)
 
     # ---------------- Tischreihen ----------------
+    def werkzeug(xm, yp):
+        """Platz der Spielerin an der ersten Bank, im unteren Bildrand der Spielkamera: Block mit Bleistift, ein
+        EKG-Streifen (Papier wie die Leinwand, die Kurve legt das Spiel darauf) und der Zirkel, offen. Nur auf der
+        hinteren Hälfte der Platte (x < 5,05), die vordere liegt unter dem Bildrand."""
+        z = TISCH_H
+        kiste((0.21, 0.29, 0.006), (xm - 0.06, yp - 0.25, z + 0.003), "ls_papier", dreh=90 - 4, name="LS Platz Block")
+        kiste((0.007, 0.16, 0.007), (xm - 0.08, yp - 0.23, z + 0.012), "ls_dunkel", dreh=-30, name="LS Platz Stift")
+        kiste((0.07, 0.38, 0.002), (xm - 0.15, yp + 0.09, z + 0.004), "ls_streifen", dreh=3, name="LS Platz Streifen")
+        hx, hy = xm - 0.03, yp + 0.0                           # Zirkel: Kopf, zwei Schenkel offen zur Seite (+y), flach gelegt
+        zyl(0.012, 0.012, (hx, hy, z + 0.008), "ls_dunkel", v=12, name="LS Platz Zirkel Kopf")
+        for w in (-9, 9):
+            ri = (-math.sin(math.radians(w)), math.cos(math.radians(w)))
+            kiste((0.006, 0.13, 0.006), (hx + 0.065 * ri[0], hy + 0.065 * ri[1], z + 0.004), "ls_metall", dreh=w, name="LS Platz Zirkel")
+
     for r, xm in enumerate(REIHEN_X):
         for (ya, yb) in BLOECKE:
             tisch(xm, (ya + yb) / 2, TISCH_T, yb - ya)
@@ -279,9 +294,14 @@ def ausbau(h):
                 tasche = zr.choice((None,) * 8 + ("ls_tasche", "ls_tasche2"))
                 if r == len(REIHEN_X) - 1: tasche = None    # keine dunklen Klötze am unteren Bildrand (ART_BIBLE §3.3)
                 stuhl(xm + TISCH_T / 2 + 0.3 + raus, yp, dreh, jacke=jacke, tasche=tasche)
+                platz = r == 0 and (ya, yb) == BLOECKE[0] and p == 2     # Platz der Spielerin (Kamera): eigene Werkzeuge, unten
                 if zr.random() < 0.55:                     # Block und Stift am Platz
-                    kiste((0.21, 0.29, 0.006), (xm + 0.05, yp, TISCH_H + 0.003), "ls_papier", dreh=90 + zr.uniform(-8, 8), name="LS Block")
-                    kiste((0.008, 0.14, 0.008), (xm + 0.06, yp + 0.17, TISCH_H + 0.01), "ls_dunkel", dreh=zr.uniform(-20, 20), name="LS Stift")
+                    w1, w2 = zr.uniform(-8, 8), zr.uniform(-20, 20)
+                    if not platz:
+                        kiste((0.21, 0.29, 0.006), (xm + 0.05, yp, TISCH_H + 0.003), "ls_papier", dreh=90 + w1, name="LS Block")
+                        kiste((0.008, 0.14, 0.008), (xm + 0.06, yp + 0.17, TISCH_H + 0.01), "ls_dunkel", dreh=w2, name="LS Stift")
+                if platz:
+                    werkzeug(xm, yp)
             if zr.random() < 0.6:                          # eine Wasserflasche je zweitem Tisch
                 zyl(0.028, 0.2, (xm - 0.15, ya + 0.25 + zr.uniform(0, 1.2), TISCH_H + 0.1), "ls_flasche", v=14, name="LS Flasche")
 

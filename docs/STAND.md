@@ -12,7 +12,9 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 - Weil von dort Nische, Flurwand und Türen außerhalb liegen, vom Nutzer bestätigt umgestellt: Liege quer vor dem linken
   Giebelfenster (Kopf zur Fensterwand), Wagen am Kopfende in der Ecke, Whiteboard auf fahrbarem Gestell rechts hinter dem
   Dozententisch (−28° zur Klasse), Uhr über der Leinwand, Stuhl der Dozentin hinter dem Tisch; Ausgang wird ein Pfeil am
-  rechten Bildrand. Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
+  rechten Bildrand. Danach: Kamera tiefer und weiter (5,75 / 2,85 / 1,25, 18 mm), damit unten die eigene Bank mit
+  Block, EKG-Streifen und Zirkel liegt (`werkzeug()` in `szene_lehrsaal.py`); Dozententisch 1,2 × 0,6 m.
+  Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
 - Für die Ebenen-Pipeline: das Whiteboard ist gedreht — `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an,
   für Hausräume die echten Eckpunkte der Vorderseite nehmen.
 

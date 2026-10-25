@@ -165,15 +165,16 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
 ## 7. Kamera und Ebenen
 
 - **Die Spielerin sitzt an der ersten Bank** (Wunsch des Nutzers, 25.10.2026), Gangplatz im linken Block: Kamera
-  (5,65 / 2,85 / 1,2), Blick frontal zur Stirnwand (`gier` 180), Ziel (0,45 / 3,0 / 0,8), 20 mm, Bild 1600 × 900,
+  (5,75 / 2,85 / 1,25), Blick frontal zur Stirnwand (`gier` 180), Ziel (0,45 / 3,0 / 0,4), 18 mm, Bild 1600 × 900,
   Objektivverschiebung statt Drehung (die Leinwand bleibt ein exaktes Rechteck). Im Bild: Leinwand mit Uhr darüber in
   der Mitte, links Liege und Wagen vor dem linken Giebelfenster, rechts Dozententisch und Whiteboard auf Gestell, unten
-  die helle Holzkante der eigenen Bank. Die Türen liegen rechts außerhalb: `ausgang` ist ein Pfeil am rechten Bildrand.
+  die eigene Bank mit den Werkzeugen der Spielerin (Block mit Bleistift, EKG-Streifen quer, Zirkel offen; Wunsch des
+  Nutzers: „dort liegen die nötigen Instrumente"). Das Lineal kommt erst aus der Schachtel (`lineale`). Die Türen liegen rechts außerhalb: `ausgang` ist ein Pfeil am rechten Bildrand.
   Render: `python3 gen/blender/haus_blockout.py render lehrsaal`. Der frühere Blick von hinten längs des Saals (14,05 /
   3,6 / 1,55, 24 mm) zeigte den ganzen Raum, aber Liege, Whiteboard und Uhr nur klein; dafür sind die Tischreihen
   gebaut, der Saal ist derselbe.
 - **Kein angeschnittener dunkler Vordergrund** (§3.3): deshalb der Stuhl der Dozentin hinter dem Tisch statt am
-  rechten Bildrand; die eigene Bank zeigt nur ihre helle Kante.
+  rechten Bildrand; die eigene Bank ist hell (Holz, Papier) und trägt nur die Werkzeuge.
 - **Ebenen** (§3.4): Hintergrund (Hülle, Fenster, Decke, Leinwand, Whiteboard, Uhr, Türen, Vorhänge, Beamer);
   Mittelgrund (Liege, Wagen, Tische, Stühle, Schachtel); Figuren (Dr. Wieser, Jonas, Mitstudierende,
   Spielerinnenschatten). Die Trennung kommt mit der Ebenen-Pipeline für Hausräume.
@@ -191,7 +192,7 @@ Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben
 | Türen | Flurwand y 7, Mitte x 3,9 und x 9,8, je 1,0 × 2,1 |
 | Leinwand | 2,4 × 1,5 m, Mitte y 3,2, Unterkante z 1,0, an der Stirnwand |
 | Whiteboard | auf fahrbarem Gestell, 1,4 × 1,0 m, Mitte (1,15 / 5,65), z 0,95 … 1,95, um −28° zur Klasse gedreht, vor dem rechten Giebelfenster; Wanduhr Ø 0,42 über der Leinwand, Mitte z 2,97 |
-| Dozententisch | 1,6 × 0,75 m, Mitte (2,1 / 4,9), quer zum Saal |
+| Dozententisch | 1,2 × 0,6 m (Pult, vom Nutzer verkleinert), Mitte (2,1 / 4,9), quer zum Saal |
 | Liege | 1,95 × 0,65 m, quer vor dem linken Giebelfenster: x 0,85 … 1,5, y 0,35 … 2,3, Liegefläche 0,75 m (unter der Brüstung), Kopfende zur Fensterwand, Füße zur Leinwand, Tritt zur Raumseite; der Freiwillige zeigt der Klasse seine rechte Seite |
 | EKG-Wagen | Mitte (1,175 / 0,03), am Kopfende in der Ecke, Schirm zur Klasse |
 | Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
