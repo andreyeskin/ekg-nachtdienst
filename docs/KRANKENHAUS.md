@@ -770,12 +770,28 @@ Pinceau, lokal `vorlagen/haus/stil/natur/`), ferne Stadt wie dort, „и неб�
 Schwächen: Stadt zeigt sich nur in der schmalen Lücke rechts von Trakt N; Lappen bleiben bei Nähe leicht facettiert; die
 gesprenkelten Lichtflecken unter Kronen (Floc'h) ergeben sich nur aus dem Kronenschatten, keine eigenen Flecken.
 
+### Figuren mit Haltung und lesbare Schrift (25.10.2026, Auftrag B)
+
+- **Figuren:** sieben statt sechs, je mit Haltung (ART_BIBLE §5 „Haltung statt Pose") und einem Gegenstand, übertrieben, weil
+  sie aus Kamera (a) 30–115 px hoch sind. Vorn auf dem Parkweg (22 m) ein älterer Herr mit Mütze, Mantel und Gehstock, der
+  stehen bleibt und ins Tal schaut; dahinter eine Besucherin im gelben Mantel mit Tasche. Am Portal eine Besucherin in Rot,
+  eine Ärztin im Kittel mit Klemmbrett und Dutt mitten im Satz mit einem Patienten im Bademantel am Infusionsständer; eine
+  Pflegerin raucht an der Raucherecke, an der Haltestelle wartet jemand mit Telefon. Die Figuren am Portal bleiben
+  Silhouetten mit Farbfleck; lesbar ist die Haltung nur bei den beiden vorn.
+- **Abweichung von ART_BIBLE §2** („Silhouetten draußen in Petrol und Papier"): Mäntel in Ziegelrot, Ockergelb, Blau und
+  Grün aus der vorhandenen Palette, dazu Haut (`haut`) für Kopf und Hände (nach den Referenzen Chaland und Floc'h). Wartet auf
+  Bestätigung.
+- **Schrift:** „HAUS FÖHRENHANG" in Antiqua-Versalien (Rockwell) auf der Giebelwand über dem Traufgesims (0,6 m, ≈ 11 px).
+  Unter dem Traufgesims verdeckten die Fensterfaschen die Buchstaben. Wegweiser vom Vorplatz an den Parkweg West verlegt
+  (30 m vor der Kamera, DIN, „↑ Haupteingang", „Notaufnahme →"); an der Kehre war er 60 m weit und unlesbar. Grünes „H" an
+  der Haltestelle. Die Schrift kommt aus einer Schriftdatei, gesetzt vom Code (ART_BIBLE §6), nur Namen und Wegweiser auf
+  Deutsch; das Täfelchen am Portal bleibt aus Textbalken (bei 2 px Schrifthöhe nicht lesbar).
+
 **Offene Punkte / Fragen an den Nutzer:**
 - Gardinen lesen sich als helle untere Scheibe, nicht als Stoff — reicht das, oder lieber nur Rollläden und Glas?
 - Kopfsteinmuster der Zufahrt fehlt (bei 17 px/m nicht zeichenbar); Pflaster bleibt eine Fläche.
 - Der kahle Baum (rechts, vor Tal und Himmel) ist jetzt ein Fächer aus Zweigen (25.10.): so lassen?
-- Schild „Haus Föhrenhang" trägt nur Textbalken; lesbarer Schriftzug erst in der Spielgrafik (Overlay) möglich.
-- Figuren sind Kapseln ohne Haltung; echte Silhouetten kommen mit `figuren_zeichnen.py`.
+- Farbige Mäntel und Hautton der Figuren draußen (Abweichung von ART_BIBLE §2): so lassen?
 - Trakt N 1. OG SE: Fensterband hinter den Lamellen für Schaltraum/Arztzimmer eingeführt (§3 sagte „keine") — bestätigen.
 
 ## Nächster Schritt (eigener Chat)

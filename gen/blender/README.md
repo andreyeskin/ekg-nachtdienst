@@ -135,6 +135,12 @@ ohne `bpy.ops` (`roehre`, `lappen`, `etage`); `astwerk` verzweigt rekursiv (Leit
 Baumsaum. Himmel der Stile: `himmel_grenzen` (fünf Stufen), Wolkenschatten (`wolke_schatten`, blau: angestrahlt),
 `WOLKEN_STREIFEN`, `VOEGEL`. Boden: `GRAS`, `FELDSTEINE`, dunkle Wiesenflecken. Linien der Stile werden ab 90 m dünner
 (Freestyle-Modifikator „Entfernung zur Kamera", bis ×0,35 bei 260 m).
+
+Figuren und Schrift (25.10.2026): `HALTUNGEN` (Gelenkpunkte je Haltung: geht, spricht, infusion, raucht, stock, wartet),
+`FIGUREN` (Ort, Blick, Haltung, Kleidung, Hose, Mantelsaum, Gegenstand, Kopfteil), `figur` baut daraus Röhren, Kopf und
+Hände, Mantel, Gegenstand und Haar, Dutt oder Mütze. `schrift` setzt Text aus `SCHRIFTEN` als Netz (Font-Kurve über den
+Depsgraph): `SCHRIFTZUG` „HAUS FÖHRENHANG" auf der Giebelwand, `WEGWEISER` mit Text und Pfeilen, „H" an der Haltestelle.
+Die Schriftdateien sind macOS-Systemschriften (Rockwell, DIN Alternate Bold); fehlen sie, nimmt Blender seine eingebaute.
 Maßstab von Kamera (a) ≈ 17 px/m: alles unter 0,1 m bekommt **keine eigene Tuschelinie** (Materialien `rahmen`, `fasche`,
 `fuge`, `holz_gruen`, `gardine`, `zink`, `schrift`, `sparren`, `lamelle`, `ast`, `laub_boden*` in `OHNE_LINIE`), sonst wurden
 Fensterrahmen und Astwerk zu schwarzem Gekritzel; Linie nur an Laibung, Scheibe, Rollladen, Gesims, Handlauf. `kiste` ohne Fase

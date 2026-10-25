@@ -228,8 +228,25 @@ GIEBEL_DEKOR = dict(streifen=0.32, balkon=(27.6, 33.6, 1.2), rundfenster=(0.42, 
 # Wegweiser an der Kehre, Haltestelle an der Klinikstraße, Raucherecke an der Ecke von Trakt N, Fahrradständer am Vorplatz
 ZUFAHRT = [(41.0, -12.0), (50.0, -13.6), (62.0, -15.0), (76.0, -14.2), (88.0, -10.0), (92.0, -6.5)]
 STELLPLAETZE = dict(flaeche=(43.5, -10.8, 53.5, -5.5), autos=[(45.6, -8.1, "auto_weiss"), (51.2, -8.1, "auto_blau")])   # (x, y Mitte, Material), längs y
-FIGUREN = [(30.6, -4.9, 0.0), (34.6, -6.6, 2.2), (35.3, -6.3, -0.8), (64.0, -8.6, 1.0), (23.5, -18.5, 0.6), (106.4, 7.5, 3.1)]   # (x, y, Blick rad)
-WEGWEISER = dict(ort=(17.0, -23.8), hoehe=2.4, schilder=((2.1, 1), (1.6, -1)))   # Schilder (z Unterkante, Pfeilrichtung ±1): Notaufnahme →, Bettenstationen ←
+FIGUREN = [(30.6, -4.9, -0.9, "geht", "ziegel", "sockel", 0.72, "tasche", "haar"),          # Besucherin verlässt das Portal, roter Mantel, Tasche
+           (34.6, -6.6, 0.4, "spricht", "rtw", "figur", 0.62, "klemmbrett", "dutt"),   # Ärztin im Kittel, mitten im Satz …
+           (35.3, -6.3, 3.54, "infusion", "tor", "kante", 0.5, "infusion", None),         # … mit einem Patienten im Bademantel am Infusionsständer
+           (64.0, -8.6, -2.2, "raucht", "petrol", "petrol", None, "zigarette", "haar"),     # Pflegerin in der Raucherecke
+           (-16.8, -47.3, -0.8, "stock", "figur", "sockel", 0.75, "stock", "muetze"),         # älterer Herr mit Gehstock bleibt auf dem Parkweg stehen
+                                           # (22 m vor der Kamera, ≈ 115 px hoch) und schaut ins Tal: die eine Figur, deren Haltung liest
+           (-0.9, -36.8, -2.62, "geht", "laub_gelb", "figur", 0.7, "tasche", "haar"),         # Besucherin kommt den Parkweg herunter (38 m, links neben dem Wegweiser)
+           (106.4, 7.5, 3.1, "wartet", "rollladen", "figur", 0.7, "telefon", "muetze")]       # wartet an der Haltestelle, schaut aufs Telefon
+                                           # (x, y, Blick rad, Haltung, Kleidung, Hose, Mantelsaum m oder None, Gegenstand, Kopf); Blick möglichst
+                                           # quer zur Kamera, damit Schritt und Arme in der Silhouette lesen
+WEGWEISER = dict(ort=(-6.0, -44.0), hoehe=2.65, schilder=((2.02, 0, "Haupteingang"), (1.38, 1, "Notaufnahme")), breite=2.3, hoch_=0.56, schrift=0.36)
+                                           # am Parkweg West rechts, 30 m vor der Kamera (≈ 50 px/m, Schrift ≈ 13 px; an der Kehre 60 m weit
+                                           # war sie unlesbar). Schilder (z Unterkante, Pfeil 0 = geradeaus / 1 = rechts, Text)
+# Schrift (25.10.2026): echte Buchstaben aus einer Schriftdatei (vom Code gesetzt, ART_BIBLE §6), nur Namen und Wegweiser auf Deutsch
+# (das Haus steht in Österreich; Spieltexte bleiben im UI). Fehlt die Datei, nimmt Blender seine eingebaute Schrift.
+SCHRIFTEN = dict(fassade="/System/Library/Fonts/Supplemental/Rockwell.ttc", schild="/System/Library/Fonts/Supplemental/DIN Alternate Bold.ttf")
+SCHRIFTZUG = dict(text="HAUS FÖHRENHANG", grundlinie=12.42, groesse=0.86)
+                                           # Antiqua-Versalien (Tinte auf Putz) auf der Giebelwand über dem Traufgesims (z 12 … 13,5, bisher leer):
+                                           # 0,6 m hoch ≈ 11 px aus Kamera (a); unter dem Traufgesims verdeckten die Fensterfaschen des 2. OG die Schrift
 HALTESTELLE = dict(x=106.6, y0=3.5, y1=7.5, tiefe=1.6, hoehe=2.6, schild=(105.6, 1.5))
 RAUCHERECKE = dict(bank=(66.0, -8.4), ascher=(63.6, -8.0))
 FAHRRAEDER = dict(buegel=(21.2, 22.0, 22.8, 23.6), y=-5.0, raeder=((21.6, "figur"), (23.2, "tor")))
@@ -342,7 +359,7 @@ PALETTE = {
     "tor": "#2C5560", "lamelle": "#C99A5B", "beton": "#F7F1E4", "stuetze": "#2C5560", "attika": "#F7F1E4",
     "wand": "#EFE6D3", "wand_n": "#F7F1E4", "paneel": "#BFD9CF", "paneel_n": "#2C5560", "decke": "#F7F1E4",
     "lino_warm": "#C9BDA2", "lino_kuehl": "#B6BFB6", "tuer": "#2C5560", "zarge": "#C99A5B", "holz": "#C99A5B",
-    "lift": "#2C5560", "petrol": "#2C5560", "figur": "#2C5560",
+    "lift": "#2C5560", "petrol": "#2C5560", "figur": "#2C5560", "haut": "#EFE0CC",
     # Außengrün (ART_BIBLE §2 „Wiese"/„Laub", Entscheid des Nutzers 23.10.2026): Rasen Wiese, Kronen/Hecken/Büsche Laub
     "wiese": "#ACB98B", "wiese_hell": "#B9C59A", "wiese_dunkel": "#9FAE7E", "gras": "#8E9C70", "weg": "#C9BDA2", "kante": "#EFE6D3", "asphalt": "#B6BFB6", "pflaster": "#F7F1E4", "hecke": "#6F8A62",
     "stamm": "#2C3E46", "zweig": "#2C3E46", "laub": "#6F8A62", "wald_nah": "#6F8A62", "wald_mitte": "#2C5560", "wald_fern": "#F7F1E4",
@@ -384,7 +401,7 @@ TAG_PALETTE = {
     # Fassadendetails und Herbst (ART_BIBLE §2 „Außen", Ergänzung 25.10.2026)
     "fasche": "#F4F1E6", "gesims": "#F4F1E6", "rustika": "#D6D0BE", "fuge": "#AFA896", "rollladen": "#4F7F4A", "holz_gruen": "#4F7F4A",
     "gardine": "#E3E6EC", "holz_dunkel": "#4A2E22", "stein": "#CFC9BA", "zink": "#7E858F", "schrift": "#1A1F2E", "sparren": "#3B2A22",
-    "auto_weiss": "#F4F1E6", "auto_blau": "#3A5A8C", "laub_gelb": "#D9A93C", "laub_rost": "#B9652C", "laub_boden": "#B8762F", "laub_boden_hell": "#D8A24A",
+    "auto_weiss": "#F4F1E6", "auto_blau": "#3A5A8C", "haut": "#E8C4A0", "laub_gelb": "#D9A93C", "laub_rost": "#B9652C", "laub_boden": "#B8762F", "laub_boden_hell": "#D8A24A",
 }
 # Stadt und Hügel (25.10.2026): Wand-, Dach-, Fenster- und Baumtöne; „…_fern" = zum Horizont hin mit Dunst gemischt (Oberstadt am
 # Gegenhang, Luftperspektive). Probe (06:40): alles im Talschatten, ohne Linie. Stile: besonnt und schattiert, die nahe Unterstadt mit Linie.
@@ -926,24 +943,112 @@ def bauen():
 
     for i, (x, y, m) in enumerate(STELLPLAETZE["autos"]): auto(f"Auto {i + 1}", x, y, m)
 
-    def figur(name, x, y, blick, m="figur"):
-        """Silhouette: Kapsel 1,7 m (Rumpf, Kopf, zwei Beine als ein schmalerer Zylinder), kein Schlagschatten, kleiner Fußschatten."""
-        z = gelaende_z(x, y)
-        einordnen(wz.zylinder(0.15, 0.85, (x, y, z + 0.425), M[m], "hinten", v=10, name=f"{name} Beine"), "Figuren")
-        einordnen(wz.kiste((0.42, 0.24, 0.62), (x, y, z + 1.16), M[m], "hinten", dreh=(0, 0, blick), fase=0.08, name=f"{name} Rumpf"), "Figuren")
-        einordnen(wz.kugel(0.12, (x, y, z + 1.6), M[m], "hinten", name=f"{name} Kopf"), "Figuren")
+    # Figuren (25.10.2026, ART_BIBLE §5 „Haltung statt Pose"): Gerüst aus Röhren (Rumpf, Arme, Beine mit Knie und Ellbogen),
+    # Kopf und Hände als Kugeln, Mantel als Glocke von der Brust bis zum Saum, dazu je ein Gegenstand. Gelenkpunkte je Haltung in
+    # einem Figurenrahmen (u vorwärts, v links, z oben); bei 18–23 px/m trägt nur die Silhouette, darum übertrieben: weiter
+    # Schritt, abgespreizte Arme, Neigung. Zwei Farben (Kleidung, Hose) plus Haut für Kopf und Hände.
+    HALTUNGEN = {
+        "geht": dict(neig=6, kopf=(0.0, 0.0), beine=(((0.14, 0.1, 0.5), (0.3, 0.1, 0.08)), ((-0.08, -0.1, 0.48), (-0.28, -0.1, 0.14))),
+                     arme=(((-0.1, 0.22, 1.15), (-0.2, 0.22, 0.92)), ((0.1, -0.22, 1.15), (0.16, -0.2, 0.9)))),
+        "spricht": dict(neig=-2, kopf=(8, 10), beine=(((0.0, 0.09, 0.5), (0.0, 0.1, 0.08)), ((0.08, -0.14, 0.5), (0.06, -0.2, 0.08))),
+                        arme=(((0.04, 0.23, 1.12), (0.24, 0.12, 1.14)), ((0.1, -0.3, 1.16), (0.3, -0.36, 1.34)))),
+        "infusion": dict(neig=10, kopf=(10, 0), beine=(((0.08, 0.1, 0.5), (0.14, 0.1, 0.08)), ((-0.02, -0.1, 0.5), (-0.1, -0.1, 0.1))),
+                         arme=(((0.12, 0.26, 1.1), (0.24, 0.3, 1.26)), ((0.0, -0.21, 1.12), (0.04, -0.22, 0.86)))),
+        "raucht": dict(neig=-5, kopf=(-6, -8), beine=(((0.06, 0.04, 0.5), (0.12, -0.08, 0.08)), ((0.0, -0.1, 0.5), (0.0, -0.12, 0.08))),
+                       arme=(((0.16, 0.2, 1.2), (0.12, 0.05, 1.52)), ((-0.06, -0.26, 1.1), (0.02, -0.21, 0.97)))),
+        "stock": dict(neig=14, kopf=(-8, 0), beine=(((0.12, 0.1, 0.5), (0.22, 0.1, 0.08)), ((-0.04, -0.1, 0.5), (-0.16, -0.1, 0.12))),
+                      arme=(((-0.02, 0.22, 1.1), (0.02, 0.24, 0.86)), ((0.12, -0.24, 1.1), (0.3, -0.24, 0.9)))),
+        "wartet": dict(neig=0, kopf=(22, -6), beine=(((0.0, 0.06, 0.5), (0.0, 0.05, 0.08)), ((0.1, -0.16, 0.52), (0.14, -0.24, 0.08))),
+                       arme=(((0.06, 0.22, 1.12), (0.24, 0.08, 1.24)), ((-0.04, -0.25, 1.16), (0.04, -0.17, 1.4)))),
+    }
+
+    def figur(name, x, y, blick, haltung, kleid="figur", hose="figur", mantel=None, ding=None, kopfteil=None):
+        """Figur mit Haltung (HALTUNGEN). `mantel`: Saumhöhe (Kittel, Bademantel, Mantel) oder None; `ding`: Tasche, Klemmbrett,
+        Infusionsständer, Zigarette, Gehstock, Telefon. Kein Schlagschatten (Sammlung Figuren), kleiner Fußschatten."""
+        z0 = gelaende_z(x, y); hl = HALTUNGEN[haltung]; cw, sw = math.cos(blick), math.sin(blick)
+        neig = math.radians(hl["neig"])
+
+        def P(u, v, z, oben=True):                                 # Figurenrahmen -> Welt; Oberkörper um das Becken geneigt
+            if oben and z > 0.95: u, z = u + (z - 0.95) * math.sin(neig), 0.95 + (z - 0.95) * math.cos(neig)
+            return Vector((x + u * cw - v * sw, y + u * sw + v * cw, z0 + z))
+        teile = {m: Bau() for m in {kleid, hose, "haut", "holz_dunkel", "rtw", "zink"}}
+        becken, brust, hals = P(0, 0, 0.95), P(0.02, 0, 1.36), P(0.03, 0, 1.5)
+        teile[kleid].roehre([becken - Vector((0, 0, 0.08)), P(0.01, 0, 1.15), brust, hals], [0.15, 0.155, 0.18, 0.07])
+        if mantel:                                                 # Mantel: Glocke von der Brust zum Saum, unten weiter
+            teile[kleid].roehre([P(0.02, 0, 1.3), P(0.01, 0, 1.0), P(0.0, 0, mantel, oben=False)], [0.18, 0.19, 0.24], seiten=10)
+        kn, kt = hl["kopf"]; kopf = P(0.04 + 0.1 * math.sin(math.radians(kn)), 0.1 * math.sin(math.radians(kt)), 1.62)
+        teile["haut"].lappen(kopf, 0.105, random.Random(name), stufe=2, beulen=4, tiefe=0.0, flach=1.1)
+        hinten = P(-0.035, 0, 0, oben=False) - P(0, 0, 0, oben=False)
+        if kopfteil in ("haar", "dutt"):                           # Haar als Kappe hinten-oben, Dutt als Kugel am Hinterkopf
+            teile["holz_dunkel"].lappen(kopf + hinten + Vector((0, 0, 0.025)), 0.108, random.Random(name + "h"), stufe=2, beulen=6, tiefe=0.12, flach=0.95)
+            if kopfteil == "dutt": teile["holz_dunkel"].lappen(kopf + hinten * 3.2 + Vector((0, 0, 0.06)), 0.055, random.Random(name + "d"), stufe=1, beulen=3, tiefe=0.0)
+        elif kopfteil == "muetze":                                 # Schiebermütze: flacher Deckel mit Schirm nach vorn
+            vorn = P(0.09, 0, 0, oben=False) - P(0, 0, 0, oben=False)
+            teile[hose].roehre([kopf + Vector((0, 0, 0.04)), kopf + Vector((0, 0, 0.1))], [0.118, 0.1], seiten=10)
+            teile[hose].roehre([kopf + Vector((0, 0, 0.045)), kopf + vorn + Vector((0, 0, 0.035))], [0.07, 0.06], seiten=6)
+        for seite, ((knie, fuss)) in zip((1, -1), hl["beine"]):
+            huefte = P(0.0, 0.09 * seite, 0.93, oben=False)
+            k_, f_ = P(*knie, oben=False), P(*fuss, oben=False)
+            teile[hose].roehre([huefte, k_, f_], [0.075, 0.065, 0.055])
+            teile["holz_dunkel"].roehre([f_, f_ + (P(0.2, 0, 0, oben=False) - P(0, 0, 0, oben=False))], [0.055, 0.05], seiten=6)   # Schuh
+        haende = []
+        for seite, (ell, hand) in zip((1, -1), hl["arme"]):
+            sch = P(0.02, 0.19 * seite, 1.42); e_, h_ = P(*ell), P(*hand)
+            teile[kleid].roehre([sch, e_, h_], [0.06, 0.052, 0.045]); teile["haut"].lappen(h_, 0.05, random.Random(name + str(seite)), stufe=1, beulen=3, tiefe=0.0)
+            haende.append(h_)
+        links, rechts = haende
+        if ding == "tasche":                                       # Tasche an der rechten Hand
+            t = teile["holz_dunkel"]; c = rechts - Vector((0, 0, 0.2)); quer = P(0, 0.06, 0, oben=False) - P(0, 0, 0, oben=False); vor = P(0.16, 0, 0, oben=False) - P(0, 0, 0, oben=False)
+            t.roehre([c - vor, c + vor], [0.13, 0.13], seiten=4)
+        elif ding == "klemmbrett":                                 # Klemmbrett in der linken Hand, leicht schräg
+            t = teile["rtw"]; t.roehre([links + Vector((0, 0, -0.1)), links + Vector((0, 0, 0.18))], [0.13, 0.13], seiten=4)
+        elif ding == "infusion":                                   # Infusionsständer neben der linken Hand: Stange, Fuß, Beutel oben
+            fuss = P(0.26, 0.34, 0.0, oben=False); t = teile["zink"]
+            t.roehre([fuss, fuss + Vector((0, 0, 1.95))], [0.018, 0.018], seiten=6)
+            for a in range(3): t.roehre([fuss + Vector((0, 0, 0.06)), fuss + Vector((0.28 * math.cos(a * 2.1), 0.28 * math.sin(a * 2.1), 0.02))], [0.02, 0.02], seiten=4)
+            teile["rtw"].lappen(fuss + Vector((0, 0, 1.78)), 0.1, random.Random(name + "b"), stufe=1, beulen=3, tiefe=0.0, flach=1.5)
+        elif ding == "zigarette":
+            teile["rtw"].roehre([links, links + (P(0.12, 0.02, 1.56) - P(0, 0, 1.5))], [0.012, 0.012], seiten=4)
+        elif ding == "stock":                                      # Gehstock von der rechten Hand schräg vor die Füße
+            teile["holz_dunkel"].roehre([rechts + Vector((0, 0, 0.04)), P(0.4, -0.26, 0.0, oben=False)], [0.022, 0.02], seiten=6)
+        elif ding == "telefon":                                    # Telefon leuchtet (fenster_warm), Tasche am Riemen
+            teile["holz_dunkel"].roehre([links, links + Vector((0, 0, 0.12))], [0.04, 0.04], seiten=4)
+            t = teile["holz_dunkel"]; c = P(-0.02, -0.24, 0.98, oben=False); t.roehre([c - Vector((0, 0, 0.14)), c + Vector((0, 0, 0.14))], [0.12, 0.12], seiten=4)
+        for m, b in teile.items(): b.fertig(f"{name} {m}", m, "Figuren", glatt=m in (kleid, hose, "haut"))
         fussschatten(f"{name} Schatten", x, y, 0.3, laenge=1.4, breite=0.7, versatz=0.8)
 
-    for i, (x, y, blick) in enumerate(FIGUREN): figur(f"Figur {i + 1}", x, y, blick, "rtw" if i == 1 else "figur")   # eine im weißen Kittel
+    for i, f_ in enumerate(FIGUREN): figur(f"Figur {i + 1}", *f_)
+
+    def schrift(name, text, x, y, z, groesse, m="schrift", samm="Hof", art="schild", dreh=0.0, ausrichtung="CENTER"):
+        """Text als Netz aus einer Schriftdatei (SCHRIFTEN): Grundlinie bei z, liest von links nach rechts, Vorderseite nach −y
+        (`dreh` um z). Font-Kurve -> Netz über den Depsgraph, die Kurve wird danach gelöscht."""
+        cu = bpy.data.curves.new(name, 'FONT'); cu.body = text; cu.size = groesse; cu.extrude = 0.008; cu.align_x = ausrichtung
+        pfad = SCHRIFTEN.get(art)
+        if pfad and os.path.exists(pfad): cu.font = bpy.data.fonts.load(pfad, check_existing=True)
+        tmp = bpy.data.objects.new(name, cu); sc.collection.objects.link(tmp)
+        me = bpy.data.meshes.new_from_object(tmp.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+        bpy.data.objects.remove(tmp); bpy.data.curves.remove(cu)
+        me.materials.clear(); me.materials.append(M[m])
+        o = bpy.data.objects.new(name, me); sc.collection.objects.link(o)
+        o.rotation_euler = (math.radians(90), 0, dreh); o.location = (x, y, z)
+        return einordnen(o, samm)
 
     wwz = WEGWEISER; (wx, wy) = wwz["ort"]; wzz = gelaende_z(wx, wy)                 # Wegweiser an der Kehre: Pfosten, zwei weiße Schilder mit Pfeil und Textbalken
     einordnen(wz.zylinder(0.05, wwz["hoehe"], (wx, wy, wzz + wwz["hoehe"] / 2), M["zink"], "hinten", v=8, name="Wegweiser Pfosten"), "Hof")
-    for i, (zs, richtung) in enumerate(wwz["schilder"]):
-        kiste(f"Wegweiser Schild {i + 1}", wx - 0.7, wy - 0.03, wx + 0.7, wy + 0.03, wzz + zs, wzz + zs + 0.4, "rtw", "Hof")
-        sx = wx + richtung * 0.42; sz = wzz + zs + 0.2
-        kiste(f"Wegweiser Pfeil {i + 1}", sx - 0.14, wy - 0.045, sx + 0.14, wy - 0.035, sz - 0.03, sz + 0.03, "schrift", "Hof")
-        netz(f"Wegweiser Pfeilspitze {i + 1}", [(sx + richtung * 0.1, wy - 0.045, sz - 0.11), (sx + richtung * 0.1, wy - 0.045, sz + 0.11), (sx + richtung * 0.26, wy - 0.045, sz)], [(0, 1, 2)], "schrift", "Hof")
-        kiste(f"Wegweiser Text {i + 1}", wx - 0.55 + (0.2 if richtung > 0 else 0.0), wy - 0.045, wx + 0.2 + (0.2 if richtung > 0 else 0.0), wy - 0.035, sz - 0.03, sz + 0.03, "schrift", "Hof")
+    bw, bh = wwz["breite"] / 2, wwz["hoch_"]
+    for i, (zs, richtung, text) in enumerate(wwz["schilder"]):    # weißes Schild, Pfeil links (geradeaus) oder rechts, Text in DIN
+        kiste(f"Wegweiser Schild {i + 1}", wx - bw, wy - 0.03, wx + bw, wy + 0.03, wzz + zs, wzz + zs + bh, "rtw", "Hof")
+        sz = wzz + zs + bh / 2; yf = wy - 0.045
+        if richtung:                                                # → an der rechten Kante
+            sx = wx + bw - 0.24
+            kiste(f"Wegweiser Pfeil {i + 1}", sx - 0.12, yf, sx + 0.02, yf + 0.01, sz - 0.035, sz + 0.035, "schrift", "Hof")
+            netz(f"Wegweiser Pfeilspitze {i + 1}", [(sx, yf, sz - 0.11), (sx, yf, sz + 0.11), (sx + 0.16, yf, sz)], [(0, 1, 2)], "schrift", "Hof")
+            schrift(f"Wegweiser Text {i + 1}", text, wx - 0.2, wy - 0.04, sz - 0.125, wwz["schrift"])
+        else:                                                       # ↑ an der linken Kante
+            sx = wx - bw + 0.2
+            kiste(f"Wegweiser Pfeil {i + 1}", sx - 0.035, yf, sx + 0.035, yf + 0.01, sz - 0.16, sz + 0.02, "schrift", "Hof")
+            netz(f"Wegweiser Pfeilspitze {i + 1}", [(sx - 0.11, yf, sz + 0.02), (sx + 0.11, yf, sz + 0.02), (sx, yf, sz + 0.17)], [(0, 1, 2)], "schrift", "Hof")
+            schrift(f"Wegweiser Text {i + 1}", text, wx + 0.2, wy - 0.04, sz - 0.125, wwz["schrift"])
 
     hs_ = HALTESTELLE; hz = gelaende_z(hs_["x"], (hs_["y0"] + hs_["y1"]) / 2)         # Haltestelle an der Klinikstraße: Glashäuschen und H-Schild
     for yy in (hs_["y0"] + 0.1, hs_["y1"] - 0.1):
@@ -954,7 +1059,7 @@ def bauen():
     sx, sy = hs_["schild"]; sz = gelaende_z(sx, sy)
     einordnen(wz.zylinder(0.04, 2.6, (sx, sy, sz + 1.3), M["zink"], "hinten", v=8, name="Haltestelle Schildpfosten"), "Hof")
     einordnen(wz.zylinder(0.32, 0.04, (sx, sy, sz + 2.7), M["rtw"], "hinten", dreh=(0, math.radians(90), 0), v=16, name="Haltestelle Schild"), "Hof")
-    kiste("Haltestelle H", sx - 0.04, sy - 0.12, sx + 0.04, sy + 0.12, sz + 2.6, sz + 2.8, "schrift", "Hof")
+    schrift("Haltestelle H", "H", sx - 0.04, sy, sz + 2.58, 0.36, m="rollladen", dreh=math.radians(-90))   # grünes H auf weißer Scheibe
 
     bank("Raucherecke Bank", *RAUCHERECKE["bank"], math.radians(180))                 # Raucherecke an der SE-Ecke von Trakt N, Standascher
     ax, ay = RAUCHERECKE["ascher"]; az = gelaende_z(ax, ay)
@@ -1467,6 +1572,8 @@ def bauen():
     pts += [(px1, zs_), (px1, zo), (px0, zo)]
     prisma("Loggia Bogenfeld", pts, "y", yv - 0.05, yv + lg["tiefe"], "gesims", "Trakt A 1OG")
     balkon("Loggia Austritt 2OG", px0, px1, yg, pt + 0.05, zo, pd["bruestung"], "Trakt A 2OG", bal=pd["baluster"])
+    sz_ = SCHRIFTZUG                                               # Schriftzug auf der Giebelwand (Antiqua in Tinte)
+    schrift("Schriftzug Haus", sz_["text"], (RISALIT_SE[0] + RISALIT_SE[2]) / 2, RISALIT_SE[1] - 0.02, sz_["grundlinie"], sz_["groesse"], samm="Trakt A Dach", art="fassade")
     sx0 = PORTAL["x1"] + 0.2 + pw + 0.7                            # Schild „Haus Föhrenhang": weiße Tafel, drei Textbalken (Schrift bei 17 px/m unlesbar)
     kiste("Schild Haus", sx0, yg - 0.04, sx0 + 0.95, yg, 1.5, 2.25, "rtw", "Trakt A EG")
     for i, (zs, lb_) in enumerate(((2.08, 0.55), (1.92, 0.75), (1.68, 0.4))):

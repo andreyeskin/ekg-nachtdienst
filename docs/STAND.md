@@ -4,6 +4,13 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Figuren mit Haltung und lesbare Schrift in der Außenansicht (a) (Auftrag B, dritter Teil)
+
+- `haus_blockout.py`: `HALTUNGEN` und `figur` (Röhrengerüst, Mantel, Gegenstand, Haar, Dutt, Mütze); sieben Figuren, davon
+  zwei vorn auf dem Parkweg (älterer Herr mit Gehstock, Besucherin mit Tasche). `schrift` setzt Text aus Schriftdateien:
+  „HAUS FÖHRENHANG" auf der Giebelwand, Wegweiser am Parkweg („↑ Haupteingang", „Notaufnahme →"), „H" an der Haltestelle.
+- Offen beim Nutzer: farbige Mäntel und Hautton draußen statt nur Petrol und Papier (ART_BIBLE §2), siehe KRANKENHAUS.
+
 ## Fertig (25.10.2026): Natur, Himmel und Ferne der Außenansicht (a) (Auftrag B, zweiter Teil)
 
 - Nutzer: Bäume lesen schlecht, kahle Bäume wie Hergé, Details und ferne Stadt wie in den Referenzen, Himmel auch
@@ -293,9 +300,9 @@ Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehe
 
 ## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
-**Stand 25.10.2026: Fassade und Natur/Himmel/Ferne fertig** (siehe „Fertig" oben). Rest: Rückmeldung des Nutzers zu
-den neuen Bäumen und zum Himmel, offene Fragen (Gardinen, kahler Baum, Trakt N), Figuren mit Haltung, Schild lesbar, dann
-Raumkameras aus KRANKENHAUS §9 und Aufnahme B1.
+**Stand 25.10.2026: Fassade, Natur/Himmel/Ferne, Figuren und Schrift fertig** (siehe „Fertig" oben; Bäume und Himmel
+vom Nutzer angenommen). Rest: offene Fragen (Farben der Figuren, Gardinen, kahler Baum, Trakt N), dann Raumkameras aus
+KRANKENHAUS §9 und Aufnahme B1.
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne

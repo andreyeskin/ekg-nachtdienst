@@ -199,7 +199,8 @@ Kontext → einsetzen, `gen/blender/README.md`).
 ## 6. Was ein Bild sofort disqualifiziert
 
 - Schrift im Bild. **Jeder Text im Spiel wird vom Code gesetzt**, nie vom Bildmodell —
-  das ist das eindeutigste Erkennungszeichen für KI-Bilder.
+  das ist das eindeutigste Erkennungszeichen für KI-Bilder. In den Blender-Renders setzt der Code Schrift aus einer
+  Schriftdatei (`schrift` in `haus_blockout.py`): nur Namen und Wegweiser im Haus, auf Deutsch (25.10.2026).
 - Ein EKG, das vom Bildmodell gemalt wurde. **Alle Kurven kommen aus der Engine**, aus echten
   Aufnahmen. Gemalte Zacken sind medizinisch falsch und sofort als Fake erkennbar.
 - Sechs Finger, verbogene Hände, Instrumente, die es nicht gibt, Stethoskope mit zwei Schläuchen.
