@@ -4,6 +4,21 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Fassade und Hof der Außenansicht (a) ausdetailliert (Auftrag B, erster Teil)
+
+- Nutzer schickte zwei Fotos eines Altbau-Klinikgebäudes als **Beispiel** für Detailgrad (lokal
+  `vorlagen/haus/fotos/vorbild_portal.webp`, `vorbild_fassade.webp`; kein Nachbau).
+- In `gen/blender/haus_blockout.py`: Altbaufenster (Rahmen, Kämpfer, Fasche, Sohlbank, grüne Rollläden in wechselnder
+  Höhe, Gardinen, offene Flügel), gebändertes Sockelgeschoss, Gesimse, Traufe mit Sparrenköpfen, Rinne, Fallrohre,
+  Gauben, Kaminköpfe, Giebel mit Holzstreifen und Rundfenster, Loggia mit drei Bögen, Rundbogenportal mit Holztür,
+  Leuchten, Schild, Stufen, Kübel; Trakt N hell mit Lamellen und Leben dahinter; Hof mit Pflaster-Zufahrt, Stellplätzen,
+  Autos, Figuren-Silhouetten, Wegweiser, Haltestelle, Raucherecke, Fahrradbügel; Spätherbst (gelbe und rostige Kronen,
+  Laub, ein kahler Baum), Comic-Wolken. Bau 45 s statt ≈ 8 min. Renders `docs/haus/stil_tag.jpg`, `stil_blau.jpg`,
+  `probe_aussen.jpg`; Einzelheiten KRANKENHAUS „Fassade ausdetailliert (25.10.2026)" und „Korrekturrunde".
+- Offene Fragen an den Nutzer: Gardinen (helle untere Scheibe) lassen oder nur Rollläden? Kahlen Baum rechts behalten
+  (liest sich noch wie ein Gestell)? Fensterband hinter den Lamellen von Trakt N 1. OG bestätigen? Schwächen:
+  Kopfsteinmuster nicht sichtbar, Schild nur Textbalken, Figuren ohne Haltung.
+
 ## Fertig (25.10.2026): Mechanik und Struktur, dritte Fassung (Entwurf, wartet auf Freigabe)
 
 - Nutzer will Geschichte und Mechanik neu: zuerst die Mechanik; Belohnungen; drei Teile (Kurswoche im Lehrsaal mit
