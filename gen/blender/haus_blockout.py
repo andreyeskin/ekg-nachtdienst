@@ -233,8 +233,9 @@ WEGWEISER = dict(ort=(17.0, -23.8), hoehe=2.4, schilder=((2.1, 1), (1.6, -1)))  
 HALTESTELLE = dict(x=106.6, y0=3.5, y1=7.5, tiefe=1.6, hoehe=2.6, schild=(105.6, 1.5))
 RAUCHERECKE = dict(bank=(66.0, -8.4), ascher=(63.6, -8.0))
 FAHRRAEDER = dict(buegel=(21.2, 22.0, 22.8, 23.6), y=-5.0, raeder=((21.6, "figur"), (23.2, "tor")))
-JUNGBAEUME = [(57.0, -18.6, 2.0, "laub_gelb"), (70.5, -19.0, 1.9, "laub"), (84.0, -18.2, 2.1, "laub_rost"), (10.0, -15.0, 1.8, "laub_gelb")]
-KAHLE_BAEUME = [(13.0, -45.0, 2.8)]       # ein kahler Jungbaum auf der Wiese rechts des Wegs, vor Wiese und Himmel (vor der Fassade las das Astwerk als Gekritzel)
+JUNGBAEUME = [(57.0, -18.6, 2.0, "laub_gelb", "laub"), (70.5, -19.0, 1.9, "laub_gelb", "licht"), (84.0, -18.2, 2.1, "laub_rost", "laub"), (10.0, -15.0, 1.8, "laub_gelb", "laub")]
+                                           # (x, y, Kronenradius, Farbe, Art): „licht" = Spätherbst, halb kahl (Astwerk mit wenigen Laubballen)
+KAHLE_BAEUME = [(13.0, -45.0, 3.2)]       # ein kahler Baum (9,6 m) auf der Wiese rechts des Wegs, vor Wiese und Himmel (vor der Fassade las das Astwerk als Gekritzel)
 HERBST = dict(linden=("laub_gelb", "laub_rost"), kastanie="laub_rost", wald_anteil=0.35)   # Spätherbst (ART_BIBLE §4): Kronen teils gelb/rostig
 LAUB = dict(weg=(18.0, 95.0, 90, 2.6), linden=6.5, je_linde=28, vorplatz=30, radius=(0.25, 0.7))   # Herbstlaub: (s0, s1, Anzahl, Streubreite) am Parkweg West
 
@@ -281,6 +282,11 @@ WOLKEN = [(260.0, 150.0, 520.0, 24.0, "wolke_warm"), (-140.0, 232.0, 820.0, 30.0
 # der Himmelsebene bei z ≈ 140, Bildoberkante bei ≈ 300.
 WOLKEN_KUMULUS = [(-320.0, 224.0, 230.0, 62.0, "wolke_hell"), (-70.0, 250.0, 170.0, 52.0, "wolke_hell"),
                   (190.0, 165.0, 270.0, 92.0, "wolke_hell"), (375.0, 240.0, 140.0, 44.0, "wolke_warm"), (-30.0, 198.0, 80.0, 26.0, "wolke_warm")]
+WOLKEN_STREIFEN = [(150.0, 128.0, 340.0, 5.0), (300.0, 112.0, 220.0, 3.5), (-60.0, 178.0, 260.0, 4.0), (420.0, 150.0, 160.0, 3.0)]
+                                           # Stile: lange flache Schleierwolken nahe dem Horizont (seitlich, Mitte z, Länge, Dicke), ohne Linie,
+                                           # über der Stadt rechts (dort reicht der Himmel bis z ≈ 60 herunter): Tiefe wie im Pinceau-Himmel
+VOEGEL = [(-15.0, 19.5), (-13.2, 20.6), (-11.8, 19.0), (-10.0, 21.6), (-17.2, 21.0)]   # Stile: kleiner Schwarm 80 m vor der Kamera
+                                           # (seitlich m, Höhe über der Kamera), Spannweite ≈ 1 m ≈ 19 px, zwischen Wolken und First: Leben im Himmel
                                            # alle innerhalb des Bildes (± 458 m bei 900 m): eine angeschnittene Wolke zog ihre Grundlinie als Lineal bis zum Rand.
                                            # Links liegt das ferne Waldband 2 (wald_fern, 170–240 m vor der Kamera) VOR der Himmelsebene und reicht aus (a) bis
                                            # ≈ 13° (z ≈ 208 auf 890 m): Wolken links brauchen eine Unterkante ≥ 220, sonst schiebt sich das Band in die Wolke.
@@ -291,7 +297,11 @@ BUESCHE = [(-10.0, -36.0, 0.9), (-8.4, -34.6, 0.6), (-11.6, -34.8, 0.7),        
            (11.5, -24.0, 1.0), (13.2, -22.6, 0.7), (10.0, -22.4, 0.6), (12.4, -25.6, 0.5),  # Gruppe an der Kehre, NW-Seite
            (20.0, -40.0, 0.9), (22.0, -39.2, 0.6), (21.2, -41.6, 0.7),                     # Gruppe an der Gabel zur Haltestelle
            (-2.0, -52.0, 0.8), (-0.2, -50.8, 0.55), (-3.4, -50.6, 0.6)]                    # Gruppe rechts unten am Hang (Bildrand)
-WIESENFLECKEN = dict(bereich=(-40.0, -70.0, 90.0, -5.0), anzahl=18, radius=(4.0, 11.0))
+WIESENFLECKEN = dict(bereich=(-40.0, -70.0, 90.0, -5.0), anzahl=18, radius=(4.0, 11.0), dunkel=12)   # dazu 12 dunklere Flecken (Pinceau)
+GRAS = dict(anzahl=150, abstand=(6.0, 42.0), winkel=(20.0, 70.0), weg_frei=2.2)   # Grasbüschel im Vordergrund: Polarkoordinaten um Kamera (a)
+                                           # (Meter, Grad ab +x), dichter nahe der Kamera, nicht auf und an den Wegen
+FELDSTEINE = [("west", 9.0, 2.6, 0.45), ("west", 15.5, -2.4, 0.32), ("west", 23.0, 2.9, 0.55), ("west", 24.2, 3.6, 0.3), ("west", 33.0, -2.6, 0.4)]
+                                           # (Weg, Meter ab Anfang, seitlich, Radius): Feldsteine am Parkweg West (Pinceau: Steine am Ufer)
 
 # Wald (§5): nahes Band als dichte Baumgruppen (zwei Reihen), Mitte und Ferne als Silhouettenbänder (ein Netz je Band).
 # Tiefenstaffelung: vorn Laub (grün, besonnt), Mitte Petrol (Kamm im Schatten, die dunkle Form), hinten Papier (Dunst).
@@ -305,10 +315,10 @@ WALDBAND_AUSLAUF = 40.0      # auf den letzten Metern sinkt die Oberkante eines 
 # neben Trakt N (18–26° rechts von +x) die Unterstadt gleich hinter der Klinikstraße (nur ihre Dächer ragen über die Terrassenkante),
 # dahinter den Fluss und die Oberstadt am Gegenhang. `neigung`: Streifen schräg zur Blickachse (y0/y1 wandern mit x).
 # Nur Bänder, keine Linie. Dächer Holz (eine Stufe dunkler als Linoleum warm): auf Papier-Hängen blieb die Stadt sonst unsichtbar.
-STADT = [dict(x0=-120.0, x1=200.0, y0=-290.0, y1=-210.0, haeuser=40, tuerme=((20.0, -250.0, "helm"), (110.0, -250.0, "zwiebel"))),
-         dict(x0=150.0, x1=235.0, y0=8.0, y1=24.0, neigung=0.46, haeuser=45, groesse=0.65, hoehe=(5.0, 8.0), tuerme=((178.0, 26.0, "helm"),)),
+STADT = [dict(x0=-120.0, x1=200.0, y0=-290.0, y1=-210.0, haeuser=40, fern=True, tuerme=((20.0, -250.0, "helm"), (110.0, -250.0, "zwiebel"))),
+         dict(x0=150.0, x1=235.0, y0=6.0, y1=26.0, neigung=0.46, haeuser=45, baeume=14, groesse=0.65, hoehe=(5.0, 8.0), tuerme=((178.0, 26.0, "helm"),)),
                                            # Unterstadt, linke Hälfte der Lücke; kleine Häuser, sonst deckt ein einziges 170 m vor der Kamera die Lücke
-         dict(x0=445.0, x1=660.0, y0=40.0, y1=320.0, haeuser=260, tuerme=((470.0, 130.0, "zwiebel"), (560.0, 190.0, "helm")))]   # Oberstadt am Gegenhang
+         dict(x0=445.0, x1=660.0, y0=40.0, y1=320.0, haeuser=260, baeume=90, fern=True, tuerme=((470.0, 130.0, "zwiebel"), (560.0, 190.0, "helm")))]   # Oberstadt am Gegenhang
 # Die Stadt liegt um 06:40 noch im Schatten des Tals (nur die Hangterrasse hat schon Sonne): ihre Materialien sind IMMER_SCHATTEN,
 # das Komposit legt die Schattenstufe darüber; der Fluss spiegelt den Himmel und bleibt hell.
 HUEGEL = [(-110.0, -260.0, 70.0, 40.0), (190.0, -270.0, 80.0, 50.0), (820.0, 150.0, 260.0, 60.0), (1000.0, -60.0, 320.0, 80.0), (700.0, 420.0, 220.0, 50.0)]
@@ -334,13 +344,13 @@ PALETTE = {
     "lino_warm": "#C9BDA2", "lino_kuehl": "#B6BFB6", "tuer": "#2C5560", "zarge": "#C99A5B", "holz": "#C99A5B",
     "lift": "#2C5560", "petrol": "#2C5560", "figur": "#2C5560",
     # Außengrün (ART_BIBLE §2 „Wiese"/„Laub", Entscheid des Nutzers 23.10.2026): Rasen Wiese, Kronen/Hecken/Büsche Laub
-    "wiese": "#ACB98B", "wiese_hell": "#B9C59A", "weg": "#C9BDA2", "kante": "#EFE6D3", "asphalt": "#B6BFB6", "pflaster": "#F7F1E4", "hecke": "#6F8A62",
-    "stamm": "#2C3E46", "laub": "#6F8A62", "wald_nah": "#6F8A62", "wald_mitte": "#2C5560", "wald_fern": "#F7F1E4",
+    "wiese": "#ACB98B", "wiese_hell": "#B9C59A", "wiese_dunkel": "#9FAE7E", "gras": "#8E9C70", "weg": "#C9BDA2", "kante": "#EFE6D3", "asphalt": "#B6BFB6", "pflaster": "#F7F1E4", "hecke": "#6F8A62",
+    "stamm": "#2C3E46", "zweig": "#2C3E46", "laub": "#6F8A62", "wald_nah": "#6F8A62", "wald_mitte": "#2C5560", "wald_fern": "#F7F1E4",
     "stadt": "#F7F1E4", "stadt_sand": "#EFE6D3", "stadt_dach": "#C99A5B", "himmel_0": HIMMEL_BAENDER[0], "himmel_1": HIMMEL_BAENDER[1],
     "himmel_2": HIMMEL_BAENDER[2], "beet": "#C99A5B",
     # Leben und Tiefe in Bild (a): warme Fenster (Morgenlicht, eine Stufe wärmer als die Fassadensonne), Fluss, Wolken (Morgenlicht-
     # Abwandlungen), Fußschatten der Bäume (Lokalfarbe des Bodens, im Sonnen-Durchgang schwarz → Schattenstufe), Rettungswagen
-    "fenster_warm": "#F3CD8C", "fluss": "#F8E7BF", "wolke_hell": "#FBF0D6", "wolke_warm": "#F8E7BF",
+    "fenster_warm": "#F3CD8C", "fluss": "#F8E7BF", "wolke_hell": "#FBF0D6", "wolke_warm": "#F8E7BF", "wolke_schatten": "#F3E0B8", "wolke_streif": "#FBF0D6",
     "schatten_wiese": "#ACB98B", "schatten_pflaster": "#F7F1E4", "rtw": "#F7F1E4", "rost": "#B5552D",
     # Fassadendetails (25.10.2026): Faschen/Gesimse Papier, Sockelgeschoss Linoleum kühl mit Fugen, Rollläden und Giebelholz Laub,
     # Portaltür dunkles Holz, Zink für Rinne und Fallrohre, Schrift Tinte; Herbst: Kronen gelb/rostig, Laub am Boden
@@ -348,11 +358,11 @@ PALETTE = {
     "gardine": "#E6E4DC", "holz_dunkel": "#5A3A2A", "stein": "#D9D2C2", "zink": "#8A8F96", "schrift": "#1E2A30", "sparren": "#3B2A22",
     "auto_weiss": "#F7F1E4", "auto_blau": "#2C5560", "laub_gelb": "#D0A54A", "laub_rost": "#B8703A", "laub_boden": "#B07A3C", "laub_boden_hell": "#D2A354",
 }
-OHNE_LINIE = {"himmel_0", "himmel_1", "himmel_2", "wald_fern", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
-              "fluss", "schatten_wiese", "schatten_pflaster",
+OHNE_LINIE = {"wiese_dunkel", "gras", "himmel_0", "himmel_1", "himmel_2", "himmel_3", "himmel_4", "wolke_schatten", "wolke_streif", "wald_fern", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
+              "fluss", "schatten_wiese", "schatten_pflaster", "zweig",
               "rahmen", "fasche", "fuge", "holz_gruen", "gardine", "zink", "schrift", "sparren", "laub_boden", "laub_boden_hell", "lamelle"}
-OHNE_SCHATTIERUNG = {"himmel_0", "himmel_1", "himmel_2", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
-                     "fluss", "wolke_hell", "wolke_warm", "fenster_warm", "rahmen", "fasche", "fuge", "gardine", "schrift", "laub_boden", "laub_boden_hell"}
+OHNE_SCHATTIERUNG = {"wiese_dunkel", "gras", "himmel_0", "himmel_1", "himmel_2", "himmel_3", "himmel_4", "wolke_schatten", "wolke_streif", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
+                     "fluss", "wolke_hell", "wolke_warm", "fenster_warm", "zweig", "rahmen", "fasche", "fuge", "gardine", "schrift", "laub_boden", "laub_boden_hell"}
 IMMER_SCHATTEN = {"schatten_wiese", "schatten_pflaster", "stadt", "stadt_sand", "stadt_dach"}   # im Sonnen-Durchgang schwarz: das Komposit
                                          # legt dort die Schattenstufe hin (Fußschatten; die Stadt im Tal liegt um 06:40 noch im Schatten)
 OHNE_SCHATTEN = {"Baeume", "Buesche", "Laternen", "Figuren", "Hof"}   # Sammlungen, deren Objekte keinen Schlagschatten werfen (ART_BIBLE §3.5: bei 7° Sonne
@@ -366,25 +376,39 @@ SONNE_AUS_MATERIAL = {"glas"}            # Glas lässt die Sonne durch (Sonnen-D
 TAG_PALETTE = {
     "putz": "#E9C46A", "sockel": "#8F8A7A", "ziegel": "#B8452F", "rahmen": "#F4F1E6", "glas": "#1B2240", "tor": "#3A5A8C",
     "lamelle": "#B9783E", "beton": "#ECE8DC", "attika": "#ECE8DC", "stuetze": "#3A5A8C",
-    "wiese": "#8DB255", "wiese_hell": "#A5C46A", "weg": "#D9C9A0", "kante": "#F4F1E6", "asphalt": "#6E7480", "pflaster": "#E2D7B9",
-    "hecke": "#3F7A3A", "stamm": "#3B2A22", "laub": "#5E9440", "wald_nah": "#3F7A3A", "wald_mitte": "#2F5A55", "wald_fern": "#9DB8C8",
+    "wiese": "#8DB255", "wiese_hell": "#A5C46A", "wiese_dunkel": "#7AA24A", "gras": "#4E7F33", "weg": "#D9C9A0", "kante": "#F4F1E6", "asphalt": "#6E7480", "pflaster": "#E2D7B9",
+    "hecke": "#3F7A3A", "stamm": "#3B2A22", "zweig": "#2A1F1C", "laub": "#5E9440", "wald_nah": "#3F7A3A", "wald_mitte": "#2F5A55", "wald_fern": "#9DB8C8",
     "stadt": "#E8DCC2", "stadt_sand": "#D9C08A", "stadt_dach": "#B8452F", "beet": "#8A5A3A",
-    "fenster_warm": "#FFD25A", "fluss": "#7FB3D5", "wolke_hell": "#FFFFFF", "wolke_warm": "#F2F6FA",
+    "fenster_warm": "#FFD25A", "fluss": "#7FB3D5", "wolke_hell": "#FFFFFF", "wolke_warm": "#F2F6FA", "wolke_schatten": "#D3E0EE", "wolke_streif": "#E4EEF7",
     "schatten_wiese": "#8DB255", "schatten_pflaster": "#E2D7B9", "rtw": "#F4F1E6", "rost": "#C8382B",
     # Fassadendetails und Herbst (ART_BIBLE §2 „Außen", Ergänzung 25.10.2026)
     "fasche": "#F4F1E6", "gesims": "#F4F1E6", "rustika": "#D6D0BE", "fuge": "#AFA896", "rollladen": "#4F7F4A", "holz_gruen": "#4F7F4A",
     "gardine": "#E3E6EC", "holz_dunkel": "#4A2E22", "stein": "#CFC9BA", "zink": "#7E858F", "schrift": "#1A1F2E", "sparren": "#3B2A22",
     "auto_weiss": "#F4F1E6", "auto_blau": "#3A5A8C", "laub_gelb": "#D9A93C", "laub_rost": "#B9652C", "laub_boden": "#B8762F", "laub_boden_hell": "#D8A24A",
 }
+# Stadt und Hügel (25.10.2026): Wand-, Dach-, Fenster- und Baumtöne; „…_fern" = zum Horizont hin mit Dunst gemischt (Oberstadt am
+# Gegenhang, Luftperspektive). Probe (06:40): alles im Talschatten, ohne Linie. Stile: besonnt und schattiert, die nahe Unterstadt mit Linie.
+STADT_MAT = ("stadt", "stadt_sand", "stadt_rosa", "stadt_dach", "stadt_dach2", "stadt_schiefer", "stadt_fenster", "stadt_baum")
+PALETTE.update({"stadt_rosa": "#EFE0CC", "stadt_dach2": "#B98A50", "stadt_schiefer": "#B6BFB6", "stadt_fenster": "#C9BDA2", "stadt_baum": "#ACB98B", "huegel_baum": "#EFE6D3"})
+TAG_PALETTE.update({"stadt_rosa": "#E2B89A", "stadt_dach2": "#9C3B2C", "stadt_schiefer": "#7A8292", "stadt_fenster": "#4B5470", "stadt_baum": "#5E8A4C", "huegel_baum": "#86A3B8"})
+for _pal, _ziel in ((PALETTE, "#F7F1E4"), (TAG_PALETTE, "#BCD8EE")):
+    for _n in STADT_MAT:
+        _a, _b = (tuple(int(f[i:i + 2], 16) for i in (1, 3, 5)) for f in (_pal[_n], _ziel))
+        _pal[_n + "_fern"] = "#" + "".join(f"{round(x * 0.58 + y * 0.42):02X}" for x, y in zip(_a, _b))
+STADT_ALLE = set(STADT_MAT) | {n + "_fern" for n in STADT_MAT}
+OHNE_LINIE |= STADT_ALLE | {"huegel_baum"}; OHNE_SCHATTIERUNG |= STADT_ALLE | {"huegel_baum"}; IMMER_SCHATTEN |= STADT_ALLE
+
 STILE = {
     "tag": dict(palette=TAG_PALETTE, kamera=dict(sonne=(115.0, 24.0), licht="#FFF3D6", anteil=0.22, schatten=0.45,
-                                                 himmel=["#5E9AD0", "#86B6E0", "#B9D7EE"], wolken=WOLKEN_KUMULUS),
+                                                 himmel=["#5A93CC", "#6AA2D5", "#7FB1DD", "#9CC4E6", "#BCD8EE"], himmel_grenzen=(262, 226, 186, 140),
+                                                 wolken=WOLKEN_KUMULUS),     # fünf Stufen statt drei: zum Horizont heller (Chaland, Pinceau)
                 schatten="#3B4A7A", tinte="#1A1F2E", kontur=2.6, innen=1.3, baumschatten=True),
-    "blau": dict(palette=dict(TAG_PALETTE, wolke_hell="#3A3A3A", wolke_warm="#303030"),
+    "blau": dict(palette=dict(TAG_PALETTE, wolke_hell="#3A3A3A", wolke_warm="#303030", wolke_schatten="#C98E72", wolke_streif="#E0A27C"),
                  kamera=dict(sonne=(80.0, 7.0), licht="#F6C98A", anteil=0.0, schatten=0.0,
-                             himmel=["#0E0E0E", "#262626", "#E9A86A"], wolken=WOLKEN_KUMULUS),           # unten ein Streifen Morgenrot (Dienst endet)
+                             himmel=["#0E0E0E", "#202020", "#383838", "#C99A8A", "#E9A86A"], himmel_grenzen=(255, 205, 150, 100),
+                             wolken=WOLKEN_KUMULUS),           # unten Morgenrot in zwei Stufen (Dienst endet), Wolkenunterseiten glühen
                  schatten="#1A2350", tinte="#0E1226", kontur=2.6, innen=1.3, mit_sonne=False,
-                 duoton=("#121A48", "#8FA4EC"), eigen=0.10, leuchten=("fenster_warm", "himmel_2")),
+                 duoton=("#121A48", "#8FA4EC"), eigen=0.10, leuchten=("fenster_warm", "himmel_3", "himmel_4", "wolke_schatten", "wolke_streif")),
 }
 
 
@@ -652,86 +676,212 @@ def bauen():
         x = 36 + i * 4
         if abs(x + 1.5 - tx) > 2.5: kiste(f"Zaun {i + 1}", x, ty - 0.03, x + 3.0, ty + 0.03, tz + 0.2, tz + 1.3, "holz", "Umgebung")
 
-    # ---------------- Bäume: Stamm mit Astansatz, Kronen aus überlappenden Kugeln, Nadelbäume in Etagen ----------------
-    def vereinen(teile, name):
-        """Mehrere Netze zu einem Objekt (eine Krone = ein Objekt; Freestyle zeichnet nur die sichtbare Silhouette)."""
-        bpy.ops.object.select_all(action='DESELECT')
-        for o in teile: o.select_set(True)
-        bpy.context.view_layer.objects.active = teile[0]; bpy.ops.object.join()
-        o = bpy.context.object; o.name = name
-        return o
+    # ---------------- Bäume (25.10.2026, Referenzen Hergé/Pinceau): Astwerk aus verjüngten Röhren, Kronen aus gezackten Lappen ----------------
+    # Vorher Kugelhaufen (lasen als Luftballons) und ein kahler Baum aus fünf Stöcken (las als Gestell). Jetzt: Stamm gabelt sich
+    # rekursiv, Laubkronen sitzen als Lappen an den Astspitzen (Lücken zeigen das Astwerk), Lappenrand gebeult wie Comic-Wolken,
+    # feine Zweige massiv in Tinte ohne Umriss (`zweig`, OHNE_LINIE), Fichten als gezackte Sternetagen. Alles ohne bpy.ops.
+    ICO = {}
 
-    def krone_kugeln(name, x, y, zc, r, dz_spanne, zr, n, m, flach=(0.78, 0.95)):
-        """n überlappende, verschieden große Kugeln um (x, y, zc), leicht gedrückt, plus eine Kugel als Wipfel."""
-        teile = []
-        for i in range(n):
-            rr = r * zr.uniform(0.45, 0.72); ang = zr.uniform(0, 2 * math.pi); d = (r - rr) * zr.uniform(0.35, 1.0)
-            k = wz.kugel(rr, (x + math.cos(ang) * d, y + math.sin(ang) * d, zc + zr.uniform(-dz_spanne, dz_spanne)), M[m], "hinten", name=name)
-            k.scale = (1, 1, zr.uniform(*flach)); bpy.ops.object.transform_apply(scale=True); teile.append(k)
-        rw = r * 0.55
-        k = wz.kugel(rw, (x + zr.uniform(-0.2, 0.2) * r, y + zr.uniform(-0.2, 0.2) * r, zc + dz_spanne + rw * 0.35), M[m], "hinten", name=name)
-        k.scale = (1, 1, 0.85); bpy.ops.object.transform_apply(scale=True); teile.append(k)
-        return vereinen(teile, name)
+    def ikosaeder(stufe):
+        """Einheits-Ikosaeder (Ecken, Flächen) je Unterteilung, einmal erzeugt."""
+        if stufe not in ICO:
+            import bmesh
+            bm = bmesh.new(); bmesh.ops.create_icosphere(bm, subdivisions=stufe, radius=1.0)
+            ICO[stufe] = ([v.co.normalized() for v in bm.verts], [tuple(v.index for v in f.verts) for f in bm.faces]); bm.free()
+        return ICO[stufe]
+
+    class Bau:
+        """Sammelt Ecken und Flächen für EIN Netz (ein Baum = Holz, Zweige, Krone; Freestyle zeichnet nur die sichtbare Silhouette)."""
+        def __init__(self): self.v, self.f = [], []
+
+        def roehre(self, punkte, radien, seiten=8):
+            """Verjüngte Röhre durch `punkte`, unten mit Deckel, oben mit kurzer Kegelspitze (8 Seiten: beim Sechseck lag der
+            Flächenwinkel genau auf dem Knickwinkel 120°, jede Kante wurde zur Binnenlinie)."""
+            n0 = len(self.v); u = None
+            for i, p in enumerate(punkte):
+                t = (punkte[min(i + 1, len(punkte) - 1)] - punkte[max(i - 1, 0)]).normalized()
+                u = t.orthogonal().normalized() if u is None else (u - t * u.dot(t)).normalized()   # mitgeführter Rahmen: keine Verdrillung
+                w = t.cross(u)
+                for k in range(seiten):
+                    a = 2 * math.pi * k / seiten
+                    self.v.append(tuple(p + (u * math.cos(a) + w * math.sin(a)) * radien[i]))
+            for i in range(len(punkte) - 1):
+                for k in range(seiten):
+                    a0, a1 = n0 + i * seiten + k, n0 + i * seiten + (k + 1) % seiten
+                    self.f.append((a0, a1, a1 + seiten, a0 + seiten))
+            fuss = len(self.v); self.v.append(tuple(punkte[0]))
+            spitze = len(self.v); self.v.append(tuple(punkte[-1] + (punkte[-1] - punkte[-2]).normalized() * radien[-1]))
+            last = n0 + (len(punkte) - 1) * seiten
+            for k in range(seiten):
+                self.f.append((n0 + (k + 1) % seiten, n0 + k, fuss)); self.f.append((last + k, last + (k + 1) % seiten, spitze))
+
+        def lappen(self, c, r, zr, stufe=3, flach=0.92, beulen=20, tiefe=0.3):
+            """Kronenlappen: Kugel, deren Rand aus `beulen` Kuppen besteht (Fibonacci-Verteilung mit Zufall); zwischen den Kuppen
+            Kerben wie bei den Comic-Wolken. Unterseite flacher (Pinceau: Lappen sitzen auf einer dunkleren, flachen Unterseite)."""
+            ecken, flaechen = ikosaeder(stufe); n0 = len(self.v)
+            ga = math.pi * (3 - math.sqrt(5)); d0 = zr.uniform(0, 2 * math.pi); zentren = []
+            for i in range(beulen):
+                zz = 1 - 2 * (i + 0.5) / beulen; rho = math.sqrt(1 - zz * zz); a = i * ga + d0
+                zentren.append((Vector((rho * math.cos(a), rho * math.sin(a), zz)) + Vector(tuple(zr.uniform(-0.15, 0.15) for _ in range(3)))).normalized())
+            breite = 0.62 * math.sqrt(4 * math.pi / beulen)         # schmaler als der Abstand: zwischen den Kuppen bleiben Kerben
+            for e in ecken:
+                f = 0.0
+                for z_ in zentren:
+                    th = math.acos(max(-1.0, min(1.0, e.dot(z_))))
+                    if th < breite: f = max(f, math.sqrt(1 - (th / breite) ** 2))
+                p = e * (r * (1 - tiefe + tiefe * f))
+                self.v.append((c[0] + p.x, c[1] + p.y, c[2] + p.z * (flach if p.z > 0 else flach * 0.82)))
+            self.f.extend(tuple(n0 + i for i in fl) for fl in flaechen)
+
+        def etage(self, x, y, z0, r, h, zr, zacken=13, haengen=0.3):
+            """Fichtenetage: Spitze oben, Rand als Stern (jede zweite Ecke eingezogen, die Spitzen hängen), Unterseite flacher Kegel."""
+            n0 = len(self.v); self.v.append((x, y, z0 + h)); self.v.append((x, y, z0 + h * 0.22)); d0 = zr.uniform(0, math.pi)
+            for i in range(2 * zacken):
+                a = d0 + i * math.pi / zacken + zr.uniform(-0.07, 0.07)
+                if i % 2 == 0: rr, zz = r * zr.uniform(0.88, 1.1), z0 - haengen * h * zr.uniform(0.5, 1.0)
+                else: rr, zz = r * zr.uniform(0.55, 0.72), z0 + 0.08 * h
+                self.v.append((x + rr * math.cos(a), y + rr * math.sin(a), zz))
+            n = 2 * zacken
+            for i in range(n):
+                a, b = n0 + 2 + i, n0 + 2 + (i + 1) % n
+                self.f.append((a, b, n0)); self.f.append((b, a, n0 + 1))
+
+        def fertig(self, name, m, samm, glatt=True):
+            if not self.f: return None
+            o = netz(name, self.v, self.f, m, samm, normalen=True)
+            if glatt: o.data.shade_smooth()
+            return o
+
+    def astwerk(zr, fuss, laengen, r0, gabel=(2, 3), spreiz=(30, 48), auftrieb=0.3, neigung=0.0):
+        """Rekursive Verzweigung (Hergé-Cover): `laengen[s]` = Astlänge der Stufe s (0 = Stamm). Am Ende jedes Asts 2–3 Kinder,
+        das erste als Leittrieb (halbe Spreizung), Radius ÷ √n (Leonardo), Auftrieb nach oben; jeder Ast aus 2–3 Gliedern mit
+        leichtem Knick. Liefert Äste (Punkte, Radien, Stufe) und Spitzen (Punkt, Richtung) der letzten Stufe."""
+        aeste, spitzen = [], []
+        oben = Vector((0, 0, 1))
+
+        def ast(p, d, r, s):
+            glieder = 3 if s < 2 else 2; rr = r * 0.7; pk, rk = [p], [r]
+            for i in range(1, glieder + 1):
+                d = (d + d.orthogonal().normalized() * zr.uniform(-0.16, 0.16) + d.cross(d.orthogonal()).normalized() * zr.uniform(-0.16, 0.16)).normalized()
+                p = p + d * laengen[s] * zr.uniform(0.85, 1.1) / glieder; pk.append(p); rk.append(r + (rr - r) * i / glieder)
+            aeste.append((pk, rk, s))
+            if s == len(laengen) - 1: spitzen.append((p, d)); return
+            k = zr.randint(*gabel); rkind = rr / math.sqrt(k) * 1.1; phi0 = zr.uniform(0, 2 * math.pi)
+            a_ = d.orthogonal().normalized(); b_ = d.cross(a_)
+            for j in range(k):
+                phi = phi0 + j * 2 * math.pi / k + zr.uniform(-0.4, 0.4); sp = math.radians(zr.uniform(*spreiz)) * (0.5 if j == 0 else 1.0)
+                nd = (d * math.cos(sp) + (a_ * math.cos(phi) + b_ * math.sin(phi)) * math.sin(sp) + oben * auftrieb).normalized()
+                ast(p - d * rr * 0.5, nd, rkind, s + 1)
+
+        start = Vector((neigung * zr.uniform(-1, 1), neigung * zr.uniform(-1, 1), 1)).normalized()
+        ast(Vector(fuss), start, r0, 0)
+        return aeste, spitzen
+
+    def holz_bauen(aeste, holz, zweige, ab_stufe, seiten=8):
+        """Äste bis `ab_stufe` − 1 als Holz mit Umriss, ab `ab_stufe` als Tinten-Zweige (4 Seiten, ohne Linie)."""
+        for pk, rk, s in aeste:
+            if s < ab_stufe: holz.roehre(pk, rk, seiten if s else 10)
+            else: zweige.roehre(pk, [max(0.03, r) for r in rk], 4)   # unter 2 px Breite wurden die Zweige im Bild grau
 
     def baum(name, x, y, r, art="laub", m="laub", samm="Baeume", hoehe=None, z=None, stammanteil=None):
-        """laub: Stamm sichtbar, zwei Astansätze, Krone aus 5–7 Kugeln. foehre: hoher Stamm, lichter Schirm aus drei
-        flachen Kugeln. fichte: vier gestapelte Kegel mit Lücken. Zufall je Baum aus dem Namen (reproduzierbar)."""
+        """laub: Stamm gabelt sich zweimal, Lappen an den Spitzen. licht (Spätherbst, halb kahl): vier Stufen Astwerk, nur an
+        einem Teil der Gabeln kleine Lappen, sonst Zweige. kahl: fünf Stufen, Fächer. foehre: hoher Stamm, flacher Schirm aus
+        Lappen. fichte: gezackte Etagen. Waldbäume (`stammanteil`): kurzer Stamm, Lappenkrone ohne sichtbares Astwerk.
+        Zufall je Baum aus dem Namen (reproduzierbar)."""
         zr = random.Random(name)
-        if z is None: z = gelaende_z(x, y); fussschatten(name + " Schatten", x, y, r)    # nur Bäume auf dem Gelände (nicht im Kübel)
-        if art == "laub":
-            h = hoehe or r * 2.6; hs = h * (stammanteil or 0.36); rs = max(0.12, r * 0.07)   # Waldbäume: Krone tiefer (0,2), sonst stehen 8-m-Stämme als „Pfähle" neben dem Haus
-            stamm = wz.zylinder(rs, hs + 0.4, (x, y, z + (hs + 0.4) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm")
-            aeste = [stamm]
-            for j in range(0 if stammanteil else 2):               # zwei Äste schräg in die Krone (Waldbäume: keine, die Gabel ragte unter der Krone hervor)
-                ang = zr.uniform(0, 2 * math.pi); neig = math.radians(zr.uniform(28, 42)); la = r * 0.55
-                dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
-                mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z + hs + math.cos(neig) * la / 2)
-                aeste.append(wz.zylinder(rs * 0.5, la, mitte, M["stamm"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
-            einordnen(vereinen(aeste, name + " Stamm"), samm)
-            zc = z + hs + (h - hs) * 0.5
-            krone = krone_kugeln(name, x, y, zc, r, (h - hs) * 0.22, zr, 5 + zr.randint(0, 2), m)
-            if stammanteil:                                        # Waldbäume: eine Unterkrone direkt über dem Stammende, damit kein langer Stamm frei steht
-                unten = wz.kugel(r * 0.7, (x, y, z + hs + r * 0.55), M[m], "hinten", name=name); unten.scale = (1, 1, 0.8)
-                bpy.ops.object.transform_apply(scale=True); krone = vereinen([krone, unten], name)
-            einordnen(krone, samm)
+        if z is None:                                              # nur Bäume auf dem Gelände (nicht im Kübel); kahle werfen kaum Schatten
+            z = gelaende_z(x, y); fussschatten(name + " Schatten", x, y, r * {"kahl": 0.25, "licht": 0.6}.get(art, 1.0))
+        holz, zweige, krone = Bau(), Bau(), Bau()
+        if art in ("laub", "licht", "kahl") and not stammanteil:
+            h = hoehe or r * 2.6; hs = h * 0.34; rs = max(0.12, r * 0.06)
+            if art == "laub":
+                laengen = (hs, r * 0.6, r * 0.42); ab = 3
+            elif art == "licht":
+                laengen = (hs, r * 0.6, r * 0.42, r * 0.3, r * 0.2); ab = 3
+            else:
+                rs = max(0.16, r * 0.07); laengen = (h * 0.24, h * 0.25, h * 0.2, h * 0.15, h * 0.1, h * 0.07); ab = 3
+            aeste, spitzen = astwerk(zr, (x, y, z - 0.3), laengen, rs, spreiz=(30, 48) if art != "kahl" else (34, 56),
+                                     auftrieb=0.3 if art != "kahl" else 0.16, neigung=0.05, gabel=(2, 3))
+            holz_bauen(aeste, holz, zweige, ab)
+            if art == "laub":                                      # Lappen an den Spitzen und an den Gabeln darunter, dazu ein Wipfel
+                for p, d in spitzen:
+                    krone.lappen(p + d * r * 0.15, r * zr.uniform(0.42, 0.54), zr)
+                for pk, rk, s in aeste:                            # Füllung: sonst standen die Lappen als Pilzhüte einzeln auf Stielen
+                    if s == 1: krone.lappen(pk[-1] + (pk[-1] - pk[0]).normalized() * r * 0.25, r * zr.uniform(0.44, 0.52), zr)
+                top = max(spitzen, key=lambda s_: s_[0].z)[0]
+                krone.lappen((x + zr.uniform(-0.2, 0.2) * r, y + zr.uniform(-0.2, 0.2) * r, top.z + r * 0.25), r * 0.5, zr)
+            elif art == "licht":                                   # nur ein Drittel der Gabeln der Stufe 2 trägt noch Laub
+                for pk, rk, s in aeste:
+                    if s == 2 and zr.random() < 0.38: krone.lappen(pk[-1] + (pk[-1] - pk[0]).normalized() * r * 0.2, r * zr.uniform(0.26, 0.36), zr)
+        elif art in ("laub", "licht", "kahl"):                     # Waldbaum: Krone tief (sonst stehen 8-m-Stämme als „Pfähle" neben dem Haus)
+            h = hoehe or r * 2.6; hs = h * stammanteil; rs = max(0.12, r * 0.07)
+            holz.roehre([Vector((x, y, z - 0.3)), Vector((x, y, z + hs + 0.6))], [rs, rs * 0.8])
+            zc = z + hs + (h - hs) * 0.5; kx, ky = KAMERAS["aussen"]["ort"][:2]
+            fein = dict(stufe=3, beulen=16) if math.hypot(x - kx, y - ky) < 75 else dict(stufe=2, beulen=10)   # nahe Waldbäume: sonst Facetten
+            for i in range(5 + zr.randint(0, 2)):
+                rr = r * zr.uniform(0.45, 0.7); ang = zr.uniform(0, 2 * math.pi); d = (r - rr) * zr.uniform(0.35, 1.0)
+                krone.lappen((x + math.cos(ang) * d, y + math.sin(ang) * d, zc + zr.uniform(-1, 1) * (h - hs) * 0.22), rr, zr, **fein)
+            krone.lappen((x, y, zc + (h - hs) * 0.3), r * 0.55, zr, **fein)
+            krone.lappen((x, y, z + hs + r * 0.55), r * 0.7, zr, flach=0.8, **fein)
         elif art == "foehre":
-            h = hoehe or r * 3.4; hs = h * 0.62; rs = max(0.14, r * 0.08)
-            einordnen(wz.zylinder(rs, hs + 0.3, (x + zr.uniform(-0.3, 0.3), y, z + (hs + 0.3) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
-            einordnen(krone_kugeln(name, x, y, z + hs + (h - hs) * 0.45, r * 0.95, (h - hs) * 0.18, zr, 3, m, flach=(0.45, 0.6)), samm)
-        elif art == "kahl":                                        # Spätherbst: junger Baum ohne Laub — Stamm und fünf kräftige Hauptäste mit Umriss,
-            h = hoehe or r * 2.6; rs = max(0.14, r * 0.05)          # keine feinen Zweige (bei 17–30 px/m wurden sie zu Gekritzel); ein Objekt
-            teile = [wz.zylinder(rs, h * 0.5, (x, y, z + h * 0.25), M["stamm"], "hinten", v=8, name=name + " Stamm")]
-            for j in range(5):
-                ang = j * 2 * math.pi / 5 + zr.uniform(-0.3, 0.3); neig = math.radians(zr.uniform(22, 42)); la = h * zr.uniform(0.45, 0.6)
-                z0_ = z + h * zr.uniform(0.4, 0.5); dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
-                mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z0_ + math.cos(neig) * la / 2)
-                teile.append(wz.zylinder(rs * 0.55, la, mitte, M["stamm"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
-            einordnen(vereinen(teile, name), samm)
-        else:                                                      # fichte: Etagen
-            h = hoehe or r * 3.2; hs = h * 0.18; rs = max(0.12, r * 0.07)
-            einordnen(wz.zylinder(rs, h * 0.6, (x, y, z + h * 0.3), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
-            teile = []; etagen = 4; z0 = z + hs
+            h = hoehe or r * 3.4; hs = h * 0.62; rs = max(0.14, r * 0.08); fx = x + zr.uniform(-0.3, 0.3)
+            holz.roehre([Vector((fx, y, z - 0.3)), Vector((fx + zr.uniform(-0.4, 0.4), y, z + hs * 0.6)), Vector((x, y, z + hs + 0.5))], [rs, rs * 0.85, rs * 0.7])
+            zc = z + hs + (h - hs) * 0.45
+            for i in range(4):
+                ang = zr.uniform(0, 2 * math.pi); d = r * zr.uniform(0.2, 0.5)
+                krone.lappen((x + math.cos(ang) * d, y + math.sin(ang) * d, zc + zr.uniform(-0.5, 0.5) * (h - hs) * 0.3), r * zr.uniform(0.5, 0.65), zr,
+                             stufe=2, beulen=10, flach=0.55)
+        else:                                                      # fichte: gezackte Etagen, nach oben kleiner und dichter
+            h = hoehe or r * 3.2; hs = h * 0.12; rs = max(0.12, r * 0.07)
+            holz.roehre([Vector((x, y, z - 0.3)), Vector((x, y, z + h * 0.6))], [rs, rs * 0.6])
+            etagen = 5 + zr.randint(0, 1); z0 = z + hs
             for j in range(etagen):
-                rj = r * (1.0 - 0.2 * j) * zr.uniform(0.9, 1.1); hj = (h - hs) / etagen * 1.45
-                zj = z0 + (h - hs) / etagen * j
-                teile.append(wz.kegel(rj, rj * 0.1 if j < etagen - 1 else 0.0, hj, (x, y, zj + hj / 2), M[m], "hinten", v=9, name=name))
-            einordnen(vereinen(teile, name), samm)
+                t = j / etagen; rj = r * (1.0 - 0.78 * t) * zr.uniform(0.9, 1.08)
+                hj = (h - hs) / etagen * 1.7; zj = z0 + (h - hs) * t * 0.92
+                krone.etage(x + zr.uniform(-0.1, 0.1), y + zr.uniform(-0.1, 0.1), zj, rj, hj, zr, zacken=13 - j)
+        holz.fertig(name + " Stamm", "stamm", samm, glatt=art not in ("fichte",))
+        zweige.fertig(name + " Zweige", "zweig", samm)
+        krone.fertig(name, m, samm, glatt=art != "fichte")
 
     def busch(name, x, y, r, m="laub", samm="Buesche"):
-        """Busch: Kugelhaufen, Mitte nur 0,3 r über dem Boden (Bodenkontakt, keine schwebende Wolke), dazu ein Fußschatten."""
-        zr = random.Random(name); z = gelaende_z(x, y)
-        einordnen(krone_kugeln(name, x, y, z + r * 0.3, r, r * 0.15, zr, 3 + zr.randint(0, 2), m, flach=(0.6, 0.8)), samm)
+        """Busch: 3–5 gezackte Lappen, Mitte nur 0,3 r über dem Boden (Bodenkontakt, keine schwebende Wolke), dazu ein Fußschatten."""
+        zr = random.Random(name); z = gelaende_z(x, y); b = Bau()
+        for i in range(3 + zr.randint(0, 2)):
+            rr = r * zr.uniform(0.5, 0.72); ang = zr.uniform(0, 2 * math.pi); d = (r - rr) * zr.uniform(0.35, 1.0)
+            b.lappen((x + math.cos(ang) * d, y + math.sin(ang) * d, z + r * 0.3 + zr.uniform(-0.15, 0.15) * r), rr, zr, beulen=11, flach=0.75)
+        b.lappen((x, y, z + r * 0.55), r * 0.55, zr, beulen=11, flach=0.8)
+        b.fertig(name, m, samm)
         fussschatten(name + " Schatten", x, y, r, laenge=1.3, breite=0.8, versatz=0.6)
 
     def hecke(name, p0, p1, hoehe=1.1, dicke=0.9):
-        """Geschnittene Hecke: gedrehter Quader mit stark gerundeter Oberkante (Fase 0,3; ein scharfer Quader las sich als Betonmauer,
-        eine Kugelkette als Raupe). Kein Schlagschatten (Sammlung Buesche), dafür ein Fußschatten-Viereck in Sonnenrichtung."""
-        dx, dy = p1[0] - p0[0], p1[1] - p0[1]; l = math.hypot(dx, dy); w = math.atan2(dy, dx)
-        xm, ym = (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2; z0 = min(gelaende_z(*p0), gelaende_z(*p1)) - 0.15
-        o = wz.kiste((l, dicke, hoehe + 0.15), (xm, ym, z0 + (hoehe + 0.15) / 2), M["hecke"], "hinten", fase=0.3, dreh=(0, 0, w), name=name)
-        einordnen(o, "Buesche")
-        r = dicke / 2; nx_, ny_ = -dy / l * r * 1.1, dx / l * r * 1.1; vs = (sr[0] * 0.8, sr[1] * 0.8)
-        sch = [(p0[0] + nx_ + vs[0], p0[1] + ny_ + vs[1]), (p1[0] + nx_ + vs[0], p1[1] + ny_ + vs[1]), (p1[0] - nx_ + vs[0], p1[1] - ny_ + vs[1]), (p0[0] - nx_ + vs[0], p0[1] - ny_ + vs[1])]
+        """Geschnittene Hecke: Querschnitt mit gerundeter Oberkante, entlang der Länge alle 0,25 m eine Station; Oberkante und
+        Flanken gebeult (Kuppen 0,5–0,7 m, Kerben dazwischen) wie ein frisch nachgewachsener Schnitt. Ein glatter Quader las sich
+        als Betonmauer, eine Kugelkette als Raupe. Kein Schlagschatten (Sammlung Buesche), dafür ein Fußschatten-Viereck."""
+        dx, dy = p1[0] - p0[0], p1[1] - p0[1]; l = math.hypot(dx, dy); tx, ty = dx / l, dy / l; nx_, ny_ = -ty, tx
+        zr = random.Random(name); d2 = dicke / 2
+        profil = [(-d2, -0.2), (-d2, hoehe - 0.3), (-d2 + 0.08, hoehe - 0.1), (-d2 + 0.25, hoehe), (d2 - 0.25, hoehe), (d2 - 0.08, hoehe - 0.1), (d2, hoehe - 0.3), (d2, -0.2)]
+        kuppen = []; s_ = 0.0
+        while s_ < l + 1: w_ = zr.uniform(0.5, 0.7); kuppen.append((s_ + w_ / 2, w_ / 2)); s_ += w_
+
+        def beule(s):
+            for (mitte, halb) in kuppen:
+                if abs(s - mitte) <= halb: return math.sqrt(1 - ((s - mitte) / halb) ** 2)
+            return 0.0
+        n = max(2, int(l / 0.25)); v, f = [], []
+        for i in range(n + 1):
+            s = l * i / n; b = beule(s); px, py = p0[0] + tx * s, p0[1] + ty * s; zb = gelaende_z(px, py)
+            e = math.sqrt(min(1.0, s / 0.5, (l - s) / 0.5))      # Enden gerundet (ein senkrechter Schnitt las als Tunnelportal)
+            for (q, hz) in profil:
+                aussen = 0.06 * b if hz > 0.2 else 0.0; q2 = (q + math.copysign(aussen, q)) * (0.55 + 0.45 * e)
+                hz2 = (hz + (0.08 * b - 0.05 if hz >= hoehe - 0.15 else 0.0)) * (0.7 + 0.3 * e) if hz > 0 else hz
+                v.append((px + nx_ * q2, py + ny_ * q2, zb + hz2))
+        k = len(profil)
+        for i in range(n):
+            for j in range(k - 1): f.append((i * k + j, i * k + j + 1, (i + 1) * k + j + 1, (i + 1) * k + j))
+        f.append(tuple(range(k - 1, -1, -1))); f.append(tuple(n * k + j for j in range(k)))
+        o = netz(name, v, f, "hecke", "Buesche", normalen=True); o.data.shade_smooth()
+        r = dicke / 2; nx2, ny2 = nx_ * r * 1.1, ny_ * r * 1.1; vs = (sr[0] * 0.8, sr[1] * 0.8)
+        sch = [(p0[0] + nx2 + vs[0], p0[1] + ny2 + vs[1]), (p1[0] + nx2 + vs[0], p1[1] + ny2 + vs[1]), (p1[0] - nx2 + vs[0], p1[1] - ny2 + vs[1]), (p0[0] - nx2 + vs[0], p0[1] - ny2 + vs[1])]
         netz(name + " Schatten", [(x, y, gelaende_z(x, y) + 0.012) for x, y in sch], [(0, 1, 2, 3)], "schatten_wiese", "Gelaende")
 
     for i, (p0, p1) in enumerate(HECKEN): hecke(f"Hecke Parkweg {i + 1}", p0, p1)
@@ -752,9 +902,9 @@ def bauen():
         bank(f"Bank Parkweg {i + 1}", x - ty * 2.2, y + tx * 2.2, math.atan2(ty, tx))
     for i, (x, y, r) in enumerate(LINDEN): baum(f"Linde {i + 1}", x, y, r, m=HERBST["linden"][i % 2])   # Spätherbst: gelb und rostig
     baum("Kastanie", *KASTANIE, m=HERBST["kastanie"])
-    for i, (x, y, r, m) in enumerate(JUNGBAEUME): baum(f"Jungbaum {i + 1}", x, y, r, m=m, hoehe=r * 3.3)   # schlanker Stamm, lockere runde Krone
-    for i, (x, y, r) in enumerate(KAHLE_BAEUME): baum(f"Kahler Baum {i + 1}", x, y, r, "kahl")
-    for i, (x, y, r) in enumerate(PLATANEN): baum(f"Platane {i + 1}", x, y, r)
+    for i, (x, y, r, m, art) in enumerate(JUNGBAEUME): baum(f"Jungbaum {i + 1}", x, y, r, art, m=m, hoehe=r * 3.3)   # schlanker Stamm, lockere runde Krone
+    for i, (x, y, r) in enumerate(KAHLE_BAEUME): baum(f"Kahler Baum {i + 1}", x, y, r, "kahl", hoehe=r * 3.0)
+    for i, (x, y, r) in enumerate(PLATANEN): baum(f"Platane {i + 1}", x, y, r, "licht" if i % 2 else "laub", m="laub_gelb" if i % 2 else "laub")   # Platanen verlieren im November früh
     for i, (x, y, r) in enumerate(BUESCHE): busch(f"Busch {i + 1}", x, y, r)
     for i, (x, y, r) in enumerate(UNTERHOLZ): busch(f"Unterholz {i + 1}", x, y, r, "wald_nah")   # Waldrand hinter dem Haus: verdeckt die Stämme links des Westgiebels
 
@@ -841,6 +991,36 @@ def bauen():
     for i in range(wf["anzahl"]):
         cx, cy = zufall.uniform(fx0, fx1), zufall.uniform(fy0, fy1); ra = zufall.uniform(*wf["radius"]); rb = ra * zufall.uniform(0.35, 0.7)
         ellipse(f"Wiesenfleck {i + 1}", cx, cy, ra, rb, zufall.uniform(0, math.pi), "wiese_hell", hoch=0.008)   # unter den Fußschatten (0,012)
+    for i in range(wf["dunkel"]):
+        cx, cy = zufall.uniform(fx0, fx1), zufall.uniform(fy0, fy1); ra = zufall.uniform(2.5, 7.0); rb = ra * zufall.uniform(0.3, 0.6)
+        ellipse(f"Wiesenfleck dunkel {i + 1}", cx, cy, ra, rb, zufall.uniform(0, math.pi), "wiese_dunkel", hoch=0.009)
+
+    def wegabstand(x, y):
+        """Kleinster Abstand zu den Mittellinien der Gehwege (Grasbüschel und Steine bleiben neben dem Weg)."""
+        d = 1e9
+        for weg in (PARKWEG_WEST, PARKWEG):
+            for (ax, ay), (bx, by) in zip(weg, weg[1:]):
+                l2 = (bx - ax) ** 2 + (by - ay) ** 2; t = max(0.0, min(1.0, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / l2))
+                d = min(d, math.hypot(x - ax - t * (bx - ax), y - ay - t * (by - ay)))
+        return d
+    g = GRAS; gras = Bau(); kx, ky = KAMERAS["aussen"]["ort"][:2]; gz = random.Random(23)   # Grasbüschel: 4–6 schmale, geneigte Halme
+    for i in range(g["anzahl"]):
+        d = g["abstand"][0] * (g["abstand"][1] / g["abstand"][0]) ** gz.random(); w = math.radians(gz.uniform(*g["winkel"]))
+        x, y = kx + math.cos(w) * d, ky + math.sin(w) * d
+        if wegabstand(x, y) < g["weg_frei"]: continue
+        z = gelaende_z(x, y); qx, qy = -math.sin(w), math.cos(w)            # Halme quer zur Blickrichtung (sonst nur Striche)
+        for j in range(gz.randint(4, 6)):
+            o_ = gz.uniform(-0.12, 0.12); hh = gz.uniform(0.16, 0.34); neig = gz.uniform(-0.12, 0.12) + o_ * 0.8
+            n0 = len(gras.v); gras.v.extend([(x + qx * (o_ - 0.025), y + qy * (o_ - 0.025), z - 0.02), (x + qx * (o_ + 0.025), y + qy * (o_ + 0.025), z - 0.02),
+                                             (x + qx * (o_ + neig), y + qy * (o_ + neig), z + hh)])
+            gras.f.append((n0, n0 + 1, n0 + 2))
+    gras.fertig("Grasbueschel", "gras", "Buesche", glatt=False)
+    steine = Bau()
+    for i, (weg, s_, q, r) in enumerate(FELDSTEINE):
+        (px, py), (tx, ty) = entlang(PARKWEG_WEST if weg == "west" else PARKWEG, s_); sx, sy = px - ty * q, py + tx * q
+        steine.lappen((sx, sy, gelaende_z(sx, sy) + r * 0.15), r, random.Random(f"Stein {i}"), stufe=2, beulen=5, flach=0.55, tiefe=0.28)
+        fussschatten(f"Feldstein {i + 1} Schatten", sx, sy, r, laenge=1.4, breite=0.8, versatz=0.5)
+    steine.fertig("Feldsteine", "stein", "Buesche", glatt=False)
     # Wald (§5): nahes Band als dichte Gruppe in zwei Reihen (Laub, Föhren, Fichten gemischt), dahinter Silhouettenbänder
     def herbstfarbe(art):                                          # Spätherbst: ein Teil der Laubkronen gelb oder rostig, Nadeln bleiben
         if art != "laub" or zufall.random() > HERBST["wald_anteil"]: return "wald_nah"
@@ -869,8 +1049,8 @@ def bauen():
             basis = gelaende_z(x, y); top = 12.0
             for (bx, r, h, nadel) in baeume:
                 d = abs(x - bx)
-                if nadel: top = max(top, h - d * (h * 0.5 / r)) if d < 2 * r else top
-                elif d < r: top = max(top, h - r * 0.9 + math.sqrt(r * r - d * d) * 0.9)
+                if nadel and d < 2 * r: top = max(top, h - d * (h * 0.5 / r) - (d % (r * 0.4)) * 0.9)   # Fichte: Sägezahn der Etagen
+                elif not nadel and d < r: top = max(top, h - r * 0.9 + math.sqrt(r * r - d * d) * 0.9 + 0.7 * abs(math.sin(x * 0.8 + bx)))   # Laub: Ballen
             top *= min(1.0, (x1 - x) / WALDBAND_AUSLAUF, 1.0) if x > x1 - WALDBAND_AUSLAUF else 1.0   # Band läuft nach Osten aus
             v.append((x, y, basis - 3.0)); v.append((x, y, basis + max(top, 0.5)))
             if i: f.append((2 * i - 2, 2 * i, 2 * i + 1, 2 * i - 1))
@@ -878,35 +1058,105 @@ def bauen():
 
     for i, (y, x0, x1, m, hoehen) in enumerate(WALDBAENDER): waldband(f"Waldband {i + 1}", y, x0, x1, m, hoehen)
 
-    # ---------------- Stadt im Tal: ferne Kulisse (Papier/Sand, ohne Linie), Hügel ----------------
+    # ---------------- Stadt im Tal (25.10.2026, Referenzen Rom-Forum/Tram): Häuser ohne Überlappung in Gassen, drei Wandtöne,
+    # vier Dachtöne, Fensterreihen auf den Seiten zur Kamera (−x, −y), Kaminköpfe, Bäume und Pappeln dazwischen, Kirchtürme mit
+    # Schallöffnungen und Gesims. Ein Netz je Material und Stadtteil (vorher ein Objekt je Haus: rote Schliere aus Überlappungen).
+    # `fern`: Materialien mit Dunst (…_fern, heller) und ohne Linie; die nahe Unterstadt bekommt in den Stilen eine dünne Linie.
     def stadt(nr, st):
-        zr = random.Random(100 + nr)
-        for i in range(st["haeuser"]):
+        zr = random.Random(100 + nr); fern = st.get("fern", False); teile = {}
+        def mat(m): return m + "_fern" if fern else m
+        def bau_(m): return teile.setdefault(mat(m), Bau())
+
+        def quader(b, x0, y0, x1, y1, z0, z1):
+            n0 = len(b.v); b.v.extend([(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0), (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)])
+            b.f.extend(tuple(n0 + i for i in fl) for fl in ((0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (2, 3, 7, 6), (3, 0, 4, 7), (1, 2, 6, 5)))
+
+        def fenster_reihen(x0, y0, x1, y1, zg, h):
+            """Fenster 0,9 × 1,3 m alle 2,6 m, je Geschoss (3 m) eine Reihe, 6 cm vor den Seiten −x und −y (zur Kamera)."""
+            b = bau_("stadt_fenster"); geschosse = max(1, int((h - 0.8) / 3.0))
+            for seite, a0, a1 in (("y", x0, x1), ("x", y0, y1)):
+                n = int((a1 - a0) / 2.6)
+                if n < 1: continue
+                rand = (a1 - a0 - n * 2.6) / 2
+                for g in range(geschosse):
+                    zu = zg + 1.0 + g * 3.0
+                    if zr.random() < 0.12: continue                # hier und da eine blinde Reihe (Laden, Treppenhaus)
+                    for i in range(n):
+                        a = a0 + rand + 1.3 + i * 2.6; n0 = len(b.v)
+                        if seite == "y": b.v.extend([(a - 0.45, y0 - 0.06, zu), (a + 0.45, y0 - 0.06, zu), (a + 0.45, y0 - 0.06, zu + 1.3), (a - 0.45, y0 - 0.06, zu + 1.3)])
+                        else: b.v.extend([(x0 - 0.06, a + 0.45, zu), (x0 - 0.06, a - 0.45, zu), (x0 - 0.06, a - 0.45, zu + 1.3), (x0 - 0.06, a + 0.45, zu + 1.3)])
+                        b.f.append((n0, n0 + 1, n0 + 2, n0 + 3))
+
+        belegt = []
+        def frei(x0, y0, x1, y1, abstand):
+            return all(x1 + abstand <= a0 or x0 - abstand >= a1 or y1 + abstand <= b0 or y0 - abstand >= b1 for (a0, b0, a1, b1) in belegt)
+
+        gr = st.get("groesse", 1.0); versuche = 0; haeuser = 0
+        while haeuser < st["haeuser"] and versuche < st["haeuser"] * 12:
+            versuche += 1
             x = zr.uniform(st["x0"], st["x1"]); schraeg = st.get("neigung", 0.0) * (x - st["x0"])
-            gr = st.get("groesse", 1.0)
-            y = zr.uniform(st["y0"], st["y1"]) + schraeg; b = zr.uniform(8, 22) * gr; t = zr.uniform(7, 14) * gr
+            y = zr.uniform(st["y0"], st["y1"]) + schraeg; b = zr.uniform(8, 18) * gr; t = zr.uniform(7, 12) * gr
             if zr.random() < 0.5: b, t = t, b
-            zg = gelaende_z(x + b / 2, y + t / 2); h = zr.uniform(*st.get("hoehe", (6.0, 11.0))); m = "stadt" if i % 3 else "stadt_sand"
-            kiste(f"Stadt {nr} Haus {i + 1}", x, y, x + b, y + t, zg - 1.0, zg + h, m, "Stadt")
-            md = "stadt_dach"
-            if b >= t:                                             # Satteldach längs x
-                netz(f"Stadt {nr} Dach {i + 1}", [(x, y, zg + h), (x + b, y, zg + h), (x + b, y + t, zg + h), (x, y + t, zg + h), (x, y + t / 2, zg + h + t * 0.45), (x + b, y + t / 2, zg + h + t * 0.45)],
-                     [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4)], md, "Stadt")
+            if not frei(x, y, x + b, y + t, 0.9 * gr): continue    # Gassen statt Überlappung
+            belegt.append((x, y, x + b, y + t)); haeuser += 1
+            zg = gelaende_z(x + b / 2, y + t / 2); h = zr.uniform(*st.get("hoehe", (6.0, 11.0)))
+            quader(bau_(zr.choice(("stadt", "stadt", "stadt_sand", "stadt_rosa"))), x, y, x + b, y + t, zg - 1.0, zg + h)
+            fenster_reihen(x, y, x + b, y + t, zg, h)
+            d = bau_(zr.choice(("stadt_dach", "stadt_dach", "stadt_dach2", "stadt_schiefer"))); u = 0.4 * gr; n0 = len(d.v)
+            if b >= t:                                             # Satteldach längs x, 0,4 m Überstand
+                d.v.extend([(x - u, y - u, zg + h), (x + b + u, y - u, zg + h), (x + b + u, y + t + u, zg + h), (x - u, y + t + u, zg + h),
+                            (x - u, y + t / 2, zg + h + t * 0.45), (x + b + u, y + t / 2, zg + h + t * 0.45)])
+                d.f.extend([(n0, n0 + 1, n0 + 5, n0 + 4), (n0 + 2, n0 + 3, n0 + 4, n0 + 5), (n0 + 1, n0 + 2, n0 + 5), (n0 + 3, n0, n0 + 4)])
+                first = (x + b * zr.uniform(0.2, 0.8), y + t / 2, zg + h + t * 0.45)
             else:
-                netz(f"Stadt {nr} Dach {i + 1}", [(x, y, zg + h), (x + b, y, zg + h), (x + b, y + t, zg + h), (x, y + t, zg + h), (x + b / 2, y, zg + h + b * 0.45), (x + b / 2, y + t, zg + h + b * 0.45)],
-                     [(3, 2, 5, 4), (1, 0, 4, 5), (0, 3, 4), (2, 1, 5)], md, "Stadt")
-        for j, (x, y, art) in enumerate(st["tuerme"]):            # Kirchtürme: einer mit Helm, einer mit Zwiebelhaube
+                d.v.extend([(x - u, y - u, zg + h), (x + b + u, y - u, zg + h), (x + b + u, y + t + u, zg + h), (x - u, y + t + u, zg + h),
+                            (x + b / 2, y - u, zg + h + b * 0.45), (x + b / 2, y + t + u, zg + h + b * 0.45)])
+                d.f.extend([(n0 + 3, n0 + 2, n0 + 5, n0 + 4), (n0 + 1, n0, n0 + 4, n0 + 5), (n0, n0 + 3, n0 + 4), (n0 + 2, n0 + 1, n0 + 5)])
+                first = (x + b / 2, y + t * zr.uniform(0.2, 0.8), zg + h + b * 0.45)
+            if zr.random() < 0.6:                                  # Kaminkopf auf dem First
+                k_ = 0.35 * gr; quader(bau_("stadt_sand" if zr.random() < 0.5 else "stadt"), first[0] - k_, first[1] - k_, first[0] + k_, first[1] + k_, first[2] - 1.0, first[2] + 1.2 * gr)
+        for i in range(st.get("baeume", 0)):                       # Bäume und Pappeln in den Lücken (Rom: Zypressen zwischen den Häusern)
+            x = zr.uniform(st["x0"], st["x1"]); y = zr.uniform(st["y0"], st["y1"]) + st.get("neigung", 0.0) * (x - st["x0"]); rb = zr.uniform(2.2, 3.8) * gr
+            if not frei(x - rb, y - rb, x + rb, y + rb, 0.3): continue
+            belegt.append((x - rb * 0.6, y - rb * 0.6, x + rb * 0.6, y + rb * 0.6)); zg = gelaende_z(x, y)
+            if zr.random() < 0.35: bau_("stadt_baum").lappen((x, y, zg + rb * 2.6), rb * 0.75, zr, stufe=2, beulen=8, flach=2.4, tiefe=0.18)   # Pappel
+            else: bau_("stadt_baum").lappen((x, y, zg + rb * 1.5), rb, zr, stufe=2, beulen=9, flach=0.85)
+        for j, (x, y, art) in enumerate(st["tuerme"]):            # Kirchtürme: Schaft, Gesims, Schallöffnungen, Helm oder Zwiebelhaube
             zg = gelaende_z(x + 3, y + 3)
-            kiste(f"Stadt {nr} Kirchturm {j + 1}", x, y, x + 5, y + 5, zg - 1.0, zg + 24, "stadt_sand", "Stadt")
-            if art == "helm": einordnen(wz.kegel(3.8, 0.0, 11, (x + 2.5, y + 2.5, zg + 29.5), M["stadt_dach"], "hinten", v=8, name=f"Stadt {nr} Helm"), "Stadt")
+            quader(bau_("stadt_sand"), x, y, x + 5, y + 5, zg - 1.0, zg + 24)
+            quader(bau_("stadt"), x - 0.3, y - 0.3, x + 5.3, y + 5.3, zg + 17.6, zg + 18.2)
+            quader(bau_("stadt"), x - 0.35, y - 0.35, x + 5.35, y + 5.35, zg + 23.6, zg + 24.3)
+            fb = bau_("stadt_fenster")
+            for a in (1.6, 3.4):                                   # je zwei Schallöffnungen auf den Seiten zur Kamera, eine Uhr darunter
+                n0 = len(fb.v); fb.v.extend([(x + a - 0.4, y - 0.08, zg + 19.6), (x + a + 0.4, y - 0.08, zg + 19.6), (x + a + 0.4, y - 0.08, zg + 22.4), (x + a - 0.4, y - 0.08, zg + 22.4)]); fb.f.append((n0, n0 + 1, n0 + 2, n0 + 3))
+                n0 = len(fb.v); fb.v.extend([(x - 0.08, y + a + 0.4, zg + 19.6), (x - 0.08, y + a - 0.4, zg + 19.6), (x - 0.08, y + a - 0.4, zg + 22.4), (x - 0.08, y + a + 0.4, zg + 22.4)]); fb.f.append((n0, n0 + 1, n0 + 2, n0 + 3))
+            n0 = len(fb.v); fb.v.append((x + 2.5, y - 0.1, zg + 15.6))
+            for i in range(12): a = 2 * math.pi * i / 12; fb.v.append((x + 2.5 + 0.9 * math.cos(a), y - 0.1, zg + 15.6 + 0.9 * math.sin(a)))
+            fb.f.extend((n0, n0 + 1 + (i + 1) % 12, n0 + 1 + i) for i in range(12))
+            if art == "helm": einordnen(wz.kegel(3.8, 0.0, 11, (x + 2.5, y + 2.5, zg + 29.8), M[mat("stadt_dach")], "hinten", v=8, name=f"Stadt {nr} Helm"), "Stadt")
             else:
-                einordnen(wz.kugel(3.4, (x + 2.5, y + 2.5, zg + 26.5), M["stadt_dach"], "hinten", name=f"Stadt {nr} Zwiebel"), "Stadt")
-                einordnen(wz.kegel(1.3, 0.0, 5, (x + 2.5, y + 2.5, zg + 31.5), M["stadt_dach"], "hinten", v=8, name=f"Stadt {nr} Zwiebel Spitze"), "Stadt")
+                einordnen(wz.kugel(3.4, (x + 2.5, y + 2.5, zg + 26.8), M[mat("stadt_schiefer")], "hinten", name=f"Stadt {nr} Zwiebel"), "Stadt")
+                einordnen(wz.kegel(1.3, 0.0, 5, (x + 2.5, y + 2.5, zg + 31.8), M[mat("stadt_schiefer")], "hinten", v=8, name=f"Stadt {nr} Zwiebel Spitze"), "Stadt")
+        for m, b in teile.items():
+            o = b.fertig(f"Stadt {nr} {m}", m, "Stadt", glatt=m.startswith("stadt_baum"))
+            if o and fern: o["ohne_linie"] = True
 
     for nr, st in enumerate(STADT): stadt(nr + 1, st)
-    for i, (x, y, r, h) in enumerate(HUEGEL):                      # Hügel: Kugeln, nur die oberen h Meter ragen heraus
-        zg = gelaende_z(x, y)
-        einordnen(wz.kugel(r, (x, y, zg - r + h), M["wald_fern"], "hinten", name=f"Huegel {i + 1}"), "Stadt")
+    hz = random.Random(77)
+    for i, (x, y, r, h) in enumerate(HUEGEL):                      # Hügel: Kugeln, nur die oberen h Meter ragen heraus; auf dem Kamm
+        zg = gelaende_z(x, y); zm = zg - r + h                     # ein Saum aus Baumkronen (Rom: Baumreihen auf den Hügeln statt glatter Fläche)
+        o = einordnen(wz.kugel(r, (x, y, zm), M["wald_fern"], "hinten", name=f"Huegel {i + 1}"), "Stadt"); o["ohne_linie"] = True
+        b = Bau(); kx, ky = KAMERAS["aussen"]["ort"][:2]
+        for j in range(int(2 * math.pi * r / 16)):
+            a = 2 * math.pi * j / int(2 * math.pi * r / 16) + hz.uniform(-0.01, 0.01)
+            for band_ in (0.0, 0.5):                               # zwei Reihen knapp unter dem Kamm (sichtbar als Saum und Textur)
+                el = math.asin(max(-1.0, min(1.0, (r - 6 - band_ * 14) / r))); px, py = x + math.cos(a) * r * math.cos(el), y + math.sin(a) * r * math.cos(el)
+                if (px - x) * (kx - x) + (py - y) * (ky - y) < -0.3 * r * math.hypot(kx - x, ky - y): continue   # Rückseite: unsichtbar
+                rb = hz.uniform(4.0, 7.0); pz = zm + r * math.sin(el)
+                if hz.random() < 0.1: b.lappen((px, py, pz + rb * 1.1), rb * 0.55, hz, stufe=1, beulen=6, flach=1.6, tiefe=0.15)   # selten Pappeln: viele lasen als Felsnadeln
+                else: b.lappen((px, py, pz + rb * 0.5), rb, hz, stufe=1, beulen=7, flach=0.8, tiefe=0.2)
+        o = b.fertig(f"Huegel {i + 1} Baeume", "huegel_baum", "Stadt")
+        if o: o["ohne_linie"] = True
 
     # ---------------- Sockel und Decken ----------------
     kiste("Sockel A", A["x0"], A["y0"], A["x1"], A["y1"], -SOCKEL, 0.0, "sockel", "Trakt A EG")
@@ -1400,10 +1650,11 @@ def himmel_setzen(sc, k, gier, M):
     farben = k["himmel"]; abstand = 900.0; hoehe = 700.0
     ox, oy, _ = k["ort"]
     cx, cy = ox + math.cos(gier) * abstand, oy + math.sin(gier) * abstand
-    n = len(farben)
+    n = len(farben); grenzen = k.get("himmel_grenzen")
+    kanten = [-100 + hoehe] + list(grenzen) + [-100.0] if grenzen else [-100 + (n - i) * hoehe / n for i in range(n + 1)]   # Stile: Kanten im sichtbaren Himmel
     for i, f in enumerate(farben):
         m = bpy.data.materials.get(f"himmel_{i}") or wz.material(f"himmel_{i}", (0.9, 0.9, 0.9), 0.9)   # unbenutzte Materialien überleben das Speichern nicht
-        z0 = -100 + (n - 1 - i) * hoehe / n; z1 = z0 + hoehe / n
+        z1, z0 = kanten[i], kanten[i + 1]
         o = wz.platte(3000.0, z1 - z0, (cx, cy, (z0 + z1) / 2), m, "hinten", dreh=(math.radians(90), 0, gier + math.radians(90)), name=f"Himmel {i}")
         o.data.materials[0] = m
     # Wolken: flache Linsen (oben rund, unten flach) 10 m vor der Himmelsebene, Farben Morgenlicht-Abwandlungen, ohne Linie
@@ -1430,18 +1681,36 @@ def himmel_setzen(sc, k, gier, M):
             oben.append((u, top)); unten.append((u, max(0.0, bot)))
         return oben + unten[::-1]
 
-    for i, (seit, z, laenge, dicke, mat) in enumerate(k.get("wolken", ())):
+    def flaeche_quer(name, form, mitte_ab, seit, z, mat):
+        """Ebenes Vieleck quer zur Blickrichtung, `mitte_ab` Meter vor der Kamera, (a seitlich, b Höhe) relativ zu (seit, z)."""
         m = bpy.data.materials.get(mat) or wz.material(mat, (0.95, 0.95, 0.95), 0.9)
-        wx, wy = ox + math.cos(gier) * (abstand - 10) + rx * seit, oy + math.sin(gier) * (abstand - 10) + ry * seit
-        if stil():                                                 # Stile tag/blau: Kumulus mit Umriss
-            form = kumulus(laenge, dicke, random.Random(i + 3))
-        else:                                                      # alte Probe: flache Linse (oben rund, unten flach)
-            form = []
-            for j in range(24):
-                t = 2 * math.pi * j / 24; form.append((laenge / 2 * math.cos(t), dicke * (math.sin(t) if math.sin(t) > 0 else 0.35 * math.sin(t))))
+        wx, wy = ox + math.cos(gier) * mitte_ab + rx * seit, oy + math.sin(gier) * mitte_ab + ry * seit
         v = [(wx + rx * a, wy + ry * a, z + b) for (a, b) in form]
-        me = bpy.data.meshes.new(f"Wolke {i}"); me.from_pydata(v, [], [tuple(range(len(v)))]); me.update()
-        o = bpy.data.objects.new(f"Wolke {i}", me); o.data.materials.append(m); sc.collection.objects.link(o)
+        me = bpy.data.meshes.new(name); me.from_pydata(v, [], [tuple(range(len(v)))]); me.update()
+        o = bpy.data.objects.new(name, me); o.data.materials.append(m); sc.collection.objects.link(o)
+
+    def linse(laenge, dicke, unten=0.35):
+        form = []
+        for j in range(24):
+            t = 2 * math.pi * j / 24; form.append((laenge / 2 * math.cos(t), dicke * (math.sin(t) if math.sin(t) > 0 else unten * math.sin(t))))
+        return form
+
+    for i, (seit, z, laenge, dicke, mat) in enumerate(k.get("wolken", ())):
+        ab = abstand - 10 - i * 1.5                                # jede Wolke etwas näher: spätere überdecken frühere samt Umriss
+        if stil():                                                 # Stile tag/blau: Kumulus mit Umriss, unten eine Schattenbank (ohne Linie;
+            flaeche_quer(f"Wolke {i}", kumulus(laenge, dicke, random.Random(i + 3)), ab, seit, z, mat)   # blau: vom Morgenrot angestrahlt)
+            flaeche_quer(f"Wolke {i} Schatten", kumulus(laenge * 0.84, dicke * 0.4, random.Random(i + 31)), ab - 0.5, seit + laenge * 0.03, z + 0.2, "wolke_schatten")
+        else:                                                      # alte Probe: flache Linse (oben rund, unten flach)
+            flaeche_quer(f"Wolke {i}", linse(laenge, dicke), ab, seit, z, mat)
+    if stil():
+        for i, (seit, z, laenge, dicke) in enumerate(WOLKEN_STREIFEN):
+            flaeche_quer(f"Schleier {i}", linse(laenge, dicke, 0.6), abstand - 30 - i, seit, z, "wolke_streif")
+        zr = random.Random(5); b_ = 0.06                         # Vögel: flaches „M" aus einem Band (Tinte, ohne Linie)
+        for i, (seit, z) in enumerate(VOEGEL):
+            s_ = zr.uniform(0.8, 1.1); h_ = zr.uniform(0.06, 0.16)
+            zug = [(-0.5 * s_, h_ * 0.6), (-0.22 * s_, h_), (0.0, 0.0), (0.22 * s_, h_), (0.5 * s_, h_ * 0.6)]
+            form = [(a, b + b_) for a, b in zug] + [(a, b - b_) for a, b in zug[::-1]]
+            flaeche_quer(f"Vogel {i}", form, 80.0, seit, 3.0 + z, "zweig")
 
 
 def durchgang(kamera_name, art, ortho=None):
@@ -1517,14 +1786,18 @@ def durchgang(kamera_name, art, ortho=None):
                 o.hide_render = bool({m.name for m in o.data.materials if m} & set(ohne_material))
 
     sonne.hide_render = art != "sun"
+    besonnt = STADT_ALLE if stil() else set()            # Stile: die Stadt liegt in der Sonne und hat Seiten (Probe: Talschatten)
+    ohne_sch, immer = OHNE_SCHATTIERUNG - besonnt, IMMER_SCHATTEN - besonnt
     if art == "flat":
         emission_ueberall(lambda n: hex_lin(pal[n]) if n in pal else (0.5, 0.5, 0.5))
         for m in bpy.data.materials:
-            if m.node_tree and m.name not in OHNE_SCHATTIERUNG and m.node_tree.nodes.get("Material Output"): stufen_nach_richtung(m)
+            if m.node_tree and m.name not in ohne_sch and m.node_tree.nodes.get("Material Output"): stufen_nach_richtung(m)
         welt(hex_lin(k["himmel"][0])); sichtbar(); proben = PROBEN["flat"]
     elif art == "lines":
         emission_ueberall(lambda n: (1, 1, 1)); welt((1, 1, 1))
-        sichtbar(OHNE_LINIE | (set() if stil() else {"wolke_hell", "wolke_warm"}))   # Linsenwolken der alten Probe bleiben ohne Umriss
+        sichtbar((OHNE_LINIE - set(STADT_MAT)) if stil() else OHNE_LINIE | {"wolke_hell", "wolke_warm"})   # Linsenwolken der alten Probe ohne Umriss;
+        for o in bpy.data.objects:                       # Stile: nahe Unterstadt mit Linie, Fernes (Oberstadt, Hügel) ohne
+            if o.get("ohne_linie"): o.hide_render = True
         if not ortho and k.get("linien_nur"):           # Innenkameras: alles außerhalb der genannten Sammlungen aus dem Linien-Durchgang nehmen
             for c in bpy.data.collections:
                 if c.name not in k["linien_nur"]: c.hide_render = True
@@ -1559,6 +1832,9 @@ def durchgang(kamera_name, art, ortho=None):
             if boden: li.select_by_collection = True; li.collection = boden; li.collection_negation = 'EXCLUSIVE'
             li.linestyle = bpy.data.linestyles.new("innen"); li.linestyle.color = (0, 0, 0); li.linestyle.caps = "ROUND"
             li.linestyle.thickness = stil()["innen"] * UEBER
+            for st_ in (ls.linestyle, li.linestyle):    # Linie dünner mit der Entfernung (Wald hinten, Unterstadt): Luftperspektive
+                fm = st_.thickness_modifiers.new(name="ferne", type='DISTANCE_FROM_CAMERA'); fm.blend = 'MULTIPLY'
+                fm.range_min, fm.range_max, fm.value_min, fm.value_max = 90.0, 260.0, 1.0, 0.35
         proben = PROBEN["lines"]
     elif art == "sun":
         for m in bpy.data.materials:
@@ -1566,8 +1842,8 @@ def durchgang(kamera_name, art, ortho=None):
             b = m.node_tree.nodes.get("Principled BSDF")
             if b is None: continue
             b.inputs["Base Color"].default_value = (0.6, 0.6, 0.6, 1); b.inputs["Roughness"].default_value = 0.7
-            if m.name in IMMER_SCHATTEN: b.inputs["Base Color"].default_value = (0, 0, 0, 1)   # Fußschatten: immer Schattenstufe
-            if m.name in OHNE_SCHATTIERUNG and m.name not in IMMER_SCHATTEN:   # Himmel, Fernes, warme Fenster gelten als beleuchtet
+            if m.name in immer: b.inputs["Base Color"].default_value = (0, 0, 0, 1)   # Fußschatten: immer Schattenstufe
+            if m.name in ohne_sch and m.name not in immer:   # Himmel, Fernes, warme Fenster gelten als beleuchtet
                 b.inputs["Emission Color"].default_value = (1, 1, 1, 1); b.inputs["Emission Strength"].default_value = 1.0
         welt((0, 0, 0), 0.0); sc.cycles.max_bounces = 0; sichtbar(SONNE_AUS_MATERIAL); proben = PROBEN["sun"]
         for o in bpy.data.objects:                 # Bäume werfen keinen Schatten (OHNE_SCHATTEN), bleiben aber selbst besonnt
