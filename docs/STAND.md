@@ -4,6 +4,19 @@ Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem 
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
+## Fertig (25.10.2026): Mechanik und Struktur, dritte Fassung (Entwurf, wartet auf Freigabe)
+
+- Nutzer will Geschichte und Mechanik neu: zuerst die Mechanik; Belohnungen; drei Teile (Kurswoche im Lehrsaal mit
+  Modellen, Noten und Prüfung · Ambulanz mit Patienten, Mentorbericht und Patientenreaktion · Station und Reanimation).
+- **`docs/MECHANIK.md`** (nur Konzept, Spiel unverändert): dramatische Frage des ganzen Spiels „Wird man dir die Nacht
+  anvertrauen?"; Kernschleife auf vier Ebenen; Befundsatz nach Lektion 34 als gemeinsame Mechanik; Belohnung =
+  Logbuch mit Vertrauensstufen (EPA), Noten nur im Kurs, Mentorbericht (Mini-CEX), Patientenreaktion, Verlauf,
+  Befundatlas, Werkzeuge, „Routine wird kurz"; keine Punkte, Serien, Ranglisten. Teil 1 vier Lehrtage, Prüfung als
+  OSCE; Teil 2 fünf Ambulanztage (A1 = Herr Baum unverändert); Teil 3 Station, Intensiv, Reanimation, Finale
+  Nachtdienst. Bestand-Tabelle (§10), Vorbilder (§11), Datenaufträge (§12), **14 offene Fragen (§13)**, Gutachten
+  Medizin (§14).
+- Ersetzt nach Freigabe KONZEPT §2–§3 und GAME_DESIGN §2, §5; bis dahin gelten diese.
+
 ## Fertig (25.10.2026): Außenstil Tag und Blaue Stunde
 
 - Nutzer bringt Stilreferenzen (Chaland, Floc'h, Tram-Wandbild, Dauger; nur lokal in `vorlagen/haus/stil/`, Ordner
@@ -233,7 +246,26 @@ Komplexe Aufgaben (3D-Szenen, Medizin-Abgleich) als Subagent auf Fable, Routine 
 Auftrag für diesen Chat: <ein Arbeitsblock, z. B. „Nächster Auftrag" unten>
 ```
 
-## Nächster Auftrag (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
+## Nächster Auftrag A (ab 25.10.2026): Mechanik freigeben
+
+Der Nutzer beantwortet die offenen Fragen in `docs/MECHANIK.md` §13 (F1–F14, je eine Entscheidung mit Empfehlung).
+Danach im selben Chat: Antworten in MECHANIK §13 eintragen, KONZEPT §2–§3, GAME_DESIGN §2/§5 und LEHRPLAN §2/§6 auf
+MECHANIK verweisen lassen, committen, pushen. Folgeauftrag (eigener Chat): senkrechter Schnitt (MECHANIK §15.2:
+Lehrtag 3 mit Testat, Prüfungsstation 3, Herr Baum mit Mentorbericht und Logbuch). Auftrag B (Fassade) läuft
+unabhängig davon.
+
+### Startnachricht
+
+```
+Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire.
+Lies docs/STAND.md (Abschnitt „Nächster Auftrag A") und docs/MECHANIK.md ganz, dazu docs/KONZEPT.md §1–§3 und
+docs/REDESIGN_FALL1.md §2–§3 nur bei Bedarf.
+Auftrag: Geh mit mir die offenen Fragen in MECHANIK §13 einzeln durch (eine Frage je Nachricht, kurz, mit
+Empfehlung), trag die Antworten ein und zieh KONZEPT, GAME_DESIGN und LEHRPLAN nach. Kein Code.
+Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
+```
+
+## Nächster Auftrag B (ab 25.10.2026): Fassade und Umgebung ausdetaillieren (beide Außenstile)
 
 Außenstil ist entschieden (siehe „Fertig" oben). Jetzt die Außenansicht (a) vom Blockout zum Bild bringen, in beiden
 Stilen prüfen: Fenster mit Rahmen, Kämpfer und Sprossen, Sohlbank, Gardinen und Jalousien in wechselnder Höhe, einzelne
