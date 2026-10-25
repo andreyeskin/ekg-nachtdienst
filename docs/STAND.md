@@ -13,7 +13,10 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
   Giebelfenster (Kopf zur Fensterwand), Wagen am Kopfende in der Ecke, Whiteboard auf fahrbarem Gestell rechts hinter dem
   Dozententisch (−28° zur Klasse), Uhr über der Leinwand, Stuhl der Dozentin hinter dem Tisch; Ausgang wird ein Pfeil am
   rechten Bildrand. Danach: Kamera tiefer und weiter (5,75 / 2,85 / 1,25, 18 mm), damit unten die eigene Bank mit
-  Block, EKG-Streifen und Zirkel liegt (`werkzeug()` in `szene_lehrsaal.py`); Dozententisch 1,2 × 0,6 m.
+  Block, EKG-Streifen und Zirkel liegt (`werkzeug()` in `szene_lehrsaal.py`); Dozententisch 1,2 × 0,6 m. Dann „schön
+  stellen": Whiteboard an die Flurwand ins Eck (rechter Bildrand; Nutzer wollte die Tafel behalten, Inhalt: Schemata aus
+  dem Code, die Leinwand zeigt echte Kurven), Liege mit hochgestelltem Kopfteil und Kissen, Hocker statt Tritt, Wagenschirm
+  um 31° zur Bank gedreht (für `schirme.json` ebenfalls gedreht), Stuhl der Dozentin weg, Ziel y 3,3.
   Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
 - Für die Ebenen-Pipeline: das Whiteboard ist gedreht — `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an,
   für Hausräume die echten Eckpunkte der Vorderseite nehmen.

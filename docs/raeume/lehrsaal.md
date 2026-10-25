@@ -112,7 +112,7 @@ hier niemandem gehört (§2, Regel 4). Kein Poster mit EKG-Kurve (Text und Kurve
 |---|---|---|---|
 | `projektion` | hintergrund | 2,4 × 1,5 m, frontal zur Kamera, exaktes Rechteck im Bild (wie der große Schirm im Monitorzimmer: Rückwand bei y = 0, keine Kameraneigung) | Millimeterpapier `#FFF8F4` mit Eichzacke; je nach Aufgabe: eine Ableitung groß (50 mm/s), das 12-Kanal-Blatt, der Cabrera-Kreis, die Wellen-Markierungen. Standbild oder laufend, je Aufgabe. Dies ist der Hauptschirm des Raums. |
 | `wagen_schirm` | mittelgrund | wie `wagen_schirm` in der Aufnahme | laufende Ableitung II des Freiwilligen (Monitorstil Phosphor), Frequenz aus den Daten |
-| `whiteboard` | hintergrund | 1,4 × 1,0 m, auf Gestell, schräg zur Klasse (vier Ecken in `schirme.json`) | nur SVG-Zeichnungen aus dem Code (Einthoven-Dreieck, Herzschema aus `gen/kunst.py`); im Render leer |
+| `whiteboard` | hintergrund | 1,2 × 1,1 m an der Flurwand, schräg im Bild (vier Ecken in `schirme.json`) | nur SVG-Zeichnungen aus dem Code (Einthoven-Dreieck, Herzschema aus `gen/kunst.py`); im Render leer |
 
 Alle Kurven kommen aus `data/ekg_daten.json` (ART_BIBLE §6): der Freiwillige ist LUDB-Aufnahme **142**
 (Sinusrhythmus ohne Nebendiagnose, 74/min, PQ 130 ms, QRS 84 ms, QT 356 ms); Ersatz für den
@@ -165,16 +165,16 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
 ## 7. Kamera und Ebenen
 
 - **Die Spielerin sitzt an der ersten Bank** (Wunsch des Nutzers, 25.10.2026), Gangplatz im linken Block: Kamera
-  (5,75 / 2,85 / 1,25), Blick frontal zur Stirnwand (`gier` 180), Ziel (0,45 / 3,0 / 0,4), 18 mm, Bild 1600 × 900,
+  (5,75 / 2,85 / 1,25), Blick frontal zur Stirnwand (`gier` 180), Ziel (0,45 / 3,3 / 0,4), 18 mm, Bild 1600 × 900,
   Objektivverschiebung statt Drehung (die Leinwand bleibt ein exaktes Rechteck). Im Bild: Leinwand mit Uhr darüber in
-  der Mitte, links Liege und Wagen vor dem linken Giebelfenster, rechts Dozententisch und Whiteboard auf Gestell, unten
+  der Mitte, links Liege und Wagen vor dem linken Giebelfenster, rechts Dozententisch, am rechten Bildrand das Whiteboard an der Flurwand, unten
   die eigene Bank mit den Werkzeugen der Spielerin (Block mit Bleistift, EKG-Streifen quer, Zirkel offen; Wunsch des
   Nutzers: „dort liegen die nötigen Instrumente"). Das Lineal kommt erst aus der Schachtel (`lineale`). Die Türen liegen rechts außerhalb: `ausgang` ist ein Pfeil am rechten Bildrand.
   Render: `python3 gen/blender/haus_blockout.py render lehrsaal`. Der frühere Blick von hinten längs des Saals (14,05 /
   3,6 / 1,55, 24 mm) zeigte den ganzen Raum, aber Liege, Whiteboard und Uhr nur klein; dafür sind die Tischreihen
   gebaut, der Saal ist derselbe.
-- **Kein angeschnittener dunkler Vordergrund** (§3.3): deshalb der Stuhl der Dozentin hinter dem Tisch statt am
-  rechten Bildrand; die eigene Bank ist hell (Holz, Papier) und trägt nur die Werkzeuge.
+- **Kein angeschnittener dunkler Vordergrund** (§3.3): deshalb kein Stuhl der Dozentin (sie steht) und kein dunkler
+  Tritt an der Liege; die eigene Bank ist hell (Holz, Papier) und trägt nur die Werkzeuge.
 - **Ebenen** (§3.4): Hintergrund (Hülle, Fenster, Decke, Leinwand, Whiteboard, Uhr, Türen, Vorhänge, Beamer);
   Mittelgrund (Liege, Wagen, Tische, Stühle, Schachtel); Figuren (Dr. Wieser, Jonas, Mitstudierende,
   Spielerinnenschatten). Die Trennung kommt mit der Ebenen-Pipeline für Hausräume.
@@ -191,10 +191,10 @@ Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben
 | Fenster | Südost: Paare x 0,65 … 1,65 / 1,95 … 2,95 und 4,25 … 5,25 / 5,55 … 6,55 (Nische), einzeln x 8,3 … 9,7 und 11,9 … 13,3; Giebel y 0,4 … 1,8 und 4,6 … 6,0; alle z 0,9 … 3,1 |
 | Türen | Flurwand y 7, Mitte x 3,9 und x 9,8, je 1,0 × 2,1 |
 | Leinwand | 2,4 × 1,5 m, Mitte y 3,2, Unterkante z 1,0, an der Stirnwand |
-| Whiteboard | auf fahrbarem Gestell, 1,4 × 1,0 m, Mitte (1,15 / 5,65), z 0,95 … 1,95, um −28° zur Klasse gedreht, vor dem rechten Giebelfenster; Wanduhr Ø 0,42 über der Leinwand, Mitte z 2,97 |
+| Whiteboard | Flurwand ganz vorn im Eck (Wunsch des Nutzers), x 0,55 … 1,75, z 0,95 … 2,05; von der ersten Bank schräg am rechten Bildrand. Wanduhr Ø 0,42 über der Leinwand, Mitte z 2,97 |
 | Dozententisch | 1,2 × 0,6 m (Pult, vom Nutzer verkleinert), Mitte (2,1 / 4,9), quer zum Saal |
-| Liege | 1,95 × 0,65 m, quer vor dem linken Giebelfenster: x 0,85 … 1,5, y 0,35 … 2,3, Liegefläche 0,75 m (unter der Brüstung), Kopfende zur Fensterwand, Füße zur Leinwand, Tritt zur Raumseite; der Freiwillige zeigt der Klasse seine rechte Seite |
-| EKG-Wagen | Mitte (1,175 / 0,03), am Kopfende in der Ecke, Schirm zur Klasse |
+| Liege | 1,95 × 0,65 m, quer vor dem linken Giebelfenster: x 0,85 … 1,5, y 0,35 … 2,3, Liegefläche 0,75 m (unter der Brüstung), Kopfteil 0,5 m um 20° hochgestellt mit Kissen (liest sich als Liege), Kopfende zur Fensterwand, Füße zur Leinwand, Holzhocker an der Fußseite statt eines dunklen Tritts; der Freiwillige zeigt der Klasse seine rechte Seite |
+| EKG-Wagen | Mitte (1,175 / 0,03), am Kopfende in der Ecke, Schirm 0,36 × 0,24 um 31° zur ersten Bank gedreht |
 | Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
 | Decke | Latten z 3,31 … 3,36, Lichtbänder darunter, Ringleuchten Ø 1,1 m auf z 2,75 bei x 7,8 |
 | Figuren | Dr. Wieser 1,72 m, Jonas 1,80 m liegend (Kopf zur Fensterwand); Plätze werden mit der Ebenen-Pipeline neu gesetzt (Vorschlag: Wieser zwischen Liege und Leinwand auf dem freien Boden, nicht vor der Leinwand) |

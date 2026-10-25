@@ -9,7 +9,7 @@ Raum (Entscheid des Nutzers 25.10.2026, Vorbild ein Seminarsaal mit Fensterfront
 x 0 … 14,4, y 0 … 7 (Achsen 1–4), dazu die 1-m-Nische des Eckrisalits West (x 0 … 7,2, y −1 … 0). Lichte Flächen: Giebel
 x 0,45, Fensterwand y −0,55 (Nische) bzw. 0,45, Flurwand y 6,925, Rückwand x 14,325, Raumhöhe 3,4.
 Spielkamera an der ersten Bank, Blick nach Südwesten (−x) auf den Giebel: Leinwand zwischen zwei Fenstern, Uhr darüber,
-links davor Liege und EKG-Wagen, rechts Dozententisch und Whiteboard auf Gestell. Links die Fenster (Südost, Morgensonne).
+links davor Liege und EKG-Wagen, rechts Dozententisch und Whiteboard an der Flurwand. Links die Fenster (Südost, Morgensonne).
 
     python3 gen/blender/haus_blockout.py bauen && python3 gen/blender/haus_blockout.py render lehrsaal
 """
@@ -61,7 +61,7 @@ OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
 # dem Giebelfenster, Leinwand mit Uhr in der Mitte, Dozententisch und Whiteboard rechts; unten die hintere Hälfte der eigenen
 # Bank mit Block, EKG-Streifen und Zirkel (`werkzeug`). Die Türen liegen rechts außerhalb: der Ausgang ist ein Pfeil am rechten Rand.
 # Sonne 08:10 Anfang November (47° N): Azimut 126°, Höhe 9°, fast senkrecht vor der Südostfront, lange Lichtbahnen.
-KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.0, 0.4), gier=180.0, brennweite=18, sonne=(126.0, 9.0),
+KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.3, 0.4), gier=180.0, brennweite=18, sonne=(126.0, 9.0),
               licht="#FFD9A3", anteil=0.6, himmel=["#9EC3E0", "#C9DCE6", "#F2D2B0"],
               schatten=0.24, schattenfarbe="#6F7FB0",   # ohne Sonne: ein Viertel zum kühlen Blau (Lofi-Vorlagen), Sonne Pfirsich
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
@@ -167,7 +167,7 @@ def ausbau(h):
                   BRUESTUNG + 0.24 * groesse), "ls_pflanze", dreh=w, kipp=k, name="LS Blatt")
 
     pflanze(1.15, FENSTER_NISCHE + 0.14); pflanze(5.9, FENSTER_NISCHE + 0.13, 1.3); pflanze(12.2, FENSTER_WAND + 0.17, 0.9)
-    pflanze(GIEBEL + 0.16, 4.8, 1.2)                          # links am rechten Giebelfenster, neben dem Whiteboard
+    pflanze(GIEBEL + 0.16, 4.8, 1.2)                          # links am rechten Giebelfenster
 
     # ---------------- Decke: Holzlatten längs des Raums, Lichtbänder quer, zwei Ringleuchten, Beamer ----------------
     y = FENSTER_NISCHE
@@ -193,7 +193,7 @@ def ausbau(h):
     for (r, t, m) in ((0.21, 0.02, "ls_dunkel"), (0.19, 0.03, "ls_papier")):   # Wanduhr über der Leinwand (im Bild der Spielkamera)
         zyl(r, t, (gx + t / 2, lm, 2.97), m, dreh=(0, math.radians(90), 0), v=32, name="LS Uhr")
 
-    # ---------------- Vorn: Dozententisch mit Linealschachtel, Whiteboard auf Gestell, Liege und EKG-Wagen ----------------
+    # ---------------- Vorn: Dozententisch mit Linealschachtel, Whiteboard an der Flurwand, Liege und EKG-Wagen ----------------
     def tisch(xm, ym, lx, ly, h_=TISCH_H, name="LS Tisch"):
         box(name + " Platte", xm - lx / 2, ym - ly / 2, xm + lx / 2, ym + ly / 2, h_ - 0.03, h_, "ls_holz")
         for ya in (ym - ly / 2 + 0.06, ym + ly / 2 - 0.1):     # T-Gestell an beiden Enden (wie Klapptische)
@@ -211,19 +211,12 @@ def ausbau(h):
     kiste((0.24, 0.015, 0.22), (tx - 0.07, ty + 0.35, TISCH_H + 0.12), "ls_dunkel", dreh=90, kipp=-12, name="LS Laptop Deckel")
     zyl(0.035, 0.24, (tx + 0.18, ty - 0.05, TISCH_H + 0.12), "ls_flasche", v=14, name="LS Flasche")
 
-    # Whiteboard auf fahrbarem Gestell hinter dem Tisch, vor dem rechten Giebelfenster, zur Klasse gedreht (die Flurwand
-    # liegt außerhalb des Bilds der Spielkamera an der ersten Bank). Lokal +x = Tafelseite.
-    bx, by, bw = 1.15, 5.65, -28.0
-    c_, s_ = math.cos(math.radians(bw)), math.sin(math.radians(bw))
-    B = lambda dx, dy, z: (bx + dx * c_ - dy * s_, by + dx * s_ + dy * c_, z)
-    kiste((0.03, 1.46, 1.06), B(0, 0, 1.45), "ls_metall", dreh=bw, name="LS Whiteboard Rahmen")
-    kiste((0.006, 1.4, 1.0), B(0.018, 0, 1.45), "ls_tafel", dreh=bw, name="LS Whiteboard")
-    kiste((0.08, 1.0, 0.02), B(0.05, 0, 0.93), "ls_metall", dreh=bw, name="LS Whiteboard Ablage")
-    for dy in (-0.75, 0.75):
-        kiste((0.04, 0.04, 1.92), B(-0.03, dy, 1.02), "ls_dunkel", dreh=bw, name="LS Whiteboard Staender")
-        kiste((0.55, 0.05, 0.04), B(-0.03, dy, 0.06), "ls_dunkel", dreh=bw, name="LS Whiteboard Fuss")
-        for dx in (-0.25, 0.19):
-            zyl(0.025, 0.04, B(dx, dy, 0.02), "ls_dunkel", dreh=(math.radians(90), 0, math.radians(bw)), v=10, name="LS Whiteboard Rolle")
+    # Whiteboard an der Flurwand, ganz vorn im Eck (Wunsch des Nutzers): von der ersten Bank am rechten Bildrand, schräg
+    # gesehen; das Spiel öffnet es per Klick groß (Herzschema, Einthoven, „Reizleitung bauen").
+    wx0, wx1, wz0, wz1, fw = 0.55, 1.75, 0.95, 2.05, FLUR_WAND - d
+    box("LS Whiteboard Rahmen", wx0 - 0.03, fw - 0.03, wx1 + 0.03, fw, wz0 - 0.03, wz1 + 0.03, "ls_metall")
+    box("LS Whiteboard", wx0, fw - 0.034, wx1, fw - 0.03, wz0, wz1, "ls_tafel")
+    box("LS Whiteboard Ablage", wx0 + 0.2, fw - 0.1, wx1 - 0.2, fw, wz0 - 0.06, wz0 - 0.03, "ls_metall")
 
     # Liege quer vor dem linken Giebelfenster (unter der Brüstung), Kopfende zur Fensterwand, Füße zur Leinwand: von der
     # ersten Bank sieht man den Freiwilligen im Profil, seine rechte Seite (rote Klemme) zur Klasse. Tritt zur Raumseite,
@@ -233,12 +226,18 @@ def ausbau(h):
     box("LS Liege Fuss", lx0 + 0.05, ly0 + 0.3, lx1 - 0.05, ly1 - 0.3, 0.0, 0.06, "ls_petrol")
     box("LS Liege Saeule", lxM - 0.16, (ly0 + ly1) / 2 - 0.25, lxM + 0.16, (ly0 + ly1) / 2 + 0.25, 0.06, 0.57, "ls_dunkel")
     box("LS Liege Rahmen", lx0 + 0.015, ly0 + 0.03, lx1 - 0.015, ly1 - 0.03, 0.57, 0.62, "ls_dunkel")
-    kiste((lx1 - lx0, ly1 - ly0, 0.13), (lxM, (ly0 + ly1) / 2, lo - 0.065), "ls_mint", fase=0.03, name="LS Liege Polster")
-    box("LS Liege Papier", lx0 + 0.07, ly0 + 0.05, lx1 - 0.07, ly1 - 0.05, lo, lo + 0.003, "ls_papier")
-    kiste((0.4, 0.3, 0.07), (lxM, ly0 + 0.2, lo + 0.035), "ls_papier", fase=0.03, name="LS Kissen")
-    zyl(0.065, 0.56, (lxM, ly0 - 0.03, lo + 0.09), "ls_papier", dreh=(0, math.radians(90), 0), v=20, name="LS Papierrolle")
-    box("LS Tritt", lx1 + 0.02, ly0 + 0.75, lx1 + 0.44, ly0 + 1.2, 0.0, 0.25, "ls_dunkel")
-    box("LS Tritt Flaeche", lx1 + 0.02, ly0 + 0.75, lx1 + 0.44, ly0 + 1.2, 0.25, 0.262, "ls_petrol")
+    kk = 0.5                                                   # Kopfteil 0,5 m, um 20° hochgestellt: liest sich als Liege, nicht als Tisch
+    kiste((lx1 - lx0, ly1 - ly0 - kk, 0.13), (lxM, (ly0 + kk + ly1) / 2, lo - 0.065), "ls_mint", fase=0.03, name="LS Liege Polster")
+    kiste((lx1 - lx0, kk, 0.13), (lxM, ly0 + kk - kk / 2 * math.cos(math.radians(20)), lo - 0.065 + kk / 2 * math.sin(math.radians(20))),
+          "ls_mint", kipp=-20, fase=0.03, name="LS Liege Kopfteil")
+    box("LS Liege Papier", lx0 + 0.07, ly0 + kk, lx1 - 0.07, ly1 - 0.05, lo, lo + 0.003, "ls_papier")
+    kiste((0.42, 0.26, 0.08), (lxM, ly0 + 0.2, lo + 0.17), "ls_papier", kipp=-20, fase=0.03, name="LS Kissen")
+    zyl(0.065, 0.56, (lxM, ly0 - 0.04, lo + 0.2), "ls_papier", dreh=(0, math.radians(90), 0), v=20, name="LS Papierrolle")
+    hx_, hy_ = lx1 + 0.3, ly1 - 0.35                           # Hocker an der Fußseite (statt des dunklen Tritts im Vordergrund)
+    zyl(0.17, 0.04, (hx_, hy_, 0.48), "ls_holz", v=24, name="LS Hocker")
+    for w in (0, 120, 240):
+        kiste((0.025, 0.025, 0.47), (hx_ + 0.12 * math.cos(math.radians(w)), hy_ + 0.12 * math.sin(math.radians(w)), 0.23), "ls_dunkel",
+              dreh=w, kipp=0, name="LS Hocker Bein")
     wcx, wcy = lxM, 0.03                                       # EKG-Wagen am Kopfende
     box("LS Wagen Boden oben", wcx - 0.23, wcy - 0.28, wcx + 0.23, wcy + 0.28, 0.9, 0.95, "ls_petrol")
     box("LS Wagen Boden unten", wcx - 0.23, wcy - 0.28, wcx + 0.23, wcy + 0.28, 0.22, 0.26, "ls_petrol")
@@ -246,11 +245,12 @@ def ausbau(h):
         for dy in (-0.23, 0.23):
             zyl(0.012, 0.9, (wcx + dx, wcy + dy, 0.5), "ls_metall", v=8, name="LS Wagen Pfosten")
     box("LS Wagen Geraet", wcx - 0.18, wcy - 0.25, wcx + 0.18, wcy + 0.25, 0.95, 1.06, "ls_dunkel")
-    kiste((0.03, 0.34, 0.25), (wcx + 0.12, wcy, 1.19), "ls_dunkel", dreh=0, name="LS Wagen Schirmrahmen")
-    box("LS Wagen Schirm", wcx + 0.135, wcy - 0.15, wcx + 0.139, wcy + 0.15, 1.095, 1.285, "ls_glas")
+    ws = 31.0                                                   # Schirm zur ersten Bank gedreht (Blick der Spielkamera)
+    nx, ny = math.cos(math.radians(ws)), math.sin(math.radians(ws))
+    kiste((0.03, 0.42, 0.3), (wcx + 0.06, wcy + 0.02, 1.22), "ls_dunkel", dreh=ws, name="LS Wagen Schirmrahmen")
+    kiste((0.004, 0.36, 0.24), (wcx + 0.06 + 0.017 * nx, wcy + 0.02 + 0.017 * ny, 1.22), "ls_glas", dreh=ws, name="LS Wagen Schirm")
     box("LS Wagen Streifen", wcx + 0.18, wcy - 0.06, wcx + 0.183, wcy + 0.06, 0.82, 1.0, "ls_papier")
 
-    # Stuhl der Dozentin hinter dem Tisch, Jacke über der Lehne (sie sitzt nicht)
     def stuhl(x, y, dreh=-90.0, name="LS Stuhl", jacke=None, tasche=None):
         """Seminarstuhl: Sitz und Lehne Petrol, Gestell Tinte. Lehne auf der lokalen +y-Seite; dreh −90° = Lehne nach +x."""
         a = math.radians(dreh); c, s_ = math.cos(a), math.sin(a)
@@ -267,7 +267,6 @@ def ausbau(h):
         if tasche:
             kiste((0.34, 0.14, 0.3), P(0.32, -0.05, 0.15), tasche, dreh=dreh + zr.uniform(-20, 20), fase=0.04, name=name + " Tasche")
 
-    stuhl(tx - 0.58, ty + 0.1, dreh=90 - 10, name="LS Stuhl Dozentin", jacke="ls_dunkel")   # hinter dem Tisch (rechts am Bildrand lag er als dunkler Klotz)
 
     # ---------------- Tischreihen ----------------
     def werkzeug(xm, yp):
