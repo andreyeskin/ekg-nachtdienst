@@ -180,6 +180,9 @@ SONDERFENSTER = [
     ("N", "1OG", "y", 18, 61.8, 65.4, 5.0, 6.6, "glas"),                                                # Warten Angehörige
     ("N", "1OG", "x", 85.2, -5.4, 6.4, 5.0, 6.6, "glas"),                                               # NE Band HKL-Arzt/Befundung
     ("N", "1OG", "x", 85.2, 7.3, 9.7, 4.9, 7.1, "glas"),                                                # Flurende 1. OG
+    ("N", "EG", "y", -6, 71.0, 84.4, 1.0, 2.6, "glas"),                                                 # Triage SE Fensterband (25.10.: Leben an der SE-Seite)
+    ("N", "1OG", "y", -6, 74.8, 84.6, 4.9, 7.0, "glas"),                                                # Schaltraum HKL und Arztzimmer: Band hinter den Lamellen
+    ("N", "1OG", "y", -6, 62.4, 65.4, 5.4, 6.6, "warm"),                                                # Technik N: ein warmes Fenster hinter den Lamellen
 ]
 BLIND_NW = {9, 10}                      # Achsen ohne NW-Fenster (Lifte L1, Blindfeld); Achse 8 liegt im Risalit
 
@@ -198,6 +201,41 @@ PAAR = dict(b=1.0, pfosten=0.3)            # Paar deckt xm ± 1,15 — bleibt 0,
 # Warm beleuchtete Fenster um 06:40 (Ende des Nachtdiensts): (Geschoss, Achse) auf der SE-Front, unregelmäßig, vor allem Station
 # 1. OG; dazu in SONDERFENSTER die Schockraum-Oberlichter (Steiner, Reanimation seit 06:30) und das Portal (Foyer). Rest Tinte/Glas.
 WARME_FENSTER = {("1OG", 3), ("1OG", 6), ("1OG", 9), ("1OG", 11), ("1OG", 15), ("2OG", 4), ("2OG", 14), ("EG", 7)}
+
+# Fassade ausdetailliert (25.10.2026, Auftrag B; Vorbild nur für den Detailgrad: vorlagen/haus/fotos/, nie im Repository).
+# Maßstab von Kamera (a): etwa 17 px je Meter an der Fassade — ein Detail unter 0,1 m ist nur noch Rauschen. Deshalb Fenster-
+# rahmen, Sprossen, Faschen und Fugen als flache Farbflächen OHNE eigene Tuschelinie (Materialien in OHNE_LINIE); Linie nur
+# an der Laibung (Wandnetz), an der Scheibe, am Rollladen und an den Gesimsen.
+FENSTERDEKOR = dict(rahmen=0.13, pfosten=0.10, kaempfer=0.12, kaempfer_hoehe=0.68, fasche=0.16, sohlbank=0.20, sohlbank_vor=0.08,
+                    tiefe=0.14,                        # Scheibe 0,14 m hinter der Außenflucht (statt 0,30: weniger Doppellinie)
+                    rollladen=0.26, gardine=0.30, offen=0.07)   # Anteile der SE-Fenster mit Rollladen (halb/ganz), Gardine, offenem Flügel
+RUSTIKA = dict(fugen=(0.5, 1.1, 1.7, 2.3, 2.9, 3.5), hoehe=0.06, vor=0.012)   # gebändertes Sockelgeschoss: horizontale Fugen (ohne Linie)
+GESIMSE = [dict(z0=3.86, z1=4.10, vor=0.12), dict(z0=7.88, z1=8.08, vor=0.08), dict(z0=11.66, z1=12.0, vor=0.14)]   # Geschoss- und Traufgesims
+# Fassadenkanten, an denen Gesimse laufen: (Wandachse, Lage, a0, a1, Außenseite ±1); nur was Kamera (a) sieht (SE und West)
+FASSADENKANTEN = [("y", -ECK_VOR, 0.0, 7.2, -1), ("x", 7.2, -ECK_VOR, 0.0, +1), ("y", 0.0, 7.2, RISALIT_SE[0], -1),
+                  ("x", RISALIT_SE[0], RISALIT_SE[1], 0.0, -1), ("y", RISALIT_SE[1], RISALIT_SE[0], RISALIT_SE[2], -1), ("x", RISALIT_SE[2], RISALIT_SE[1], 0.0, +1),
+                  ("y", 0.0, RISALIT_SE[2], A["x1"], -1), ("x", 0.0, -ECK_VOR, A["y1"], -1)]
+TRAUFE_OHNE = {("y", RISALIT_SE[1]), ("x", RISALIT_SE[0]), ("x", RISALIT_SE[2])}   # am Mittelrisalit steigt die Giebelwand weiter: dort kein Traufgesims
+SPARREN = dict(abstand=0.9, b=0.12, h=0.16, tiefe=0.55)                            # dunkle Sparrenköpfe unter dem Dachüberstand (ohne Linie)
+FALLROHRE = [("y", -ECK_VOR, 0.25), ("y", 0.0, 7.45), ("y", 0.0, 24.95), ("y", 0.0, 36.25), ("y", 0.0, 53.8), ("y", 0.0, 60.9)]   # (Achse, Lage, Stelle)
+GAUBEN = [13.0, 19.2, 42.0, 48.2]              # Giebelgauben auf der SE-Dachfläche (x der Mitte), Front bei y 1,8
+GAUBE = dict(b=1.6, y=1.8, tiefe=1.8, fenster=(1.0, 1.1))
+PORTAL_DEKOR = dict(bogen=1.5, tuer_h=2.4, pilaster=0.6, pilaster_vor=0.22, stufen=3, stufe=0.37, stufen_b=6.4,
+                    balkon=(27.4, 33.8, 1.45), bruestung=0.95, baluster=0.2)   # Balkon 1. OG = Vordach des Portals, Holzbrüstung
+GIEBEL_DEKOR = dict(streifen=0.32, balkon=(27.6, 33.6, 1.2), rundfenster=(0.42, 15.72), tuer=(0.95, 1.7))
+# Umgebung: Zufahrt (Pflaster, 4,5 m, geschwungen vom Vorplatz zur Rettungsvorfahrt), Stellplätze mit Autos, Figuren als Silhouetten,
+# Wegweiser an der Kehre, Haltestelle an der Klinikstraße, Raucherecke an der Ecke von Trakt N, Fahrradständer am Vorplatz
+ZUFAHRT = [(41.0, -12.0), (50.0, -13.6), (62.0, -15.0), (76.0, -14.2), (88.0, -10.0), (92.0, -6.5)]
+STELLPLAETZE = dict(flaeche=(43.5, -10.8, 53.5, -5.5), autos=[(45.6, -8.1, "auto_weiss"), (51.2, -8.1, "auto_blau")])   # (x, y Mitte, Material), längs y
+FIGUREN = [(30.6, -4.9, 0.0), (34.6, -6.6, 2.2), (35.3, -6.3, -0.8), (64.0, -8.6, 1.0), (23.5, -18.5, 0.6), (106.4, 7.5, 3.1)]   # (x, y, Blick rad)
+WEGWEISER = dict(ort=(17.0, -23.8), hoehe=2.4, schilder=((2.1, 1), (1.6, -1)))   # Schilder (z Unterkante, Pfeilrichtung ±1): Notaufnahme →, Bettenstationen ←
+HALTESTELLE = dict(x=106.6, y0=3.5, y1=7.5, tiefe=1.6, hoehe=2.6, schild=(105.6, 1.5))
+RAUCHERECKE = dict(bank=(66.0, -8.4), ascher=(63.6, -8.0))
+FAHRRAEDER = dict(buegel=(21.2, 22.0, 22.8, 23.6), y=-5.0, raeder=((21.6, "figur"), (23.2, "tor")))
+JUNGBAEUME = [(57.0, -18.6, 2.0, "laub_gelb"), (70.5, -19.0, 1.9, "laub"), (84.0, -18.2, 2.1, "laub_rost"), (10.0, -15.0, 1.8, "laub_gelb")]
+KAHLE_BAEUME = [(44.5, -17.5, 3.0), (-7.0, -28.5, 2.6)]          # junge Bäume ohne Laub (Spätherbst): Stamm und Astfächer
+HERBST = dict(linden=("laub_gelb", "laub_rost"), kastanie="laub_rost", wald_anteil=0.35)   # Spätherbst (ART_BIBLE §4): Kronen teils gelb/rostig
+LAUB = dict(weg=(18.0, 95.0, 90, 2.6), linden=6.5, je_linde=28, vorplatz=30, radius=(0.25, 0.7))   # Herbstlaub: (s0, s1, Anzahl, Streubreite) am Parkweg West
 
 # Umgebung (§5)
 LINDEN = [(15.0, -10.0, 4.5), (46.0, -10.0, 4.5)]                 # (x, y, Kronenradius); nach außen gerückt (Antwort 4): bei x 18 deckte die Krone aus
@@ -237,6 +275,12 @@ FLUSS = dict(punkte=[(410.0, -160.0), (413.0, -80.0), (417.0, 0.0), (423.0, 80.0
 HIMMEL_BAENDER = ["#F8E7BF", "#F6DCA4", "#F3CD8C"]            # oben → Horizont (§9 a)
 # Wolken: flache Linsen auf der Himmelsebene (900 m), (seitlich m, Höhe z, Länge, Dicke, Material); negativ = links der Blickachse
 WOLKEN = [(260.0, 150.0, 520.0, 24.0, "wolke_warm"), (-140.0, 232.0, 820.0, 30.0, "wolke_hell"), (150.0, 290.0, 440.0, 18.0, "wolke_warm")]
+# Comic-Wolken (Stile tag/blau, 25.10.2026): geballte Kumulus mit Umriss statt Linsen — (seitlich m, Unterkante z, Länge, Höhe, Material);
+# Umriss = flache Unterkante, oben eine Kette überlappender Kreise mit Kerben (siehe `kumulus` in himmel_setzen). Dachfirst liegt auf
+# der Himmelsebene bei z ≈ 140, Bildoberkante bei ≈ 300.
+WOLKEN_KUMULUS = [(-320.0, 190.0, 230.0, 75.0, "wolke_hell"), (-70.0, 250.0, 170.0, 52.0, "wolke_hell"),
+                  (190.0, 165.0, 270.0, 92.0, "wolke_hell"), (375.0, 240.0, 140.0, 44.0, "wolke_warm"), (-200.0, 150.0, 100.0, 32.0, "wolke_warm")]
+                                           # alle innerhalb des Bildes (± 458 m bei 900 m): eine angeschnittene Wolke zog ihre Grundlinie als Lineal bis zum Rand
 
 # Vordergrund von Render (a): Büsche (x, y, Radius) in drei Gruppen mit Bodenkontakt neben dem Parkweg, nicht in der Bildmitte,
 # alle ≥ 33 m vor der Kamera (näher werden sie zu grünen Wolken); Wiesenflecken zufällig im Bildausschnitt
@@ -294,14 +338,20 @@ PALETTE = {
     # Abwandlungen), Fußschatten der Bäume (Lokalfarbe des Bodens, im Sonnen-Durchgang schwarz → Schattenstufe), Rettungswagen
     "fenster_warm": "#F3CD8C", "fluss": "#F8E7BF", "wolke_hell": "#FBF0D6", "wolke_warm": "#F8E7BF",
     "schatten_wiese": "#ACB98B", "schatten_pflaster": "#F7F1E4", "rtw": "#F7F1E4", "rost": "#B5552D",
+    # Fassadendetails (25.10.2026): Faschen/Gesimse Papier, Sockelgeschoss Linoleum kühl mit Fugen, Rollläden und Giebelholz Laub,
+    # Portaltür dunkles Holz, Zink für Rinne und Fallrohre, Schrift Tinte; Herbst: Kronen gelb/rostig, Laub am Boden
+    "fasche": "#F7F1E4", "gesims": "#F7F1E4", "rustika": "#D8D2C0", "fuge": "#B6AE9C", "rollladen": "#6F8A62", "holz_gruen": "#6F8A62",
+    "gardine": "#E6E4DC", "holz_dunkel": "#5A3A2A", "stein": "#D9D2C2", "zink": "#8A8F96", "schrift": "#1E2A30", "sparren": "#3B2A22", "ast": "#2C3E46",
+    "auto_weiss": "#F7F1E4", "auto_blau": "#2C5560", "laub_gelb": "#D0A54A", "laub_rost": "#B8703A", "laub_boden": "#B07A3C", "laub_boden_hell": "#D2A354",
 }
 OHNE_LINIE = {"himmel_0", "himmel_1", "himmel_2", "wald_fern", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
-              "fluss", "wolke_hell", "wolke_warm", "schatten_wiese", "schatten_pflaster"}
+              "fluss", "schatten_wiese", "schatten_pflaster",
+              "rahmen", "fasche", "fuge", "holz_gruen", "gardine", "zink", "schrift", "sparren", "laub_boden", "laub_boden_hell", "lamelle", "ast"}
 OHNE_SCHATTIERUNG = {"himmel_0", "himmel_1", "himmel_2", "glas", "wald_fern", "wald_mitte", "stadt", "stadt_sand", "stadt_dach", "wiese_hell",
-                     "fluss", "wolke_hell", "wolke_warm", "fenster_warm"}
+                     "fluss", "wolke_hell", "wolke_warm", "fenster_warm", "rahmen", "fasche", "fuge", "gardine", "schrift", "laub_boden", "laub_boden_hell"}
 IMMER_SCHATTEN = {"schatten_wiese", "schatten_pflaster", "stadt", "stadt_sand", "stadt_dach"}   # im Sonnen-Durchgang schwarz: das Komposit
                                          # legt dort die Schattenstufe hin (Fußschatten; die Stadt im Tal liegt um 06:40 noch im Schatten)
-OHNE_SCHATTEN = {"Baeume", "Buesche", "Laternen"}   # Sammlungen, deren Objekte keinen Schlagschatten werfen (ART_BIBLE §3.5: bei 7° Sonne
+OHNE_SCHATTEN = {"Baeume", "Buesche", "Laternen", "Figuren", "Hof"}   # Sammlungen, deren Objekte keinen Schlagschatten werfen (ART_BIBLE §3.5: bei 7° Sonne
                                          # würde jeder Busch 20 m, jede Laterne 28 m Schatten werfen; Kronenschatten zerlegten die Fassade).
                                          # Sie bekommen stattdessen einen flachen Fußschatten (`fussschatten`). Gebäude und RTW werfen echte.
 SONNE_AUS_MATERIAL = {"glas"}            # Glas lässt die Sonne durch (Sonnen-Durchgang ohne Scheiben)
@@ -317,14 +367,18 @@ TAG_PALETTE = {
     "stadt": "#E8DCC2", "stadt_sand": "#D9C08A", "stadt_dach": "#B8452F", "beet": "#8A5A3A",
     "fenster_warm": "#FFD25A", "fluss": "#7FB3D5", "wolke_hell": "#FFFFFF", "wolke_warm": "#F2F6FA",
     "schatten_wiese": "#8DB255", "schatten_pflaster": "#E2D7B9", "rtw": "#F4F1E6", "rost": "#C8382B",
+    # Fassadendetails und Herbst (ART_BIBLE §2 „Außen", Ergänzung 25.10.2026)
+    "fasche": "#F4F1E6", "gesims": "#F4F1E6", "rustika": "#D6D0BE", "fuge": "#AFA896", "rollladen": "#4F7F4A", "holz_gruen": "#4F7F4A",
+    "gardine": "#E3E6EC", "holz_dunkel": "#4A2E22", "stein": "#CFC9BA", "zink": "#7E858F", "schrift": "#1A1F2E", "sparren": "#3B2A22", "ast": "#3B2A22",
+    "auto_weiss": "#F4F1E6", "auto_blau": "#3A5A8C", "laub_gelb": "#D9A93C", "laub_rost": "#B9652C", "laub_boden": "#B8762F", "laub_boden_hell": "#D8A24A",
 }
 STILE = {
     "tag": dict(palette=TAG_PALETTE, kamera=dict(sonne=(115.0, 24.0), licht="#FFF3D6", anteil=0.22, schatten=0.45,
-                                                 himmel=["#5E9AD0", "#86B6E0", "#B9D7EE"]),
+                                                 himmel=["#5E9AD0", "#86B6E0", "#B9D7EE"], wolken=WOLKEN_KUMULUS),
                 schatten="#3B4A7A", tinte="#1A1F2E", kontur=2.6, innen=1.3, baumschatten=True),
     "blau": dict(palette=dict(TAG_PALETTE, wolke_hell="#3A3A3A", wolke_warm="#303030"),
                  kamera=dict(sonne=(80.0, 7.0), licht="#F6C98A", anteil=0.0, schatten=0.0,
-                             himmel=["#0E0E0E", "#262626", "#E9A86A"]),           # unten ein Streifen Morgenrot (Dienst endet)
+                             himmel=["#0E0E0E", "#262626", "#E9A86A"], wolken=WOLKEN_KUMULUS),           # unten ein Streifen Morgenrot (Dienst endet)
                  schatten="#1A2350", tinte="#0E1226", kontur=2.6, innen=1.3, mit_sonne=False,
                  duoton=("#121A48", "#8FA4EC"), eigen=0.10, leuchten=("fenster_warm", "himmel_2")),
 }
@@ -398,16 +452,34 @@ def bauen():
         return o
 
     def kiste(name, x0, y0, x1, y1, z0, z1, m, samm, fase=0.0):
+        """Achsparalleler Quader. Ohne Fase direkt als Netz (from_pydata, kein Operator): bei 4000 Objekten kostete jeder
+        bpy.ops-Aufruf eine Depsgraph-Aktualisierung, der Bau dauerte 8 min statt 1,5."""
         x0, x1 = sorted((x0, x1)); y0, y1 = sorted((y0, y1)); z0, z1 = sorted((z0, z1))
         if min(x1 - x0, y1 - y0, z1 - z0) < 1e-4: return None
-        o = wz.kiste((x1 - x0, y1 - y0, z1 - z0), ((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2), M[m], "hinten", fase=fase, name=name)
-        return einordnen(o, samm)
+        if fase:
+            o = wz.kiste((x1 - x0, y1 - y0, z1 - z0), ((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2), M[m], "hinten", fase=fase, name=name)
+            return einordnen(o, samm)
+        v = [(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0), (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)]
+        return netz(name, v, [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (2, 3, 7, 6), (3, 0, 4, 7), (1, 2, 6, 5)], m, samm)
 
-    def netz(name, verts, faces, m, samm, glatt=False):
-        me = bpy.data.meshes.new(name); me.from_pydata(verts, [], faces); me.update()
+    def netz(name, verts, faces, m, samm, glatt=False, normalen=False):
+        me = bpy.data.meshes.new(name); me.from_pydata(verts, [], faces)
+        if normalen:                                                   # geschlossene Körper (Prismen): Normalen konsequent nach außen
+            import bmesh
+            bm = bmesh.new(); bm.from_mesh(me); bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:]); bm.to_mesh(me); bm.free()
+        me.update()
         o = bpy.data.objects.new(name, me); o.data.materials.append(M[m]); sc.collection.objects.link(o)
         wz.markiere(o, "hinten")
         return einordnen(o, samm)
+
+    def prisma(name, punkte, achse, w0, w1, m, samm):
+        """Beliebiges ebenes Vieleck (u entlang der Wand, v = z), zwischen w0 und w1 quer zur Wand ausgezogen (Bogenzwickel,
+        Giebelfelder). `achse` wie bei wandnetz."""
+        n = len(punkte); verts = []
+        for w in (w0, w1):
+            for (u, v) in punkte: verts.append((u, w, v) if achse == "y" else (w, u, v))
+        faces = [tuple(range(n)), tuple(range(2 * n - 1, n - 1, -1))] + [(i, (i + 1) % n, n + (i + 1) % n, n + i) for i in range(n)]
+        return netz(name, verts, faces, m, samm, normalen=True)
 
     def wandnetz(name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m, samm):
         """Wand mit Öffnungen als EIN sauberes Netz ohne Boolesche Operation: Vorder- und Rückseite sind ein Raster aus
@@ -618,6 +690,21 @@ def bauen():
             h = hoehe or r * 3.4; hs = h * 0.62; rs = max(0.14, r * 0.08)
             einordnen(wz.zylinder(rs, hs + 0.3, (x + zr.uniform(-0.3, 0.3), y, z + (hs + 0.3) / 2), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
             einordnen(krone_kugeln(name, x, y, z + hs + (h - hs) * 0.45, r * 0.95, (h - hs) * 0.18, zr, 3, m, flach=(0.45, 0.6)), samm)
+        elif art == "kahl":                                        # Spätherbst: junger Baum ohne Laub, Stamm und Astfächer (ein Objekt)
+            h = hoehe or r * 2.4; rs = max(0.1, r * 0.05)
+            einordnen(wz.zylinder(rs, h * 0.55, (x, y, z + h * 0.275), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
+            teile = []                                             # Äste und Zweige ohne Tuschelinie (Material ast): bei 17 px/m wurden sie sonst zum Gekritzel
+            for j in range(6):
+                ang = zr.uniform(0, 2 * math.pi) if j else zr.uniform(0, 0.5); neig = math.radians(zr.uniform(18, 48)); la = h * zr.uniform(0.4, 0.55)
+                z0_ = z + h * zr.uniform(0.42, 0.56); dreh = (neig * math.sin(ang), -neig * math.cos(ang), 0)
+                mitte = (x + math.sin(neig) * la / 2 * math.cos(ang), y + math.sin(neig) * la / 2 * math.sin(ang), z0_ + math.cos(neig) * la / 2)
+                teile.append(wz.zylinder(rs * 0.6, la, mitte, M["ast"], "hinten", dreh=dreh, v=6, name=name + " Ast"))
+                for k in range(1 + (j % 2)):                       # je Ast ein bis zwei Zweige weiter außen
+                    t = zr.uniform(0.55, 0.95); ang2 = ang + zr.uniform(-0.9, 0.9); neig2 = neig + math.radians(zr.uniform(-25, 25)); lz = la * 0.5
+                    px, py, pz = (x + math.sin(neig) * la * t * math.cos(ang), y + math.sin(neig) * la * t * math.sin(ang), z0_ + math.cos(neig) * la * t)
+                    m2 = (px + math.sin(neig2) * lz / 2 * math.cos(ang2), py + math.sin(neig2) * lz / 2 * math.sin(ang2), pz + math.cos(neig2) * lz / 2)
+                    teile.append(wz.zylinder(rs * 0.3, lz, m2, M["ast"], "hinten", dreh=(neig2 * math.sin(ang2), -neig2 * math.cos(ang2), 0), v=5, name=name + " Zweig"))
+            einordnen(vereinen(teile, name + " Aeste"), samm)
         else:                                                      # fichte: Etagen
             h = hoehe or r * 3.2; hs = h * 0.18; rs = max(0.12, r * 0.07)
             einordnen(wz.zylinder(rs, h * 0.6, (x, y, z + h * 0.3), M["stamm"], "hinten", v=8, name=name + " Stamm"), samm)
@@ -646,25 +733,105 @@ def bauen():
         netz(name + " Schatten", [(x, y, gelaende_z(x, y) + 0.012) for x, y in sch], [(0, 1, 2, 3)], "schatten_wiese", "Gelaende")
 
     for i, (p0, p1) in enumerate(HECKEN): hecke(f"Hecke Parkweg {i + 1}", p0, p1)
-    for i, (weg, s) in enumerate(BAENKE_WEG):                      # Ruhebank: Petrol-Gestell, vier Sitz- und zwei Lehnenlatten Holz, längs zum Weg,
-        (x, y), (tx, ty) = entlang(PARKWEG_WEST if weg == "west" else PARKWEG[1:], s)   # Lehne zur NW-Seite (Blick ins Tal); ohne Schlagschatten
-        x, y = x - ty * 2.2, y + tx * 2.2; z = gelaende_z(x, y); w = math.atan2(ty, tx); nx_, ny_ = -ty, tx
-        def teil(name, groesse, laengs, quer, hoch, m):
-            einordnen(wz.kiste(groesse, (x + tx * laengs + nx_ * quer, y + ty * laengs + ny_ * quer, z + hoch), M[m], "hinten", dreh=(0, 0, w), name=f"Bank Parkweg {i + 1} {name}"), "Buesche")
+
+    def bank(name, x, y, w, samm="Buesche"):
+        """Ruhebank: Petrol-Gestell, vier Sitz- und zwei Lehnenlatten Holz; `w` = Richtung der Sitzfläche (rad), Lehne links davon."""
+        z = gelaende_z(x, y); tx, ty = math.cos(w), math.sin(w); nx_, ny_ = -ty, tx
+        def teil(teilname, groesse, laengs, quer, hoch, m):
+            einordnen(wz.kiste(groesse, (x + tx * laengs + nx_ * quer, y + ty * laengs + ny_ * quer, z + hoch), M[m], "hinten", dreh=(0, 0, w), name=f"{name} {teilname}"), samm)
         for a in (-0.7, 0.7):                                      # Seitenwangen: Fuß und Lehnenstütze
             teil("Wange", (0.05, 0.5, 0.42), a, 0.0, 0.21, "petrol"); teil("Stuetze", (0.05, 0.05, 0.45), a, 0.2, 0.62, "petrol")
         for q in (-0.19, -0.065, 0.065, 0.19): teil("Latte", (1.7, 0.1, 0.04), 0.0, q, 0.44, "holz")
         for h in (0.6, 0.78): teil("Lehnenlatte", (1.7, 0.04, 0.1), 0.0, 0.22, h, "holz")
-        fussschatten(f"Bank Parkweg {i + 1} Schatten", x, y, 0.9, laenge=1.2, breite=0.5, versatz=0.5)
-    for i, (x, y, r) in enumerate(LINDEN): baum(f"Linde {i + 1}", x, y, r)
-    baum("Kastanie", *KASTANIE)
+        fussschatten(f"{name} Schatten", x, y, 0.9, laenge=1.2, breite=0.5, versatz=0.5)
+
+    for i, (weg, s) in enumerate(BAENKE_WEG):                      # Ruhebank 2,2 m links des Parkwegs, längs zum Weg, Lehne zur NW-Seite (Blick ins Tal)
+        (x, y), (tx, ty) = entlang(PARKWEG_WEST if weg == "west" else PARKWEG[1:], s)
+        bank(f"Bank Parkweg {i + 1}", x - ty * 2.2, y + tx * 2.2, math.atan2(ty, tx))
+    for i, (x, y, r) in enumerate(LINDEN): baum(f"Linde {i + 1}", x, y, r, m=HERBST["linden"][i % 2])   # Spätherbst: gelb und rostig
+    baum("Kastanie", *KASTANIE, m=HERBST["kastanie"])
+    for i, (x, y, r, m) in enumerate(JUNGBAEUME): baum(f"Jungbaum {i + 1}", x, y, r, m=m, hoehe=r * 3.3)   # schlanker Stamm, lockere runde Krone
+    for i, (x, y, r) in enumerate(KAHLE_BAEUME): baum(f"Kahler Baum {i + 1}", x, y, r, "kahl")
     for i, (x, y, r) in enumerate(PLATANEN): baum(f"Platane {i + 1}", x, y, r)
     for i, (x, y, r) in enumerate(BUESCHE): busch(f"Busch {i + 1}", x, y, r)
+
+    # ---------------- Hof (25.10.2026): Zufahrt, Stellplätze mit Autos, Figuren, Wegweiser, Haltestelle, Raucherecke, Herbstlaub ----------------
+    band("Zufahrt", ZUFAHRT, 4.5, "pflaster", hoch=0.03)
+    for s_ in (1, -1): band(f"Zufahrt Kante {'links' if s_ > 0 else 'rechts'}", ZUFAHRT, WEG["kante"], "kante", hoch=0.035, versatz=s_ * (4.5 + WEG["kante"]) / 2)
+    flaeche("Stellplaetze", *STELLPLAETZE["flaeche"], "asphalt", hoch=0.025)
+    for i, x in enumerate((46.9, 49.7)):                           # Markierung zwischen den Stellplätzen
+        kiste(f"Stellplatz Linie {i + 1}", x - 0.05, STELLPLAETZE["flaeche"][1] + 0.3, x + 0.05, STELLPLAETZE["flaeche"][3] - 0.3, -SOCKEL + 0.03, -SOCKEL + 0.04, "kante", "Gelaende")
+
+    def auto(name, x, y, m):
+        """Pkw längs y (Front nach −y): Wanne, Kabine mit Glas, Räder; Material = Lackfarbe. Wirft echten Schatten (Fahrzeug)."""
+        z = gelaende_z(x, y)
+        kiste(f"{name} Wanne", x - 0.9, y - 2.2, x + 0.9, y + 2.2, z + 0.3, z + 0.95, m, "Umgebung", fase=0.08)
+        kiste(f"{name} Kabine", x - 0.8, y - 1.0, x + 0.8, y + 1.3, z + 0.95, z + 1.5, "glas", "Umgebung", fase=0.06)
+        kiste(f"{name} Dach", x - 0.78, y - 0.75, x + 0.78, y + 1.1, z + 1.5, z + 1.56, m, "Umgebung")
+        for j, (xr, yr) in enumerate(((x - 0.85, y - 1.4), (x - 0.85, y + 1.4), (x + 0.85, y - 1.4), (x + 0.85, y + 1.4))):
+            einordnen(wz.zylinder(0.32, 0.22, (xr, yr, z + 0.32), M["stamm"], "hinten", dreh=(0, math.radians(90), 0), v=12, name=f"{name} Rad {j + 1}"), "Umgebung")
+
+    for i, (x, y, m) in enumerate(STELLPLAETZE["autos"]): auto(f"Auto {i + 1}", x, y, m)
+
+    def figur(name, x, y, blick, m="figur"):
+        """Silhouette: Kapsel 1,7 m (Rumpf, Kopf, zwei Beine als ein schmalerer Zylinder), kein Schlagschatten, kleiner Fußschatten."""
+        z = gelaende_z(x, y)
+        einordnen(wz.zylinder(0.15, 0.85, (x, y, z + 0.425), M[m], "hinten", v=10, name=f"{name} Beine"), "Figuren")
+        einordnen(wz.kiste((0.42, 0.24, 0.62), (x, y, z + 1.16), M[m], "hinten", dreh=(0, 0, blick), fase=0.08, name=f"{name} Rumpf"), "Figuren")
+        einordnen(wz.kugel(0.12, (x, y, z + 1.6), M[m], "hinten", name=f"{name} Kopf"), "Figuren")
+        fussschatten(f"{name} Schatten", x, y, 0.3, laenge=1.4, breite=0.7, versatz=0.8)
+
+    for i, (x, y, blick) in enumerate(FIGUREN): figur(f"Figur {i + 1}", x, y, blick, "rtw" if i == 1 else "figur")   # eine im weißen Kittel
+
+    wwz = WEGWEISER; (wx, wy) = wwz["ort"]; wzz = gelaende_z(wx, wy)                 # Wegweiser an der Kehre: Pfosten, zwei weiße Schilder mit Pfeil und Textbalken
+    einordnen(wz.zylinder(0.05, wwz["hoehe"], (wx, wy, wzz + wwz["hoehe"] / 2), M["zink"], "hinten", v=8, name="Wegweiser Pfosten"), "Hof")
+    for i, (zs, richtung) in enumerate(wwz["schilder"]):
+        kiste(f"Wegweiser Schild {i + 1}", wx - 0.7, wy - 0.03, wx + 0.7, wy + 0.03, wzz + zs, wzz + zs + 0.4, "rtw", "Hof")
+        sx = wx + richtung * 0.42; sz = wzz + zs + 0.2
+        kiste(f"Wegweiser Pfeil {i + 1}", sx - 0.14, wy - 0.045, sx + 0.14, wy - 0.035, sz - 0.03, sz + 0.03, "schrift", "Hof")
+        netz(f"Wegweiser Pfeilspitze {i + 1}", [(sx + richtung * 0.1, wy - 0.045, sz - 0.11), (sx + richtung * 0.1, wy - 0.045, sz + 0.11), (sx + richtung * 0.26, wy - 0.045, sz)], [(0, 1, 2)], "schrift", "Hof")
+        kiste(f"Wegweiser Text {i + 1}", wx - 0.55 + (0.2 if richtung > 0 else 0.0), wy - 0.045, wx + 0.2 + (0.2 if richtung > 0 else 0.0), wy - 0.035, sz - 0.03, sz + 0.03, "schrift", "Hof")
+
+    hs_ = HALTESTELLE; hz = gelaende_z(hs_["x"], (hs_["y0"] + hs_["y1"]) / 2)         # Haltestelle an der Klinikstraße: Glashäuschen und H-Schild
+    for yy in (hs_["y0"] + 0.1, hs_["y1"] - 0.1):
+        kiste("Haltestelle Pfosten", hs_["x"] - 0.06, yy - 0.06, hs_["x"] + 0.06, yy + 0.06, hz, hz + hs_["hoehe"], "zink", "Hof")
+    kiste("Haltestelle Dach", hs_["x"] - 0.3, hs_["y0"] - 0.2, hs_["x"] + hs_["tiefe"], hs_["y1"] + 0.2, hz + hs_["hoehe"], hz + hs_["hoehe"] + 0.15, "stein", "Hof")
+    kiste("Haltestelle Rueckwand", hs_["x"] + hs_["tiefe"] - 0.06, hs_["y0"], hs_["x"] + hs_["tiefe"], hs_["y1"], hz + 0.3, hz + hs_["hoehe"] - 0.1, "glas", "Hof")
+    kiste("Haltestelle Bank", hs_["x"] + hs_["tiefe"] - 0.6, hs_["y0"] + 0.4, hs_["x"] + hs_["tiefe"] - 0.2, hs_["y1"] - 0.4, hz + 0.4, hz + 0.46, "holz", "Hof")
+    sx, sy = hs_["schild"]; sz = gelaende_z(sx, sy)
+    einordnen(wz.zylinder(0.04, 2.6, (sx, sy, sz + 1.3), M["zink"], "hinten", v=8, name="Haltestelle Schildpfosten"), "Hof")
+    einordnen(wz.zylinder(0.32, 0.04, (sx, sy, sz + 2.7), M["rtw"], "hinten", dreh=(0, math.radians(90), 0), v=16, name="Haltestelle Schild"), "Hof")
+    kiste("Haltestelle H", sx - 0.04, sy - 0.12, sx + 0.04, sy + 0.12, sz + 2.6, sz + 2.8, "schrift", "Hof")
+
+    bank("Raucherecke Bank", *RAUCHERECKE["bank"], math.radians(180))                 # Raucherecke an der SE-Ecke von Trakt N, Standascher
+    ax, ay = RAUCHERECKE["ascher"]; az = gelaende_z(ax, ay)
+    einordnen(wz.zylinder(0.12, 1.0, (ax, ay, az + 0.5), M["zink"], "hinten", v=10, name="Standascher"), "Hof")
+    einordnen(wz.zylinder(0.14, 0.06, (ax, ay, az + 1.03), M["petrol"], "hinten", v=10, name="Standascher Deckel"), "Hof")
+
+    lz = random.Random(11); lb = LAUB                                               # Herbstlaub: kleine Ellipsen in zwei Tönen auf Weg, Vorplatz und Wiese
+    def laubfleck(name, x, y):
+        ra = lz.uniform(*lb["radius"]); m = "laub_boden" if lz.random() < 0.55 else "laub_boden_hell"
+        ellipse(name, x, y, ra, ra * lz.uniform(0.5, 0.75), lz.uniform(0, math.pi), m, hoch=0.045, n=8)
+    s0, s1, n_, streu = lb["weg"]
+    for i in range(n_):
+        (px, py), (tx, ty) = entlang(PARKWEG_WEST, lz.uniform(s0, s1)); q = lz.uniform(-streu, streu) * (1.4 if lz.random() < 0.3 else 1.0)
+        laubfleck(f"Laub Weg {i + 1}", px - ty * q, py + tx * q)
+    for j, (x, y, r) in enumerate(LINDEN):
+        for i in range(lb["je_linde"]):
+            a, d = lz.uniform(0, 2 * math.pi), lb["linden"] * math.sqrt(lz.random())
+            laubfleck(f"Laub Linde {j + 1} {i + 1}", x + math.cos(a) * d + sr[0] * 1.5, y + math.sin(a) * d + sr[1] * 1.5)
+    for i in range(lb["vorplatz"]):
+        laubfleck(f"Laub Vorplatz {i + 1}", lz.uniform(VORPLATZ[0], VORPLATZ[2]), lz.uniform(VORPLATZ[1], VORPLATZ[3]))
     for i, (x, y) in enumerate(((38, 24), (54, 20))):
         kiste(f"Holzbank Garten {i + 1}", x - 0.9, y - 0.25, x + 0.9, y + 0.25, 0.0, 0.45, "holz", "Umgebung")
-    for i, x in enumerate((26, 34)):                              # Bänke und Fahrradständer am Vorplatz
-        kiste(f"Bank Vorplatz {i + 1}", x - 0.9, -8.0, x + 0.9, -7.5, -SOCKEL, -SOCKEL + 0.45, "holz", "Umgebung")
-    kiste("Fahrradstaender", 21.0, -5.5, 24.0, -4.5, -SOCKEL, -SOCKEL + 0.8, "petrol", "Umgebung")
+    for i, x in enumerate((25.0, 36.2)): bank(f"Bank Vorplatz {i + 1}", x, -7.8, 0.0)   # Bänke am Vorplatz, Blick nach Südost
+    fr = FAHRRAEDER; zf_ = gelaende_z(fr["buegel"][0], fr["y"])                            # Anlehnbügel (flache Platten, lesbar als Bügel) und zwei Räder
+    for i, x in enumerate(fr["buegel"]):
+        kiste(f"Fahrradbuegel {i + 1}", x - 0.3, fr["y"] - 0.025, x + 0.3, fr["y"] + 0.025, zf_, zf_ + 0.8, "stuetze", "Hof")
+    for i, (x, m) in enumerate(fr["raeder"]):
+        for dy in (-0.52, 0.52):
+            einordnen(wz.zylinder(0.33, 0.04, (x, fr["y"] + dy, zf_ + 0.33), M[m], "hinten", dreh=(0, math.radians(90), 0), v=16, name=f"Fahrrad {i + 1} Rad"), "Hof")
+        kiste(f"Fahrrad {i + 1} Rahmen", x - 0.02, fr["y"] - 0.45, x + 0.02, fr["y"] + 0.45, zf_ + 0.45, zf_ + 0.75, m, "Hof")
     zufall = random.Random(7)
     # Wiesenflecken: hellere Ellipsen auf der Wiese (ohne Linie, ohne Schattierung), folgen dem Gelände
     wf = WIESENFLECKEN; fx0, fy0, fx1, fy1 = wf["bereich"]
@@ -672,19 +839,22 @@ def bauen():
         cx, cy = zufall.uniform(fx0, fx1), zufall.uniform(fy0, fy1); ra = zufall.uniform(*wf["radius"]); rb = ra * zufall.uniform(0.35, 0.7)
         ellipse(f"Wiesenfleck {i + 1}", cx, cy, ra, rb, zufall.uniform(0, math.pi), "wiese_hell", hoch=0.008)   # unter den Fußschatten (0,012)
     # Wald (§5): nahes Band als dichte Gruppe in zwei Reihen (Laub, Föhren, Fichten gemischt), dahinter Silhouettenbänder
+    def herbstfarbe(art):                                          # Spätherbst: ein Teil der Laubkronen gelb oder rostig, Nadeln bleiben
+        if art != "laub" or zufall.random() > HERBST["wald_anteil"]: return "wald_nah"
+        return "laub_gelb" if zufall.random() < 0.6 else "laub_rost"
     wn = WALD_NAH
     for reihe, (y0, y1) in enumerate(wn["reihen"]):
         x = wn["x0"] + reihe * wn["abstand"] / 2
         while x < wn["x1"]:
             xx = x + zufall.uniform(-1.5, 1.5); yy = zufall.uniform(y0, y1); w = zufall.random()
             art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
-            baum(f"Wald {reihe + 1} {x:g}", xx, yy, zufall.uniform(3.5, 5.5), art, "wald_nah", hoehe=zufall.uniform(*wn["hoehe"]))
+            baum(f"Wald {reihe + 1} {x:g}", xx, yy, zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*wn["hoehe"]))
             x += wn["abstand"]
     ww = WALD_WEST
     for x in range(int(ww["x0"]), int(ww["x1"]), int(ww["abstand"][0])):     # Wald westlich (x < −20), rahmt Render (a) links
         for y in range(int(ww["y0"]), int(ww["y1"]), int(ww["abstand"][1])):
             w = zufall.random(); art = "laub" if w < 0.5 else ("foehre" if w < 0.8 else "fichte")
-            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(3.5, 5.5), art, "wald_nah", hoehe=zufall.uniform(*ww["hoehe"]))
+            baum(f"Wald W {x} {y}", x + zufall.uniform(-2, 2), y + zufall.uniform(-2, 2), zufall.uniform(3.5, 5.5), art, herbstfarbe(art), hoehe=zufall.uniform(*ww["hoehe"]))
 
     def waldband(name, y, x0, x1, m, hoehen):
         """Silhouettenband: ein senkrechtes Netz bei y, Oberkante = Umriss überlappender Kronen und Wipfel."""
@@ -795,21 +965,89 @@ def bauen():
             if f1 <= a0 or f0 >= a1: continue
             oeffnungen.append((f0, f1, z0, z1))
             scheibe(trakt, g, achse, lage, f0, f1, z0, z1, art, innen_seite)
-        return wandnetz(name, achse, w0, w1, a0, a1, z, oben or z + GESCHOSS, oeffnungen, "putz", f"Trakt {trakt} {g}")
+        m = "beton" if trakt == "N" else ("rustika" if g == "EG" else "putz")       # Neubau hell, Altbau-Sockelgeschoss gebändert
+        if m == "rustika":                                                            # Fugen: flache Streifen zwischen den Fenstern (ohne Linie)
+            frei = [(a0, a1)]
+            for (f0, f1, z0, z1) in oeffnungen:
+                neu_ = []
+                for (b0, b1) in frei:
+                    o0, o1 = f0 - FENSTERDEKOR["fasche"] - 0.02, f1 + FENSTERDEKOR["fasche"] + 0.02
+                    if o1 <= b0 or o0 >= b1: neu_.append((b0, b1)); continue
+                    if o0 > b0: neu_.append((b0, o0))
+                    if o1 < b1: neu_.append((o1, b1))
+                frei = neu_
+            fw0, fw1 = (lage - RUSTIKA["vor"], lage) if innen_seite > 0 else (lage, lage + RUSTIKA["vor"])
+            for (b0, b1) in frei:
+                if b1 - b0 < 0.15: continue
+                for zf in RUSTIKA["fugen"]:
+                    if achse == "y": kiste("Fuge", b0, fw0, b1, fw1, z + zf, z + zf + RUSTIKA["hoehe"], "fuge", f"Trakt {trakt} {g}")
+                    else: kiste("Fuge", fw0, b0, fw1, b1, z + zf, z + zf + RUSTIKA["hoehe"], "fuge", f"Trakt {trakt} {g}")
+        return wandnetz(name, achse, w0, w1, a0, a1, z, oben or z + GESCHOSS, oeffnungen, m, f"Trakt {trakt} {g}")
 
     def scheibe(trakt, g, achse, lage, f0, f1, z0, z1, art, innen_seite):
-        """Rahmen (Petrol) und Scheibe (Glas) in der Laibung, 0,3 m hinter der Außenflucht."""
-        tiefe = 0.3 * innen_seite; d = 0.06
-        m = {"glas": "glas", "portal": "fenster_warm", "tor": "tor", "warm": "fenster_warm"}[art]   # Portal: Foyer um 06:40 beleuchtet
-        samm = f"Trakt {trakt} {g}"
-        if achse == "y":
-            kiste(f"Scheibe {achse}{lage:g} {f0:g} {g}", f0, lage + tiefe - d / 2, f1, lage + tiefe + d / 2, z0, z1, m, samm)
-            for a in (f0, f1 - 0.08): kiste("Rahmen", a, lage + tiefe - 0.05, a + 0.08, lage + tiefe + 0.05, z0, z1, "rahmen", samm)
-            for zz in (z0, z1 - 0.08): kiste("Rahmen", f0, lage + tiefe - 0.05, f1, lage + tiefe + 0.05, zz, zz + 0.08, "rahmen", samm)
-        else:
-            kiste(f"Scheibe {achse}{lage:g} {f0:g} {g}", lage + tiefe - d / 2, f0, lage + tiefe + d / 2, f1, z0, z1, m, samm)
-            for a in (f0, f1 - 0.08): kiste("Rahmen", lage + tiefe - 0.05, a, lage + tiefe + 0.05, a + 0.08, z0, z1, "rahmen", samm)
-            for zz in (z0, z1 - 0.08): kiste("Rahmen", lage + tiefe - 0.05, f0, lage + tiefe + 0.05, f1, zz, zz + 0.08, "rahmen", samm)
+        """Fenster in der Laibung (25.10.2026, Auftrag B). Altbau: Scheibe 0,14 m hinter der Flucht, davor weißer Rahmen mit Pfosten und
+        Kämpfer (flache Streifen ohne Linie), außen Fasche und Sohlbank (Putzrahmen, ohne Linie); nach festem Zufall je Fenster ein grüner
+        Rollladen in wechselnder Höhe (mit Linie an der Unterkante), eine Gardine oder ein nach außen geöffneter Flügel (Kastenfenster) —
+        nur auf den Seiten, die Kamera (a) sieht. Neubau: Scheibe und dünner weißer Rahmen. Portal: Rundbogen (Zwickel), dunkle
+        Holz-Doppeltür, Oberlicht warm."""
+        FD = FENSTERDEKOR; tiefe = FD["tiefe"] * innen_seite; aussen = -innen_seite; d = 0.06
+        m = {"glas": "glas", "portal": "fenster_warm", "tor": "tor", "warm": "fenster_warm"}[art]
+        samm = f"Trakt {trakt} {g}"; sichtbar_a = (achse == "y" and lage <= 0) or (achse == "x" and lage <= 0)
+
+        def box(name, a0, a1, zz0, zz1, w0, w1, mat, **kw):
+            """Quader in Wandkoordinaten: a entlang der Wand, w quer (absolut), z."""
+            return kiste(name, a0, w0, a1, w1, zz0, zz1, mat, samm, **kw) if achse == "y" else kiste(name, w0, a0, w1, a1, zz0, zz1, mat, samm, **kw)
+
+        def quer(von, bis):                                        # Querschicht relativ zur Außenflucht, nach außen positiv (sortiert)
+            return tuple(sorted((lage + aussen * von, lage + aussen * bis)))
+
+        if art == "portal":
+            R = PORTAL_DEKOR["bogen"]; um = (f0 + f1) / 2; zk = z1 - R; th = PORTAL_DEKOR["tuer_h"]
+            for seite in (-1, 1):                                  # Bogenzwickel: Rechteck minus Viertelkreis, durch die ganze Wandstärke
+                bogen = lambda winkel: [(um + R * math.cos(math.radians(a)), zk + R * math.sin(math.radians(a))) for a in winkel]
+                if seite < 0: pts = [(um - R, zk), (um - R, z1), (um, z1)] + bogen(range(95, 180, 5))
+                else: pts = [(um, z1), (um + R, z1), (um + R, zk)] + bogen(range(5, 90, 5))
+                prisma(f"Portal Zwickel {'links' if seite < 0 else 'rechts'}", pts, achse, *sorted((lage, lage + innen_seite * A["aussen"])), "rustika", samm)
+            box("Portal Oberlicht", f0, f1, th, z1, *quer(tiefe * aussen - d / 2, tiefe * aussen + d / 2), "fenster_warm")
+            for (a0, a1) in ((f0, um - 0.02), (um + 0.02, f1)):
+                box("Portal Tuerblatt", a0, a1, 0.0, th, *quer(tiefe * aussen - d / 2, tiefe * aussen + d / 2), "holz_dunkel")
+            box("Portal Kaempfer", f0, f1, th - 0.05, th + 0.05, *quer(tiefe * aussen + d / 2, tiefe * aussen + d / 2 + 0.03), "sparren")
+            for a in (um - 0.4, um + 0.4): box("Portal Griff", a - 0.03, a + 0.03, 1.0, 1.35, *quer(tiefe * aussen + d / 2, tiefe * aussen + d / 2 + 0.03), "zink")
+            return
+        box(f"Scheibe {achse}{lage:g} {f0:g} {g}", f0, f1, z0, z1, *quer(tiefe * aussen - d / 2, tiefe * aussen + d / 2), m)
+        if trakt != "A" or art == "tor":                           # Neubau: dünner weißer Rahmen, sonst nichts
+            r = 0.08; w = quer(tiefe * aussen + d / 2, tiefe * aussen + d / 2 + 0.03)
+            for a in (f0, f1 - r): box("Rahmen", a, a + r, z0, z1, *w, "rahmen")
+            for zz in (z0, z1 - r): box("Rahmen", f0, f1, zz, zz + r, *w, "rahmen")
+            return
+        zr = random.Random(f"{g}{achse}{lage:g}{f0:g}{z0:g}")
+        r, p, k, fa, sb = FD["rahmen"], FD["pfosten"], FD["kaempfer"], FD["fasche"], FD["sohlbank"]
+        h = z1 - z0; b = f1 - f0; t0 = tiefe * aussen + d / 2    # t0: Außenseite der Scheibe (relativ, nach außen positiv)
+        # Fasche und Sohlbank bündig auf der Wandfläche
+        wf = quer(0.0, 0.03)
+        box("Fasche", f0 - fa, f0, z0, z1 + fa, *wf, "fasche"); box("Fasche", f1, f1 + fa, z0, z1 + fa, *wf, "fasche")
+        box("Fasche", f0, f1, z1, z1 + fa, *wf, "fasche")
+        box("Sohlbank", f0 - fa, f1 + fa, z0 - sb, z0, *quer(0.0, FD["sohlbank_vor"]), "fasche")
+        # Rahmen: außen umlaufend, Pfosten in der Mitte (nur Einzelfenster), Kämpfer bei 68 % der Höhe
+        wr = quer(t0 + 0.02, t0 + 0.05)
+        for a in (f0, f1 - r): box("Rahmen", a, a + r, z0, z1, *wr, "rahmen")
+        for zz in (z0, z1 - r): box("Rahmen", f0, f1, zz, zz + r, *wr, "rahmen")
+        zk = z0 + h * FD["kaempfer_hoehe"]; box("Kaempfer", f0, f1, zk - k / 2, zk + k / 2, *wr, "rahmen")
+        if b > 1.2: box("Pfosten", (f0 + f1) / 2 - p / 2, (f0 + f1) / 2 + p / 2, z0, z1, *wr, "rahmen")
+        if not sichtbar_a: return
+        wahl = zr.random()
+        if art == "glas" and wahl < FD["rollladen"]:               # Rollladen: grün, halb oder ganz herunter, vor dem Rahmen
+            anteil = zr.choice((0.3, 0.42, 0.55, 0.55, 1.0))
+            box("Rollladen", f0, f1, z1 - h * anteil, z1 - 0.04, *quer(t0 + 0.06, t0 + 0.09), "rollladen")
+        elif art == "glas" and wahl < FD["rollladen"] + FD["gardine"]:   # Gardine: helle Fläche hinter dem Rahmen, unteres Drittel bis zwei Drittel
+            anteil = zr.choice((0.45, 0.6, 0.62))
+            box("Gardine", f0 + r, f1 - r, z0 + r, z0 + h * anteil, *quer(t0, t0 + 0.02), "gardine")
+        elif art == "glas" and achse == "y" and wahl < FD["rollladen"] + FD["gardine"] + FD["offen"]:   # Flügel nach außen geöffnet (Kastenfenster)
+            wl = (b / 2 - p / 2 - 0.02) if b > 1.2 else b - 0.04; th = math.radians(zr.uniform(55, 75))
+            hx, hy = f1 - 0.02, lage + aussen * (t0 + 0.07)
+            cx, cy = hx - math.cos(th) * wl / 2, hy - math.sin(th) * wl / 2
+            einordnen(wz.kiste((wl, 0.05, h), (cx, cy, (z0 + z1) / 2), M["rahmen"], "hinten", dreh=(0, 0, th), fase=0.0, name="Fluegel offen"), samm)
+            einordnen(wz.kiste((wl - 2 * r, 0.056, h - 2 * r), (cx, cy, (z0 + z1) / 2), M["glas"], "hinten", dreh=(0, 0, th), fase=0.0, name="Fluegel offen Glas"), samm)
 
     for g in GESCHOSSE:
         # Trakt A: SE-Front mit Eckrisaliten (West alle Geschosse, Ost nur 2. OG) und Mittelrisalit, NW-Front mit Treppenhausrisalit,
@@ -873,6 +1111,106 @@ def bauen():
          [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4), (3, 2, 1, 0)], "ziegel", "Trakt A Dach")
     for x in DACH["kamine"]:
         kiste(f"Kamin x{x:g}", x - 0.4, DACH["first_y"] - 0.35, x + 0.4, DACH["first_y"] + 0.35, zf - 1.2, zf + 1.0, "putz", "Trakt A Dach")
+    for x in DACH["kamine"]:                                       # Kaminköpfe: Steinplatte, etwas breiter als der Schaft
+        kiste(f"Kaminkopf x{x:g}", x - 0.52, DACH["first_y"] - 0.47, x + 0.52, DACH["first_y"] + 0.47, zf + 1.0, zf + 1.22, "stein", "Trakt A Dach")
+
+    # ---------------- Fassadendetails Altbau (25.10.2026, Auftrag B): Gesimse, Sparrenköpfe, Rinne, Fallrohre, Gauben, Giebel, Portal ----------------
+    def kante_box(name, achse, lage, a0, a1, aussen, z0, z1, vor, m, samm="Trakt A Dach", ab=0.0):
+        """Quader entlang einer Fassadenkante, `vor` Meter vor der Wandfläche (ab `ab` dahinter beginnend), an den Enden um `vor` verlängert."""
+        w = tuple(sorted((lage + aussen * ab, lage + aussen * vor)))
+        if achse == "y": return kiste(name, a0 - vor, w[0], a1 + vor, w[1], z0, z1, m, samm)
+        return kiste(name, w[0], a0 - vor, w[1], a1 + vor, z0, z1, m, samm)
+
+    for (achse, lage, a0, a1, aussen) in FASSADENKANTEN:
+        for i, ge in enumerate(GESIMSE):
+            if i == len(GESIMSE) - 1 and (achse, lage) in TRAUFE_OHNE: continue
+            kante_box(f"Gesims {i + 1} {achse}{lage:g}", achse, lage, a0, a1, aussen, ge["z0"], ge["z1"], ge["vor"], "gesims")
+        if (achse, lage) in TRAUFE_OHNE: continue
+        sp = SPARREN; n_sp = int((a1 - a0) / sp["abstand"]); start = a0 + ((a1 - a0) - (n_sp - 1) * sp["abstand"]) / 2
+        for j in range(n_sp):                                      # Sparrenköpfe unter dem Überstand, dunkel, ohne Linie
+            a = start + j * sp["abstand"]
+            kante_box(f"Sparren {achse}{lage:g} {j}", achse, lage, a - sp["b"] / 2, a + sp["b"] / 2, aussen, ze - sp["h"], ze + 0.02, sp["tiefe"], "sparren", ab=0.05)
+    # Dachrinne (Zink, ohne Linie) an den Traufen, die Kamera (a) sieht; Fallrohre an den Fassadenkanten
+    for name, (x0, y0, x1, y1) in (("Rinne SE West", (7.8, -u - 0.14, 24.6, -u)), ("Rinne SE Ost", (36.6, -u - 0.14, 61.8, -u)),
+                                     ("Rinne Eckrisalit West", (-u, -ECK_VOR - u - 0.14, 7.8, -ECK_VOR - u)),
+                                     ("Rinne Giebel West", (24.6 - 0.14, RISALIT_SE[1] - u, 24.6, -u)), ("Rinne Giebel Ost", (36.6, RISALIT_SE[1] - u, 36.6 + 0.14, -u)),
+                                     ("Rinne Stirn West", (-u - 0.14, -ECK_VOR - u, -u, A["y1"] + u))):
+        kiste(name, x0, y0, x1, y1, ze - 0.16, ze + 0.02, "zink", "Trakt A Dach")
+    for i, (achse, lage, stelle) in enumerate(FALLROHRE):
+        x, y = (stelle, lage - 0.12) if achse == "y" else (lage - 0.12, stelle)
+        einordnen(wz.zylinder(0.07, ze - 0.1 + SOCKEL, (x, y, (ze - 0.1 - SOCKEL) / 2), M["zink"], "hinten", v=8, name=f"Fallrohr {i + 1}"), "Trakt A Dach")
+    # Giebelgauben auf der SE-Dachfläche: Körper, Satteldächlein, Fenster mit weißem Rahmen
+    ga = GAUBE; gy = ga["y"]; z_dach = lambda y: ze + (y + u) * tan
+    for i, gx in enumerate(GAUBEN):
+        b2 = ga["b"] / 2; zb0 = z_dach(gy) - 0.7; zb1 = z_dach(gy) + 1.5; yb1 = gy + ga["tiefe"]
+        kiste(f"Gaube {i + 1}", gx - b2, gy, gx + b2, yb1, zb0, zb1, "putz", "Trakt A Dach")
+        gd = 0.22; top = zb1 + 0.7
+        netz(f"Gaube {i + 1} Dach", [(gx - b2 - gd, gy - gd, zb1 - 0.05), (gx + b2 + gd, gy - gd, zb1 - 0.05), (gx + b2 + gd, yb1, zb1 - 0.05), (gx - b2 - gd, yb1, zb1 - 0.05),
+                                     (gx, gy - gd, top), (gx, yb1, top)], [(0, 4, 5, 3), (1, 2, 5, 4), (0, 1, 4), (2, 3, 5)], "ziegel", "Trakt A Dach")
+        fb, fh = ga["fenster"]; fz0 = z_dach(gy) + 0.15; fz1 = fz0 + fh
+        kiste(f"Gaube {i + 1} Fenster", gx - fb / 2, gy - 0.03, gx + fb / 2, gy, fz0, fz1, "glas", "Trakt A Dach")
+        for a in (gx - fb / 2, gx + fb / 2 - 0.1): kiste("Rahmen", a, gy - 0.05, a + 0.1, gy - 0.03, fz0, fz1, "rahmen", "Trakt A Dach")
+        for zz in (fz0, fz1 - 0.1): kiste("Rahmen", gx - fb / 2, gy - 0.05, gx + fb / 2, gy - 0.03, zz, zz + 0.1, "rahmen", "Trakt A Dach")
+        kiste("Pfosten", gx - 0.04, gy - 0.05, gx + 0.04, gy - 0.03, fz0, fz1, "rahmen", "Trakt A Dach")
+    # Giebel des Mittelrisalits: senkrechte Holzverschalung in zwei Tönen (ohne Linie), Rundfenster, Giebelbalkon mit Holzbrüstung und Tür
+    gdk = GIEBEL_DEKOR; yg = RISALIT_SE[1]; st = gdk["streifen"]; hx_i = (RISALIT_SE[2] - RISALIT_SE[0]) / 2
+    xs_ = RISALIT_SE[0] + 0.02; j = 0
+    while xs_ + st <= RISALIT_SE[2] - 0.02:
+        weit = max(abs(xs_ - xm), abs(xs_ + st - xm)); zt = gz1 + (hx_i - weit) * tan - 0.04
+        kiste(f"Giebelholz {j}", xs_, yg - 0.03, xs_ + st, yg, gz1, zt, "holz_gruen" if j % 2 else "rahmen", "Trakt A Dach")
+        xs_ += st; j += 1
+    rr, rz = gdk["rundfenster"]
+    einordnen(wz.zylinder(rr + 0.1, 0.05, (xm, yg - 0.045, rz), M["rahmen"], "hinten", dreh=(math.radians(90), 0, 0), v=20, name="Rundfenster Ring"), "Trakt A Dach")
+    einordnen(wz.zylinder(rr, 0.05, (xm, yg - 0.07, rz), M["glas"], "hinten", dreh=(math.radians(90), 0, 0), v=20, name="Rundfenster"), "Trakt A Dach")
+    tb, th_ = gdk["tuer"]
+    kiste("Giebeltuer", xm - tb / 2, yg - 0.06, xm + tb / 2, yg - 0.03, gz1, gz1 + th_, "glas", "Trakt A Dach")
+    for a in (xm - tb / 2, xm + tb / 2 - 0.1): kiste("Rahmen", a, yg - 0.08, a + 0.1, yg - 0.06, gz1, gz1 + th_, "rahmen", "Trakt A Dach")
+    kiste("Rahmen", xm - tb / 2, yg - 0.08, xm + tb / 2, yg - 0.06, gz1 + th_ - 0.1, gz1 + th_, "rahmen", "Trakt A Dach")
+
+    def balkon(name, x0, x1, y_wand, tiefe_b, z_boden, h_br, samm, bal=0.2):
+        """Balkon vor einer Wand bei y_wand (nach −y): Platte, Eckpfosten mit Kugel, Handlauf (Linie) und dunkle Baluster (ohne Linie)."""
+        yv = y_wand - tiefe_b
+        kiste(f"{name} Platte", x0, yv, x1, y_wand, z_boden, z_boden + 0.2, "gesims", samm)
+        for (px, py) in ((x0 + 0.08, yv + 0.08), (x1 - 0.08, yv + 0.08)):
+            kiste(f"{name} Pfosten", px - 0.07, py - 0.07, px + 0.07, py + 0.07, z_boden + 0.2, z_boden + 0.2 + h_br, "holz_dunkel", samm)
+            einordnen(wz.kugel(0.13, (px, py, z_boden + 0.2 + h_br + 0.12), M["stein"], "hinten", name=f"{name} Kugel"), samm)
+        zh = z_boden + 0.2 + h_br
+        kiste(f"{name} Handlauf", x0, yv, x1, yv + 0.1, zh - 0.08, zh, "holz_dunkel", samm)
+        for xs in (x0, x1 - 0.1): kiste(f"{name} Handlauf Seite", xs, yv, xs + 0.1, y_wand, zh - 0.08, zh, "holz_dunkel", samm)
+        n_b = int((x1 - x0 - 0.4) / bal)
+        for i in range(n_b + 1):
+            bx = x0 + 0.2 + i * (x1 - x0 - 0.4) / max(n_b, 1)
+            kiste(f"{name} Baluster", bx - 0.025, yv + 0.03, bx + 0.025, yv + 0.08, z_boden + 0.2, zh - 0.08, "sparren", samm)
+        for xs in (x0 + 0.03, x1 - 0.08):
+            for i in range(1, int(tiefe_b / bal)):
+                by = yv + i * bal
+                kiste(f"{name} Baluster", xs, by - 0.025, xs + 0.05, by + 0.025, z_boden + 0.2, zh - 0.08, "sparren", samm)
+
+    gb0, gb1, gbt = gdk["balkon"]; balkon("Giebelbalkon", gb0, gb1, yg, gbt, gz1, 0.95, "Trakt A Dach")
+    # Portal: Pilaster mit Kapitell, Balkon im 1. OG als Vordach (Konsolen), Wandleuchten, Schild, drei Stufen, Pflanzkübel mit Formgehölz
+    pd = PORTAL_DEKOR; px0, px1, pt = pd["balkon"]; pw = pd["pilaster"]; um = (PORTAL["x0"] + PORTAL["x1"]) / 2
+    for seite in (-1, 1):
+        a0 = PORTAL["x0"] - 0.2 - pw if seite < 0 else PORTAL["x1"] + 0.2
+        kiste("Pilaster", a0, yg - pd["pilaster_vor"], a0 + pw, yg, -SOCKEL, 3.55, "fasche", "Trakt A EG")
+        kiste("Pilaster Kapitell", a0 - 0.08, yg - pd["pilaster_vor"] - 0.06, a0 + pw + 0.08, yg, 3.55, 3.78, "stein", "Trakt A EG")
+        kiste("Pilaster Fuss", a0 - 0.06, yg - pd["pilaster_vor"] - 0.04, a0 + pw + 0.06, yg, -SOCKEL, -SOCKEL + 0.4, "stein", "Trakt A EG")
+        lx = a0 - 0.5 if seite < 0 else a0 + pw + 0.25
+        kiste("Wandleuchte", lx, yg - 0.24, lx + 0.25, yg, 2.3, 2.66, "fenster_warm", "Trakt A EG")
+        kiste("Wandleuchte Kappe", lx - 0.03, yg - 0.3, lx + 0.28, yg, 2.66, 2.72, "sparren", "Trakt A EG")
+        kiste("Portal Konsole", a0 + 0.1, yg - 1.0, a0 + pw - 0.1, yg, 3.4, 3.95, "stein", "Trakt A 1OG")
+    balkon("Portalbalkon", px0, px1, yg, pt, 3.95, pd["bruestung"], "Trakt A 1OG", bal=pd["baluster"])
+    sx0 = PORTAL["x1"] + 0.2 + pw + 0.7                            # Schild „Haus Föhrenhang": weiße Tafel, drei Textbalken (Schrift bei 17 px/m unlesbar)
+    kiste("Schild Haus", sx0, yg - 0.04, sx0 + 0.95, yg, 1.5, 2.25, "rtw", "Trakt A EG")
+    for i, (zs, lb_) in enumerate(((2.08, 0.55), (1.92, 0.75), (1.68, 0.4))):
+        kiste(f"Schild Text {i + 1}", sx0 + 0.1, yg - 0.05, sx0 + 0.1 + lb_, yg - 0.04, zs, zs + 0.05, "schrift", "Trakt A EG")
+    sb_ = pd["stufen_b"]; st_ = pd["stufe"]; sh = SOCKEL / pd["stufen"]
+    for i in range(pd["stufen"]):                                  # Stufen: oberste schmal, unterste weit, ganze Portalbreite
+        kiste(f"Stufe {i + 1}", um - sb_ / 2, yg - st_ * (i + 1), um + sb_ / 2, yg, -sh * (i + 1), -sh * i, "stein", "Trakt A EG")
+    for seite in (-1, 1):                                          # Pflanzkübel mit Formgehölz (Kugel)
+        kx = um + seite * (sb_ / 2 + 0.75)
+        kiste("Kuebel Portal", kx - 0.36, yg - 1.5, kx + 0.36, yg - 0.78, -SOCKEL, -SOCKEL + 0.72, "stein", "Trakt A EG")
+        einordnen(wz.kugel(0.45, (kx, yg - 1.14, -SOCKEL + 0.72 + 0.4), M["hecke"], "hinten", name="Formgehoelz"), "Buesche")
+
     # Trakt N: Flachdach, Attika, Dachgarten, Holzlamellen, Vordach
     zn = N["geschosse"] * GESCHOSS
     kiste("Dach N", N["x0"], N["y0"], N["x1"], N["y1"], zn - 0.4, zn, "beton", "Trakt N Dach")
@@ -885,8 +1223,10 @@ def bauen():
     for i, (x, y) in enumerate(((68, 2), (82, 10))):
         kiste(f"Kuebel {i + 1}", x - 0.5, y - 0.5, x + 0.5, y + 0.5, zn, zn + 0.6, "beton", "Trakt N Dach")
         baum(f"Felsenbirne {i + 1}", x, y, 1.3, "laub", "laub", "Trakt N Dach", hoehe=3.8, z=zn + 0.6)
-    for i, x in enumerate([N["x0"] + 0.4 + 0.6 * j for j in range(int((N["x1"] - N["x0"] - 0.8) / 0.6) + 1)]):   # Lamellen SE, 1. OG
-        kiste(f"Lamelle SE {i + 1}", x, N["y0"] - 0.32, x + 0.1, N["y0"] - 0.2, GESCHOSS + 0.3, zn - 0.3, "lamelle", "Trakt N 1OG")
+    for i, x in enumerate([N["x0"] + 0.4 + 0.6 * j for j in range(int((N["x1"] - N["x0"] - 0.8) / 0.6) + 1)]):   # Lamellen SE, 1. OG: flache Holzstreifen
+        kiste(f"Lamelle SE {i + 1}", x, N["y0"] - 0.32, x + 0.14, N["y0"] - 0.2, GESCHOSS + 0.42, zn - 0.42, "lamelle", "Trakt N 1OG")   # ohne eigene Linie (25.10.)
+    for name, z0 in (("Lamellenschiene SE unten", GESCHOSS + 0.28), ("Lamellenschiene SE oben", zn - 0.42)):   # Schienen mit Linie: das Raster liest als Schirm
+        kiste(name, N["x0"] + 0.3, N["y0"] - 0.34, N["x1"] - 0.3, N["y0"] - 0.18, z0, z0 + 0.14, "holz_dunkel", "Trakt N 1OG")
     for i, y in enumerate([AUFNAHME_GLAS["y0"] + 0.3 + 0.6 * j for j in range(16)]):                          # Lamellen NE vor der Glasfront
         kiste(f"Lamelle NE {i + 1}", N["x1"] + 0.2, y, N["x1"] + 0.32, y + 0.1, 0.3, zn - 0.3, "lamelle", "Trakt N EG")
     V = VORDACH
@@ -1050,14 +1390,39 @@ def himmel_setzen(sc, k, gier, M):
         o.data.materials[0] = m
     # Wolken: flache Linsen (oben rund, unten flach) 10 m vor der Himmelsebene, Farben Morgenlicht-Abwandlungen, ohne Linie
     rx, ry = math.sin(gier), -math.cos(gier)                       # „rechts" quer zur Blickrichtung
+    def kumulus(laenge, hoehe, zr):
+        """Comic-Wolke als Umriss (a seitlich, b Höhe über der Unterkante): eine Kette überlappender Kreise, zur Mitte hin größer,
+        unten an der Grundlinie abgeschnitten (flache Unterkante, runde Enden). Wo zwei Kreise sich schneiden, entsteht die Kerbe.
+        Ein Vieleck; Freestyle zeichnet den Umriss."""
+        re = hoehe * 0.3; kreise = [(-laenge / 2 + re, re, re)]      # Endkreise sitzen auf der Grundlinie: runde Enden statt senkrechter Schnitte
+        a = -laenge / 2 + hoehe * 0.75
+        while a < laenge / 2 - hoehe * 0.75:
+            lage_ = min(1.0, abs(a) / (laenge / 2)); r = hoehe * (0.34 + 0.32 * (1 - lage_ ** 2)) * zr.uniform(0.85, 1.15)
+            r = min(r, 0.66 * hoehe); kreise.append((a, r * zr.uniform(0.45, 0.6), r)); a += r * zr.uniform(0.9, 1.25)
+        mitte_ = (kreise[-1][0] + laenge / 2 - re) / 2                   # Lückenfüller vor dem rechten Endkreis (sonst hing er als Blase daneben)
+        kreise.append((mitte_, 0.22 * hoehe, 0.45 * hoehe)); kreise.append((laenge / 2 - re, re, re))
+        oben, unten = [], []; n = 180; u0, u1 = kreise[0][0] - kreise[0][2], kreise[-1][0] + kreise[-1][2]
+        for j in range(n + 1):
+            u = u0 + (u1 - u0) * j / n; top = None; bot = None
+            for (cu, cv, r) in kreise:
+                if abs(u - cu) < r:
+                    w = math.sqrt(r * r - (u - cu) ** 2)
+                    top = cv + w if top is None else max(top, cv + w); bot = cv - w if bot is None else min(bot, cv - w)
+            if top is None: continue
+            oben.append((u, top)); unten.append((u, max(0.0, bot)))
+        return oben + unten[::-1]
+
     for i, (seit, z, laenge, dicke, mat) in enumerate(k.get("wolken", ())):
         m = bpy.data.materials.get(mat) or wz.material(mat, (0.95, 0.95, 0.95), 0.9)
         wx, wy = ox + math.cos(gier) * (abstand - 10) + rx * seit, oy + math.sin(gier) * (abstand - 10) + ry * seit
-        v = []
-        for j in range(24):
-            t = 2 * math.pi * j / 24; a = laenge / 2 * math.cos(t); b = dicke * (math.sin(t) if math.sin(t) > 0 else 0.35 * math.sin(t))
-            v.append((wx + rx * a, wy + ry * a, z + b))
-        me = bpy.data.meshes.new(f"Wolke {i}"); me.from_pydata(v, [], [tuple(range(24))]); me.update()
+        if stil():                                                 # Stile tag/blau: Kumulus mit Umriss
+            form = kumulus(laenge, dicke, random.Random(i + 3))
+        else:                                                      # alte Probe: flache Linse (oben rund, unten flach)
+            form = []
+            for j in range(24):
+                t = 2 * math.pi * j / 24; form.append((laenge / 2 * math.cos(t), dicke * (math.sin(t) if math.sin(t) > 0 else 0.35 * math.sin(t))))
+        v = [(wx + rx * a, wy + ry * a, z + b) for (a, b) in form]
+        me = bpy.data.meshes.new(f"Wolke {i}"); me.from_pydata(v, [], [tuple(range(len(v)))]); me.update()
         o = bpy.data.objects.new(f"Wolke {i}", me); o.data.materials.append(m); sc.collection.objects.link(o)
 
 
@@ -1140,7 +1505,8 @@ def durchgang(kamera_name, art, ortho=None):
             if m.node_tree and m.name not in OHNE_SCHATTIERUNG and m.node_tree.nodes.get("Material Output"): stufen_nach_richtung(m)
         welt(hex_lin(k["himmel"][0])); sichtbar(); proben = PROBEN["flat"]
     elif art == "lines":
-        emission_ueberall(lambda n: (1, 1, 1)); welt((1, 1, 1)); sichtbar(OHNE_LINIE)
+        emission_ueberall(lambda n: (1, 1, 1)); welt((1, 1, 1))
+        sichtbar(OHNE_LINIE | (set() if stil() else {"wolke_hell", "wolke_warm"}))   # Linsenwolken der alten Probe bleiben ohne Umriss
         if not ortho and k.get("linien_nur"):           # Innenkameras: alles außerhalb der genannten Sammlungen aus dem Linien-Durchgang nehmen
             for c in bpy.data.collections:
                 if c.name not in k["linien_nur"]: c.hide_render = True
