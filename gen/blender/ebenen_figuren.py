@@ -423,12 +423,12 @@ def aufbau(raum):
         tritt = bpy.data.objects.new("wieser_tritt", me); tritt.data.materials.append(figuren.material("fig_rollkragen"))
         bpy.data.collections["figuren"].objects.link(tritt); figs["wieser"].teile.append(tritt)
         sichtbar = lambda o: True
-        # Nichts im Raum steht vor den beiden (Jonas liegt AUF der Liege): keine Verdeckung, sonst schnitte die Polsterkante
-        # Löcher in den gezeichneten Jonas. Die Zonen `jonas` und `liege` (Elektroden-Aufgabe) bleiben getrennt; die Leinwand
+        # Vor Wieser steht der Dozententisch (verdeckt sie, `None` = jedes Raumobjekt davor); Jonas liegt AUF der Liege: keine
+        # Verdeckung, sonst schnitte die Polsterkante Löcher in den gezeichneten Jonas. Die Zonen `jonas` und `liege` (Elektroden-Aufgabe) bleiben getrennt; die Leinwand
         # bleibt ganz (Wieser liegt im Spiel als späteres Feld darüber, Spieltest 26.10.2026). Die Quellbilder (art/figuren_quelle) stammen aus dem alten Seminarraum: ausrichten aus.
         return dict(cam=sc.camera, figs=figs, raum_sichtbar=sichtbar, sonne_sichtbar=sichtbar, sonne_stellen=sonne_stellen,
                     klasse={"wieser": "atmet", "jonas": "atmet"}, unten={}, kontext={"wieser": [], "jonas": []},
-                    verdecker={"wieser": [], "jonas": []}, getrennt={"jonas": "liege"},
+                    verdecker={"wieser": None, "jonas": []}, getrennt={"jonas": "liege"},
                     ausrichten={"jonas": False, "wieser": False},
                     einstellung=dict(licht=k["licht"], anteil=k["anteil"], schwelle=0.35, weich=0.7,
                                      schattenfarbe=k["schattenfarbe"], schatten=k["schatten"]))

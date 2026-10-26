@@ -1472,8 +1472,8 @@ await warte(1200);
 ok("Lehrsaal: Raum gezeigt, Menü zu", await seite.evaluate(() => window.Szene.aktueller() === "lehrsaal") &&
    (await seite.locator("#menue-hof.an").count()) === 0);
 const lsFelder = await seite.evaluate(() => [...document.querySelectorAll(".feld")].map((f) => f.getAttribute("data-feld") || "→" + f.getAttribute("data-nach")));
-ok("Lehrsaal: alle Klickzonen da (Bank, Whiteboard, Wieser, Liege, Wagen, Leinwand, Lineale, Uhr, Ausgang)",
-   ["bank", "whiteboard", "wieser", "liege", "wagen", "projektion", "lineale", "uhr", "→aufnahme"].every((f) => lsFelder.includes(f)), lsFelder.join(","));
+ok("Lehrsaal: alle Klickzonen da (Bank, Whiteboard, Wieser, Liege, Wagen, Leinwand, Lineale, Ausgang; die Uhr ohne Feld)",
+   !lsFelder.includes("uhr") && ["bank", "whiteboard", "wieser", "liege", "wagen", "projektion", "lineale", "→aufnahme"].every((f) => lsFelder.includes(f)), lsFelder.join(","));
 ok("Lehrsaal: Ebenen und Figur Dr. Wieser gerendert", await seite.evaluate(() => {
   const b = document.getElementById("buehne");
   return !!b.querySelector(".ebene-hintergrund image") && !!b.querySelector(".ebene-mittelgrund image") && !!b.querySelector("#fig-wieser");

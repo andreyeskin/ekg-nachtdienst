@@ -131,7 +131,7 @@ siehe `docs/UMBAU.md` §5). Bis dahin zeigt die Projektion nur Ableitung II und 
 | `projektion` | öffnet die große Ansicht (Papier, Ableitungen, Lagetyp, Zacken benennen) | Leinwand |
 | `whiteboard` | Herzschema / Einthoven-Dreieck (Rätsel „Reizleitung bauen" wandert hierher) | Tafel |
 | `lineale` | Lineal nehmen (einmalig; danach „erledigt") | Schachtel |
-| `uhr` | Uhrzeit-Meldung | Zifferblatt |
+| `uhr` | nur noch für die Zeiger (`gen/kunst.py`), kein Klickfeld: bei 4:3 liegt die Uhr unter dem HUD (Nutzer 26.10.2026) | Zifferblatt |
 | `bank` | eigene Bank: öffnet den Zirkel (RR an Jonas' Ableitung II), Wunsch des Nutzers 26.10.2026 | Block, Streifen, Zirkel |
 | `ausgang` | zur Aufnahme — frei erst, wenn die Pflichtaufgaben der Lektionen 1–7 gezeigt sind (Fallakte) | Pfeil am rechten Bildrand (die Türen liegen außerhalb des Bilds) |
 
@@ -199,7 +199,7 @@ Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben
 | EKG-Wagen | Mitte (1,9 / 0,02), schräg vor dem Kopfende, im Bild mit Abstand links der Liege; Schirm 0,36 × 0,24 um 38° zur ersten Bank gedreht |
 | Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
 | Decke | Latten z 3,31 … 3,36, Lichtbänder darunter, Ringleuchten Ø 1,1 m auf z 2,75 bei x 7,8 |
-| Figuren | Dr. Wieser 1,72 m am Fußende der Liege (1,75 / 2,6), Körper zur Leinwand, Kopf zur Klasse, linker Fuß auf ihrem Tritt (Teil der Figur), deckt die linke untere Ecke der Leinwand; Jonas 1,80 m liegend (Kopf zur Fensterwand, Oberkörper auf dem 20°-Kopfteil, rechte Seite zur Klasse), Werte in `figuren.PLATZ` |
+| Figuren | Dr. Wieser 1,72 m zwischen Leinwand und Dozententisch (1,4 / 4,35, Nutzer 26.10.2026: am Fußende deckte sie die Kurve), Kopf zur Klasse, linker Fuß auf ihrem Tritt (Teil der Figur, vom Tisch verdeckt); Jonas 1,80 m liegend (Kopf zur Fensterwand, Oberkörper auf dem 20°-Kopfteil, rechte Seite zur Klasse), Werte in `figuren.PLATZ` |
 
 Alles steht auf dem Boden, Wege frei: Fenstergang 0,9 m, Mittelgang 0,9 m, Flurgang 1,1 m; vorn 2,6 m zwischen
 Leinwand und erster Reihe.

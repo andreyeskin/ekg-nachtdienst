@@ -48,9 +48,10 @@ PLATZ = {
     # Lehrsaal (Hauskoordinaten, szene_lehrsaal.py; Spielkamera an der ersten Bank, Blick −x, im Bild rechts = +y).
     # Jonas auf der Liegefläche (0,75 m) quer vor dem Giebelfenster: Kopf zur Fensterwand (Kopfmitte y ≈ 0,55, auf Kissen und
     # Kopfteil), Füße zur Leinwand (y ≈ 2,25), rechte Seite (rote Klemme) zur Klasse (+x): drehung 180.
-    # Dr. Wieser auf dem freien Boden am Fußende der Liege, knapp links der Leinwand: Körper zur Leinwand gedreht, Kopf zur Klasse
-    # (`blick` 90 = +x), linker Fuß auf ihrem Tritt (Teil ihrer Zeichnung, kein Raumobjekt).
-    "wieser": dict(ort=(1.75, 2.6, 0.0), drehung=150, blick=90, haltung="tritt"),
+    # Dr. Wieser zwischen Leinwand und Dozententisch (Entscheid des Nutzers 26.10.2026: am Fußende der Liege deckte sie die Kurve),
+    # im Bild knapp rechts der Leinwand: Körper zum Tisch mit den Linealen, Kopf zur Klasse (`blick` 90 = +x), linker Fuß auf ihrem
+    # Tritt (Teil ihrer Zeichnung, kein Raumobjekt); der Tisch steht vor ihr und verdeckt Beine und Tritt teilweise.
+    "wieser": dict(ort=(1.4, 4.35, 0.0), drehung=150, blick=90, haltung="tritt"),
     "jonas": dict(ort=(1.175, 1.35, 0.75), drehung=180, haltung="liegen"),
 }
 TINTE = "fig_tinte"

@@ -578,7 +578,7 @@
         /* Die Leinwand vor Dr. Wieser: das spätere Feld liegt oben, wer auf Wieser klickt, trifft sie; der Rest ist Leinwand. */
         { id: "projektion", name: T("Leinwand"), punkte: zone("lehrsaal", "projektion", [602, 131, 969, 360]),
           bei: function () { melde("Auf der Leinwand läuft dieselbe Ableitung, groß wie auf Papier."); } },
-        { id: "wieser", name: T("Dr. Wieser"), punkte: zone("lehrsaal", "wieser", [637, 208, 815, 592]),
+        { id: "wieser", name: T("Dr. Wieser"), punkte: zone("lehrsaal", "wieser", [962, 217, 1124, 559]),
           bei: function () { global.Dialog.starte("wieser", "start"); } },
         { id: "jonas", name: T("Jonas"), punkte: zone("lehrsaal", "jonas", [330, 330, 600, 420]),
           sichtbar: function () { return !!(KUNST.szenen.lehrsaal.zonen || {}).jonas; },   /* erst mit seiner Figur */
@@ -595,9 +595,8 @@
             if (hat("ls_lineal")) { melde("Dein Lineal steckt schon in der Kitteltasche."); return; }
             setze("ls_lineal"); global.Szene.aktualisiere();
             melde("Du nimmst ein blaues Lineal aus der Schachtel.");
-          } },
-        { id: "uhr", name: T("Uhr"), punkte: zone("lehrsaal", "uhr", [753, 28, 817, 93]),
-          bei: function () { melde(T("Es ist {zeit}.", { zeit: zeitText() })); } }
+          } }
+        /* Keine Uhr-Zone: bei 4:3 liegt die Uhr unter dem HUD, die Zeit steht dort ohnehin (Entscheid des Nutzers 26.10.2026). */
       ],
       ausgaenge: [
         { name: T("Zurück in die Aufnahme"), nach: "aufnahme", punkte: zone("lehrsaal", "ausgang", [1536, 600, 1600, 880]) }

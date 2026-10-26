@@ -8,7 +8,7 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 
 - **Erreichbar über das Menü** (≡/Escape → „Lehrsaal", Entscheid des Nutzers); Ausgang (Pfeil am rechten Rand) → Aufnahme. Das neue
   Spiel beginnt weiter in der Aufnahme. Zonen: `bank` öffnet den Zirkel (RR an LUDB 142, Entscheid des Nutzers), `whiteboard`
-  „Reizleitung bauen", `lineale` (einmal, dann erledigt), `wieser` (ein Satz), `liege`, `wagen`, `projektion`, `uhr` (Meldungen).
+  „Reizleitung bauen", `lineale` (einmal, dann erledigt), `wieser` (ein Satz), `liege`, `wagen`, `projektion` (Meldungen); die Uhr ohne Feld.
   Wagenschirm und Leinwand zeigen Jonas' Ableitung II (LUDB 142), das Whiteboard bleibt leer. Texte en/ru da; Durchlauf 15b prüft den Weg.
 - **Ebenen-Pipeline für Hausräume:** `haus_blockout.py ebenen lehrsaal` (≈ 35 s) schreibt Hintergrund, Mittelgrund, Vorschau,
   `hitboxes.json`, `schirme.json` nach `art/szenen/lehrsaal/` — Eigenschaften `ebene`/`zone`/`schirm` am Objekt, dieselbe kühle
@@ -16,8 +16,8 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 - **Fensterblick-Tafeln** `blick_sw_eg`, `blick_se_eg` (Render vom Ort der Spielkamera hinaus, ohne Linie, im Komposit unverändert).
 - **Fassade** (Wunsch des Nutzers „Fenster wie im Saal"): Saalfenster außen ohne Zufalls-Rollladen/Gardine/Flügel, Pfirsich-Vorhänge
   an den Außenseiten jeder Fenstergruppe; dadurch ist auch das rechte Giebelfenster innen frei. Probe `docs/haus/probe_aussen.jpg`.
-- **Dr. Wieser** eingesetzt (alte Zeichnung, ohne fal): am Fußende der Liege, Körper zur Leinwand, Kopf zur Klasse, Tritt als Teil
-  ihrer Figur; sie deckt die linke untere Ecke der Leinwand (die Zone `projektion` weicht ihr).
+- **Dr. Wieser** eingesetzt (alte Zeichnung, ohne fal): zwischen Leinwand und Dozententisch, Kopf zur Klasse, Tritt als Teil ihrer
+  Figur (vom Tisch verdeckt).
 
 ## Fertig (25./26.10.2026): Lehrsaal gestaltet — Saal im Haus, Farbdesign „Morgen", Spielkamera an der ersten Bank
 
@@ -138,8 +138,9 @@ Texte über IDs in `text/{de,en,ru}/aufnahme_baum.json`, Prüfungen in `tools/du
 
 **Offen am Lehrsaal (Spieltest 26.10.2026, Bericht `bau/spieltest_lehrsaal.md`; behoben: Leinwand-Zone, Ausgang mit Pfeil,
 Lineal-Zone, Wiesers Satz, Escape im Zirkel, „Miss den RR-Abstand."):**
-- **Uhr unter dem HUD** bei 4:3 (iPad, 1024×768): Bild und Zone liegen unter „Was geht hier?". Bei 16:9 frei. Frage an den Nutzer offen.
-- **Wieser steht vor der Leinwand** (deckt den linken Teil der laufenden Kurve). Frage an den Nutzer offen.
+- Entschieden (Nutzer, 26.10.2026): die Uhr bleibt über der Leinwand, aber ohne Klickfeld (bei 4:3 liegt sie unter dem HUD);
+  Dr. Wieser steht jetzt zwischen Leinwand und Dozententisch (1,4 / 4,35), der Tisch verdeckt ihre Beine, die Leinwand ist frei.
+  Vom Tritt bleibt unter dem Tisch nur ein dunkler Rest am Boden; bei einer Neuzeichnung „stehen" ohne Tritt wählen.
 - „Reizleitung bauen" ist in en/ru deutsch (alte Lücke in `tools/woerter.py`, Agent `uebersetzer`).
 - Namensschild beim Überfahren sitzt unten mittig statt am Feld; auf dem iPad kein Hover, „Was geht hier?" zeigt keine Namen,
   nur 2,4 s und blass (gilt für alle Räume).
