@@ -1429,6 +1429,16 @@ def bauen():
         for zz in (z0, z1 - r): box("Rahmen", f0, f1, zz, zz + r, *wr, "rahmen")
         zk = z0 + h * FD["kaempfer_hoehe"]; box("Kaempfer", f0, f1, zk - k / 2, zk + k / 2, *wr, "rahmen")
         if b > 1.2: box("Pfosten", (f0 + f1) / 2 - p / 2, (f0 + f1) / 2 + p / 2, z0, z1, *wr, "rahmen")
+        mx, my = ((f0 + f1) / 2, lage) if achse == "y" else (lage, (f0 + f1) / 2)
+        eigen = next((a.FASSADE for a in AUSBAUTEN.values() if trakt == "A" and g == a.FASSADE["geschoss"]
+                      and a.FASSADE["x"][0] <= mx <= a.FASSADE["x"][1] and a.FASSADE["y"][0] <= my <= a.FASSADE["y"][1]), None)
+        if eigen:                                                  # Fenster eines ausgebauten Raums: kein Zufall (Rollladen, Gardine, Flügel),
+            vb = eigen["vorhang_breite"]                            # außen sieht man seine Vorhänge an den Außenseiten der Fenstergruppe
+            gr = next(((a0_, a1_) for (ach, a0_, a1_) in eigen["gruppen"] if ach == achse and a0_ - 0.1 <= f0 and f1 <= a1_ + 0.1), (f0, f1))
+            for rand, a0_, a1_ in ((gr[0], f0 + r, f0 + r + vb), (gr[1], f1 - r - vb, f1 - r)):   # (innen aus wie die Scheibe)
+                if abs(rand - (f0 if a0_ == f0 + r else f1)) < 0.1:
+                    box("Vorhang aussen", a0_, a1_, z0 + r, z1 - r, *quer(t0, t0 + 0.02), eigen["vorhang"])["ohne_linie"] = 1
+            return
         if not sichtbar_a: return
         wahl = zr.random()
         if art == "glas" and wahl < FD["rollladen"]:               # Rollladen: grün, halb oder ganz herunter, vor dem Rahmen
@@ -1941,8 +1951,8 @@ def durchgang(kamera_name, art, ortho=None):
                 o.hide_render = bool({m.name for m in o.data.materials if m} & set(ohne_material))
 
     datei = art                                          # Ebenen-Pipeline: flatbg, sunbg, linesbg ohne Mittelgrund, linesmid nur er
-    ebene = "bg" if art.endswith("bg") else "mid" if art.endswith("mid") else ""
-    art = art[:len(art) - len(ebene)]
+    schicht = "bg" if art.endswith("bg") else "mid" if art.endswith("mid") else ""
+    art = art[:len(art) - len(schicht)]
     sonne.hide_render = art != "sun"
     besonnt = STADT_ALLE if stil() else set()            # Stile: die Stadt liegt in der Sonne und hat Seiten (Probe: Talschatten)
     ohne_sch, immer = OHNE_SCHATTIERUNG - besonnt, IMMER_SCHATTEN - besonnt
@@ -2027,7 +2037,7 @@ def durchgang(kamera_name, art, ortho=None):
             if c.name.startswith("Ausbau ") and c.name not in k.get("ausbau", ()): c.hide_render = True
         if k.get("ohne_scheiben"):
             for o in bpy.data.objects:
-                if o.name.startswith(("Scheibe", "Gardine", "Fluegel offen Glas")): o.hide_render = True
+                if o.name.startswith(("Scheibe", "Gardine", "Fluegel offen Glas", "Vorhang aussen")): o.hide_render = True
         for name in k.get("verstecken", ()):            # Fensterblick: Geschossräume aus (der Blick geht vom Raum aus hinaus)
             c = bpy.data.collections.get(name)
             if c: c.hide_render = True
@@ -2039,10 +2049,10 @@ def durchgang(kamera_name, art, ortho=None):
         for o in bpy.data.objects:                       # Ebenen: im Hintergrund fehlt der Mittelgrund (in der Sonne wirft er weiter Schatten),
             if o.type != 'MESH' or o.hide_render: continue   # der Linien-Durchgang des Mittelgrunds zeichnet nur ihn
             mitte = o.get("ebene") == "mitte"
-            if ebene == "bg" and mitte:
+            if schicht == "bg" and mitte:
                 if art == "sun": o.visible_camera = False
                 else: o.hide_render = True
-            elif ebene == "mid" and not mitte: o.hide_render = True
+            elif schicht == "mid" and not mitte: o.hide_render = True
         for name in k.get("fensterblick", ()):
             tafel(name, art)
     sc.cycles.samples = proben; sc.cycles.use_denoising = art == "sun"
@@ -2186,6 +2196,10 @@ def zonen(name):
             x, y = bild(o.matrix_world @ v.co); zonen_.setdefault(o["zone"], []).append((x, y))
     hit = {z: [max(0, round(min(p[0] for p in pts))), max(0, round(min(p[1] for p in pts))),
                min(B, round(max(p[0] for p in pts))), min(H, round(max(p[1] for p in pts)))] for z, pts in sorted(zonen_.items())}
+    for r in hit.values():                                            # mindestens 44 CSS-px (Bühne 1440 px breit: 49 Bühnen-px)
+        for i in (0, 1):
+            if r[i + 2] - r[i] < 49:
+                m = (r[i] + r[i + 2]) // 2; r[i], r[i + 2] = max(0, m - 25), min((B, H)[i], m + 25)
     hit.update(k.get("zonen_fest", {}))
     schirme = {}
     for o in bpy.data.objects:

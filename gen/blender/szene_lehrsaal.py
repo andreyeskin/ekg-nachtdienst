@@ -56,6 +56,24 @@ PALETTE = {
 OHNE_LINIE = set()
 OHNE_SCHATTIERUNG = {"ls_projektion", "ls_tafel", "ls_leuchte", "ls_glas"}
 
+# Fassade (Wunsch des Nutzers 26.10.2026: „Fenster wie im Saal"): Fenster im Grundriss des Saals bekommen außen keinen zufälligen
+# Rollladen, keine Gardine und keinen offenen Flügel, dafür an den Außenseiten jeder Fenstergruppe (ein Paar ist eine Gruppe, wie die
+# Vorhänge im Saal) einen Streifen der Pfirsich-Vorhänge, ohne Linie (haus_blockout `scheibe`).
+FASSADE = dict(geschoss="EG", x=(0.0, 14.4), y=(-1.0, 7.0), vorhang="ls_vorhang", vorhang_breite=0.26,
+               gruppen=[("y", FENSTER_SE_NISCHE[0][0], FENSTER_SE_NISCHE[1][1]), ("y", FENSTER_SE_NISCHE[2][0], FENSTER_SE_NISCHE[3][1])]
+                       + [("y", *f) for f in FENSTER_SE] + [("x", *f) for f in GIEBELFENSTER])
+
+# Fürs Spiel (lehrsaal.md §4, §5, §7; `haus_blockout.py ebenen lehrsaal`): Ebene, Klickzone und Schirmfläche nach dem Namensanfang
+# der Objekte, als Objekteigenschaften `ebene`, `zone`, `schirm`. Mittelgrund sind Liege, Wagen, Tische samt allem darauf und
+# Stühle; alles andere ist Hintergrund. Die Zonen der Figuren (wieser, jonas) setzt figuren_zeichnen.py, `ausgang` hat kein Objekt
+# (Pfeil am rechten Bildrand, KAMERA `zonen_fest`).
+MITTELGRUND = ("LS Liege", "LS Kissen", "LS Wagen", "LS Tisch", "LS Dozententisch", "LS Stuhl", "LS Linealschachtel", "LS Lineal",
+               "LS EKG-Blaetter", "LS Laptop", "LS Flasche", "LS Platz", "LS Block", "LS Stift")
+ZONEN = {"liege": ("LS Liege", "LS Kissen"), "wagen": ("LS Wagen",), "projektion": ("LS Leinwand Tuch",),
+         "whiteboard": ("LS Whiteboard",), "lineale": ("LS Linealschachtel", "LS Lineal"), "uhr": ("LS Uhr",),
+         "bank": ("LS Platz",)}          # eigene Bank: Block, Streifen, Zirkel — öffnet den Zirkel (Nutzer 26.10.2026)
+SCHIRME = {"LS Projektion": "projektion", "LS Whiteboard": "whiteboard", "LS Wagen Schirm": "wagen_schirm"}   # genauer Name
+
 # Spielkamera: die Spielerin sitzt an der ersten Bank (Gangplatz links, Augenhöhe 1,25, leicht zurückgelehnt), Blick frontal
 # zur Stirnwand (`gier` 180: Leinwand ein exaktes Rechteck, Verschiebung statt Drehung), 18 mm. Im Bild: Liege und Wagen links vor
 # dem Giebelfenster, Leinwand mit Uhr in der Mitte, Dozententisch und Whiteboard rechts; unten die hintere Hälfte der eigenen
@@ -66,7 +84,8 @@ KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.3, 0.4), gier=180.0, brenn
               schatten=0.24, schattenfarbe="#6F7FB0",   # ohne Sonne: ein Viertel zum kühlen Blau (Lofi-Vorlagen), Sonne Pfirsich
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
               sonne_staerke=80.0,   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
-              fensterblick=("blick_sw_eg", "blick_se_eg"))   # Tafeln hinter Giebel- und Nischenfenstern (haus_blockout FENSTERBLICKE)
+              fensterblick=("blick_sw_eg", "blick_se_eg"),   # Tafeln hinter Giebel- und Nischenfenstern (haus_blockout FENSTERBLICKE)
+              zonen_fest={"ausgang": [1536, 600, 1600, 880]})   # die Türen liegen rechts außerhalb: Pfeil am rechten Bildrand, unter dem Whiteboard
 
 
 def ausbau(h):
@@ -75,12 +94,17 @@ def ausbau(h):
     (erste Fassung mit werkzeug-Grundkörpern: Bau 9:44 min statt einiger Sekunden)."""
     Euler = h["Euler"]
     zr = random.Random(8)
+    gebaut = []
+
+    def merke(o):
+        if o is not None: gebaut.append(o)
+        return o
 
     def netz(name, verts, faces, m):
-        return h["netz"](name, verts, faces, m, SAMMLUNG)
+        return merke(h["netz"](name, verts, faces, m, SAMMLUNG))
 
     def box(name, x0, y0, x1, y1, z0, z1, m):                     # achsparallel
-        return h["kiste"](name, x0, y0, x1, y1, z0, z1, m, SAMMLUNG)
+        return merke(h["kiste"](name, x0, y0, x1, y1, z0, z1, m, SAMMLUNG))
 
     def gedreht(punkte, ort, dreh):
         mat = Euler(dreh).to_matrix()
@@ -108,7 +132,7 @@ def ausbau(h):
         return netz(name, gedreht(pts, ort, (0, 0, 0)), faces, m)
 
     def wand(name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m):
-        return h["wandnetz"](name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m, SAMMLUNG)
+        return merke(h["wandnetz"](name, achse, w0, w1, a0, a1, z0, z1, oeffnungen, m, SAMMLUNG))
 
     # ---------------- Boden, Wandflächen, Sockel ----------------
     box("LS Boden", GIEBEL, FENSTER_NISCHE, RUECK, FLUR_WAND, 0.0, 0.015, "ls_boden")
@@ -306,3 +330,10 @@ def ausbau(h):
         zyl(0.16, 0.02, (x, y, 0.01), "ls_dunkel", v=20, name="LS Stehleuchte Fuss")
         zyl(0.012, 1.45, (x, y, 0.74), "ls_dunkel", v=8, name="LS Stehleuchte Stange")
         kegelstumpf(0.22, 0.15, 0.3, (x, y, 1.6), "ls_lampe", v=24, name="LS Stehleuchte Schirm")
+
+    for o in gebaut:                                           # Ebene, Klickzone, Schirm (oben: MITTELGRUND, ZONEN, SCHIRME)
+        n = o.name.split(".")[0]
+        if n.startswith(MITTELGRUND): o["ebene"] = "mitte"
+        zone = next((z for z, anf in ZONEN.items() if n.startswith(anf)), None)
+        if zone: o["zone"] = zone
+        if n in SCHIRME: o["schirm"] = SCHIRME[n]
