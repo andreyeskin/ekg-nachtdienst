@@ -1067,6 +1067,28 @@ def uhr_teile(ordner):
             f'<circle cx="{F(cx)}" cy="{F(cy)}" r="{3 if r > 45 else 2.2}" fill="{LINIE}"/>')
 
 
+# Räume, deren Ausgang außerhalb des Bilds liegt (Lehrsaal: Türen rechts außerhalb): ein Pfeil in der Zone `ausgang`
+AUSGANGSPFEIL = {"lehrsaal": "rechts"}
+
+
+def pfeil_teile(ordner, richtung):
+    """Ausgangspfeil als flache Form mit Tuschelinie (ligne claire) in der Zone `ausgang`, zeigt zum Bildrand."""
+    pfad = os.path.join(ordner, "hitboxes.json")
+    if not os.path.exists(pfad):
+        return ""
+    z = json.load(open(pfad, encoding="utf-8")).get("ausgang")
+    if not z:
+        return ""
+    x0, y0, x1, y1 = z
+    cy, b, h = (y0 + y1) / 2, min(66, x1 - x0 - 14), 62
+    spitze = x0 + 8 + b if richtung == "rechts" else x1 - 8 - b      # innen in der Zone: schmale Fenster schneiden den Bildrand ab
+    s = 1 if richtung == "rechts" else -1
+    pkt = [(spitze, cy), (spitze - s * b * 0.5, cy - h / 2), (spitze - s * b * 0.5, cy - h / 5), (spitze - s * b, cy - h / 5),
+           (spitze - s * b, cy + h / 5), (spitze - s * b * 0.5, cy + h / 5), (spitze - s * b * 0.5, cy + h / 2)]
+    return (f'<polygon id="ausgang-pfeil" points="{" ".join(f"{F(x)},{F(y)}" for x, y in pkt)}" fill="#FFF8F4" '
+            f'stroke="{LINIE}" stroke-width="3" stroke-linejoin="round" opacity="0.92"/>')
+
+
 def _png64(pfad):
     import base64
     with open(pfad, "rb") as f:
@@ -1110,7 +1132,9 @@ def baue():
             if ebene == "figuren" and os.path.exists(os.path.join(ordner, "figuren", "figuren.json")):
                 aus["szenen"][name][ebene] = png_figuren(os.path.join(ordner, "figuren"))
             elif os.path.exists(pfad):
-                aus["szenen"][name][ebene] = png_ebene(pfad, uhr_teile(ordner) if ebene == "hintergrund" else "")
+                extra = (uhr_teile(ordner) + (pfeil_teile(ordner, AUSGANGSPFEIL[name]) if name in AUSGANGSPFEIL else "")
+                         if ebene == "hintergrund" else "")
+                aus["szenen"][name][ebene] = png_ebene(pfad, extra)
             else:
                 aus["szenen"][name][ebene] = ""
         # Klickzonen (hitboxes.json) und Bildschirmflächen (schirme.json) wandern mit ins Spiel: spiel.js baut

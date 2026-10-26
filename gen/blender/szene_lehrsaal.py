@@ -85,7 +85,8 @@ KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.3, 0.4), gier=180.0, brenn
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
               sonne_staerke=80.0,   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
               fensterblick=("blick_sw_eg", "blick_se_eg"),   # Tafeln hinter Giebel- und Nischenfenstern (haus_blockout FENSTERBLICKE)
-              zonen_fest={"ausgang": [1536, 600, 1600, 880]})   # die Türen liegen rechts außerhalb: Pfeil am rechten Bildrand, unter dem Whiteboard
+              zonen_fest={"ausgang": [1490, 560, 1600, 880]},   # die Türen liegen rechts außerhalb: Pfeil am rechten Bildrand, unter dem Whiteboard
+              zonen_rand={"lineale": 18})       # kleine Schachtel: Zone größer als das Bild (Spieltest 26.10.2026)
 
 
 def ausbau(h):

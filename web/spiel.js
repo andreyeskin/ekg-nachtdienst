@@ -117,7 +117,7 @@
     /* Lehrsaal, solange sein Fall fehlt (docs/UMBAU.md §2d): je ein Satz, Stimmen nach docs/raeume/lehrsaal.md §2.
        Wieser gibt eine Aufgabe statt einer Antwort; Jonas verrät nichts, er ist heute Patient. */
     wieser: {
-      start: { text: "Erst setzen, dann messen. Dein Zirkel liegt auf der Bank: von einer R-Zacke zur nächsten.",
+      start: { text: "Bevor wir anfangen: Dein Zirkel liegt auf der Bank. Miss von einer R-Zacke zur nächsten.",
                endeText: "Mach ich." }
     },
     jonas: {
@@ -567,7 +567,7 @@
         { id: "bank", name: T("Deine Bank · Zirkel"), punkte: zone("lehrsaal", "bank", [298, 741, 990, 900]),
           erledigt: function () { return hat("ls_zirkel"); },
           bei: function () {
-            global.Zirkel.starte({ satz: satz(LEHRSAAL_EKG), was: "rr",
+            global.Zirkel.starte({ satz: satz(LEHRSAAL_EKG), was: "rr", auftrag: "Miss den RR-Abstand.",
               fertig: function (erg) {
                 setze("ls_zirkel"); global.Szene.aktualisiere();
                 melde(T("Gemessen: {ms} ms von R zu R.", { ms: erg.wahrheit }));
@@ -575,6 +575,9 @@
           } },
         { id: "whiteboard", name: T("Whiteboard"), punkte: zone("lehrsaal", "whiteboard", [1348, 154, 1549, 390]),
           bei: function () { global.Reizleitung.starte({ satz: satz }); } },
+        /* Die Leinwand vor Dr. Wieser: das spätere Feld liegt oben, wer auf Wieser klickt, trifft sie; der Rest ist Leinwand. */
+        { id: "projektion", name: T("Leinwand"), punkte: zone("lehrsaal", "projektion", [602, 131, 969, 360]),
+          bei: function () { melde("Auf der Leinwand läuft dieselbe Ableitung, groß wie auf Papier."); } },
         { id: "wieser", name: T("Dr. Wieser"), punkte: zone("lehrsaal", "wieser", [637, 208, 815, 592]),
           bei: function () { global.Dialog.starte("wieser", "start"); } },
         { id: "jonas", name: T("Jonas"), punkte: zone("lehrsaal", "jonas", [330, 330, 600, 420]),
@@ -586,8 +589,6 @@
           bei: function () {
             melde(T("Der Wagen schreibt Jonas' Ableitung II mit: {hf} pro Minute.", { hf: satz(LEHRSAAL_EKG).mess.frequenz }));
           } },
-        { id: "projektion", name: T("Leinwand"), punkte: zone("lehrsaal", "projektion", [602, 131, 969, 360]),
-          bei: function () { melde("Auf der Leinwand läuft dieselbe Ableitung, groß wie auf Papier."); } },
         { id: "lineale", name: T("Lineale"), punkte: zone("lehrsaal", "lineale", [1071, 402, 1151, 452]),
           erledigt: function () { return hat("ls_lineal"); },
           bei: function () {

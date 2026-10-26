@@ -2196,6 +2196,8 @@ def zonen(name):
             x, y = bild(o.matrix_world @ v.co); zonen_.setdefault(o["zone"], []).append((x, y))
     hit = {z: [max(0, round(min(p[0] for p in pts))), max(0, round(min(p[1] for p in pts))),
                min(B, round(max(p[0] for p in pts))), min(H, round(max(p[1] for p in pts)))] for z, pts in sorted(zonen_.items())}
+    for z, rand in k.get("zonen_rand", {}).items():                   # Zugabe ringsum für kleine Dinge
+        if z in hit: hit[z] = [max(0, hit[z][0] - rand), max(0, hit[z][1] - rand), min(B, hit[z][2] + rand), min(H, hit[z][3] + rand)]
     for r in hit.values():                                            # mindestens 44 CSS-px (Bühne 1440 px breit: 49 Bühnen-px)
         for i in (0, 1):
             if r[i + 2] - r[i] < 49:

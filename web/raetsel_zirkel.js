@@ -51,6 +51,9 @@
       '</div>';
     document.body.appendChild(hof);
     hof.querySelector(".zu").addEventListener("click", schliesse);
+    document.addEventListener("keydown", function (e) {             /* Escape schließt, wie bei der Reizleitung */
+      if (e.key === "Escape" && hof.classList.contains("an")) { e.preventDefault(); schliesse(); }
+    });
     hof.querySelector(".loesung").addEventListener("click", zeigeLoesung);
     hof.querySelector(".nochmal").addEventListener("click", function () {
       streifen.setze({ zirkel: null, loesung: null, marken: null });
