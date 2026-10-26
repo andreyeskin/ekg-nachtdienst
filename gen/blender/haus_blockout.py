@@ -4,6 +4,8 @@
     python3 gen/blender/haus_blockout.py render aussen    Probe-Render (a): Außenansicht 06:40  -> docs/haus/probe_aussen.jpg
     python3 gen/blender/haus_blockout.py render flur      Probe-Render (b): Flur 1. OG 09:15    -> docs/haus/probe_flur.jpg
     python3 gen/blender/haus_blockout.py render lehrsaal  Lehrsaal EG 08:10 (Hülle + Ausbau szene_lehrsaal.py) -> docs/haus/probe_lehrsaal.jpg
+    python3 gen/blender/haus_blockout.py render blick_sw_eg   Fensterblick-Tafel (FENSTERBLICKE) -> bau/blender/haus/blick_sw_eg.png
+    python3 gen/blender/haus_blockout.py ebenen lehrsaal  Hausraum fürs Spiel: Ebenen, Klickzonen, Schirme -> art/szenen/lehrsaal/
     python3 gen/blender/haus_blockout.py grundriss eg|1og|2og|alle   Draufsicht (orthografisch) -> docs/haus/grundriss_<g>.png
 
 Alle Maße stehen in den Tabellen oben (Meter, lokale Koordinaten nach KRANKENHAUS §2: Ursprung Südwestecke des
@@ -13,8 +15,9 @@ grobe Klötze im Probe-Flur, Bäume aus Astwerk und gezackten Kronenlappen bzw. 
 Stadt im Tal eine ferne Kulisse (Südost unsichtbar, Nordost-Talbiegung im Bild von Kamera (a)).
 
 Render: Fläche (Lokalfarbe, Stufen nach Flächenrichtung), Sonne (nur direktes Licht, grau) und Freestyle-Linie wie in
-ebenen.py, zusammengesetzt mit komposit.py — ohne die Ebenen-Trennung (kein Mittelgrund, keine Klickzonen); die
-Ebenen-Pipeline bleibt unverändert. Jeder Durchgang lädt die .blend neu (die Durchgänge verändern die Materialien).
+ebenen.py, zusammengesetzt mit komposit.py. `ebenen` trennt für Hausräume Hintergrund und Mittelgrund (Objekteigenschaft
+`ebene`), schreibt Klickzonen (`zone`) und Schirmflächen (`schirm`) — die Ebenen-Pipeline für Hausräume; ebenen.py bleibt für die
+alten Einzelszenen. Jeder Durchgang lädt die .blend neu (die Durchgänge verändern die Materialien).
 """
 import math
 import os
@@ -435,6 +438,32 @@ import szene_lehrsaal  # noqa: E402
 AUSBAUTEN = {"lehrsaal": szene_lehrsaal}
 for _n, _a in AUSBAUTEN.items():
     PALETTE.update(_a.PALETTE); OHNE_LINIE |= _a.OHNE_LINIE; OHNE_SCHATTIERUNG |= _a.OHNE_SCHATTIERUNG; KAMERAS[_n] = _a.KAMERA
+
+# Fensterblick-Tafeln (KRANKENHAUS „Bausteine" Punkt 4): je Fassadenseite und Geschoss einmal von außen gerendert (Fläche und
+# Sonne, ohne Linie, Licht und Himmel der Raumkamera) und als flache Tafel knapp vor die Fassade gelegt (`ebene`: Achse und Lage).
+# Der Blick geht vom Ort der Raumkamera aus: durch die Öffnungen sieht die Raumkamera dann genau, was die Tafel zeigt. Versteckt
+# werden die Geschossräume und alle Ausbauten (Vorhänge, Pflanzen auf der Fensterbank), sonst nichts. `schatten_radius`: nur
+# Körper in diesem Umkreis werfen Schatten (die Hügel fingen die flache Sonne sonst ab). Eine Raumkamera nennt ihre Tafeln unter
+# `fensterblick`; `render blick_sw_eg` erneuert eine Tafel (bau/blender/haus/blick_sw_eg.png), `ebenen` rendert fehlende selbst.
+FENSTERBLICKE = {
+    "blick_sw_eg": dict(raum="lehrsaal", gier=180.0, brennweite=18, verschiebung=(0.0, 0.0), ebene=("x", -0.4)),   # Giebel: zwei Fenster neben der Leinwand
+    "blick_se_eg": dict(raum="lehrsaal", gier=-90.0, brennweite=12, verschiebung=(-0.5, 0.0), ebene=("y", -1.4)),  # Nische des Eckrisalits, links im Bild
+}
+for _n, _f in FENSTERBLICKE.items():
+    KAMERAS[_n] = dict({s: w for s, w in KAMERAS[_f["raum"]].items() if s not in ("ziel", "linien_nur", "fensterblick", "sonne_staerke")},
+                       ausbau=(), verstecken=("Trakt A EG",), schatten_radius=150.0, **{s: _f[s] for s in ("gier", "brennweite", "verschiebung")})
+
+
+def tafel_ecken(name):
+    """Vier Ecken (Welt, unten links gegen den Uhrzeigersinn) der Tafel `name`: das Sichtfeld ihrer Kamera, geschnitten mit der
+    Ebene vor der Fassade — dieselbe Rechnung wie Blender (Sensor 36 mm waagrecht, Verschiebung in Bildbreiten)."""
+    f = FENSTERBLICKE[name]; k = KAMERAS[name]; o = k["ort"]; g = math.radians(k["gier"])
+    vor, rechts = (math.cos(g), math.sin(g), 0.0), (math.sin(g), -math.cos(g), 0.0)
+    achse, lage = f["ebene"]; i = 0 if achse == "x" else 1
+    d = (lage - o[i]) / vor[i]                                    # Abstand längs der Blickachse
+    b = d * 36.0 / k["brennweite"]; h = b * H / B; sx, sy = k["verschiebung"]
+    mitte = [o[j] + vor[j] * d + rechts[j] * sx * b for j in range(3)]; mitte[2] += sy * b
+    return [tuple(mitte[j] + rechts[j] * u * b / 2 + (v * h / 2 if j == 2 else 0.0) for j in range(3)) for u, v in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
 
 
 def stil():
@@ -1750,12 +1779,16 @@ def kamera_stellen(sc, k, aufloesung=(B, H)):
     from mathutils import Vector
     from bpy_extras.object_utils import world_to_camera_view
     kam = bpy.data.objects["Kamera"]; sc.camera = kam
-    ox, oy, oz = k["ort"]; zx, zy, zz = k["ziel"]
-    gier = math.radians(k["gier"]) if "gier" in k else math.atan2(zy - oy, zx - ox)   # feste Blickrichtung: Wand bleibt frontal
+    ox, oy, oz = k["ort"]
+    gier = math.radians(k["gier"]) if "gier" in k else math.atan2(k["ziel"][1] - oy, k["ziel"][0] - ox)   # feste Blickrichtung: Wand bleibt frontal
     kam.location = k["ort"]; kam.rotation_euler = (math.radians(90), 0, gier - math.radians(90))
     kam.data.type = 'PERSP'; kam.data.lens = k["brennweite"]; kam.data.shift_x = 0; kam.data.shift_y = 0
     kam.data.clip_start = 0.3; kam.data.clip_end = 2000
     sc.render.resolution_x, sc.render.resolution_y = aufloesung
+    if "verschiebung" in k:                                         # Fensterblick: feste Verschiebung (tafel_ecken rechnet mit ihr)
+        kam.data.shift_x, kam.data.shift_y = k["verschiebung"]
+        bpy.context.view_layer.update()
+        return gier
     bpy.context.view_layer.update()
     p = world_to_camera_view(sc, kam, Vector(k["ziel"]))          # Ziel in die Bildmitte: Verschiebung statt Neigung
     kam.data.shift_y = (p.y - 0.5) * aufloesung[1] / aufloesung[0]
@@ -1765,7 +1798,8 @@ def kamera_stellen(sc, k, aufloesung=(B, H)):
 
 
 def himmel_setzen(sc, k, gier, M):
-    """Himmelsbänder als große Fläche quer zur Blickrichtung, 900 m entfernt (nur für diesen Render)."""
+    """Himmelsbänder als große Fläche quer zur Blickrichtung, 900 m entfernt (nur für diesen Render); 8 km breit, damit auch ein
+    Weitwinkel mit Verschiebung (Fensterblick) nicht seitlich an ihr vorbeisieht."""
     import bpy
     sys.path.insert(0, HIER); import werkzeug as wz
     farben = k["himmel"]; abstand = 900.0; hoehe = 700.0
@@ -1776,7 +1810,7 @@ def himmel_setzen(sc, k, gier, M):
     for i, f in enumerate(farben):
         m = bpy.data.materials.get(f"himmel_{i}") or wz.material(f"himmel_{i}", (0.9, 0.9, 0.9), 0.9)   # unbenutzte Materialien überleben das Speichern nicht
         z1, z0 = kanten[i], kanten[i + 1]
-        o = wz.platte(3000.0, z1 - z0, (cx, cy, (z0 + z1) / 2), m, "hinten", dreh=(math.radians(90), 0, gier + math.radians(90)), name=f"Himmel {i}")
+        o = wz.platte(8000.0, z1 - z0, (cx, cy, (z0 + z1) / 2), m, "hinten", dreh=(math.radians(90), 0, gier + math.radians(90)), name=f"Himmel {i}")
         o.data.materials[0] = m
     # Wolken: flache Linsen (oben rund, unten flach) 10 m vor der Himmelsebene, Farben Morgenlicht-Abwandlungen, ohne Linie
     rx, ry = math.sin(gier), -math.cos(gier)                       # „rechts" quer zur Blickrichtung
@@ -1906,10 +1940,22 @@ def durchgang(kamera_name, art, ortho=None):
             if o.type == 'MESH':
                 o.hide_render = bool({m.name for m in o.data.materials if m} & set(ohne_material))
 
+    datei = art                                          # Ebenen-Pipeline: flatbg, sunbg, linesbg ohne Mittelgrund, linesmid nur er
+    ebene = "bg" if art.endswith("bg") else "mid" if art.endswith("mid") else ""
+    art = art[:len(art) - len(ebene)]
     sonne.hide_render = art != "sun"
     besonnt = STADT_ALLE if stil() else set()            # Stile: die Stadt liegt in der Sonne und hat Seiten (Probe: Talschatten)
     ohne_sch, immer = OHNE_SCHATTIERUNG - besonnt, IMMER_SCHATTEN - besonnt
-    if art == "flat":
+    if art == "mask":                                    # Maske des Mittelgrunds: weiß, alles andere schwarz (verdeckt aber mit)
+        emission_ueberall(lambda n: (0.0, 0.0, 0.0)); welt((0, 0, 0)); sichtbar(); proben = PROBEN["flat"]
+        weiss = bpy.data.materials.new("maske_weiss"); weiss.use_nodes = True
+        wn = weiss.node_tree; e_ = wn.nodes.new("ShaderNodeEmission"); e_.inputs["Color"].default_value = (1, 1, 1, 1)
+        for l in list(wn.nodes["Material Output"].inputs["Surface"].links): wn.links.remove(l)
+        wn.links.new(e_.outputs["Emission"], wn.nodes["Material Output"].inputs["Surface"])
+        for o in bpy.data.objects:
+            if o.type == 'MESH' and o.get("ebene") == "mitte":
+                for i in range(len(o.data.materials)): o.data.materials[i] = weiss
+    elif art == "flat":
         emission_ueberall(lambda n: hex_lin(pal[n]) if n in pal else (0.5, 0.5, 0.5))
         for m in bpy.data.materials:
             if m.node_tree and m.name not in ohne_sch and m.node_tree.nodes.get("Material Output"): stufen_nach_richtung(m)
@@ -1982,22 +2028,88 @@ def durchgang(kamera_name, art, ortho=None):
         if k.get("ohne_scheiben"):
             for o in bpy.data.objects:
                 if o.name.startswith(("Scheibe", "Gardine", "Fluegel offen Glas")): o.hide_render = True
+        for name in k.get("verstecken", ()):            # Fensterblick: Geschossräume aus (der Blick geht vom Raum aus hinaus)
+            c = bpy.data.collections.get(name)
+            if c: c.hide_render = True
+        if art == "sun" and k.get("schatten_radius"):  # nur nahe Körper werfen Schatten
+            ko = Vector(k["ort"])
+            for o in bpy.data.objects:
+                if o.type == 'MESH' and (o.matrix_world @ (sum((Vector(v) for v in o.bound_box), Vector()) / 8) - ko).length > k["schatten_radius"]:
+                    o.visible_shadow = False
+        for o in bpy.data.objects:                       # Ebenen: im Hintergrund fehlt der Mittelgrund (in der Sonne wirft er weiter Schatten),
+            if o.type != 'MESH' or o.hide_render: continue   # der Linien-Durchgang des Mittelgrunds zeichnet nur ihn
+            mitte = o.get("ebene") == "mitte"
+            if ebene == "bg" and mitte:
+                if art == "sun": o.visible_camera = False
+                else: o.hide_render = True
+            elif ebene == "mid" and not mitte: o.hide_render = True
+        for name in k.get("fensterblick", ()):
+            tafel(name, art)
     sc.cycles.samples = proben; sc.cycles.use_denoising = art == "sun"
-    sc.render.filepath = BAU + f"{kamera_name}{stil_endung()}_{art}.png"
+    sc.render.filepath = BAU + f"{kamera_name}{stil_endung()}_{datei}.png"
     t = time.time(); bpy.ops.render.render(write_still=True)
     if art == "lines":
         from PIL import Image
         Image.open(sc.render.filepath).convert("RGB").reduce(UEBER).save(sc.render.filepath)
-    print(f"RENDER {kamera_name} {art} {time.time() - t:.1f}s", flush=True)
+    print(f"RENDER {kamera_name} {datei} {time.time() - t:.1f}s", flush=True)
 
 
-def komposit(kamera_name, ziel, k, mit_sonne=True, max_kb=300):
-    """Lokalfarbe, Schattenseite eine Stufe dunkler (Richtung Petrol), Sonnenfleck getönt, darüber die Tusche."""
+def fensterblicke(name):
+    """Fehlende Fensterblick-Tafeln der Kamera `name` zuerst rendern."""
+    for b in KAMERAS[name].get("fensterblick", ()):
+        if not os.path.exists(BAU + b + ".png"):
+            print("Fensterblick", b, flush=True); unterprozess(["render", b])
+
+
+TAFEL_MARKE = (0.0, 0.0, 1.0)    # Farbe der Tafel im Sonnen-Durchgang (sonst nur Grau): das Komposit lässt sie ohne Licht und Schatten
+
+
+def tafel(name, art):
+    """Fensterblick-Tafel `name` als flache Fläche in die Szene (nur für diesen Durchgang): in der Fläche das Bild der Tafel,
+    im Sonnen-Durchgang die Marke, im Linien-Durchgang nicht da; sie wirft keinen Schatten."""
+    import bpy
+    pfad = BAU + name + ".png"
+    if not os.path.exists(pfad): raise SystemExit(f"FEHLER: Fensterblick fehlt, erst `render {name}`")
+    if art == "lines": return
+    m = bpy.data.materials.new("fensterblick_" + name); m.use_nodes = True; nt = m.node_tree
+    for n in list(nt.nodes):
+        if n.type != 'OUTPUT_MATERIAL': nt.nodes.remove(n)
+    em = nt.nodes.new("ShaderNodeEmission"); nt.links.new(em.outputs[0], nt.nodes["Material Output"].inputs["Surface"])
+    if art == "flat":
+        bild = nt.nodes.new("ShaderNodeTexImage"); bild.image = bpy.data.images.load(pfad); bild.interpolation = 'Closest'
+        nt.links.new(bild.outputs["Color"], em.inputs["Color"])
+    else:
+        em.inputs["Color"].default_value = (*(TAFEL_MARKE if art == "sun" else (0.0, 0.0, 0.0)), 1)   # Maske: kein Mittelgrund
+    me = bpy.data.meshes.new("Fensterblick " + name); me.from_pydata(tafel_ecken(name), [], [(0, 1, 2, 3)])
+    uv = me.uv_layers.new(); [setattr(uv.data[i], "uv", c) for i, c in enumerate(((0, 0), (1, 0), (1, 1), (0, 1)))]
+    o = bpy.data.objects.new("Fensterblick " + name, me); o.data.materials.append(m); bpy.context.scene.collection.objects.link(o)
+    o.visible_shadow = False
+
+
+def licht_schatten(flach, sonne, k, schattenfarbe):
+    """Schattenseite eine flache Stufe zur Schattenfarbe, Sonnenfleck getönt. Die Fensterblick-Tafel (im Sonnen-Durchgang mit
+    TAFEL_MARKE) bleibt, wie sie gerendert ist: sie hat ihr Licht schon."""
     import numpy as np
     from PIL import Image, ImageFilter
     sys.path.insert(0, HIER); import komposit as ko
+    ls = ko.luma(sonne)
+    licht = np.clip((ls - 0.35) / 0.08 + 0.5, 0, 1)
+    licht = np.asarray(Image.fromarray((licht * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
+    licht = ko.weich(licht, 0.7)[..., None]
+    draussen = ko.weich((sonne[..., 2] - sonne[..., 0] > 0.4).astype(np.float32), 0.7)[..., None]
+    schatten = (1 - licht) * k["schatten"] * (1 - draussen)
+    flach = flach * (1 - schatten) + schattenfarbe * schatten        # Schattenseite: flache Stufe
+    licht = licht * k["anteil"] * (1 - draussen)
+    return flach * (1 - licht) + ko.hexc(k["licht"]) * licht
+
+
+def komposit(kamera_name, ziel, k, mit_sonne=True, max_kb=300, linien=True):
+    """Lokalfarbe, Schattenseite eine Stufe dunkler (Richtung Petrol), Sonnenfleck getönt, darüber die Tusche."""
+    import numpy as np
+    from PIL import Image
+    sys.path.insert(0, HIER); import komposit as ko
     lade = lambda n: np.asarray(Image.open(BAU + f"{kamera_name}{stil_endung()}_{n}.png").convert("RGB")).astype(np.float32) / 255
-    flach = lade("flat"); t = ko.tinte(lade("lines"))[..., None]
+    flach = lade("flat"); t = ko.tinte(lade("lines"))[..., None] if linien else 0.0
     s = stil() or {}
     schattenfarbe = ko.hexc(s.get("schatten", k.get("schattenfarbe", "#2C5560"))); tinte = ko.hexc(s.get("tinte", "#1E2A30"))
     mit_sonne = mit_sonne and s.get("mit_sonne", True)
@@ -2011,30 +2123,97 @@ def komposit(kamera_name, ziel, k, mit_sonne=True, max_kb=300):
         blau = blau * (1 - s["eigen"]) + flach * s["eigen"]
         flach = np.where(leuchtet[..., None], flach, blau)
     if mit_sonne:
-        ls = ko.luma(lade("sun"))
-        licht = np.clip((ls - 0.35) / 0.08 + 0.5, 0, 1)
-        licht = np.asarray(Image.fromarray((licht * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
-        licht = ko.weich(licht, 0.7)[..., None]
-        schatten = (1 - licht) * k["schatten"]
-        flach = flach * (1 - schatten) + schattenfarbe * schatten        # Schattenseite: flache Stufe
-        flach = flach * (1 - licht * k["anteil"]) + ko.hexc(k["licht"]) * licht * k["anteil"]
+        flach = licht_schatten(flach, lade("sun"), k, schattenfarbe)
     bild = flach * (1 - t) + tinte * t
-    im = Image.fromarray((np.clip(bild, 0, 1) * 255 + 0.5).astype(np.uint8))
+    speichern(Image.fromarray((np.clip(bild, 0, 1) * 255 + 0.5).astype(np.uint8)), ziel, max_kb, palette=linien)
+
+
+def speichern(im, ziel, max_kb=300, palette=True):
+    from PIL import Image
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     if ziel.endswith(".jpg"):
         for q in (88, 82, 76, 70, 62, 55):
             im.save(ziel, quality=q, optimize=True, subsampling=1)
             if os.path.getsize(ziel) <= max_kb * 1024: break
+    elif im.mode == "RGBA" or not palette:                            # Spielebenen: volle Farbe (128 Farben gäben Stufen im Fensterblick)
+        im.save(ziel, optimize=True)
     else:
         im.convert("P", palette=Image.ADAPTIVE, colors=128).save(ziel, optimize=True)
     print("gespeichert", os.path.relpath(ziel, WURZEL), f"{os.path.getsize(ziel) // 1024} kB")
+
+
+def ebenen_komposit(name, k):
+    """Ebenen eines Hausraums fürs Spiel (wie komposit.py --layers): hintergrund.png aus den bg-Durchgängen, mittelgrund.png mit
+    Alpha (Farbe aus dem vollen Bild, Linie nur aus linesmid, Maske), vorschau.png wie die Probe. Gleiche Schattenstufe und
+    gleiches Licht wie `komposit`, sonst wird der Raum blass."""
+    import numpy as np
+    from PIL import Image
+    sys.path.insert(0, HIER); import komposit as ko
+    lade = lambda n: np.asarray(Image.open(BAU + f"{name}_{n}.png").convert("RGB")).astype(np.float32) / 255
+    ziel = os.path.join(WURZEL, "art", "szenen", name) + os.sep
+    sf, tinte = ko.hexc(k.get("schattenfarbe", "#2C5560")), ko.hexc("#1E2A30")
+    rgb = lambda a: Image.fromarray((np.clip(a, 0, 1) * 255 + 0.5).astype(np.uint8))
+    voll = licht_schatten(lade("flat"), lade("sun"), k, sf)
+    t = ko.tinte(lade("lines"))[..., None]
+    speichern(rgb(voll * (1 - t) + tinte * t), ziel + "vorschau.png", palette=False)
+    hinten = licht_schatten(lade("flatbg"), lade("sunbg"), k, sf)
+    t = ko.tinte(lade("linesbg"))[..., None]
+    speichern(rgb(hinten * (1 - t) + tinte * t), ziel + "hintergrund.png", palette=False)
+    t = ko.tinte(lade("linesmid"))[..., None]; maske = ko.luma(lade("mask"))[..., None]
+    col = voll * (1 - t) + tinte * t
+    col = tinte * (1 - maske) + col * maske                          # außerhalb des Objekts nur Tusche
+    alpha = np.clip(np.maximum(maske, t), 0, 1)
+    speichern(Image.fromarray((np.dstack([np.clip(col, 0, 1), alpha]) * 255 + 0.5).astype(np.uint8), "RGBA"), ziel + "mittelgrund.png")
+
+
+def zonen(name):
+    """Klickzonen und Schirmflächen eines Hausraums (wie ebenen.klickzonen/schirme) nach art/szenen/<raum>/: das Bildrechteck aller
+    Objekte mit derselben Eigenschaft `zone`, dazu feste Zonen der Kamera (`zonen_fest`, z. B. der Ausgangspfeil am Bildrand);
+    je Objekt mit `schirm` (und `ebene`) die vier Ecken seiner großen, der Kamera zugewandten Fläche aus dem Netz selbst — auch
+    gedreht (Wagenschirm 38°), wo der achsparallele Kasten falsche Ecken gäbe."""
+    import json
+    import bpy
+    from mathutils import Vector
+    from bpy_extras.object_utils import world_to_camera_view
+    bpy.ops.wm.open_mainfile(filepath=BLEND)
+    sc = bpy.context.scene; k = KAMERAS[name]; kamera_stellen(sc, k)
+    kam = sc.camera; cam = kam.matrix_world.translation
+    bild = lambda p: (lambda q: (q.x * B, (1 - q.y) * H))(world_to_camera_view(sc, kam, p))
+    zonen_ = {}
+    for o in bpy.data.objects:
+        if o.type != 'MESH' or not o.get("zone"): continue
+        for v in o.data.vertices:
+            x, y = bild(o.matrix_world @ v.co); zonen_.setdefault(o["zone"], []).append((x, y))
+    hit = {z: [max(0, round(min(p[0] for p in pts))), max(0, round(min(p[1] for p in pts))),
+               min(B, round(max(p[0] for p in pts))), min(H, round(max(p[1] for p in pts)))] for z, pts in sorted(zonen_.items())}
+    hit.update(k.get("zonen_fest", {}))
+    schirme = {}
+    for o in bpy.data.objects:
+        if o.type != 'MESH' or not o.get("schirm"): continue
+        flaechen = sorted(o.data.polygons, key=lambda f: -f.area)[:2]   # die beiden großen Seiten der dünnen Kiste
+        vorn = min(flaechen, key=lambda f: ((o.matrix_world @ f.center) - cam).length)
+        pts = [bild(o.matrix_world @ o.data.vertices[i].co) for i in vorn.vertices]
+        mx, my = sum(p[0] for p in pts) / 4, sum(p[1] for p in pts) / 4
+        pts.sort(key=lambda p: math.atan2(p[1] - my, p[0] - mx))          # im Uhrzeigersinn (y nach unten)
+        start = min(range(4), key=lambda i: pts[i][0] + pts[i][1])        # oben links zuerst
+        pts = pts[start:] + pts[:start]; xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+        schirme[o["schirm"]] = {"ebene": "mittelgrund" if o.get("ebene") == "mitte" else "hintergrund",
+                                "ecken": [[round(x, 1), round(y, 1)] for x, y in pts],
+                                "kasten": [round(min(xs), 1), round(min(ys), 1), round(max(xs), 1), round(max(ys), 1)]}
+    ziel = os.path.join(WURZEL, "art", "szenen", name) + os.sep; os.makedirs(ziel, exist_ok=True)
+    json.dump(hit, open(ziel + "hitboxes.json", "w", encoding="utf-8"), indent=1)
+    json.dump(schirme, open(ziel + "schirme.json", "w", encoding="utf-8"), indent=1)
+    print("KLICKZONEN", json.dumps(hit), flush=True); print("SCHIRME", json.dumps(schirme), flush=True)
+
+
+EBENEN = ("flat", "flatbg", "sun", "sunbg", "lines", "linesbg", "linesmid", "mask")
 
 
 def unterprozess(args):
     t = time.time()
     r = subprocess.run([sys.executable, os.path.abspath(__file__), *args], capture_output=True, text=True)
     for z in r.stdout.splitlines():
-        if z.startswith(("RENDER", "CYCLES", "GEBAUT", "FEHLER")): print("  " + z, flush=True)
+        if z.startswith(("RENDER", "CYCLES", "GEBAUT", "FEHLER", "KLICKZONEN", "SCHIRME")): print("  " + z, flush=True)
     if r.returncode:
         print(r.stdout[-3000:], r.stderr[-3000:]); sys.exit(r.returncode)
     return time.time() - t
@@ -2059,10 +2238,22 @@ def main():
             if not stil(): raise SystemExit("unbekannter Stil, bekannt: " + ", ".join(STILE))
         if len(sys.argv) > 3:                     # Unterprozess: ein Durchgang
             durchgang(name, sys.argv[3]); return
-        arten = ("flat", "sun", "lines") if (stil() or {}).get("mit_sonne", True) else ("flat", "lines")
+        fensterblicke(name)
+        blick = name in FENSTERBLICKE             # Tafel: Fläche und Sonne, ohne Linie
+        arten = ("flat", "sun") if blick else ("flat", "sun", "lines") if (stil() or {}).get("mit_sonne", True) else ("flat", "lines")
         zeiten = {art: unterprozess(["render", name, art]) for art in arten}
         k = dict(KAMERAS[name]); k.update((stil() or {}).get("kamera", {}))
-        komposit(name, DOCS + (f"stil_{os.environ['HAUS_STIL']}.jpg" if stil() else f"probe_{name}.jpg"), k)
+        ziel = BAU + name + ".png" if blick else DOCS + (f"stil_{os.environ['HAUS_STIL']}.jpg" if stil() else f"probe_{name}.jpg")
+        komposit(name, ziel, k, linien=not blick)
+        print("ZEITEN", " ".join(f"{a} {t:.0f}s" for a, t in zeiten.items()), f"gesamt {sum(zeiten.values()):.0f}s")
+    elif befehl == "ebenen":                      # Hausraum fürs Spiel: Ebenen, Klickzonen, Schirmflächen -> art/szenen/<raum>/
+        name = sys.argv[2]
+        if len(sys.argv) > 3 and sys.argv[3] == "zonen":
+            zonen(name); return
+        fensterblicke(name)
+        zeiten = {art: unterprozess(["render", name, art]) for art in EBENEN}
+        zeiten["zonen"] = unterprozess(["ebenen", name, "zonen"])
+        ebenen_komposit(name, KAMERAS[name])
         print("ZEITEN", " ".join(f"{a} {t:.0f}s" for a, t in zeiten.items()), f"gesamt {sum(zeiten.values()):.0f}s")
     elif befehl == "grundriss":
         g = sys.argv[2]

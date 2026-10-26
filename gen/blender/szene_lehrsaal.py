@@ -65,7 +65,8 @@ KAMERA = dict(ort=(5.75, 2.85, 1.25), ziel=(GIEBEL, 3.3, 0.4), gier=180.0, brenn
               licht="#FFD9A3", anteil=0.6, himmel=["#9EC3E0", "#C9DCE6", "#F2D2B0"],
               schatten=0.24, schattenfarbe="#6F7FB0",   # ohne Sonne: ein Viertel zum kühlen Blau (Lofi-Vorlagen), Sonne Pfirsich
               linien_nur=("Trakt A EG", SAMMLUNG), ausbau=(SAMMLUNG,), ohne_scheiben=True,
-              sonne_staerke=80.0)   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
+              sonne_staerke=80.0,   # bei 9° trifft die Sonne Tische und Boden streifend: stark genug, dass jede besonnte Fläche zählt
+              fensterblick=("blick_sw_eg", "blick_se_eg"))   # Tafeln hinter Giebel- und Nischenfenstern (haus_blockout FENSTERBLICKE)
 
 
 def ausbau(h):
