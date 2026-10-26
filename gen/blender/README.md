@@ -182,8 +182,34 @@ Kamera-Schlüssel für Innenräume: `linien_nur` (Linien und, im Sonnen-Durchgan
 Ausbau-Sammlungen; ohne Angabe keine), `ohne_scheiben` (Scheiben, Gardinen, offene Glasflügel aus: der Blick hinaus ist
 das Haus selbst, später eine Tafel), `sonne_staerke` (flache Sonne: streifend getroffene Flächen über die Schwelle), `schattenfarbe` (Farbe, zu der alles ohne
 Sonne um den Anteil `schatten` gezogen wird; Lehrsaal kühles Blau, Standard Petrol). Farben je Raum stehen im Ausbau-Skript.
-Die alte Einzelszene (Seminarraum, `ebenen.py lehrsaal`) läuft nicht mehr; ihre Ebenen in `art/szenen/lehrsaal/`
-bleiben, bis Hausräume durch die Ebenen-Pipeline gehen (Mittelgrund, `schirme.json`, `hitboxes.json`, Figuren).
+Die alte Einzelszene (Seminarraum, `ebenen.py lehrsaal`) läuft nicht mehr.
+
+**Hausraum ins Spiel (Ebenen-Pipeline für Hausräume, 26.10.2026)** — ein Befehl statt `ebenen.py` + `komposit.py`:
+
+```bash
+.venv/bin/python gen/blender/haus_blockout.py bauen                        # nach jeder Änderung am Ausbau
+.venv/bin/python gen/blender/haus_blockout.py ebenen lehrsaal              # ≈ 35 s -> art/szenen/lehrsaal/{hintergrund,mittelgrund,vorschau}.png, hitboxes.json, schirme.json
+.venv/bin/python gen/blender/figuren_zeichnen.py einsetzen lehrsaal        # danach (ebenen überschreibt hitboxes.json), ≈ 3 min
+python3 gen/kunst.py && python3 tools/baue.py
+```
+
+* **Ebene, Zone, Schirm** stehen als Objekteigenschaften (`ebene` = "mitte", `zone`, `schirm`) an den Netzen; der Ausbau setzt sie
+  nach Namensanfang (`MITTELGRUND`, `ZONEN`, `SCHIRME` in `szene_lehrsaal.py`). Zonen ohne Objekt (Ausgangspfeil) unter
+  `KAMERA["zonen_fest"]`; jede Zone mindestens 49 Bühnen-px (44 CSS-px). Schirmecken kommen aus der großen Fläche des Netzes
+  selbst, nicht aus dem achsparallelen Kasten (der Wagenschirm ist um 38° gedreht).
+* **Durchgänge** `flat`, `flatbg`, `sun`, `sunbg`, `lines`, `linesbg`, `linesmid`, `mask` (`render <raum> <durchgang>`); im
+  `sunbg` ist der Mittelgrund für die Kamera unsichtbar, wirft aber weiter Schatten. Das Komposit (`ebenen_komposit`) nimmt
+  dieselbe kühle Schattenstufe und dasselbe Licht wie die Probe (`licht_schatten`: `schattenfarbe`, `schatten`, `licht`, `anteil`).
+* **Fensterblick-Tafeln** (`FENSTERBLICKE`, KRANKENHAUS „Bausteine" Punkt 4): je Fassadenseite und Geschoss ein Render vom Ort der
+  Raumkamera hinaus (Geschoss und Ausbauten versteckt, nur Fläche und Sonne, ohne Linie) nach `bau/blender/haus/blick_*.png`;
+  im Raum als flache Fläche knapp vor der Fassade (`tafel_ecken`). Im Sonnen-Durchgang trägt sie die Marke Blau (`TAFEL_MARKE`):
+  das Komposit gibt ihr weder Licht noch Schatten, sie hat ihr Licht schon. Fehlt eine Tafel, rendern `render`/`ebenen` sie zuerst.
+* **Fassade** (`FASSADE` im Ausbau): Fenster im Grundriss des Raums bekommen außen kein Zufallsdekor, sondern die Vorhänge des Raums
+  (Streifen an den Außenseiten jeder Fenstergruppe, ohne Linie; innen ausgeblendet wie die Scheiben).
+* **Figuren**: `ebenen_figuren.aufbau("lehrsaal")` lädt die Haus-.blend und löscht alles außer `linien_nur` (sonst kostet jeder
+  `bpy.ops`-Grundkörper der Figuren eine Aktualisierung der ganzen Szene); Kamera und Sonne der Raumkamera, Licht und Schattenstufe
+  gehen als `einstellung` an `einsetzen`. Jonas' Oberkörper wird auf das 20°-Kopfteil gebeugt; Wiesers Tritt ist Teil ihrer Figur.
+  `vorlage --neu` hält das Seitenverhältnis eines vorhandenen Quellbilds.
 
 Regeln, die aus Fehlern stammen:
 * Raum nicht aus sich durchdringenden Kisten bauen — die Fugen bekommen sonst keine oder flackernde Linien.

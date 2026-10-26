@@ -1,8 +1,23 @@
-# Stand und Übergabe — 26.10.2026
+# Stand und Übergabe — 26.10.2026 (abends)
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
+
+## Fertig (26.10.2026): Lehrsaal im Spiel — Fensterblick, Ebenen-Pipeline für Hausräume, Fassade, Wieser, Raum
+
+- **Erreichbar über das Menü** (≡/Escape → „Lehrsaal", Entscheid des Nutzers); Ausgang (Pfeil am rechten Rand) → Aufnahme. Das neue
+  Spiel beginnt weiter in der Aufnahme. Zonen: `bank` öffnet den Zirkel (RR an LUDB 142, Entscheid des Nutzers), `whiteboard`
+  „Reizleitung bauen", `lineale` (einmal, dann erledigt), `wieser` (ein Satz), `liege`, `wagen`, `projektion`, `uhr` (Meldungen).
+  Wagenschirm und Leinwand zeigen Jonas' Ableitung II (LUDB 142), das Whiteboard bleibt leer. Texte en/ru da; Durchlauf 15b prüft den Weg.
+- **Ebenen-Pipeline für Hausräume:** `haus_blockout.py ebenen lehrsaal` (≈ 35 s) schreibt Hintergrund, Mittelgrund, Vorschau,
+  `hitboxes.json`, `schirme.json` nach `art/szenen/lehrsaal/` — Eigenschaften `ebene`/`zone`/`schirm` am Objekt, dieselbe kühle
+  Schattenstufe wie die Probe, Wagenschirm mit echten Ecken. Ablauf in `gen/blender/README.md` („Hausraum ins Spiel").
+- **Fensterblick-Tafeln** `blick_sw_eg`, `blick_se_eg` (Render vom Ort der Spielkamera hinaus, ohne Linie, im Komposit unverändert).
+- **Fassade** (Wunsch des Nutzers „Fenster wie im Saal"): Saalfenster außen ohne Zufalls-Rollladen/Gardine/Flügel, Pfirsich-Vorhänge
+  an den Außenseiten jeder Fenstergruppe; dadurch ist auch das rechte Giebelfenster innen frei. Probe `docs/haus/probe_aussen.jpg`.
+- **Dr. Wieser** eingesetzt (alte Zeichnung, ohne fal): am Fußende der Liege, Körper zur Leinwand, Kopf zur Klasse, Tritt als Teil
+  ihrer Figur; sie deckt die linke untere Ecke der Leinwand (die Zone `projektion` weicht ihr).
 
 ## Fertig (25./26.10.2026): Lehrsaal gestaltet — Saal im Haus, Farbdesign „Morgen", Spielkamera an der ersten Bank
 
@@ -111,19 +126,15 @@ Texte über IDs in `text/{de,en,ru}/aufnahme_baum.json`, Prüfungen in `tools/du
 
 ## Halb fertig: Lehrsaal
 
-Seit 25./26.10.2026 als Saal im Haus neu gebaut und gestaltet (siehe „Fertig" oben); die folgenden Punkte gelten für die
-Figuren weiter (Jonas liegt jetzt quer vor dem Giebelfenster, rechte Seite zur Klasse).
-Alter Stand: Raum (`art/szenen/lehrsaal/`), Figuren Dr. Wieser und Jonas samt
-Porträts als **ungeprüfter Zwischenstand** eingebettet; noch keine Spiellogik. Vor dem Weiterbauen prüfen:
-
-- Jonas' Elektroden nach Ampel-Regel (FACHREGELN, Lektion 2): rechter Arm rot, linker Arm gelb,
-  linkes Bein grün, rechtes Bein schwarz — Rot und Schwarz auf derselben Körperseite. Elektroden auf
-  Haut (Hosenbeine hoch), nicht auf Kleidung; flach liegend, Beine gestreckt und nicht übereinander;
-  T-Shirt hochgeschoben (Brustwand frei), jede Klemme mit Kabel zum Wagen. (`gen/blender/klemmen_setzen.py`
-  war dafür in Arbeit.)
-- Dr. Wieser: Akzent Kobaltblau `#2F5DA8` und blaues EKG-Lineal fehlen im Porträt; graue Haare mit 41 bewusst?
-- Das Reizleitungs-Rätsel (`web/raetsel_reizleitung.js`) wartet hier auf seinen Einstieg (Whiteboard an der Flurwand,
-  rechter Bildrand); der Durchlauf startet es bis dahin direkt.
+- **Jonas fehlt im Spiel.** Die alte Zeichnung (Blick vom Fußende, schräg) passt nicht zum Profil von der ersten Bank; der Nutzer hat
+  die Neuzeichnung über fal freigegeben (26.10.2026), auf dem Mac fehlt aber `FAL_KEY` (und `pip install fal-client` in `.venv`).
+  Bereit: Vorlage `bau/blender/figuren/vorlage_jonas.png` (Oberkörper auf dem Kopfteil), Stilphrase `stil/figur_jonas.txt` für das
+  Profil, `art/figuren_quelle/jonas.json` mit neuem Kasten (16:9; `datei` zeigt noch auf die alte Zeichnung). Zone `jonas` und Figur
+  sind aus `hitboxes.json`/`figuren.json` genommen; das Feld erscheint von selbst wieder, sobald die Zone da ist.
+- Elektroden nach Ampel-Regel (FACHREGELN, Lektion 2): rechter Arm rot, linker gelb, linkes Bein grün, rechtes Bein schwarz; auf Haut,
+  flach liegend, Beine nicht übereinander; die Stilphrase sagt das. Nach dem Zeichnen am Bild prüfen.
+- Dr. Wieser: Kobaltblau und blaues Lineal sind in ihrer Figur; im Porträt prüfen (Akzent, graue Haare mit 41).
+- Der Fall des Lehrsaals (Dialoge, Elektroden-Aufgabe, Projektion groß, `docs/UMBAU.md` §2d) fehlt; die Zonen tun bis dahin wenig.
 
 ## Entscheidungen des Nutzers (13.10.2026, umgesetzt)
 
@@ -222,55 +233,30 @@ Empfehlung), trag die Antworten ein und zieh KONZEPT, GAME_DESIGN und LEHRPLAN n
 Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
-## Nächster Auftrag (ab 26.10.2026): Lehrsaal ins Spiel — Fensterblick, Ebenen, Zonen, Figuren, Raum
+## Nächster Auftrag (ab 26.10.2026): Jonas neu zeichnen und einsetzen, Spieltest-Punkte am Lehrsaal
 
-Der Saal ist gestaltet und angenommen („Fertig" oben, Probe `docs/haus/probe_lehrsaal.jpg`). Jetzt soll er im Spiel
-erscheinen, statt der alten Seminarraum-Ebenen in `art/szenen/lehrsaal/`.
+Voraussetzung: `FAL_KEY` in `~/.zshrc` (der Nutzer trägt ihn selbst ein), `.venv/bin/pip install fal-client`.
 
-**Zuerst den Nutzer fragen:** Wie kommt man ins Spiel in den Lehrsaal, solange der Fall (Dialoge Wieser, Jonas;
-`docs/UMBAU.md` §2d) noch fehlt? Vorschlag: Raum registrieren und über einen Prüfweg erreichbar machen (z. B.
-`?raum=lehrsaal` oder ein Eintrag im Menü), Ausgang führt zur Aufnahme; das neue Spiel beginnt weiter in der Aufnahme.
-Und: soll die eigene Bank (Zirkel, Streifen) eine eigene Klickzone `bank` bekommen?
-
-1. **Fensterblick als Tafel** (KRANKENHAUS „Ein Haus, aus Bausteinen", Punkt 4): Fassade Südwest EG (beide Giebelfenster
-   neben der Leinwand) und Südost EG (Nischenfenster links) einmal von außen rendern, gleiche Tageszeit und Farben wie der
-   Saal (Himmel `#9EC3E0` → `#F2D2B0`), als flache Tafel hinter die Öffnungen; Kronen dicht davor ausdünnen.
-2. **Ebenen-Pipeline für Hausräume**, eine Pipeline: `hintergrund.png`, `mittelgrund.png` (eigene Linien),
-   `hitboxes.json`, `schirme.json` nach `art/szenen/lehrsaal/`. Ebenen und Zonen nach `lehrsaal.md` §4, §5, §7
-   (Mittelgrund: Liege, Wagen, Bänke samt eigener Bank, Schachtel). Fallen: das Komposit braucht dieselbe kühle
-   Schattenstufe (`schattenfarbe`, `schatten`) und das Pfirsichlicht wie `haus_blockout.komposit`, sonst wird der Saal
-   wieder blass; der Wagenschirm ist um 38° gedreht, `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an und
-   muss die echten Eckpunkte der Vorderseite nehmen; `ausgang` hat kein Objekt (Pfeil am rechten Bildrand).
-3. **Figuren** Dr. Wieser und Jonas neu setzen (`figuren.py` `PLATZ`, Hauskoordinaten): Jonas liegend auf der Liege
-   (x 0,85 … 1,5, y 0,35 … 2,3, Kopf bei y 0,35 auf dem 20°-Kopfteil, rechte Seite nach +x), Wieser stehend auf dem
-   freien Boden zwischen Liege und Leinwand, nicht vor der Leinwand. Dann `figuren_zeichnen.py einsetzen lehrsaal`
-   (ohne fal, Quellbilder in `art/figuren_quelle/`). Elektroden-Punkte unter „Halb fertig: Lehrsaal".
-4. **Raum im Spiel** nach der Antwort des Nutzers: `web/spiel.js` registriert bisher nur `monitor`; Felder aus den Zonen,
-   Schirme laufen über `starteSchirme`. Neue Spielertexte nur mit Skill `dialoge`, en/ru über den Agenten `uebersetzer`.
-
-Fertig, wenn das gebaute Spiel den neuen Saal mit allen Zonen und Schirmflächen zeigt, der Durchlauf „Alle Prüfungen
-bestanden." meldet und der Agent `spieltester` den Lehrsaal ohne Stocken bedient. Offen aus Auftrag B (nicht in diesem
-Block): Fragen unter „Fassade und Hof" oben. Offen am Saal: die Sonne macht nur kleine Flecken (große Lichtbahnen wären
-eine Lichtfrage).
+1. Jonas zeichnen (≈ 0,05–0,15 $, ein bis zwei Seeds), prüfen (Profil, Kopf auf dem Kopfteil, Ampel-Klemmen, keine Liege im Bild),
+   übernehmen:
+   `.venv/bin/python gen/blender/figuren_zeichnen.py malen jonas --seed 21` → Prüfbild `bau/blender/figuren/ki_jonas_s21_pruef.png`,
+   dann `… malen jonas --seed 21 --aus bau/blender/figuren/ki_jonas_s21.png --uebernehmen`.
+2. Einsetzen: `.venv/bin/python gen/blender/haus_blockout.py ebenen lehrsaal && .venv/bin/python gen/blender/figuren_zeichnen.py einsetzen lehrsaal`
+   (Zonen `jonas` und `liege` bleiben getrennt: Jonas oben, Liege unten; prüfen, ob `getrennt` hier sinnvoll schneidet).
+3. Punkte aus dem Spieltest (`bau/spieltest_lehrsaal.md`, unten unter „Offen am Lehrsaal") abarbeiten.
+4. Prüfung: Build und Durchlauf, dann `spieltester`; `medizin-gutachter`, sobald der Fall Texte bekommt.
 
 ### Startnachricht
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
-(.venv mit bpy 5.2.2, Blender-Skripte mit .venv/bin/python, Cycles auf Metal).
-Lies docs/STAND.md (Abschnitte „Nächster Auftrag" und „Halb fertig: Lehrsaal"), dann docs/raeume/lehrsaal.md §4–§8,
-gen/blender/README.md (Ablauf je Raum oben und „Lehrsaal … Ausbau im Haus"), gen/blender/szene_lehrsaal.py,
-gen/blender/ebenen.py, gen/blender/komposit.py und in gen/blender/haus_blockout.py nur KAMERAS, AUSBAUTEN,
-kamera_stellen(), durchgang() und komposit(). docs/haus/probe_lehrsaal.jpg verkleinert ansehen.
-Auftrag: den gestalteten Lehrsaal ins Spiel bringen. Zuerst mir die zwei Fragen aus „Nächster Auftrag" stellen.
-1. Fensterblick als Tafel hinter den Fenstern (Südwest EG, Südost EG).
-2. Ebenen-Pipeline für Hausräume (eine Pipeline): hintergrund, mittelgrund, hitboxes.json, schirme.json nach
-   art/szenen/lehrsaal/, mit kühler Schattenstufe wie im Haus-Komposit und gedrehtem Wagenschirm.
-3. Dr. Wieser und Jonas neu setzen (figuren.py PLATZ, figuren_zeichnen.py einsetzen lehrsaal, ohne fal).
-4. Raum lehrsaal in web/spiel.js registrieren, wie ich es auf die Frage beantworte.
-Prüfung: python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html"
-"$PWD/bau/durchlauf", danach der Agent spieltester für den Lehrsaal. Alles auf Opus (Detailarbeit an einer
-bestehenden Szene). Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
+(.venv mit bpy 5.2.2, Blender-Skripte mit .venv/bin/python, Cycles auf Metal). FAL_KEY steht in ~/.zshrc.
+Lies docs/STAND.md (Abschnitte „Nächster Auftrag" und „Halb fertig: Lehrsaal"), dann gen/blender/README.md
+(„Figuren im Raum" und „Hausraum ins Spiel") und docs/raeume/lehrsaal.md §2, §5, §8.
+Auftrag: Jonas für den Lehrsaal neu zeichnen (fal, Vorlage liegt bereit), mir das Prüfbild zeigen, nach meinem OK
+übernehmen und einsetzen; danach die Spieltest-Punkte aus STAND.md. Prüfung: python3 gen/kunst.py && python3 tools/baue.py
+&& node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf", danach der Agent spieltester.
+Alles auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
 ## Danach: Design-Prüfung und Farbpalette (neuer Chat mit den Plugins „Design" und „audit-suite")

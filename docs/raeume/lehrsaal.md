@@ -132,6 +132,7 @@ siehe `docs/UMBAU.md` §5). Bis dahin zeigt die Projektion nur Ableitung II und 
 | `whiteboard` | Herzschema / Einthoven-Dreieck (Rätsel „Reizleitung bauen" wandert hierher) | Tafel |
 | `lineale` | Lineal nehmen (einmalig; danach „erledigt") | Schachtel |
 | `uhr` | Uhrzeit-Meldung | Zifferblatt |
+| `bank` | eigene Bank: öffnet den Zirkel (RR an Jonas' Ableitung II), Wunsch des Nutzers 26.10.2026 | Block, Streifen, Zirkel |
 | `ausgang` | zur Aufnahme — frei erst, wenn die Pflichtaufgaben der Lektionen 1–7 gezeigt sind (Fallakte) | Pfeil am rechten Bildrand (die Türen liegen außerhalb des Bilds) |
 
 Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `tuete` in der Aufnahme
@@ -157,7 +158,8 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
   bewusst wärmer und matter.
 
   Draußen: der echte Blick aus dem Haus (Park, Linden im Herbstlaub), flach und ohne Linie; Scheiben und Gardinen
-  sind im Innenrender aus. Später als Fensterblick-Tafel (KRANKENHAUS „Bausteine" Punkt 4). Leinwand `#FFF8F4` (wie
+  sind im Innenrender aus; seit 26.10.2026 als Fensterblick-Tafeln `blick_sw_eg` und `blick_se_eg` (haus_blockout `FENSTERBLICKE`,
+  ohne Linie, im Komposit ohne Licht und Schatten). Leinwand `#FFF8F4` (wie
   EKG-Papier, die Kurve kommt aus dem Code). Kobaltblau nur an Dr. Wieser und in der Linealschachtel; Senfgelb nur
   an Jonas (deshalb Jacken Oliv, nicht Senf); Pflanzen Tannengrün (Laub ist nur außen). Himmel `#9EC3E0` → `#F2D2B0`
   (Blau oben, Pfirsich am Horizont), sichtbar erst mit der Fensterblick-Tafel.
@@ -177,7 +179,7 @@ Zonen überlappen nicht (§7.6): `jonas` und `liege` getrennt wie `herrk` und `t
   Tritt an der Liege; die eigene Bank ist hell (Holz, Papier) und trägt nur die Werkzeuge.
 - **Ebenen** (§3.4): Hintergrund (Hülle, Fenster, Decke, Leinwand, Whiteboard, Uhr, Türen, Vorhänge, Beamer);
   Mittelgrund (Liege, Wagen, Tische, Stühle, Schachtel); Figuren (Dr. Wieser, Jonas, Mitstudierende,
-  Spielerinnenschatten). Die Trennung kommt mit der Ebenen-Pipeline für Hausräume.
+  Spielerinnenschatten). Getrennt seit 26.10.2026: `haus_blockout.py ebenen lehrsaal` (Eigenschaft `ebene` am Objekt).
 - **Bewegung** (§7.5): Dr. Wieser atmet und dreht alle paar Sekunden das Lineal (zwei Posen, Wechsel per CSS);
   Jonas atmet sichtbar (Brustkorb); die Kurve auf dem Wagenschirm läuft; die Lichtbahnen wandern nicht.
 
@@ -197,7 +199,7 @@ Hauskoordinaten (KRANKENHAUS §2), Werte in `gen/blender/szene_lehrsaal.py` oben
 | EKG-Wagen | Mitte (1,9 / 0,02), schräg vor dem Kopfende, im Bild mit Abstand links der Liege; Schirm 0,36 × 0,24 um 38° zur ersten Bank gedreht |
 | Tischreihen | Tischmitten x 5,0 / 6,2 / 7,4 / 8,6 / 9,8; Blöcke y 1,35 … 3,15 und 4,05 … 5,85; Tisch 0,5 tief, 0,74 hoch; Stühle 0,55 hinter der Tischmitte |
 | Decke | Latten z 3,31 … 3,36, Lichtbänder darunter, Ringleuchten Ø 1,1 m auf z 2,75 bei x 7,8 |
-| Figuren | Dr. Wieser 1,72 m, Jonas 1,80 m liegend (Kopf zur Fensterwand); Plätze werden mit der Ebenen-Pipeline neu gesetzt (Vorschlag: Wieser zwischen Liege und Leinwand auf dem freien Boden, nicht vor der Leinwand) |
+| Figuren | Dr. Wieser 1,72 m am Fußende der Liege (1,75 / 2,6), Körper zur Leinwand, Kopf zur Klasse, linker Fuß auf ihrem Tritt (Teil der Figur), deckt die linke untere Ecke der Leinwand; Jonas 1,80 m liegend (Kopf zur Fensterwand, Oberkörper auf dem 20°-Kopfteil, rechte Seite zur Klasse), Werte in `figuren.PLATZ` |
 
 Alles steht auf dem Boden, Wege frei: Fenstergang 0,9 m, Mittelgang 0,9 m, Flurgang 1,1 m; vorn 2,6 m zwischen
 Leinwand und erster Reihe.
