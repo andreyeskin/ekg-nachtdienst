@@ -1,55 +1,27 @@
-# Stand und Übergabe — 25.10.2026
+# Stand und Übergabe — 26.10.2026
 
 Diese Datei ist der Einstieg für die nächste Sitzung. Der Stand liegt auf dem Branch
 `claude/stil-ligne-claire` (gepusht). Prüfung: `python3 gen/kunst.py && python3 tools/baue.py &&
 node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → „Alle Prüfungen bestanden."
 
-## Fertig (25.10.2026): Lehrsaal — Spielkamera an der ersten Bank, Vorderseite umgestellt
+## Fertig (25./26.10.2026): Lehrsaal gestaltet — Saal im Haus, Farbdesign „Morgen", Spielkamera an der ersten Bank
 
-- Nutzer: Decke zu dunkel → helles Holz `#CFA06A`, Boden `#C08552`. Spielkamera neu: **die Spielerin sitzt an der ersten
-  Bank** (5,65 / 2,85 / 1,2), Blick frontal zur Stirnwand, 20 mm; neuer Kamera-Schlüssel `gier` in `haus_blockout.py`
-  (feste Blickrichtung, Ziel per Verschiebung in x und y).
-- Weil von dort Nische, Flurwand und Türen außerhalb liegen, vom Nutzer bestätigt umgestellt: Liege quer vor dem linken
-  Giebelfenster (Kopf zur Fensterwand), Wagen am Kopfende in der Ecke, Whiteboard auf fahrbarem Gestell rechts hinter dem
-  Dozententisch (−28° zur Klasse), Uhr über der Leinwand, Stuhl der Dozentin hinter dem Tisch; Ausgang wird ein Pfeil am
-  rechten Bildrand. Danach: Kamera tiefer und weiter (5,75 / 2,85 / 1,25, 18 mm), damit unten die eigene Bank mit
-  Block, EKG-Streifen und Zirkel liegt (`werkzeug()` in `szene_lehrsaal.py`); Dozententisch 1,2 × 0,6 m. Dann „schön
-  stellen": Whiteboard an die Flurwand ins Eck (rechter Bildrand; Nutzer wollte die Tafel behalten, Inhalt: Schemata aus
-  dem Code, die Leinwand zeigt echte Kurven), Liege mit hochgestelltem Kopfteil und Kissen, Hocker statt Tritt, Wagenschirm
-  um 31° zur Bank gedreht (für `schirme.json` ebenfalls gedreht), Stuhl der Dozentin weg, Ziel y 3,3. Linke Ecke entrümpelt
-  (Nutzer: „забито"): Wagen frei neben die Liege (1,9 / 0,02), ohne Hocker, Papierrolle, Topf auf der Nischenbank und
-  Flasche auf der eigenen Bank; Liegensäule schmaler, Petrol.
-  Doku `lehrsaal.md` §4, §5, §7, §8. Probe `docs/haus/probe_lehrsaal.jpg`.
-- Für die Ebenen-Pipeline: das Whiteboard ist gedreht — `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an,
-  für Hausräume die echten Eckpunkte der Vorderseite nehmen.
+Vom Nutzer angenommen (26.10.2026). Probe `docs/haus/probe_lehrsaal.jpg`, Aufruf:
+`.venv/bin/python gen/blender/haus_blockout.py bauen && .venv/bin/python gen/blender/haus_blockout.py render lehrsaal` (≈ 25 s).
 
-## Fertig (25.10.2026): Eigenes Farbdesign „Morgen" für den Lehrsaal
-
-- Nutzer fand die Farben zu blass, schickte Vorlagen (Lofi-Zimmer, Ligne claire, Foto des Saals) und wünscht sich
-  **für jeden Raum ein eigenes Design**; ART_BIBLE §2 ist nur der Ausgangspunkt (dort vermerkt). Drei Proben gerendert
-  („Morgen", „Saal" mit roten Stühlen, „Pastell"), gewählt **„Morgen" mit Petrol-Stühlen**, nur für den Lehrsaal.
-- `szene_lehrsaal.py`: neue Palette (warmes Papier, Salbei, Parkett Honig-Eiche, dunklere Lattendecke, Akzente Pfirsich,
-  Terrakotta, Tannengrün, Oliv, Koralle) und eigene Materialien `ls_stuhl`, `ls_lampe`, `ls_tasche`, `ls_tasche2`. Kamera:
-  Sonne Pfirsich, alles ohne Sonne 24 % zum kühlen Blau (`schattenfarbe`, neu im Komposit von `haus_blockout.py`).
-  Jacken Oliv statt Senf (Senf bleibt Jonas). Probe `docs/haus/probe_lehrsaal.jpg` neu; Doku `lehrsaal.md` §6, ART_BIBLE §2,
-  README. Offen: Sonne erreicht im Saal nur kleine Flecken; große Lichtbahnen wären eine Lichtfrage (nicht Palette).
-  Für die Ebenen-Pipeline: `komposit.py` muss dieselbe kühle Schattenstufe nehmen wie das Haus-Komposit.
-
-## Fertig (25.10.2026): Lehrsaal als Saal im Haus (erster Ausbau nach „Ein Haus, aus Bausteinen")
-
-- Nutzer schickte ein Foto eines Seminarsaals (Fensterfront, Tischreihen, Holzdecke) und drei Lofi-Illustrationen
-  (Fenster und Kleinigkeiten tragen die Stimmung) und wählte: **Westende des EG, 14,4 × 7 m** (Lehrsaal + Garderobe,
-  mit der Nische des Eckrisalits), **Leinwand an der Stirnwand zwischen zwei neuen Giebelfenstern, Stühle Petrol**.
-- `gen/blender/szene_lehrsaal.py` ist jetzt ein Ausbau in Hauskoordinaten (`PALETTE`, `KAMERA`, `ausbau(h)`), von
-  `haus_blockout.py` eingebunden (`AUSBAUTEN`, `render lehrsaal` → `docs/haus/probe_lehrsaal.jpg`, ≈ 25 s mit Bau).
-  Fünf Reihen à sechs Plätze, Mittelgang, Dozententisch, Liege und EKG-Wagen in der Nische, Lattendecke, Lichtbänder,
-  Ringleuchten, Vorhänge, Pflanzen; Novembersonne 126°/9° von links. Neue Kamera-Schlüssel `ausbau`,
-  `ohne_scheiben`, `sonne_staerke`. Außenansicht und Grundriss EG neu gerendert (zwei Giebelfenster links unten).
-- Doku: `docs/raeume/lehrsaal.md` (Kopf, §1, §3, §6–§8), KRANKENHAUS (§3, §4, §9, „Umgesetzt für den Lehrsaal"),
-  ART_BIBLE §2/§4, `gen/blender/README.md`.
-- **Vom Nutzer angenommen** (25.10.2026). Offen: Fensterblick als Tafel, Ebenen-Pipeline für Hausräume, Figuren
-  (= „Nächster Auftrag" unten). Bis dahin bleiben die alten Ebenen in `art/szenen/lehrsaal/`; `ebenen.py lehrsaal`
-  läuft nicht mehr.
+- **Saal im Haus:** Westende des EG, 14,4 × 7 m, `gen/blender/szene_lehrsaal.py` als Ausbau in Hauskoordinaten
+  (`PALETTE`, `KAMERA`, `ausbau(h)`, eingebunden über `AUSBAUTEN` in `haus_blockout.py`). Nur Netze aus Punktlisten, keine
+  `bpy.ops` (9:44 min statt 11 s). Kamera-Schlüssel `ausbau`, `ohne_scheiben`, `sonne_staerke`, neu `schattenfarbe`
+  (Komposit) und `gier` (feste Blickrichtung, Ziel per Verschiebung in x und y).
+- **Eigenes Farbdesign „Morgen"** (aus drei Proben gewählt; Vorlagen Lofi-Zimmer, Ligne claire, Foto): Sonne Pfirsich,
+  alles ohne Sonne 24 % zum kühlen Blau `#6F7FB0`, Parkett, helle Lattendecke, Stühle Petrol, Akzente Pfirsich,
+  Terrakotta, Tannengrün, Oliv, Koralle. **Jeder Raum bekommt sein eigenes Design**; ART_BIBLE §2 ist nur Ausgangspunkt.
+  Werte in `docs/raeume/lehrsaal.md` §6.
+- **Spielkamera: die Spielerin sitzt an der ersten Bank** (5,75 / 2,85 / 1,25, Blick frontal zur Stirnwand, 18 mm).
+  Im Bild: Leinwand mit Uhr darüber in der Mitte; links Liege quer vor dem Giebelfenster (Kopfteil hoch, Kopf zur
+  Fensterwand) und EKG-Wagen frei daneben, Schirm zur Bank gedreht; rechts kleiner Dozententisch (Linealschachtel,
+  Laptop) und das Whiteboard an der Flurwand im Eck; unten die eigene Bank mit Block, EKG-Streifen und Zirkel
+  (`werkzeug()`). Türen außerhalb: der Ausgang wird ein Pfeil am rechten Bildrand. Maße `lehrsaal.md` §7, §8.
 
 ## Fertig (25.10.2026): Figuren mit Haltung und lesbare Schrift in der Außenansicht (a) (Auftrag B, dritter Teil)
 
@@ -60,28 +32,14 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 
 ## Fertig (25.10.2026): Natur, Himmel und Ferne der Außenansicht (a) (Auftrag B, zweiter Teil)
 
-- Nutzer: Bäume lesen schlecht, kahle Bäume wie Hergé, Details und ferne Stadt wie in den Referenzen, Himmel auch
-  (Referenzen lokal `vorlagen/haus/stil/natur/`). Ausgeführt auf Opus (Freigabe des Nutzers statt Fable).
-- `gen/blender/haus_blockout.py`: Astwerk rekursiv, Kronen als gezackte Lappen an den Astspitzen, Spätherbst halb kahl
-  („licht"), kahler Baum als Fächer mit Tinten-Zweigen, Sternfichten, Hecken gebeult; Stadt in Gassen mit Fensterreihen,
-  Dach- und Wandtönen, Bäumen, Turm mit Uhr, Oberstadt im Dunst, Hügel mit Baumsaum; Himmel fünf Stufen, Wolkenschatten
-  (blau: glühend), Schleier, Vögel; Grasbüschel, dunkle Wiesenflecken, Feldsteine; Linien ab 90 m dünner. Bau ≈ 12 s.
-  Renders `docs/haus/stil_tag.jpg`, `stil_blau.jpg`, `probe_aussen.jpg`; Einzelheiten KRANKENHAUS „Natur, Himmel und Ferne".
+Astwerk, Kronen, kahle Bäume, Stadt in Gassen, Himmel in fünf Stufen, Linien ab 90 m dünner. Einzelheiten KRANKENHAUS
+„Natur, Himmel und Ferne"; Renders `docs/haus/stil_tag.jpg`, `stil_blau.jpg`, `probe_aussen.jpg`.
 
 ## Fertig (25.10.2026): Fassade und Hof der Außenansicht (a) ausdetailliert (Auftrag B, erster Teil)
 
-- Nutzer schickte zwei Fotos eines Altbau-Klinikgebäudes als **Beispiel** für Detailgrad (lokal
-  `vorlagen/haus/fotos/vorbild_portal.webp`, `vorbild_fassade.webp`; kein Nachbau).
-- In `gen/blender/haus_blockout.py`: Altbaufenster (Rahmen, Kämpfer, Fasche, Sohlbank, grüne Rollläden in wechselnder
-  Höhe, Gardinen, offene Flügel), gebändertes Sockelgeschoss, Gesimse, Traufe mit Sparrenköpfen, Rinne, Fallrohre,
-  Gauben, Kaminköpfe, Giebel mit Holzstreifen und Rundfenster, Loggia mit drei Bögen, Rundbogenportal mit Holztür,
-  Leuchten, Schild, Stufen, Kübel; Trakt N hell mit Lamellen und Leben dahinter; Hof mit Pflaster-Zufahrt, Stellplätzen,
-  Autos, Figuren-Silhouetten, Wegweiser, Haltestelle, Raucherecke, Fahrradbügel; Spätherbst (gelbe und rostige Kronen,
-  Laub, ein kahler Baum), Comic-Wolken. Bau 45 s statt ≈ 8 min. Renders `docs/haus/stil_tag.jpg`, `stil_blau.jpg`,
-  `probe_aussen.jpg`; Einzelheiten KRANKENHAUS „Fassade ausdetailliert (25.10.2026)" und „Korrekturrunde".
-- Offene Fragen an den Nutzer: Gardinen (helle untere Scheibe) lassen oder nur Rollläden? Kahlen Baum rechts behalten
-  (liest sich noch wie ein Gestell)? Fensterband hinter den Lamellen von Trakt N 1. OG bestätigen? Schwächen:
-  Kopfsteinmuster nicht sichtbar, Schild nur Textbalken, Figuren ohne Haltung.
+Altbaufenster, Gesimse, Portal, Loggia, Hof mit Autos und Figuren, Spätherbst. Einzelheiten KRANKENHAUS „Fassade
+ausdetailliert (25.10.2026)". Offene Fragen an den Nutzer: Gardinen lassen oder nur Rollläden? Kahlen Baum rechts
+behalten? Fensterband hinter den Lamellen von Trakt N 1. OG bestätigen?
 
 ## Fertig (25.10.2026): Mechanik und Struktur, dritte Fassung (Entwurf, wartet auf Freigabe)
 
@@ -99,27 +57,13 @@ node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html" "$PWD/bau/durchlauf"` → �
 
 ## Fertig (25.10.2026): Außenstil Tag und Blaue Stunde
 
-- Nutzer bringt Stilreferenzen (Chaland, Floc'h, Tram-Wandbild, Dauger; nur lokal in `vorlagen/haus/stil/`, Ordner
-  `vorlagen/` ist in `.gitignore`). Ergebnis: Ligne claire bleibt, außen aber satter, mit dickem Umriss.
-- `render aussen --stil tag|blau` in `gen/blender/haus_blockout.py` (`TAG_PALETTE`, `STILE`): Proben
-  `docs/haus/stil_tag.jpg` und `docs/haus/stil_blau.jpg`, je etwa 10 s. **Beide angenommen, je für ihre Tageszeit**;
-  Werte und Zuordnung in ART_BIBLE §2 „Außen: zwei Stile je Tageszeit" und §4. Offen: Innenräume satter oder pastell.
-- **Jahreszeit entschieden: Spätherbst** (Anfang bis Mitte November): 06:40 Blaue Stunde, Sonnenaufgang etwa 07:10
-  (ART_BIBLE §4; Vermerke in KRANKENHAUS §5 und REDESIGN_FALL1).
-- Mitarbeit des Nutzers in Blender: eigene Kopie `vorlagen/haus/vorschlaege.blend` mit Sammlung `Vorschlaege`
-  (Klötze mit Namen, Kameras, Grease-Pencil-Notizen), Fotos realer Details in `vorlagen/haus/fotos/`. Die gebaute
-  `bau/blender/haus/haus_blockout.blend` wird bei jedem `bauen` überschrieben.
+`render aussen --stil tag|blau` (`TAG_PALETTE`, `STILE` in `haus_blockout.py`), beide angenommen, je für ihre Tageszeit
+(ART_BIBLE §2, §4). Jahreszeit Spätherbst. Vorlagen des Nutzers nur lokal in `vorlagen/` (in `.gitignore`).
 
 ## Fertig (23.10.2026): Werkzeuge für Claude-Sitzungen
 
-- **Hooks** (`.claude/settings.json`): nach jeder Bearbeitung unter `text/` oder `web/` prüft
-  `tools/haken/texte_pruefen.py` JSON, Gedankenstrich, Replikenlänge und IDs in de/en/ru; am Ende einer Antwort
-  erinnert `tools/haken/stand_pruefen.sh` einmal an offene Commits und Pushes.
-- **Skill `uebergabe`**: Block abschließen, STAND.md nachziehen, Startnachricht schreiben.
-- **Agenten** (`.claude/agents/`): `spieltester` (Sonnet, spielt als PJ-Studentin im eingebauten Browser),
-  `medizin-gutachter` (Fable, gegen FACHREGELN, QUELLEN, ESC, Lehrbuch), `uebersetzer` (Sonnet, de → en/ru).
-  Berichte landen in `bau/berichte/` (nicht in Git).
-- **Berechtigungen** (`.claude/settings.json`): feste Bau- und Prüfbefehle laufen ohne Rückfrage.
+Hooks in `.claude/settings.json` (Textprüfung, Erinnerung an Commits), Skill `uebergabe`, Agenten `spieltester`,
+`medizin-gutachter`, `uebersetzer` (`.claude/agents/`, Berichte in `bau/berichte/`).
 
 ## Fertig (23.10.2026): Außenansicht (a) zweite Überarbeitung
 
@@ -167,7 +111,8 @@ Texte über IDs in `text/{de,en,ru}/aufnahme_baum.json`, Prüfungen in `tools/du
 
 ## Halb fertig: Lehrsaal
 
-Seit 25.10.2026 als Saal im Haus neu gebaut (siehe „Fertig" oben); die folgenden Punkte gelten für die Figuren weiter.
+Seit 25./26.10.2026 als Saal im Haus neu gebaut und gestaltet (siehe „Fertig" oben); die folgenden Punkte gelten für die
+Figuren weiter (Jonas liegt jetzt quer vor dem Giebelfenster, rechte Seite zur Klasse).
 Alter Stand: Raum (`art/szenen/lehrsaal/`), Figuren Dr. Wieser und Jonas samt
 Porträts als **ungeprüfter Zwischenstand** eingebettet; noch keine Spiellogik. Vor dem Weiterbauen prüfen:
 
@@ -177,8 +122,8 @@ Porträts als **ungeprüfter Zwischenstand** eingebettet; noch keine Spiellogik.
   T-Shirt hochgeschoben (Brustwand frei), jede Klemme mit Kabel zum Wagen. (`gen/blender/klemmen_setzen.py`
   war dafür in Arbeit.)
 - Dr. Wieser: Akzent Kobaltblau `#2F5DA8` und blaues EKG-Lineal fehlen im Porträt; graue Haare mit 41 bewusst?
-- Das Reizleitungs-Rätsel (`web/raetsel_reizleitung.js`) wartet hier auf seinen Einstieg (Dr. Wieser,
-  Whiteboard); der Durchlauf startet es bis dahin direkt.
+- Das Reizleitungs-Rätsel (`web/raetsel_reizleitung.js`) wartet hier auf seinen Einstieg (Whiteboard an der Flurwand,
+  rechter Bildrand); der Durchlauf startet es bis dahin direkt.
 
 ## Entscheidungen des Nutzers (13.10.2026, umgesetzt)
 
@@ -277,44 +222,52 @@ Empfehlung), trag die Antworten ein und zieh KONZEPT, GAME_DESIGN und LEHRPLAN n
 Koordination auf Opus. Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
 ```
 
-## Nächster Auftrag (ab 25.10.2026): Lehrsaal ins Spiel — Fensterblick als Tafel, Ebenen für Hausräume
+## Nächster Auftrag (ab 26.10.2026): Lehrsaal ins Spiel — Fensterblick, Ebenen, Zonen, Figuren, Raum
 
-Der Saal ist gebaut und vom Nutzer angenommen (25.10.2026, „Fertig" oben, Probe `docs/haus/probe_lehrsaal.jpg`). Jetzt
-soll er im Spiel erscheinen, statt der alten Seminarraum-Ebenen in `art/szenen/lehrsaal/`.
+Der Saal ist gestaltet und angenommen („Fertig" oben, Probe `docs/haus/probe_lehrsaal.jpg`). Jetzt soll er im Spiel
+erscheinen, statt der alten Seminarraum-Ebenen in `art/szenen/lehrsaal/`.
 
-1. **Fensterblick als Tafel** (KRANKENHAUS „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut", Punkt 4): je
-   Fassadenseite und Geschoss einmal von außen rendern (gleiche Tageszeit, gleicher Innenstil), als flache Tafel hinter
-   die Fensteröffnungen legen; für den Lehrsaal Südost EG und Giebel Südwest EG. Kronen dicht vor den Fenstern
-   ausdünnen. Bisher sieht man durch die Öffnungen das echte Haus, flach und ohne Linie (`ohne_scheiben`).
-2. **Ebenen-Pipeline für Hausräume**: Hülle + Ausbau sollen dieselben Ergebnisse liefern wie `ebenen.py` für die
-   Einzelszenen: `hintergrund.png`, `mittelgrund.png` (eigene Linien), `hitboxes.json`, `schirme.json` in
-   `art/szenen/lehrsaal/`. Dafür im Ausbau Ebenen und Zonen setzen (Liste in `docs/raeume/lehrsaal.md` §4 und §5:
-   Schirmflächen `projektion`, `wagen_schirm`, `whiteboard`; Zonen `wieser`, `jonas`, `liege`, `wagen`, `projektion`,
-   `whiteboard`, `lineale`, `uhr`, `ausgang` an der hinteren Tür). Ob `ebenen.py` die Haus-.blend lädt oder
-   `haus_blockout.py` die Durchgänge bekommt, entscheidet der Chat; eine Pipeline, kein zweiter Weg.
-3. **Figuren** Dr. Wieser und Jonas neu setzen (`figuren.py` `PLATZ`, Hauskoordinaten aus `lehrsaal.md` §8), dann
-   `figuren_zeichnen.py einsetzen lehrsaal` (ohne fal, die Quellbilder liegen in `art/figuren_quelle/`). Die offenen
-   Punkte zu Jonas' Elektroden stehen unter „Halb fertig: Lehrsaal".
+**Zuerst den Nutzer fragen:** Wie kommt man ins Spiel in den Lehrsaal, solange der Fall (Dialoge Wieser, Jonas;
+`docs/UMBAU.md` §2d) noch fehlt? Vorschlag: Raum registrieren und über einen Prüfweg erreichbar machen (z. B.
+`?raum=lehrsaal` oder ein Eintrag im Menü), Ausgang führt zur Aufnahme; das neue Spiel beginnt weiter in der Aufnahme.
+Und: soll die eigene Bank (Zirkel, Streifen) eine eigene Klickzone `bank` bekommen?
+
+1. **Fensterblick als Tafel** (KRANKENHAUS „Ein Haus, aus Bausteinen", Punkt 4): Fassade Südwest EG (beide Giebelfenster
+   neben der Leinwand) und Südost EG (Nischenfenster links) einmal von außen rendern, gleiche Tageszeit und Farben wie der
+   Saal (Himmel `#9EC3E0` → `#F2D2B0`), als flache Tafel hinter die Öffnungen; Kronen dicht davor ausdünnen.
+2. **Ebenen-Pipeline für Hausräume**, eine Pipeline: `hintergrund.png`, `mittelgrund.png` (eigene Linien),
+   `hitboxes.json`, `schirme.json` nach `art/szenen/lehrsaal/`. Ebenen und Zonen nach `lehrsaal.md` §4, §5, §7
+   (Mittelgrund: Liege, Wagen, Bänke samt eigener Bank, Schachtel). Fallen: das Komposit braucht dieselbe kühle
+   Schattenstufe (`schattenfarbe`, `schatten`) und das Pfirsichlicht wie `haus_blockout.komposit`, sonst wird der Saal
+   wieder blass; der Wagenschirm ist um 38° gedreht, `schirme()` in `ebenen.py` nimmt den achsparallelen Kasten an und
+   muss die echten Eckpunkte der Vorderseite nehmen; `ausgang` hat kein Objekt (Pfeil am rechten Bildrand).
+3. **Figuren** Dr. Wieser und Jonas neu setzen (`figuren.py` `PLATZ`, Hauskoordinaten): Jonas liegend auf der Liege
+   (x 0,85 … 1,5, y 0,35 … 2,3, Kopf bei y 0,35 auf dem 20°-Kopfteil, rechte Seite nach +x), Wieser stehend auf dem
+   freien Boden zwischen Liege und Leinwand, nicht vor der Leinwand. Dann `figuren_zeichnen.py einsetzen lehrsaal`
+   (ohne fal, Quellbilder in `art/figuren_quelle/`). Elektroden-Punkte unter „Halb fertig: Lehrsaal".
+4. **Raum im Spiel** nach der Antwort des Nutzers: `web/spiel.js` registriert bisher nur `monitor`; Felder aus den Zonen,
+   Schirme laufen über `starteSchirme`. Neue Spielertexte nur mit Skill `dialoge`, en/ru über den Agenten `uebersetzer`.
 
 Fertig, wenn das gebaute Spiel den neuen Saal mit allen Zonen und Schirmflächen zeigt, der Durchlauf „Alle Prüfungen
-bestanden." meldet und der Agent `spieltester` den Lehrsaal ohne Stocken bedient. Offen aus Auftrag B (Außenansicht),
-nicht in diesem Block: Gardinen oder nur Rollläden? Kahlen Baum rechts behalten? Fensterband Trakt N 1. OG bestätigen?
+bestanden." meldet und der Agent `spieltester` den Lehrsaal ohne Stocken bedient. Offen aus Auftrag B (nicht in diesem
+Block): Fragen unter „Fassade und Hof" oben. Offen am Saal: die Sonne macht nur kleine Flecken (große Lichtbahnen wären
+eine Lichtfrage).
 
 ### Startnachricht
 
 ```
 Arbeite lokal auf meinem Mac im Repository andreyeskin/ekg-nachtdienst, Branch claude/stil-ligne-claire
 (.venv mit bpy 5.2.2, Blender-Skripte mit .venv/bin/python, Cycles auf Metal).
-Lies docs/STAND.md (Abschnitte „Nächster Auftrag" und „Halb fertig: Lehrsaal"), dann docs/raeume/lehrsaal.md
-§4–§8, docs/KRANKENHAUS.md Abschnitt „Entscheid (25.10.2026): Ein Haus, aus Bausteinen gebaut" samt „Umgesetzt
-für den Lehrsaal", gen/blender/README.md (Ablauf je Raum oben und „Lehrsaal … Ausbau im Haus"), dann
-gen/blender/szene_lehrsaal.py, gen/blender/ebenen.py und in gen/blender/haus_blockout.py nur KAMERAS, AUSBAUTEN
-und durchgang(). docs/haus/probe_lehrsaal.jpg verkleinert ansehen.
-Auftrag: den neuen Lehrsaal ins Spiel bringen.
-1. Fensterblick als Tafel hinter den Fenstern (Südost EG, Giebel Südwest EG).
-2. Ebenen-Pipeline für Hausräume: hintergrund, mittelgrund, hitboxes.json, schirme.json nach art/szenen/lehrsaal/,
-   Zonen und Schirmflächen nach lehrsaal.md §4/§5.
-3. Dr. Wieser und Jonas neu setzen (figuren.py PLATZ, figuren_zeichnen.py einsetzen lehrsaal).
+Lies docs/STAND.md (Abschnitte „Nächster Auftrag" und „Halb fertig: Lehrsaal"), dann docs/raeume/lehrsaal.md §4–§8,
+gen/blender/README.md (Ablauf je Raum oben und „Lehrsaal … Ausbau im Haus"), gen/blender/szene_lehrsaal.py,
+gen/blender/ebenen.py, gen/blender/komposit.py und in gen/blender/haus_blockout.py nur KAMERAS, AUSBAUTEN,
+kamera_stellen(), durchgang() und komposit(). docs/haus/probe_lehrsaal.jpg verkleinert ansehen.
+Auftrag: den gestalteten Lehrsaal ins Spiel bringen. Zuerst mir die zwei Fragen aus „Nächster Auftrag" stellen.
+1. Fensterblick als Tafel hinter den Fenstern (Südwest EG, Südost EG).
+2. Ebenen-Pipeline für Hausräume (eine Pipeline): hintergrund, mittelgrund, hitboxes.json, schirme.json nach
+   art/szenen/lehrsaal/, mit kühler Schattenstufe wie im Haus-Komposit und gedrehtem Wagenschirm.
+3. Dr. Wieser und Jonas neu setzen (figuren.py PLATZ, figuren_zeichnen.py einsetzen lehrsaal, ohne fal).
+4. Raum lehrsaal in web/spiel.js registrieren, wie ich es auf die Frage beantworte.
 Prüfung: python3 gen/kunst.py && python3 tools/baue.py && node tools/durchlauf.mjs "$PWD/bau/nachtdienst.html"
 "$PWD/bau/durchlauf", danach der Agent spieltester für den Lehrsaal. Alles auf Opus (Detailarbeit an einer
 bestehenden Szene). Commit nach jedem Teilschritt, pushen, STAND.md nachziehen. Antworte mir auf Russisch.
