@@ -1,18 +1,10 @@
 {
  "wieser": {
   "datei": "wieser.png",
-  "x": 551,
-  "y": 372,
-  "breite": 132,
-  "hoehe": 341,
-  "klasse": "atmet"
- },
- "jonas": {
-  "datei": "jonas.png",
-  "x": 710,
-  "y": 499,
-  "breite": 185,
-  "hoehe": 113,
+  "x": 637,
+  "y": 208,
+  "breite": 178,
+  "hoehe": 384,
   "klasse": "atmet"
  }
 }

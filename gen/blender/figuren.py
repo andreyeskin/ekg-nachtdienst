@@ -45,11 +45,13 @@ PLATZ = {
     "marlene": dict(ort=(-3.05, -0.5, 0.0), drehung=20, haltung="tresen", tresen=1.09),  # hinter dem Tresen (Oberkante der Ablage 1,09 m)
     "herrk": dict(ort=(2.4, -0.75, 0.0), drehung=-8, haltung="sitzen"),                  # dritter Stuhl der Wartereihe
     "falk": dict(ort=None, drehung=-14, haltung="taschen"),                              # rechts vom großen Schirm
-    # Lehrsaal (szene_lehrsaal.py: Rückwand y=0, Raum nach −y; die Raumbeschreibung misst y in den Raum hinein).
-    # Dr. Wieser links neben dem Kopfende der Liege, linker Fuß auf dem Tritt, Körper zu Jonas gedreht, Kopf zur Kamera;
-    # Jonas auf der Liegefläche (0,75 m), Körperachse entlang der um 20° gedrehten Liege, Kopf zur Rückwand.
-    "wieser": dict(ort=(-0.45, -2.05, 0.0), drehung=35, haltung="tritt"),
-    "jonas": dict(ort=(0.6, -2.4, 0.75), drehung=20, haltung="liegen"),
+    # Lehrsaal (Hauskoordinaten, szene_lehrsaal.py; Spielkamera an der ersten Bank, Blick −x, im Bild rechts = +y).
+    # Jonas auf der Liegefläche (0,75 m) quer vor dem Giebelfenster: Kopf zur Fensterwand (Kopfmitte y ≈ 0,55, auf Kissen und
+    # Kopfteil), Füße zur Leinwand (y ≈ 2,25), rechte Seite (rote Klemme) zur Klasse (+x): drehung 180.
+    # Dr. Wieser auf dem freien Boden am Fußende der Liege, knapp links der Leinwand: Körper zur Leinwand gedreht, Kopf zur Klasse
+    # (`blick` 90 = +x), linker Fuß auf ihrem Tritt (Teil ihrer Zeichnung, kein Raumobjekt).
+    "wieser": dict(ort=(1.75, 2.6, 0.0), drehung=150, blick=90, haltung="tritt"),
+    "jonas": dict(ort=(1.175, 1.35, 0.75), drehung=180, haltung="liegen"),
 }
 TINTE = "fig_tinte"
 
@@ -492,12 +494,13 @@ def falk(ort=(0, 0, 0), drehung=0.0, haltung="taschen", tag=None, hit="falk", fe
 
 
 # ====================================================================== Dr. Wieser
-def wieser(ort=(0, 0, 0), drehung=0.0, haltung="tritt", tag=None, hit="wieser", fein=0.0045):
+def wieser(ort=(0, 0, 0), drehung=0.0, haltung="tritt", tag=None, hit="wieser", fein=0.0045, blick=0.0):
     """Dr. Nora Wieser, 41 (1,72 m): schmale Ovale (Kopf, Rumpf, Ärmel), Gegenakzent der harte Winkel des rechten
     Ellbogens — der Arm hält das blaue EKG-Lineal hoch. Kittel offen über dunklem Rollkragen, kurzes graues Haar mit
     dunkler Strähne, keine Brille, kein Stethoskop (liegt über der Stuhllehne), kobaltblaue Sneaker.
-    "tritt": linker Fuß (lokal +x, vorn) auf einem 0,25 m hohen Tritt, der nicht Teil der Figur ist; der Kopf dreht
-    sich um −drehung zurück, also zur Kamera, während der Körper zur Liege zeigt. "stehen": beide Füße am Boden."""
+    "tritt": linker Fuß (lokal +x, vorn) auf einem 0,25 m hohen Tritt, der nicht Teil der Figur ist; der Kopf schaut in
+    die Weltrichtung `blick` (Grad, 0 = −y wie die alte Seminarraum-Kamera), während der Körper zur Liege zeigt.
+    "stehen": beide Füße am Boden."""
     F = Figur("wieser", ort, drehung, tag, hit, fein)
     # Beine (dunkle Hose) und Sneaker (Kobalt, helle Sohle)
     def sneaker(ort, rot=(0, 0, 0)):
@@ -536,7 +539,7 @@ def wieser(ort=(0, 0, 0), drehung=0.0, haltung="tritt", tag=None, hit="wieser", 
     F.quader((0.045, 0.004, 0.19), (HR.x + 0.01, HR.y - 0.03, HR.z + 0.09), "fig_kobalt", fase=0, rot=(math.radians(8), 0, math.radians(25)), name="lineal")
     F.glied((0, -0.005, 1.56), (0, -0.01, 1.6), 0.046, "fig_haut", name="hals")
     # Kopf: schmales Oval, zur Kamera zurückgedreht
-    kopf = F.leer((0, -0.01, 1.62), rot=(math.radians(3), 0, math.radians(-drehung if haltung == "tritt" else 0)))
+    kopf = F.leer((0, -0.01, 1.62), rot=(math.radians(3), 0, math.radians(blick - drehung if haltung == "tritt" else 0)))
     KS = (0.09, 0.1, 0.12)
     F.kugel(1, (0, 0, 0), "fig_haut", skala=KS, eltern=kopf, name="kopf")
     F.ohren(kopf, KS, z=-0.005, groesse=(0.011, 0.02, 0.03))

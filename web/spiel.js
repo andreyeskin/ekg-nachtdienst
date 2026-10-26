@@ -10,6 +10,7 @@
   var SCHLUESSEL = "nachtdienst-1";
   var FALL = "aufnahme_baum";
   var AUFNAHME_EKG = 39;          /* Herrn Baums Aufnahme — dieselbe wie im Fall (aufnahme.haupt); Kapitel 2 braucht sie an der Monitorwand */
+  var LEHRSAAL_EKG = 142;         /* Jonas im Lehrsaal: Sinusrhythmus ohne Nebenbefund (docs/raeume/lehrsaal.md §4) */
   /* Kapitel 2: die beiden anderen Betten an der Monitorwand. Gewählt nach den
      Feldern rhythmus und mess in data/ekg_daten.json. Von den drei Merkmalen,
      an denen man Herrn Baum erkennen kann (P vor jedem QRS · Frequenz · PQ),
@@ -113,6 +114,15 @@
 
   /* ------------------------------------------------------------ Dialoge, Kapitel 2 */
   var DIALOGE = {
+    /* Lehrsaal, solange sein Fall fehlt (docs/UMBAU.md §2d): je ein Satz, Stimmen nach docs/raeume/lehrsaal.md §2.
+       Wieser gibt eine Aufgabe statt einer Antwort; Jonas verrät nichts, er ist heute Patient. */
+    wieser: {
+      start: { text: "Erst setzen, dann messen. Dein Zirkel liegt auf der Bank: von einer R-Zacke zur nächsten.",
+               endeText: "Mach ich." }
+    },
+    jonas: {
+      start: { text: "Frag mich nichts. Heute bin ich Patient, ich lieg nur hier.", endeText: "Schon gut." }
+    },
     /* Der Erzähler spricht ohne Porträt und nur an wenigen Stellen: Anfang, Kapitelwechsel, Schluss (TON.md). */
     auftakt: {
       monitor: {
@@ -546,6 +556,52 @@
         }
       ]
     });
+
+    /* Lehrsaal (Einschulungstag): gerendert im Haus (gen/blender/haus_blockout.py ebenen lehrsaal). Der Fall fehlt noch;
+       erreichbar über das Menü (web/huelle.js), der Ausgang führt in die Aufnahme. Die eigene Bank öffnet den Zirkel an
+       Jonas' Ableitung II, das Whiteboard „Reizleitung bauen" (Wunsch des Nutzers 26.10.2026). */
+    global.Szene.registriere("lehrsaal", {
+      titel: "Lehrsaal", ebenen: kunst.szenen.lehrsaal, ersatzfarbe: "#F6E8CF",
+      beiBetreten: function () { betreten("lehrsaal"); },
+      felder: [
+        { id: "bank", name: T("Deine Bank · Zirkel"), punkte: zone("lehrsaal", "bank", [298, 741, 990, 900]),
+          erledigt: function () { return hat("ls_zirkel"); },
+          bei: function () {
+            global.Zirkel.starte({ satz: satz(LEHRSAAL_EKG), was: "rr",
+              fertig: function (erg) {
+                setze("ls_zirkel"); global.Szene.aktualisiere();
+                melde(T("Gemessen: {ms} ms von R zu R.", { ms: erg.wahrheit }));
+              } });
+          } },
+        { id: "whiteboard", name: T("Whiteboard"), punkte: zone("lehrsaal", "whiteboard", [1348, 154, 1549, 390]),
+          bei: function () { global.Reizleitung.starte({ satz: satz }); } },
+        { id: "wieser", name: T("Dr. Wieser"), punkte: zone("lehrsaal", "wieser", [637, 208, 815, 592]),
+          bei: function () { global.Dialog.starte("wieser", "start"); } },
+        { id: "jonas", name: T("Jonas"), punkte: zone("lehrsaal", "jonas", [330, 330, 600, 420]),
+          sichtbar: function () { return !!(KUNST.szenen.lehrsaal.zonen || {}).jonas; },   /* erst mit seiner Figur */
+          bei: function () { global.Dialog.starte("jonas", "start"); } },
+        { id: "liege", name: T("Liege"), punkte: zone("lehrsaal", "liege", [263, 420, 642, 554]),
+          bei: function () { melde("Die Klemmen an Armen und Beinen sitzen. Die Brustwand ist noch frei."); } },
+        { id: "wagen", name: T("EKG-Wagen"), punkte: zone("lehrsaal", "wagen", [45, 295, 232, 584]),
+          bei: function () {
+            melde(T("Der Wagen schreibt Jonas' Ableitung II mit: {hf} pro Minute.", { hf: satz(LEHRSAAL_EKG).mess.frequenz }));
+          } },
+        { id: "projektion", name: T("Leinwand"), punkte: zone("lehrsaal", "projektion", [602, 131, 969, 360]),
+          bei: function () { melde("Auf der Leinwand läuft dieselbe Ableitung, groß wie auf Papier."); } },
+        { id: "lineale", name: T("Lineale"), punkte: zone("lehrsaal", "lineale", [1071, 402, 1151, 452]),
+          erledigt: function () { return hat("ls_lineal"); },
+          bei: function () {
+            if (hat("ls_lineal")) { melde("Dein Lineal steckt schon in der Kitteltasche."); return; }
+            setze("ls_lineal"); global.Szene.aktualisiere();
+            melde("Du nimmst ein blaues Lineal aus der Schachtel.");
+          } },
+        { id: "uhr", name: T("Uhr"), punkte: zone("lehrsaal", "uhr", [753, 28, 817, 93]),
+          bei: function () { melde(T("Es ist {zeit}.", { zeit: zeitText() })); } }
+      ],
+      ausgaenge: [
+        { name: T("Zurück in die Aufnahme"), nach: "aufnahme", punkte: zone("lehrsaal", "ausgang", [1536, 600, 1600, 880]) }
+      ]
+    });
   }
 
   /* Bildschirme im Raum: jede Fläche aus art/szenen/<raum>/schirme.json (kunst.szenen.<raum>.schirme) bekommt
@@ -560,7 +616,8 @@
     schirmLauf.forEach(function (s) { s.streifen.stoppeLauf(); if (s.el.parentNode) s.el.parentNode.removeChild(s.el); });
     schirmLauf = [];
   }
-  function schirmAufnahme(name) {
+  function schirmAufnahme(name, raum) {
+    if (raum === "lehrsaal") return name === "whiteboard" ? null : satz(LEHRSAAL_EKG);   /* Whiteboard: nur Zeichnungen */
     if (name === "wagen_schirm" || name === "gross") return satz(AUFNAHME_EKG);
     var m = /^bett_(\d)$/.exec(name);
     if (m) { var b = betten()[+m[1] - 1]; return b ? b.satz : null; }
@@ -572,7 +629,7 @@
     if (!liste) return;
     var buehne = document.getElementById("buehne");
     Object.keys(liste).forEach(function (name) {
-      var f = liste[name], s = schirmAufnahme(name);
+      var f = liste[name], s = schirmAufnahme(name, raum);
       if (!s) return;
       var ebene = buehne.querySelector(".ebene-" + (f.ebene || "hintergrund"));
       if (!ebene) return;
@@ -588,7 +645,7 @@
       }
       d.innerHTML = "<canvas></canvas>";
       ebene.appendChild(d);
-      var gross = name === "gross";
+      var gross = name === "gross" || name === "projektion";      /* Leinwand im Lehrsaal: wie Papier */
       var streifen = global.EKG.Streifen(d.querySelector("canvas"), {
         werte: s.sig.werte, fs: s.sig.fs, mmProS: 25, dauer: gross ? 5.2 : 4.0,
         monitor: true, kalibrierung: false, stil: gross ? null : "phosphor",
@@ -624,7 +681,8 @@
     for (k in DIALOGE) baeume[k] = DIALOGE[k];
     global.Dialog.lade({
       baeume: baeume, portraits: kunst.portraits,
-      namen: { marlene: "Schwester Marlene", herr_k: "Herr Baum", falk: "Oberarzt Dr. Falk", erzaehler: "" }
+      namen: { marlene: "Schwester Marlene", herr_k: "Herr Baum", falk: "Oberarzt Dr. Falk", erzaehler: "",
+               wieser: "Dr. Wieser", jonas: "Jonas" }
     });
     baueRaeume(kunst);
 

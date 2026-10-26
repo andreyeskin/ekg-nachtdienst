@@ -996,7 +996,7 @@ SZENEN = {
         "figuren": monitor_figuren,
         "vordergrund": monitor_vordergrund,
     },
-    # Lehrsaal (Einschulungstag, 08:10): nur gerendert (art/szenen/lehrsaal/, gen/blender/szene_lehrsaal.py),
+    # Lehrsaal (Einschulungstag, 08:10): nur gerendert (art/szenen/lehrsaal/ aus `haus_blockout.py ebenen lehrsaal`, Ausbau szene_lehrsaal.py),
     # kein gezeichneter Rückfall — ohne Render bleiben die Ebenen leer
     "lehrsaal": {
         "hintergrund": lambda: "",

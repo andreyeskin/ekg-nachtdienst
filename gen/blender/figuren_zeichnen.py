@@ -272,7 +272,11 @@ def vorlage(raum, nur=None, neu=False):
         verdeckt = bool(A["kontext"].get(name))            # Raumobjekt vor/unter der Figur: Vorlage zeigt es mit
         r = RAND * max(w, h)
         x0, x1 = x0 - r, x1 + r; y0 -= r; y1 += r * (2.6 if name == "marlene" else 1.0)   # Marlene: Tresen unter der Kante zeigen
-        sv = seitenverhaeltnis(x1 - x0, y1 - y0); ziel = SEITEN[sv]
+        sv = seitenverhaeltnis(x1 - x0, y1 - y0)
+        try: alt_sv = json.load(open(alt, encoding="utf-8")).get("seitenverhaeltnis") if os.path.exists(alt) else None
+        except Exception: alt_sv = None
+        if neu and alt_sv in SEITEN and os.path.exists(QUELLE + f"{name}.png"): sv = alt_sv   # Quellbild bleibt: sein Format auch
+        ziel = SEITEN[sv]
         w, h = x1 - x0, y1 - y0
         if w / h < ziel: d = h * ziel - w; x0 -= d / 2; x1 += d / 2
         else: d = w / ziel - h; y0 -= d / 2; y1 += d / 2
@@ -371,7 +375,7 @@ def malen(name, a):
 def einsetzen(raum, skala_aus=1):
     blender_laden(); A = ef.aufbau(raum); figs = A["figs"]
     try:
-        import komposit; e = komposit.EINSTELLUNG.get(raum, komposit.STANDARD)
+        import komposit; e = A.get("einstellung") or komposit.EINSTELLUNG.get(raum, komposit.STANDARD)   # Hausräume: Licht der Kamera
     except Exception:
         e = dict(licht="#FFF6DC", anteil=0.32, schwelle=0.35, weich=0.7)
     szene_dir = os.path.join(WURZEL, "art", "szenen", raum) + os.sep
@@ -428,8 +432,12 @@ def einsetzen(raum, skala_aus=1):
         ls = luma(auf_groesse(lade(OUT + f"{name}_sonne.png"), groesse))
         licht = np.clip((ls - e["schwelle"]) / 0.08 + 0.5, 0, 1)
         licht = np.asarray(Image.fromarray((licht * 255).astype(np.uint8)).filter(ImageFilter.MedianFilter(5))).astype(np.float32) / 255
-        licht = weich(licht, e["weich"] * S)[..., None] * e["anteil"]
-        col = q[..., :3] * (1 - licht) + hexa(e["licht"]) * licht
+        licht = weich(licht, e["weich"] * S)[..., None]
+        col = q[..., :3]
+        if e.get("schatten"):                              # Hausräume: ohne Sonne eine flache Stufe zur Schattenfarbe (wie der Raum)
+            sch = (1 - licht) * e["schatten"]; col = col * (1 - sch) + hexa(e["schattenfarbe"]) * sch
+        licht = licht * e["anteil"]
+        col = col * (1 - licht) + hexa(e["licht"]) * licht
         fertig = np.concatenate([col, alpha[..., None]], axis=-1)
         # --- auf Bühnengröße, beschneiden, speichern
         klein = vormultipliziert_skalieren(fertig, ((x1 - x0) * skala_aus, (y1 - y0) * skala_aus))

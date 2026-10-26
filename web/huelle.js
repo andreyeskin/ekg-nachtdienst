@@ -301,6 +301,11 @@
     var vb = knopf("knopf gross umschalter", null, innen, function () { vollbild(!imVollbild()); }, "menue-vollbild");
     el("span", null, vb, T("Vollbild"));
     el("span", "schalter", vb, "");
+    /* Prüfweg in den Lehrsaal, solange sein Fall fehlt (Entscheid des Nutzers 26.10.2026); der Ausgang dort führt in die Aufnahme. */
+    knopf("knopf gross", T("Lehrsaal"), innen, function () {
+      schliesseMenue();
+      if (global.Szene.aktueller() !== "lehrsaal") global.Szene.zeige("lehrsaal");
+    }, "menue-lehrsaal");
     knopf("knopf gross", T("Info & Quellen"), innen, zeigeInfo, "menue-info");
     zeigeVollbild();
   }

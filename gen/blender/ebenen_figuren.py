@@ -382,31 +382,56 @@ def aufbau(raum):
                     sonne_stellen=getattr(szene, "sonne_stellen", lambda s: None),   # dieselbe Sonne wie ebenen.py (sonst die der Szene)
                     klasse={"falk": "atmet langsam"}, unten={}, kontext={"falk": []}, verdecker={"falk": None})
     if raum == "lehrsaal":
-        import importlib
-        import werkzeug as wz
-        szene = importlib.import_module("szene_lehrsaal")     # Raum, Kamera (mit Verschiebung), Sonne
-        PAL.update(szene.PALETTE)
+        # Hausraum (haus_blockout.py, Ausbau szene_lehrsaal.py): die .blend des Hauses, nur Saal und EG-Hülle bleiben (die
+        # übrigen 3500 Objekte gelöscht: jeder bpy.ops-Grundkörper der Figuren kostete sonst eine Aktualisierung der ganzen
+        # Szene), Kamera und Sonne der Spielkamera, Licht und Schattenstufe wie im Raum-Komposit.
+        import haus_blockout as hb
+        bpy.ops.wm.open_mainfile(filepath=hb.BLEND)
         sc = bpy.context.scene; render_grund(1600, 900)
+        k = hb.KAMERAS["lehrsaal"]; hb.kamera_stellen(sc, k)
+        PAL.update(hb.PALETTE)
+        bleibt = set(k["linien_nur"])
+        for o in list(bpy.data.objects):
+            if o.type == 'MESH' and (not any(c.name in bleibt for c in o.users_collection)
+                                     or o.name.startswith(("Scheibe", "Gardine", "Fluegel offen Glas", "Vorhang aussen"))):
+                bpy.data.objects.remove(o)
+        from mathutils import Vector as V
+        def sonne_stellen(s):
+            s.rotation_euler = V(hb.sonnenrichtung(*k["sonne"])).to_track_quat('-Z', 'Y').to_euler(); s.data.energy = k["sonne_staerke"]
         w, j = P["wieser"], P["jonas"]
-        figs = {"wieser": figuren.wieser(w["ort"], drehung=w["drehung"], haltung=w["haltung"], fein=0.0055),
+        figs = {"wieser": figuren.wieser(w["ort"], drehung=w["drehung"], haltung=w["haltung"], blick=w.get("blick", 0.0), fein=0.0055),
                 "jonas": figuren.jonas(j["ort"], drehung=j["drehung"], haltung=j["haltung"], fein=0.0055)}
-        nie = set(wz.PLATZHALTER)
-        # Nichts im Raum steht vor den beiden (Wieser vor dem Tritt, Jonas AUF der Liege): keine Verdeckung, sonst
-        # schnitten Tritt und Polsterkante Löcher in die gezeichneten Figuren. Die Zonen `jonas` und `liege` (Fußende,
-        # Elektroden-Aufgabe) bleiben getrennt.
-        # Der Tritt steht in Wiesers Vorlage mit (Kontext zeichnet den Fuß sonst auf den Boden) und wird beim Einsetzen
-        # aus ihrem Bild geschnitten, wo ihr Blockout ihn nicht deckt (`ausschneiden`): im Raum steht er im Mittelgrund.
-        tritt = ["tritt", "tritt_flaeche"]
-        # Jonas' vier Extremitätenklemmen zeichnet klemmen_setzen.py in sein Quellbild (Kontext setzt so kleine Dinge
-        # nicht an die Gelenke); die Blockout-Klemmen in figuren.jonas() sind nur die Vorlage dafür.
-        return dict(cam=sc.camera, figs=figs, raum_sichtbar=lambda o: o.name not in nie,
-                    sonne_sichtbar=lambda o: o.name not in nie and o.name not in szene.SONNE_AUS,
-                    sonne_stellen=getattr(szene, "sonne_stellen", lambda s: None),
-                    klasse={"wieser": "atmet", "jonas": "atmet"}, unten={}, kontext={"wieser": tritt, "jonas": []},
-                    verdecker={"wieser": [], "jonas": []}, ausschneiden={"wieser": tritt}, getrennt={"jonas": "liege"},
-                    ausrichten={"jonas": False, "wieser": False}, weicht={"projektion": "wieser"})
-        # ausrichten: Kontext hält hier die Lage der Vorlage; die Kopf-Ausrichtung verschöbe Wieser samt gezeichnetem Tritt
-        # neben den echten (ausschneiden träfe dann daneben) und bei Jonas sind die obersten Zeilen Knie und Kopf zugleich.
+        # Jonas liegt mit Schultern und Kopf auf dem um 20° hochgestellten Kopfteil (Scharnier y 0,85, Liegefläche 0,75): alle Punkte
+        # kopfwärts davon drehen um die x-Achse durch das Scharnier — sonst läge der Blockout-Kopf im Kissen.
+        from mathutils import Matrix
+        yh, zh, a_ = 0.85, j["ort"][2], math.radians(20.0)
+        teile = [o for o in bpy.data.objects if o.type == 'MESH' and ist_fig(o) and fig_name(o) == "jonas"]   # auch Gesichtsstriche
+        bpy.context.view_layer.update()                                 # sonst ist matrix_world der zuletzt angehängten Teile (Mund) veraltet
+        welt_m = {o.name: o.matrix_world.copy() for o in teile}         # erst alle merken, dann lösen
+        for o in teile:
+            me = o.data.copy(); me.transform(welt_m[o.name])
+            for v in me.vertices:
+                Y, Z = v.co.y - yh, v.co.z - zh
+                if Y < 0: v.co.y, v.co.z = yh + Y * math.cos(a_) - Z * math.sin(a_), zh - Y * math.sin(a_) + Z * math.cos(a_)
+            o.parent = None; o.matrix_parent_inverse = Matrix.Identity(4); o.matrix_world = Matrix.Identity(4); o.data = me
+        # Wiesers Tritt gehört zu ihrer Zeichnung (der Saal hat keinen, Nutzer 25.10.2026): als Teil der Figur mitgerendert,
+        # damit Vorlage, Umgriff und Klickzone ihn einschließen. Unter dem linken Fuß (lokal 0,3 / −0,28), 0,25 m hoch.
+        dreh = math.radians(w["drehung"]); c, s_ = math.cos(dreh), math.sin(dreh)
+        welt = lambda x, y, z: (w["ort"][0] + x * c - y * s_, w["ort"][1] + x * s_ + y * c, z)
+        ecken = [welt(x, y, z) for z in (0.0, 0.25) for (x, y) in ((0.12, -0.12), (0.48, -0.12), (0.48, -0.44), (0.12, -0.44))]
+        me = bpy.data.meshes.new("wieser_tritt"); me.from_pydata(ecken, [], [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)])
+        tritt = bpy.data.objects.new("wieser_tritt", me); tritt.data.materials.append(figuren.material("fig_rollkragen"))
+        bpy.data.collections["figuren"].objects.link(tritt); figs["wieser"].teile.append(tritt)
+        sichtbar = lambda o: True
+        # Nichts im Raum steht vor den beiden (Jonas liegt AUF der Liege): keine Verdeckung, sonst schnitte die Polsterkante
+        # Löcher in den gezeichneten Jonas. Die Zonen `jonas` und `liege` (Elektroden-Aufgabe) bleiben getrennt; die Leinwand
+        # weicht Wieser. Die Quellbilder (art/figuren_quelle) stammen aus dem alten Seminarraum: ausrichten aus.
+        return dict(cam=sc.camera, figs=figs, raum_sichtbar=sichtbar, sonne_sichtbar=sichtbar, sonne_stellen=sonne_stellen,
+                    klasse={"wieser": "atmet", "jonas": "atmet"}, unten={}, kontext={"wieser": [], "jonas": []},
+                    verdecker={"wieser": [], "jonas": []}, getrennt={"jonas": "liege"},
+                    ausrichten={"jonas": False, "wieser": False}, weicht={"projektion": "wieser"},
+                    einstellung=dict(licht=k["licht"], anteil=k["anteil"], schwelle=0.35, weich=0.7,
+                                     schattenfarbe=k["schattenfarbe"], schatten=k["schatten"]))
     raise SystemExit(f"unbekannter Raum {raum}")
 
 
