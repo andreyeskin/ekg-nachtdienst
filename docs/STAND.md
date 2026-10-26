@@ -136,6 +136,18 @@ Texte über IDs in `text/{de,en,ru}/aufnahme_baum.json`, Prüfungen in `tools/du
 - Dr. Wieser: Kobaltblau und blaues Lineal sind in ihrer Figur; im Porträt prüfen (Akzent, graue Haare mit 41).
 - Der Fall des Lehrsaals (Dialoge, Elektroden-Aufgabe, Projektion groß, `docs/UMBAU.md` §2d) fehlt; die Zonen tun bis dahin wenig.
 
+**Offen am Lehrsaal (Spieltest 26.10.2026, Bericht `bau/spieltest_lehrsaal.md`; behoben: Leinwand-Zone, Ausgang mit Pfeil,
+Lineal-Zone, Wiesers Satz, Escape im Zirkel, „Miss den RR-Abstand."):**
+- **Uhr unter dem HUD** bei 4:3 (iPad, 1024×768): Bild und Zone liegen unter „Was geht hier?". Bei 16:9 frei. Frage an den Nutzer offen.
+- **Wieser steht vor der Leinwand** (deckt den linken Teil der laufenden Kurve). Frage an den Nutzer offen.
+- „Reizleitung bauen" ist in en/ru deutsch (alte Lücke in `tools/woerter.py`, Agent `uebersetzer`).
+- Namensschild beim Überfahren sitzt unten mittig statt am Feld; auf dem iPad kein Hover, „Was geht hier?" zeigt keine Namen,
+  nur 2,4 s und blass (gilt für alle Räume).
+- Menü während des Auftaktdialogs gesperrt (Prüfweg in den Lehrsaal erst nach „Zum Tresen.").
+- Wieser: Sonnenflecken auf dem Kittel wirken wie Löcher (Lichtstufe auf Figuren schwächer?); Zirkel-/Rätselknöpfe 35 px (iPad ≥ 44).
+- Zirkel-Lösung RR 786 ms (76/min) gegen „74 pro Minute" am Wagen: Mittelwert der Aufnahme gegen einen Schlag (Sinusarrhythmie);
+  beim Fall mit `medizin-gutachter` klären, ob die Meldung den Mittelwert so nennen soll.
+
 ## Entscheidungen des Nutzers (13.10.2026, umgesetzt)
 
 Rotation über mehrere Dienste · Epilog für Herrn Baum als Erzählung · Reizleitung in den Lehrsaal · Dr. Falk
