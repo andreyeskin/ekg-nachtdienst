@@ -1461,6 +1461,53 @@ ok("Escape schließt das Rätsel", (await seite.locator("#reizleitung-hof.an").c
 ok("Bühne danach wieder bedienbar",
    await seite.evaluate(() => !document.getElementById("buehne").classList.contains("stumm")));
 
+/* ------------------------------------------------- 15b Lehrsaal über das Menü (Prüfweg, solange sein Fall fehlt)
+   Gerendert im Haus (haus_blockout.py ebenen lehrsaal): Ebenen, Zonen und Schirme aus kunst.json; die eigene Bank öffnet
+   den Zirkel an LUDB 142, der Ausgang führt in die Aufnahme. */
+await seite.locator("#hud-menue").click();
+await warte(400);
+ok("Menü: Eintrag „Lehrsaal“", await seite.locator("#menue-lehrsaal").isVisible());
+await seite.locator("#menue-lehrsaal").click();
+await warte(1200);
+ok("Lehrsaal: Raum gezeigt, Menü zu", await seite.evaluate(() => window.Szene.aktueller() === "lehrsaal") &&
+   (await seite.locator("#menue-hof.an").count()) === 0);
+const lsFelder = await seite.evaluate(() => [...document.querySelectorAll(".feld")].map((f) => f.getAttribute("data-feld") || "→" + f.getAttribute("data-nach")));
+ok("Lehrsaal: alle Klickzonen da (Bank, Whiteboard, Wieser, Liege, Wagen, Leinwand, Lineale, Uhr, Ausgang)",
+   ["bank", "whiteboard", "wieser", "liege", "wagen", "projektion", "lineale", "uhr", "→aufnahme"].every((f) => lsFelder.includes(f)), lsFelder.join(","));
+ok("Lehrsaal: Ebenen und Figur Dr. Wieser gerendert", await seite.evaluate(() => {
+  const b = document.getElementById("buehne");
+  return !!b.querySelector(".ebene-hintergrund image") && !!b.querySelector(".ebene-mittelgrund image") && !!b.querySelector("#fig-wieser");
+}));
+const lsSchirme = await seite.evaluate(() => window.Spiel.__schirme());
+ok("Lehrsaal: Wagenschirm und Leinwand zeigen Jonas (LUDB 142) und laufen, das Whiteboard bleibt leer",
+   ["wagen_schirm", "projektion"].every((n) => lsSchirme.some((s) => s.name === n && s.satz === 142 && s.laeuft)) &&
+   !lsSchirme.some((s) => s.name === "whiteboard"), JSON.stringify(lsSchirme));
+await schuss("lehrsaal");
+await feld("bank").click();
+await warte(500);
+ok("Lehrsaal: die eigene Bank öffnet den Zirkel (RR an Jonas' Ableitung II)",
+   await seite.locator("#zirkel-hof.an").isVisible() && /RR/.test(await seite.locator("#zirkel-hof h2").textContent()));
+await seite.locator("#zirkel-hof .zu").click();
+await warte(300);
+await feld("whiteboard").click();
+await warte(600);
+ok("Lehrsaal: das Whiteboard öffnet „Reizleitung bauen“", await seite.locator("#reizleitung-hof.an").isVisible());
+await seite.keyboard.press("Escape");
+await warte(300);
+await feld("lineale").click();
+await warte(300);
+ok("Lehrsaal: ein Lineal aus der Schachtel, die Zone ist danach erledigt",
+   /Lineal/.test(await letzteMeldung()) && (await seite.locator('.feld.erledigt[data-feld="lineale"]').count()) === 1, await letzteMeldung());
+await feld("wieser").click();
+await warte(700);
+ok("Lehrsaal: Dr. Wieser spricht", await seite.evaluate(() => window.Dialog.laeuft()) &&
+   /Zirkel/.test(await seite.locator(".dialog").textContent()));
+await seite.locator(".dialog-antwort.weiter").click();
+await warte(400);
+await seite.locator('.feld.ausgang[data-nach="aufnahme"]').click();
+await warte(1200);
+ok("Lehrsaal: der Ausgang führt in die Aufnahme", await seite.evaluate(() => window.Szene.aktueller() === "aufnahme"));
+
 /* ------------------------------------------------- 16 Vollbild-Bühne: mehrere Größen, Hochformat
    Je Größe ein frischer Browserkontext (eigener Speicher): Titel, „Neues Spiel“, dann messen. Die Bühne ist das
    größte 16:9-Rechteck im Fenster, mittig; der Rest ist Tinte. Abweichung höchstens 1 px. */
